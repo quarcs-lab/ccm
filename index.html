@@ -350,56 +350,50 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./03-rd-in-time.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Regression Discontinuity in Time</span></span></a>
+  <a href="./03-basic-diff-in-diff.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Basic Differences-in-Differences</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./04-basic-diff-in-diff.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Basic Differences-in-Differences</span></span></a>
+  <a href="./04-classical-synthetic-control.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Classical Synthetic Control</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./05-classical-synthetic-control.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Classical Synthetic Control</span></span></a>
+  <a href="./05-structural-bayesian-ts.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Structural Bayesian Time Series</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./06-structural-bayesian-ts.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Structural Bayesian Time Series</span></span></a>
+  <a href="./06-bayesian-spatial-sc.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Bayesian Spatial Synthetic Control</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./07-bayesian-spatial-sc.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Bayesian Spatial Synthetic Control</span></span></a>
+  <a href="./07-synthetic-control-prediction-intervals.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Synthetic Control with Prediction Intervals</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./08-synthetic-control-prediction-intervals.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Synthetic Control with Prediction Intervals</span></span></a>
+  <a href="./08-staggered-did.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Staggered Differences-in-Differences</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./09-staggered-did.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Staggered Differences-in-Differences</span></span></a>
+  <a href="./09-matrix-completion-and-ife.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Matrix Completion and Interactive Fixed Effects</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./10-matrix-completion-and-ife.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Matrix Completion and Interactive Fixed Effects</span></span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./11-gsynth.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Generalized Synthetic Control</span></span></a>
+  <a href="./10-gsynth.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Generalized Synthetic Control</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -474,10 +468,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p><em>Comparative Causal Metrics</em> is an introduction to <strong>regional impact evaluation</strong> using modern causal-inference methods implemented entirely in <strong>R</strong> and rendered with <strong>Quarto</strong>. The book is organized in two parts, each anchored by a running case study and a different family of estimators.</p>
 <section id="part-i-one-region-one-shock" class="level3">
 <h3 class="anchored" data-anchor-id="part-i-one-region-one-shock">Part I — One region, one shock</h3>
-<p>Chapters 1–8 evaluate <strong>California’s 1989 Proposition 99 cigarette tax</strong>, the canonical single-treated-unit policy evaluation. Every method in this half builds a counterfactual for California from a different data source — the state’s own past, a neighbour, a weighted blend of donor states, or a Bayesian time-series model — and reports the average treatment effect on the treated (ATT) between 1989 and 2000.</p>
+<p>Chapters 1–7 evaluate <strong>California’s 1989 Proposition 99 cigarette tax</strong>, the canonical single-treated-unit policy evaluation. Every method in this half builds a counterfactual for California from a different data source — the state’s own past, a neighbour, a weighted blend of donor states, or a Bayesian time-series model — and reports the average treatment effect on the treated (ATT) between 1989 and 2000.</p>
 <ul>
 <li><strong>Interrupted time series</strong> — extrapolating California’s pre-period trajectory forward.</li>
-<li><strong>Regression discontinuity in time</strong> — fitting a level-and-slope break at the policy date.</li>
 <li><strong>Basic difference-in-differences</strong> — subtracting a single control state’s pre-to-post change.</li>
 <li><strong>Classical synthetic control</strong> — building a weighted donor blend that matches the pre-period.</li>
 <li><strong>Structural Bayesian time series</strong> — state-space counterfactuals with posterior credible intervals.</li>
@@ -487,7 +480,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="part-ii-many-regions-staggered-adoption" class="level3">
 <h3 class="anchored" data-anchor-id="part-ii-many-regions-staggered-adoption">Part II — Many regions, staggered adoption</h3>
-<p>Chapters 9–11 evaluate the <strong>Callaway-Sant’Anna minimum-wage county panel</strong>, where thousands of counties adopted different state minimum-wage levels at different years. The single-treated-unit toolkit no longer applies: the estimand becomes a family of cohort-specific ATTs indexed by adoption year, and the methods exploit the panel’s panel-data structure rather than a single time series.</p>
+<p>Chapters 8–10 evaluate the <strong>Callaway-Sant’Anna minimum-wage county panel</strong>, where thousands of counties adopted different state minimum-wage levels at different years. The single-treated-unit toolkit no longer applies: the estimand becomes a family of cohort-specific ATTs indexed by adoption year, and the methods exploit the panel’s panel-data structure rather than a single time series.</p>
 <ul>
 <li><strong>Staggered difference-in-differences</strong> — group-time ATT(g, t) estimators that avoid two-way fixed-effects bias.</li>
 <li><strong>Matrix completion and interactive fixed effects</strong> — factor models that relax parallel trends.</li>
@@ -1000,35 +993,34 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">### Part I — One region, one shock</span></span>
 <span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>Chapters 1–8 evaluate **California's 1989 Proposition 99 cigarette tax**, the canonical single-treated-unit policy evaluation. Every method in this half builds a counterfactual for California from a different data source — the state's own past, a neighbour, a weighted blend of donor states, or a Bayesian time-series model — and reports the average treatment effect on the treated (ATT) between 1989 and 2000.</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>Chapters 1–7 evaluate **California's 1989 Proposition 99 cigarette tax**, the canonical single-treated-unit policy evaluation. Every method in this half builds a counterfactual for California from a different data source — the state's own past, a neighbour, a weighted blend of donor states, or a Bayesian time-series model — and reports the average treatment effect on the treated (ATT) between 1989 and 2000.</span>
 <span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Interrupted time series** — extrapolating California's pre-period trajectory forward.</span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Regression discontinuity in time** — fitting a level-and-slope break at the policy date.</span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Basic difference-in-differences** — subtracting a single control state's pre-to-post change.</span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Classical synthetic control** — building a weighted donor blend that matches the pre-period.</span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Structural Bayesian time series** — state-space counterfactuals with posterior credible intervals.</span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Bayesian spatial synthetic control** — a horseshoe-prior donor blend with spatial spillovers onto neighbours.</span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Synthetic control with prediction intervals** — frequentist forecast-error decomposition via the <span class="in">`scpi`</span> package.</span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="fu">### Part II — Many regions, staggered adoption</span></span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>Chapters 9–11 evaluate the **Callaway-Sant'Anna minimum-wage county panel**, where thousands of counties adopted different state minimum-wage levels at different years. The single-treated-unit toolkit no longer applies: the estimand becomes a family of cohort-specific ATTs indexed by adoption year, and the methods exploit the panel's panel-data structure rather than a single time series.</span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Staggered difference-in-differences** — group-time ATT(g, t) estimators that avoid two-way fixed-effects bias.</span>
-<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Matrix completion and interactive fixed effects** — factor models that relax parallel trends.</span>
-<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Generalized synthetic control** — projecting treated units onto factors estimated from never-treated controls.</span>
-<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>Each chapter pairs the conceptual logic of the method with a worked R example using publicly available data, so readers can reproduce every estimate end-to-end.</span>
-<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a><span class="fu">## How to read this book</span></span>
-<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>The chapters are designed to be read sequentially but each is self-contained. Code is folded by default — click **`&lt;/&gt; Code`** in any chapter to reveal the underlying R. The full source is available on <span class="co">[</span><span class="ot">GitHub</span><span class="co">](https://github.com/cmg777/ccm)</span>, and the entire book is available as a PDF download in the navbar.</span>
-<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>For readers who want to render a single chapter without cloning the repo, every numbered chapter offers a self-contained <span class="in">`.zip`</span> bundle (chapter source, dataset, and a minimal <span class="in">`_quarto.yml`</span>) at the bottom of the same **`&lt;/&gt; Code`** dropdown. Unzip and run <span class="in">`quarto render &lt;chapter&gt;.qmd`</span> — no <span class="in">`renv`</span> setup required.</span>
-<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a><span class="fu">## Acknowledgments</span></span>
-<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>This book builds on the infrastructure of the companion project <span class="co">[</span><span class="ot">*Mastering Causal Metrics*</span><span class="co">](https://github.com/cmg777/intro2causal)</span> and on a long tradition of applied econometric scholarship.</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Basic difference-in-differences** — subtracting a single control state's pre-to-post change.</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Classical synthetic control** — building a weighted donor blend that matches the pre-period.</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Structural Bayesian time series** — state-space counterfactuals with posterior credible intervals.</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Bayesian spatial synthetic control** — a horseshoe-prior donor blend with spatial spillovers onto neighbours.</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Synthetic control with prediction intervals** — frequentist forecast-error decomposition via the <span class="in">`scpi`</span> package.</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="fu">### Part II — Many regions, staggered adoption</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>Chapters 8–10 evaluate the **Callaway-Sant'Anna minimum-wage county panel**, where thousands of counties adopted different state minimum-wage levels at different years. The single-treated-unit toolkit no longer applies: the estimand becomes a family of cohort-specific ATTs indexed by adoption year, and the methods exploit the panel's panel-data structure rather than a single time series.</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Staggered difference-in-differences** — group-time ATT(g, t) estimators that avoid two-way fixed-effects bias.</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Matrix completion and interactive fixed effects** — factor models that relax parallel trends.</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Generalized synthetic control** — projecting treated units onto factors estimated from never-treated controls.</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>Each chapter pairs the conceptual logic of the method with a worked R example using publicly available data, so readers can reproduce every estimate end-to-end.</span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a><span class="fu">## How to read this book</span></span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>The chapters are designed to be read sequentially but each is self-contained. Code is folded by default — click **`&lt;/&gt; Code`** in any chapter to reveal the underlying R. The full source is available on <span class="co">[</span><span class="ot">GitHub</span><span class="co">](https://github.com/cmg777/ccm)</span>, and the entire book is available as a PDF download in the navbar.</span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>For readers who want to render a single chapter without cloning the repo, every numbered chapter offers a self-contained <span class="in">`.zip`</span> bundle (chapter source, dataset, and a minimal <span class="in">`_quarto.yml`</span>) at the bottom of the same **`&lt;/&gt; Code`** dropdown. Unzip and run <span class="in">`quarto render &lt;chapter&gt;.qmd`</span> — no <span class="in">`renv`</span> setup required.</span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a><span class="fu">## Acknowledgments</span></span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>This book builds on the infrastructure of the companion project <span class="co">[</span><span class="ot">*Mastering Causal Metrics*</span><span class="co">](https://github.com/cmg777/intro2causal)</span> and on a long tradition of applied econometric scholarship.</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
 <footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/quarcs-lab/ccm/edit/main/index.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/quarcs-lab/ccm/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer><script>
