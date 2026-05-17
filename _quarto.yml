@@ -17,7 +17,7 @@ book:
   repo-branch: main
   repo-actions: [edit, issue]
   sharing: [twitter, linkedin]
-  downloads: [pdf, epub]
+  downloads: [pdf]
   favicon: images/favicon.svg
   cover-image: images/cover.jpg
   chapters:
@@ -68,7 +68,3 @@ format:
     toc: true
     number-sections: true
     colorlinks: true
-  epub:
-    toc: true
-    number-sections: true
-    cover-image: images/cover.jpg

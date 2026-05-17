@@ -5,7 +5,7 @@
 Source for the Quarto book by Carlos Mendez. Built with **R + Quarto**, published to GitHub Pages via Quarto's built-in local-render workflow (`quarto publish gh-pages`).
 
 - 📖 Read online: <https://quarcs-lab.github.io/ccm/>
-- 📄 PDF & EPUB: download links in the book's navbar
+- 📄 PDF: optional download link in the book's navbar (rebuilt on demand)
 - 🐙 Source: <https://github.com/quarcs-lab/ccm>
 
 ---
@@ -27,7 +27,7 @@ Source for the Quarto book by Carlos Mendez. Built with **R + Quarto**, publishe
 
 **Infrastructure (complete):**
 
-- [x] Quarto book project with HTML + LaTeX PDF + EPUB outputs
+- [x] Quarto book project with HTML (auto-published) + LaTeX PDF (on demand)
 - [x] Dark/light theme toggle (`cosmo` / `darkly`) with custom CSS palette
 - [x] `renv.lock` pinning 146 R packages at R 4.5.2 for reproducibility
 - [x] Bibliography wired in (`references.bib` + `apa.csl`)
@@ -93,26 +93,27 @@ quarto preview
 
 Opens the book in your browser with hot-reload.
 
-### 4. Full render (HTML + PDF + EPUB)
+### 4. Render HTML
 
 ```bash
-quarto render
+quarto render --to html
 ```
 
-Outputs land in `_book/`.
+Outputs land in `_book/`. PDF is **on demand only** — run `quarto render --to pdf` when you actually need it. EPUB is no longer produced.
 
 ## Publishing
 
-The book is published manually via Quarto's built-in `gh-pages` target — no CI. From a clean working tree:
+The book is published manually via Quarto's built-in `gh-pages` target — no CI. The standard two-command flow keeps the live site in sync with `main`:
 
 ```bash
-quarto publish gh-pages --no-prompt
+quarto render --to html
+quarto publish gh-pages --no-prompt --no-render
 ```
 
-This:
+`--no-render` reuses the freshly built `_book/`, so HTML chunks only execute once. The publish step then:
 
 1. Switches to a temporary `gh-pages` worktree.
-2. Re-renders the book.
+2. Copies `_book/` into it.
 3. Force-pushes the rendered output to the `gh-pages` branch on `origin`.
 4. Returns to your working branch.
 
