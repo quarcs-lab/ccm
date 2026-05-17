@@ -465,11 +465,11 @@ window.Quarto = {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#the-scm-idea" id="toc-the-scm-idea" class="nav-link active" data-scroll-target="#the-scm-idea"><span class="header-section-number">4.1</span> The SCM idea</a></li>
-  <li><a href="#the-four-stage-tidysynth-pipeline" id="toc-the-four-stage-tidysynth-pipeline" class="nav-link" data-scroll-target="#the-four-stage-tidysynth-pipeline"><span class="header-section-number">4.2</span> The four-stage tidysynth pipeline</a></li>
-  <li><a href="#the-equation" id="toc-the-equation" class="nav-link" data-scroll-target="#the-equation"><span class="header-section-number">4.3</span> The equation</a></li>
-  <li><a href="#setup-and-data" id="toc-setup-and-data" class="nav-link" data-scroll-target="#setup-and-data"><span class="header-section-number">4.4</span> Setup and data</a></li>
-  <li><a href="#learning-objectives" id="toc-learning-objectives" class="nav-link" data-scroll-target="#learning-objectives"><span class="header-section-number">4.5</span> Learning objectives</a></li>
+  <li><a href="#learning-objectives" id="toc-learning-objectives" class="nav-link active" data-scroll-target="#learning-objectives"><span class="header-section-number">4.1</span> Learning objectives</a></li>
+  <li><a href="#the-scm-idea" id="toc-the-scm-idea" class="nav-link" data-scroll-target="#the-scm-idea"><span class="header-section-number">4.2</span> The SCM idea</a></li>
+  <li><a href="#the-four-stage-tidysynth-pipeline" id="toc-the-four-stage-tidysynth-pipeline" class="nav-link" data-scroll-target="#the-four-stage-tidysynth-pipeline"><span class="header-section-number">4.3</span> The four-stage tidysynth pipeline</a></li>
+  <li><a href="#the-equation" id="toc-the-equation" class="nav-link" data-scroll-target="#the-equation"><span class="header-section-number">4.4</span> The equation</a></li>
+  <li><a href="#setup-and-data" id="toc-setup-and-data" class="nav-link" data-scroll-target="#setup-and-data"><span class="header-section-number">4.5</span> Setup and data</a></li>
   <li><a href="#fit-the-synthetic-control-pipeline" id="toc-fit-the-synthetic-control-pipeline" class="nav-link" data-scroll-target="#fit-the-synthetic-control-pipeline"><span class="header-section-number">4.6</span> Fit the synthetic-control pipeline</a></li>
   <li><a href="#donor-weights-and-predictor-weights" id="toc-donor-weights-and-predictor-weights" class="nav-link" data-scroll-target="#donor-weights-and-predictor-weights"><span class="header-section-number">4.7</span> Donor weights and predictor weights</a>
   <ul class="collapse">
@@ -514,13 +514,23 @@ window.Quarto = {
 </header>
 
 
-<section id="the-scm-idea" class="level2" data-number="4.1">
-<h2 data-number="4.1" class="anchored" data-anchor-id="the-scm-idea"><span class="header-section-number">4.1</span> The SCM idea</h2>
+<section id="learning-objectives" class="level2" data-number="4.1">
+<h2 data-number="4.1" class="anchored" data-anchor-id="learning-objectives"><span class="header-section-number">4.1</span> Learning objectives</h2>
+<ol type="1">
+<li>Construct the four-stage <code>tidysynth</code> pipeline that optimizes donor weights to match the treated unit’s pre-period predictor profile. This is the workhorse of the single-treated-unit synthetic-control literature and recurs in chapters 6 and 7.</li>
+<li>Extract donor unit weights and the V-matrix predictor weights and inspect their concentration. Heavy concentration on one or two donors is the chapter’s main fragility diagnostic and is what later prediction-interval methods try to fix.</li>
+<li>Compute the post-period ATT as the mean gap between the treated unit and its synthetic counterpart. This single quantity is the headline estimate every subsequent SC variant in the book reports.</li>
+<li>Conduct placebo permutation inference by refitting the pipeline on each donor and ranking California’s MSPE ratio against the placebo distribution. Permutation tests are the proper SC uncertainty quantification — <em>p</em>-values from regression won’t help here.</li>
+<li>Run leave-one-out and in-time placebo robustness checks and report when the estimate survives them. Without these checks the headline ATT is one donor away from being an artifact.</li>
+</ol>
+</section>
+<section id="the-scm-idea" class="level2" data-number="4.2">
+<h2 data-number="4.2" class="anchored" data-anchor-id="the-scm-idea"><span class="header-section-number">4.2</span> The SCM idea</h2>
 <p>Synthetic Control stops using one control state. Instead, it builds a <em>weighted combination</em> of donor states that matches the treated unit’s pre-period as closely as possible on a chosen set of predictors. The weighted combination is “synthetic California”. The gap between observed California and synthetic California is the estimated effect.</p>
 <p><strong>Why it works where DiD failed.</strong> Difference-in-Differences against Nevada (chapter 3) needed parallel pre-trends with <em>one</em> neighbour. Synthetic Control needs parallel pre-trends with a <em>data-driven blend</em> of many neighbours. The optimisation does the matching, so the analyst no longer has to pick “the right” control state by hand.</p>
 </section>
-<section id="the-four-stage-tidysynth-pipeline" class="level2" data-number="4.2">
-<h2 data-number="4.2" class="anchored" data-anchor-id="the-four-stage-tidysynth-pipeline"><span class="header-section-number">4.2</span> The four-stage tidysynth pipeline</h2>
+<section id="the-four-stage-tidysynth-pipeline" class="level2" data-number="4.3">
+<h2 data-number="4.3" class="anchored" data-anchor-id="the-four-stage-tidysynth-pipeline"><span class="header-section-number">4.3</span> The four-stage tidysynth pipeline</h2>
 <div class="cell" data-layout-align="default">
 <div class="cell-output-display">
 <div id="fig-tidysynth-pipeline" class="quarto-float quarto-figure quarto-figure-center anchored">
@@ -550,8 +560,8 @@ Figure&nbsp;4.1: The four-stage tidysynth pipeline: declare → predictors → w
 </div>
 <p>Stages 1–4 produce the estimate. Stage 5 is a battery of inspection helpers — <code>plot_trends()</code>, <code>plot_differences()</code>, <code>plot_weights()</code>, <code>plot_placebos()</code>, <code>plot_mspe_ratio()</code>, <code>grab_unit_weights()</code>, <code>grab_predictor_weights()</code>, <code>grab_balance_table()</code>, <code>grab_significance()</code> — that turn the fitted object into figures and tables. We use all of them below.</p>
 </section>
-<section id="the-equation" class="level2" data-number="4.3">
-<h2 data-number="4.3" class="anchored" data-anchor-id="the-equation"><span class="header-section-number">4.3</span> The equation</h2>
+<section id="the-equation" class="level2" data-number="4.4">
+<h2 data-number="4.4" class="anchored" data-anchor-id="the-equation"><span class="header-section-number">4.4</span> The equation</h2>
 <p>Let <span class="math inline">\(X_1\)</span> be the vector of <span class="math inline">\(k\)</span> pre-period predictors for the treated unit (California), and let <span class="math inline">\(X_0\)</span> be the <span class="math inline">\(k \times J\)</span> matrix holding the same predictors for the <span class="math inline">\(J = 38\)</span> donor states. The Synthetic Control estimator chooses donor weights <span class="math inline">\(w\)</span> to minimise the (V-weighted) discrepancy between treated and synthetic on the predictors:</p>
 <p><span class="math display">\[w^* \, = \, \arg\min_{w \in \mathcal{W}} \, \big(X_1 - X_0 w\big)^\top V \big(X_1 - X_0 w\big),\]</span></p>
 <p>subject to</p>
@@ -560,8 +570,8 @@ Figure&nbsp;4.1: The four-stage tidysynth pipeline: declare → predictors → w
 <p><span class="math display">\[\widehat{Y_{1t}(0)} = \sum_{j=1}^J w_j^* \, Y_{jt},\]</span></p>
 <p>and the ATT over 1989–2000 is the mean post-period gap between observed California and that synthetic counterfactual.</p>
 </section>
-<section id="setup-and-data" class="level2" data-number="4.4">
-<h2 data-number="4.4" class="anchored" data-anchor-id="setup-and-data"><span class="header-section-number">4.4</span> Setup and data</h2>
+<section id="setup-and-data" class="level2" data-number="4.5">
+<h2 data-number="4.5" class="anchored" data-anchor-id="setup-and-data"><span class="header-section-number">4.5</span> Setup and data</h2>
 <p><strong>Packages.</strong> <code>tidyverse</code> covers wrangling and plotting. <code>tidysynth</code> is the workhorse for this chapter: it wraps the classical Abadie-Diamond-Hainmueller synthetic-control optimiser behind a tidy pipeline of <code>synthetic_control() |&gt; generate_predictor() |&gt; generate_weights() |&gt; generate_control()</code> and ships a battery of <code>plot_*()</code> / <code>grab_*()</code> helpers for inspection. The <code>R/table_helpers.R</code> helper provides <code>gt_pretty()</code> for the donor-weight and balance tables.</p>
 <div class="cell">
 <details class="code-fold">
@@ -591,16 +601,6 @@ Figure&nbsp;4.1: The four-stage tidysynth pipeline: declare → predictors → w
 <span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
-</section>
-<section id="learning-objectives" class="level2" data-number="4.5">
-<h2 data-number="4.5" class="anchored" data-anchor-id="learning-objectives"><span class="header-section-number">4.5</span> Learning objectives</h2>
-<ol type="1">
-<li>Build a synthetic-control pipeline in <code>tidysynth</code> with <code>synthetic_control()</code>, <code>generate_predictor()</code>, <code>generate_weights()</code>, and <code>generate_control()</code>. The pipeline is the workhorse for the whole single-treated-unit literature and recurs in chapters 6 and 7.</li>
-<li>Extract donor unit weights and the V-matrix predictor weights and inspect their concentration. Heavy concentration on one or two donors is the chapter’s main fragility diagnostic and is what later prediction-interval methods try to fix.</li>
-<li>Compute the post-period ATT as the mean gap between the treated unit and its synthetic counterpart. This single quantity is the headline estimate every subsequent SC variant in the book reports.</li>
-<li>Conduct placebo permutation inference by refitting the pipeline on each donor and ranking California’s MSPE ratio against the placebo distribution. Permutation tests are the proper SC uncertainty quantification — <em>p</em>-values from regression won’t help here.</li>
-<li>Run leave-one-out and in-time placebo robustness checks and report when the estimate survives them. Without these checks the headline ATT is one donor away from being an artifact.</li>
-</ol>
 <p><strong>Dataset.</strong> Unlike the ITS and DiD chapters — which used only California or only California-plus-Nevada — Synthetic Control uses the <strong>full 39-state × 31-year panel</strong>. The donor pool <em>is</em> the point: the other 38 states are the raw material the optimiser will blend into “synthetic California”. We don’t pre-filter or restrict to a window here; the chapter-2 outcome <code>cigsale</code> and the covariates <code>lnincome</code>, <code>retprice</code>, <code>age15to24</code>, <code>beer</code> are all in <code>prop99</code> and are passed straight into <code>synthetic_control()</code> below.</p>
 <div class="cell">
 <details class="code-fold">
@@ -4715,88 +4715,88 @@ Dunford, E. (2024). <em><span class="nocase">tidysynth</span> — a tidy impleme
 <span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Classical Synthetic Control"</span></span>
 <span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
 <span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a><span class="fu">## The SCM idea</span></span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a><span class="fu">## Learning objectives</span></span>
 <span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>Synthetic Control stops using one control state. Instead, it builds a *weighted combination* of donor states that matches the treated unit's pre-period as closely as possible on a chosen set of predictors. The weighted combination is "synthetic California". The gap between observed California and synthetic California is the estimated effect.</span>
-<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a>**Why it works where DiD failed.** Difference-in-Differences against Nevada (chapter 3) needed parallel pre-trends with *one* neighbour. Synthetic Control needs parallel pre-trends with a *data-driven blend* of many neighbours. The optimisation does the matching, so the analyst no longer has to pick "the right" control state by hand.</span>
-<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a><span class="fu">## The four-stage tidysynth pipeline</span></span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Construct the four-stage <span class="in">`tidysynth`</span> pipeline that optimizes donor weights to match the treated unit's pre-period predictor profile. This is the workhorse of the single-treated-unit synthetic-control literature and recurs in chapters 6 and 7.</span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>Extract donor unit weights and the V-matrix predictor weights and inspect their concentration. Heavy concentration on one or two donors is the chapter's main fragility diagnostic and is what later prediction-interval methods try to fix.</span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>Compute the post-period ATT as the mean gap between the treated unit and its synthetic counterpart. This single quantity is the headline estimate every subsequent SC variant in the book reports.</span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>Conduct placebo permutation inference by refitting the pipeline on each donor and ranking California's MSPE ratio against the placebo distribution. Permutation tests are the proper SC uncertainty quantification — *p*-values from regression won't help here.</span>
+<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a><span class="ss">5. </span>Run leave-one-out and in-time placebo robustness checks and report when the estimate survives them. Without these checks the headline ATT is one donor away from being an artifact.</span>
 <span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-15"><a href="#cb25-15" aria-hidden="true" tabindex="-1"></a><span class="in">```{mermaid}</span></span>
-<span id="cb25-16"><a href="#cb25-16" aria-hidden="true" tabindex="-1"></a>%%| label: fig-tidysynth-pipeline</span>
-<span id="cb25-17"><a href="#cb25-17" aria-hidden="true" tabindex="-1"></a>%%| fig-cap: <span class="ot">"</span><span class="st">The four-stage tidysynth pipeline: declare → predictors → weights → control, with a fifth stage of plot/grab helpers.</span><span class="ot">"</span></span>
-<span id="cb25-18"><a href="#cb25-18" aria-hidden="true" tabindex="-1"></a>flowchart LR</span>
-<span id="cb25-19"><a href="#cb25-19" aria-hidden="true" tabindex="-1"></a>    A[<span class="ot">"</span><span class="st">Stage 1&lt;br/&gt;synthetic_control()&lt;br/&gt;declare treated unit&lt;br/&gt;and intervention time</span><span class="ot">"</span>] --&gt; B[<span class="ot">"</span><span class="st">Stage 2&lt;br/&gt;generate_predictor()&lt;br/&gt;define matching variables&lt;br/&gt;(one call per time window)</span><span class="ot">"</span>]</span>
-<span id="cb25-20"><a href="#cb25-20" aria-hidden="true" tabindex="-1"></a>    B --&gt; C[<span class="ot">"</span><span class="st">Stage 3&lt;br/&gt;generate_weights()&lt;br/&gt;optimise donor weights&lt;br/&gt;(quadratic programming)</span><span class="ot">"</span>]</span>
-<span id="cb25-21"><a href="#cb25-21" aria-hidden="true" tabindex="-1"></a>    C --&gt; D[<span class="ot">"</span><span class="st">Stage 4&lt;br/&gt;generate_control()&lt;br/&gt;build synthetic California&lt;br/&gt;and post-period gap series</span><span class="ot">"</span>]</span>
-<span id="cb25-22"><a href="#cb25-22" aria-hidden="true" tabindex="-1"></a>    D --&gt; E[<span class="ot">"</span><span class="st">Stage 5&lt;br/&gt;plot_/grab_ helpers&lt;br/&gt;trends, weights,&lt;br/&gt;placebos, MSPE ratio,&lt;br/&gt;Fisher exact p-value</span><span class="ot">"</span>]</span>
-<span id="cb25-23"><a href="#cb25-23" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-24"><a href="#cb25-24" aria-hidden="true" tabindex="-1"></a>    style A fill:<span class="co">#6a9bcc,stroke:#cbd5e0,color:#fff</span></span>
-<span id="cb25-25"><a href="#cb25-25" aria-hidden="true" tabindex="-1"></a>    style B fill:<span class="co">#6a9bcc,stroke:#cbd5e0,color:#fff</span></span>
-<span id="cb25-26"><a href="#cb25-26" aria-hidden="true" tabindex="-1"></a>    style C fill:<span class="co">#6a9bcc,stroke:#cbd5e0,color:#fff</span></span>
-<span id="cb25-27"><a href="#cb25-27" aria-hidden="true" tabindex="-1"></a>    style D fill:<span class="co">#d97757,stroke:#cbd5e0,color:#fff</span></span>
-<span id="cb25-28"><a href="#cb25-28" aria-hidden="true" tabindex="-1"></a>    style E fill:<span class="co">#00d4c8,stroke:#cbd5e0,color:#141413</span></span>
-<span id="cb25-29"><a href="#cb25-29" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb25-30"><a href="#cb25-30" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-31"><a href="#cb25-31" aria-hidden="true" tabindex="-1"></a>Stages 1–4 produce the estimate. Stage 5 is a battery of inspection helpers — <span class="in">`plot_trends()`</span>, <span class="in">`plot_differences()`</span>, <span class="in">`plot_weights()`</span>, <span class="in">`plot_placebos()`</span>, <span class="in">`plot_mspe_ratio()`</span>, <span class="in">`grab_unit_weights()`</span>, <span class="in">`grab_predictor_weights()`</span>, <span class="in">`grab_balance_table()`</span>, <span class="in">`grab_significance()`</span> — that turn the fitted object into figures and tables. We use all of them below.</span>
-<span id="cb25-32"><a href="#cb25-32" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-33"><a href="#cb25-33" aria-hidden="true" tabindex="-1"></a><span class="fu">## The equation</span></span>
-<span id="cb25-34"><a href="#cb25-34" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-35"><a href="#cb25-35" aria-hidden="true" tabindex="-1"></a>Let $X_1$ be the vector of $k$ pre-period predictors for the treated unit (California), and let $X_0$ be the $k \times J$ matrix holding the same predictors for the $J = 38$ donor states. The Synthetic Control estimator chooses donor weights $w$ to minimise the (V-weighted) discrepancy between treated and synthetic on the predictors:</span>
-<span id="cb25-36"><a href="#cb25-36" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-37"><a href="#cb25-37" aria-hidden="true" tabindex="-1"></a>$$w^* \, = \, \arg\min_{w \in \mathcal{W}} \, \big(X_1 - X_0 w\big)^\top V \big(X_1 - X_0 w\big),$$</span>
+<span id="cb25-13"><a href="#cb25-13" aria-hidden="true" tabindex="-1"></a><span class="fu">## The SCM idea</span></span>
+<span id="cb25-14"><a href="#cb25-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-15"><a href="#cb25-15" aria-hidden="true" tabindex="-1"></a>Synthetic Control stops using one control state. Instead, it builds a *weighted combination* of donor states that matches the treated unit's pre-period as closely as possible on a chosen set of predictors. The weighted combination is "synthetic California". The gap between observed California and synthetic California is the estimated effect.</span>
+<span id="cb25-16"><a href="#cb25-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-17"><a href="#cb25-17" aria-hidden="true" tabindex="-1"></a>**Why it works where DiD failed.** Difference-in-Differences against Nevada (chapter 3) needed parallel pre-trends with *one* neighbour. Synthetic Control needs parallel pre-trends with a *data-driven blend* of many neighbours. The optimisation does the matching, so the analyst no longer has to pick "the right" control state by hand.</span>
+<span id="cb25-18"><a href="#cb25-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-19"><a href="#cb25-19" aria-hidden="true" tabindex="-1"></a><span class="fu">## The four-stage tidysynth pipeline</span></span>
+<span id="cb25-20"><a href="#cb25-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-23"><a href="#cb25-23" aria-hidden="true" tabindex="-1"></a><span class="in">```{mermaid}</span></span>
+<span id="cb25-24"><a href="#cb25-24" aria-hidden="true" tabindex="-1"></a>%%| label: fig-tidysynth-pipeline</span>
+<span id="cb25-25"><a href="#cb25-25" aria-hidden="true" tabindex="-1"></a>%%| fig-cap: <span class="ot">"</span><span class="st">The four-stage tidysynth pipeline: declare → predictors → weights → control, with a fifth stage of plot/grab helpers.</span><span class="ot">"</span></span>
+<span id="cb25-26"><a href="#cb25-26" aria-hidden="true" tabindex="-1"></a>flowchart LR</span>
+<span id="cb25-27"><a href="#cb25-27" aria-hidden="true" tabindex="-1"></a>    A[<span class="ot">"</span><span class="st">Stage 1&lt;br/&gt;synthetic_control()&lt;br/&gt;declare treated unit&lt;br/&gt;and intervention time</span><span class="ot">"</span>] --&gt; B[<span class="ot">"</span><span class="st">Stage 2&lt;br/&gt;generate_predictor()&lt;br/&gt;define matching variables&lt;br/&gt;(one call per time window)</span><span class="ot">"</span>]</span>
+<span id="cb25-28"><a href="#cb25-28" aria-hidden="true" tabindex="-1"></a>    B --&gt; C[<span class="ot">"</span><span class="st">Stage 3&lt;br/&gt;generate_weights()&lt;br/&gt;optimise donor weights&lt;br/&gt;(quadratic programming)</span><span class="ot">"</span>]</span>
+<span id="cb25-29"><a href="#cb25-29" aria-hidden="true" tabindex="-1"></a>    C --&gt; D[<span class="ot">"</span><span class="st">Stage 4&lt;br/&gt;generate_control()&lt;br/&gt;build synthetic California&lt;br/&gt;and post-period gap series</span><span class="ot">"</span>]</span>
+<span id="cb25-30"><a href="#cb25-30" aria-hidden="true" tabindex="-1"></a>    D --&gt; E[<span class="ot">"</span><span class="st">Stage 5&lt;br/&gt;plot_/grab_ helpers&lt;br/&gt;trends, weights,&lt;br/&gt;placebos, MSPE ratio,&lt;br/&gt;Fisher exact p-value</span><span class="ot">"</span>]</span>
+<span id="cb25-31"><a href="#cb25-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-32"><a href="#cb25-32" aria-hidden="true" tabindex="-1"></a>    style A fill:<span class="co">#6a9bcc,stroke:#cbd5e0,color:#fff</span></span>
+<span id="cb25-33"><a href="#cb25-33" aria-hidden="true" tabindex="-1"></a>    style B fill:<span class="co">#6a9bcc,stroke:#cbd5e0,color:#fff</span></span>
+<span id="cb25-34"><a href="#cb25-34" aria-hidden="true" tabindex="-1"></a>    style C fill:<span class="co">#6a9bcc,stroke:#cbd5e0,color:#fff</span></span>
+<span id="cb25-35"><a href="#cb25-35" aria-hidden="true" tabindex="-1"></a>    style D fill:<span class="co">#d97757,stroke:#cbd5e0,color:#fff</span></span>
+<span id="cb25-36"><a href="#cb25-36" aria-hidden="true" tabindex="-1"></a>    style E fill:<span class="co">#00d4c8,stroke:#cbd5e0,color:#141413</span></span>
+<span id="cb25-37"><a href="#cb25-37" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb25-38"><a href="#cb25-38" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-39"><a href="#cb25-39" aria-hidden="true" tabindex="-1"></a>subject to</span>
+<span id="cb25-39"><a href="#cb25-39" aria-hidden="true" tabindex="-1"></a>Stages 1–4 produce the estimate. Stage 5 is a battery of inspection helpers — <span class="in">`plot_trends()`</span>, <span class="in">`plot_differences()`</span>, <span class="in">`plot_weights()`</span>, <span class="in">`plot_placebos()`</span>, <span class="in">`plot_mspe_ratio()`</span>, <span class="in">`grab_unit_weights()`</span>, <span class="in">`grab_predictor_weights()`</span>, <span class="in">`grab_balance_table()`</span>, <span class="in">`grab_significance()`</span> — that turn the fitted object into figures and tables. We use all of them below.</span>
 <span id="cb25-40"><a href="#cb25-40" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-41"><a href="#cb25-41" aria-hidden="true" tabindex="-1"></a>$$\mathcal{W} = \big<span class="sc">\{</span>w \in \mathbb{R}^J \,:\, w_j \ge 0 \,\, \forall j, \,\, \textstyle\sum_{j=1}^J w_j = 1\big<span class="sc">\}</span>.$$</span>
+<span id="cb25-41"><a href="#cb25-41" aria-hidden="true" tabindex="-1"></a><span class="fu">## The equation</span></span>
 <span id="cb25-42"><a href="#cb25-42" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-43"><a href="#cb25-43" aria-hidden="true" tabindex="-1"></a>The diagonal matrix $V$ holds the **predictor** importance weights — the optimiser can care more about pre-period cigarette sales than about, say, beer consumption (we inspect $V$ below). Once $w^*$ is solved, the synthetic California outcome at any year $t$ is</span>
+<span id="cb25-43"><a href="#cb25-43" aria-hidden="true" tabindex="-1"></a>Let $X_1$ be the vector of $k$ pre-period predictors for the treated unit (California), and let $X_0$ be the $k \times J$ matrix holding the same predictors for the $J = 38$ donor states. The Synthetic Control estimator chooses donor weights $w$ to minimise the (V-weighted) discrepancy between treated and synthetic on the predictors:</span>
 <span id="cb25-44"><a href="#cb25-44" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-45"><a href="#cb25-45" aria-hidden="true" tabindex="-1"></a>$$\widehat{Y_{1t}(0)} = \sum_{j=1}^J w_j^* \, Y_{jt},$$</span>
+<span id="cb25-45"><a href="#cb25-45" aria-hidden="true" tabindex="-1"></a>$$w^* \, = \, \arg\min_{w \in \mathcal{W}} \, \big(X_1 - X_0 w\big)^\top V \big(X_1 - X_0 w\big),$$</span>
 <span id="cb25-46"><a href="#cb25-46" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-47"><a href="#cb25-47" aria-hidden="true" tabindex="-1"></a>and the ATT over 1989–2000 is the mean post-period gap between observed California and that synthetic counterfactual.</span>
+<span id="cb25-47"><a href="#cb25-47" aria-hidden="true" tabindex="-1"></a>subject to</span>
 <span id="cb25-48"><a href="#cb25-48" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-49"><a href="#cb25-49" aria-hidden="true" tabindex="-1"></a><span class="fu">## Setup and data</span></span>
+<span id="cb25-49"><a href="#cb25-49" aria-hidden="true" tabindex="-1"></a>$$\mathcal{W} = \big<span class="sc">\{</span>w \in \mathbb{R}^J \,:\, w_j \ge 0 \,\, \forall j, \,\, \textstyle\sum_{j=1}^J w_j = 1\big<span class="sc">\}</span>.$$</span>
 <span id="cb25-50"><a href="#cb25-50" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-51"><a href="#cb25-51" aria-hidden="true" tabindex="-1"></a>**Packages.** <span class="in">`tidyverse`</span> covers wrangling and plotting. <span class="in">`tidysynth`</span> is the workhorse for this chapter: it wraps the classical Abadie-Diamond-Hainmueller synthetic-control optimiser behind a tidy pipeline of <span class="in">`synthetic_control() |&gt; generate_predictor() |&gt; generate_weights() |&gt; generate_control()`</span> and ships a battery of <span class="in">`plot_*()`</span> / <span class="in">`grab_*()`</span> helpers for inspection. The <span class="in">`R/table_helpers.R`</span> helper provides <span class="in">`gt_pretty()`</span> for the donor-weight and balance tables.</span>
+<span id="cb25-51"><a href="#cb25-51" aria-hidden="true" tabindex="-1"></a>The diagonal matrix $V$ holds the **predictor** importance weights — the optimiser can care more about pre-period cigarette sales than about, say, beer consumption (we inspect $V$ below). Once $w^*$ is solved, the synthetic California outcome at any year $t$ is</span>
 <span id="cb25-52"><a href="#cb25-52" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-55"><a href="#cb25-55" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb25-56"><a href="#cb25-56" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: setup</span></span>
-<span id="cb25-57"><a href="#cb25-57" aria-hidden="true" tabindex="-1"></a><span class="co">#| message: false</span></span>
-<span id="cb25-58"><a href="#cb25-58" aria-hidden="true" tabindex="-1"></a><span class="co">#| warning: false</span></span>
-<span id="cb25-59"><a href="#cb25-59" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
-<span id="cb25-60"><a href="#cb25-60" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidysynth)</span>
-<span id="cb25-61"><a href="#cb25-61" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"R/table_helpers.R"</span>)</span>
-<span id="cb25-62"><a href="#cb25-62" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-63"><a href="#cb25-63" aria-hidden="true" tabindex="-1"></a><span class="co"># The tidysynth pipeline used in this chapter is deterministic (the IPOP</span></span>
-<span id="cb25-64"><a href="#cb25-64" aria-hidden="true" tabindex="-1"></a><span class="co"># quadratic-program solver and the placebo refits do not consume RNG), so</span></span>
-<span id="cb25-65"><a href="#cb25-65" aria-hidden="true" tabindex="-1"></a><span class="co"># this seed is set for consistency with other chapters rather than because</span></span>
-<span id="cb25-66"><a href="#cb25-66" aria-hidden="true" tabindex="-1"></a><span class="co"># any chunk below depends on it.</span></span>
-<span id="cb25-67"><a href="#cb25-67" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
-<span id="cb25-68"><a href="#cb25-68" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-69"><a href="#cb25-69" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span>opts_chunk<span class="sc">$</span><span class="fu">set</span>(<span class="at">dev.args =</span> <span class="fu">list</span>(<span class="at">bg =</span> <span class="st">"transparent"</span>))</span>
+<span id="cb25-53"><a href="#cb25-53" aria-hidden="true" tabindex="-1"></a>$$\widehat{Y_{1t}(0)} = \sum_{j=1}^J w_j^* \, Y_{jt},$$</span>
+<span id="cb25-54"><a href="#cb25-54" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-55"><a href="#cb25-55" aria-hidden="true" tabindex="-1"></a>and the ATT over 1989–2000 is the mean post-period gap between observed California and that synthetic counterfactual.</span>
+<span id="cb25-56"><a href="#cb25-56" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-57"><a href="#cb25-57" aria-hidden="true" tabindex="-1"></a><span class="fu">## Setup and data</span></span>
+<span id="cb25-58"><a href="#cb25-58" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-59"><a href="#cb25-59" aria-hidden="true" tabindex="-1"></a>**Packages.** <span class="in">`tidyverse`</span> covers wrangling and plotting. <span class="in">`tidysynth`</span> is the workhorse for this chapter: it wraps the classical Abadie-Diamond-Hainmueller synthetic-control optimiser behind a tidy pipeline of <span class="in">`synthetic_control() |&gt; generate_predictor() |&gt; generate_weights() |&gt; generate_control()`</span> and ships a battery of <span class="in">`plot_*()`</span> / <span class="in">`grab_*()`</span> helpers for inspection. The <span class="in">`R/table_helpers.R`</span> helper provides <span class="in">`gt_pretty()`</span> for the donor-weight and balance tables.</span>
+<span id="cb25-60"><a href="#cb25-60" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-63"><a href="#cb25-63" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb25-64"><a href="#cb25-64" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: setup</span></span>
+<span id="cb25-65"><a href="#cb25-65" aria-hidden="true" tabindex="-1"></a><span class="co">#| message: false</span></span>
+<span id="cb25-66"><a href="#cb25-66" aria-hidden="true" tabindex="-1"></a><span class="co">#| warning: false</span></span>
+<span id="cb25-67"><a href="#cb25-67" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb25-68"><a href="#cb25-68" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidysynth)</span>
+<span id="cb25-69"><a href="#cb25-69" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"R/table_helpers.R"</span>)</span>
 <span id="cb25-70"><a href="#cb25-70" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-71"><a href="#cb25-71" aria-hidden="true" tabindex="-1"></a><span class="fu">theme_set</span>(</span>
-<span id="cb25-72"><a href="#cb25-72" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">12</span>) <span class="sc">+</span></span>
-<span id="cb25-73"><a href="#cb25-73" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(</span>
-<span id="cb25-74"><a href="#cb25-74" aria-hidden="true" tabindex="-1"></a>      <span class="at">plot.background  =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">"transparent"</span>, <span class="at">color =</span> <span class="cn">NA</span>),</span>
-<span id="cb25-75"><a href="#cb25-75" aria-hidden="true" tabindex="-1"></a>      <span class="at">panel.background =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">"transparent"</span>, <span class="at">color =</span> <span class="cn">NA</span>),</span>
-<span id="cb25-76"><a href="#cb25-76" aria-hidden="true" tabindex="-1"></a>      <span class="at">panel.grid.major =</span> <span class="fu">element_line</span>(<span class="at">color =</span> <span class="st">"#94a3b8"</span>, <span class="at">linewidth =</span> <span class="fl">0.25</span>),</span>
-<span id="cb25-77"><a href="#cb25-77" aria-hidden="true" tabindex="-1"></a>      <span class="at">panel.grid.minor =</span> <span class="fu">element_line</span>(<span class="at">color =</span> <span class="st">"#94a3b8"</span>, <span class="at">linewidth =</span> <span class="fl">0.15</span>),</span>
-<span id="cb25-78"><a href="#cb25-78" aria-hidden="true" tabindex="-1"></a>      <span class="at">text             =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"#94a3b8"</span>),</span>
-<span id="cb25-79"><a href="#cb25-79" aria-hidden="true" tabindex="-1"></a>      <span class="at">axis.text        =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"#94a3b8"</span>)</span>
-<span id="cb25-80"><a href="#cb25-80" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb25-81"><a href="#cb25-81" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb25-82"><a href="#cb25-82" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb25-83"><a href="#cb25-83" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-84"><a href="#cb25-84" aria-hidden="true" tabindex="-1"></a><span class="fu">## Learning objectives</span></span>
-<span id="cb25-85"><a href="#cb25-85" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-86"><a href="#cb25-86" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Build a synthetic-control pipeline in <span class="in">`tidysynth`</span> with <span class="in">`synthetic_control()`</span>, <span class="in">`generate_predictor()`</span>, <span class="in">`generate_weights()`</span>, and <span class="in">`generate_control()`</span>. The pipeline is the workhorse for the whole single-treated-unit literature and recurs in chapters 6 and 7.</span>
-<span id="cb25-87"><a href="#cb25-87" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>Extract donor unit weights and the V-matrix predictor weights and inspect their concentration. Heavy concentration on one or two donors is the chapter's main fragility diagnostic and is what later prediction-interval methods try to fix.</span>
-<span id="cb25-88"><a href="#cb25-88" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>Compute the post-period ATT as the mean gap between the treated unit and its synthetic counterpart. This single quantity is the headline estimate every subsequent SC variant in the book reports.</span>
-<span id="cb25-89"><a href="#cb25-89" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>Conduct placebo permutation inference by refitting the pipeline on each donor and ranking California's MSPE ratio against the placebo distribution. Permutation tests are the proper SC uncertainty quantification — *p*-values from regression won't help here.</span>
-<span id="cb25-90"><a href="#cb25-90" aria-hidden="true" tabindex="-1"></a><span class="ss">5. </span>Run leave-one-out and in-time placebo robustness checks and report when the estimate survives them. Without these checks the headline ATT is one donor away from being an artifact.</span>
+<span id="cb25-71"><a href="#cb25-71" aria-hidden="true" tabindex="-1"></a><span class="co"># The tidysynth pipeline used in this chapter is deterministic (the IPOP</span></span>
+<span id="cb25-72"><a href="#cb25-72" aria-hidden="true" tabindex="-1"></a><span class="co"># quadratic-program solver and the placebo refits do not consume RNG), so</span></span>
+<span id="cb25-73"><a href="#cb25-73" aria-hidden="true" tabindex="-1"></a><span class="co"># this seed is set for consistency with other chapters rather than because</span></span>
+<span id="cb25-74"><a href="#cb25-74" aria-hidden="true" tabindex="-1"></a><span class="co"># any chunk below depends on it.</span></span>
+<span id="cb25-75"><a href="#cb25-75" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
+<span id="cb25-76"><a href="#cb25-76" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-77"><a href="#cb25-77" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span>opts_chunk<span class="sc">$</span><span class="fu">set</span>(<span class="at">dev.args =</span> <span class="fu">list</span>(<span class="at">bg =</span> <span class="st">"transparent"</span>))</span>
+<span id="cb25-78"><a href="#cb25-78" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-79"><a href="#cb25-79" aria-hidden="true" tabindex="-1"></a><span class="fu">theme_set</span>(</span>
+<span id="cb25-80"><a href="#cb25-80" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">12</span>) <span class="sc">+</span></span>
+<span id="cb25-81"><a href="#cb25-81" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(</span>
+<span id="cb25-82"><a href="#cb25-82" aria-hidden="true" tabindex="-1"></a>      <span class="at">plot.background  =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">"transparent"</span>, <span class="at">color =</span> <span class="cn">NA</span>),</span>
+<span id="cb25-83"><a href="#cb25-83" aria-hidden="true" tabindex="-1"></a>      <span class="at">panel.background =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">"transparent"</span>, <span class="at">color =</span> <span class="cn">NA</span>),</span>
+<span id="cb25-84"><a href="#cb25-84" aria-hidden="true" tabindex="-1"></a>      <span class="at">panel.grid.major =</span> <span class="fu">element_line</span>(<span class="at">color =</span> <span class="st">"#94a3b8"</span>, <span class="at">linewidth =</span> <span class="fl">0.25</span>),</span>
+<span id="cb25-85"><a href="#cb25-85" aria-hidden="true" tabindex="-1"></a>      <span class="at">panel.grid.minor =</span> <span class="fu">element_line</span>(<span class="at">color =</span> <span class="st">"#94a3b8"</span>, <span class="at">linewidth =</span> <span class="fl">0.15</span>),</span>
+<span id="cb25-86"><a href="#cb25-86" aria-hidden="true" tabindex="-1"></a>      <span class="at">text             =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"#94a3b8"</span>),</span>
+<span id="cb25-87"><a href="#cb25-87" aria-hidden="true" tabindex="-1"></a>      <span class="at">axis.text        =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"#94a3b8"</span>)</span>
+<span id="cb25-88"><a href="#cb25-88" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb25-89"><a href="#cb25-89" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb25-90"><a href="#cb25-90" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb25-91"><a href="#cb25-91" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb25-92"><a href="#cb25-92" aria-hidden="true" tabindex="-1"></a>**Dataset.** Unlike the ITS and DiD chapters — which used only California or only California-plus-Nevada — Synthetic Control uses the **full 39-state × 31-year panel**. The donor pool *is* the point: the other 38 states are the raw material the optimiser will blend into "synthetic California". We don't pre-filter or restrict to a window here; the chapter-2 outcome <span class="in">`cigsale`</span> and the covariates <span class="in">`lnincome`</span>, <span class="in">`retprice`</span>, <span class="in">`age15to24`</span>, <span class="in">`beer`</span> are all in <span class="in">`prop99`</span> and are passed straight into <span class="in">`synthetic_control()`</span> below.</span>
 <span id="cb25-93"><a href="#cb25-93" aria-hidden="true" tabindex="-1"></a></span>

@@ -461,9 +461,9 @@ window.Quarto = {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#when-twfe-breaks-under-staggered-adoption" id="toc-when-twfe-breaks-under-staggered-adoption" class="nav-link active" data-scroll-target="#when-twfe-breaks-under-staggered-adoption"><span class="header-section-number">8.1</span> When TWFE breaks under staggered adoption</a></li>
-  <li><a href="#setup-and-data" id="toc-setup-and-data" class="nav-link" data-scroll-target="#setup-and-data"><span class="header-section-number">8.2</span> Setup and data</a></li>
-  <li><a href="#learning-objectives" id="toc-learning-objectives" class="nav-link" data-scroll-target="#learning-objectives"><span class="header-section-number">8.3</span> Learning objectives</a></li>
+  <li><a href="#learning-objectives" id="toc-learning-objectives" class="nav-link active" data-scroll-target="#learning-objectives"><span class="header-section-number">8.1</span> Learning objectives</a></li>
+  <li><a href="#when-twfe-breaks-under-staggered-adoption" id="toc-when-twfe-breaks-under-staggered-adoption" class="nav-link" data-scroll-target="#when-twfe-breaks-under-staggered-adoption"><span class="header-section-number">8.2</span> When TWFE breaks under staggered adoption</a></li>
+  <li><a href="#setup-and-data" id="toc-setup-and-data" class="nav-link" data-scroll-target="#setup-and-data"><span class="header-section-number">8.3</span> Setup and data</a></li>
   <li><a href="#the-twfe-baseline" id="toc-the-twfe-baseline" class="nav-link" data-scroll-target="#the-twfe-baseline"><span class="header-section-number">8.4</span> The TWFE baseline</a></li>
   <li><a href="#group-time-atts-the-callaway-santanna-approach" id="toc-group-time-atts-the-callaway-santanna-approach" class="nav-link" data-scroll-target="#group-time-atts-the-callaway-santanna-approach"><span class="header-section-number">8.5</span> Group-time ATTs: the Callaway-Sant’Anna approach</a>
   <ul class="collapse">
@@ -501,8 +501,17 @@ window.Quarto = {
 </header>
 
 
-<section id="when-twfe-breaks-under-staggered-adoption" class="level2" data-number="8.1">
-<h2 data-number="8.1" class="anchored" data-anchor-id="when-twfe-breaks-under-staggered-adoption"><span class="header-section-number">8.1</span> When TWFE breaks under staggered adoption</h2>
+<section id="learning-objectives" class="level2" data-number="8.1">
+<h2 data-number="8.1" class="anchored" data-anchor-id="learning-objectives"><span class="header-section-number">8.1</span> Learning objectives</h2>
+<ol type="1">
+<li>Estimate group-time average treatment effects with <code>did::att_gt()</code> on a staggered-adoption panel. This is the workhorse of modern DiD — the estimator that replaced two-way fixed effects after the negative-weight critique.</li>
+<li>Aggregate group-time effects into event-study dynamics with <code>aggte(type = "dynamic")</code>. The aggregation step is what gives the reader a single defensible event-study plot without the contamination problems of a TWFE event study.</li>
+<li>Condition on covariates using regression, IPW, and doubly-robust estimators, and default to the doubly-robust choice. Doubly-robust estimation is consistent if <em>either</em> the outcome model or the propensity-score model is correctly specified, which is why it is the safe default — knowing all three lets the reader defend that choice against a referee.</li>
+<li>Run Rambachan-Roth relative-magnitudes sensitivity analysis with <code>HonestDiD</code> and report the smallest pre-trend violation that would overturn the post-treatment conclusion. This converts an unverifiable parallel-trends assumption into a falsifiable claim about how robust the headline result is.</li>
+</ol>
+</section>
+<section id="when-twfe-breaks-under-staggered-adoption" class="level2" data-number="8.2">
+<h2 data-number="8.2" class="anchored" data-anchor-id="when-twfe-breaks-under-staggered-adoption"><span class="header-section-number">8.2</span> When TWFE breaks under staggered adoption</h2>
 <p>Chapter 3 ran a textbook 2×2 DiD on Proposition 99, with California treated in 1989 and Nevada as the single hand-picked control. The estimate collapsed to roughly <span class="math inline">\(-5.7\)</span> packs per capita and could not be distinguished from zero. The diagnosis there was that Nevada is geographically and culturally adjacent to California and absorbs the same secular forces — so its post-1988 decline soaks up most of what we wanted to attribute to the policy.</p>
 <p>There is a deeper structural problem too. Real policy data rarely has just one treated unit and one clean control unit, both treated at the same instant. States and counties <strong>adopt at different times</strong> — some in 2004, others in 2006, still others never. The natural extension of the chapter 3 model to that setting is <em>two-way fixed effects (TWFE)</em> regression:</p>
 <p><span class="math display">\[Y_{it} = \alpha_i + \gamma_t + \beta \cdot \text{post}_{it} + \varepsilon_{it}.\]</span></p>
@@ -511,8 +520,8 @@ window.Quarto = {
 <p>The dataset is no longer Proposition 99. Staggered DiD requires <strong>variation in treatment timing</strong>, which a single-treated-state panel cannot provide. We switch to the Callaway-Sant’Anna minimum-wage panel: 1,745 US counties × 2003–2007, with cohorts <span class="math inline">\(G \in \{0, 2004,
 2006\}\)</span> (after dropping a small late-2007 cohort; see Setup) indexing the year the county’s state first raised its minimum wage above the federal $5.15/h floor. The outcome is log teen employment.</p>
 </section>
-<section id="setup-and-data" class="level2" data-number="8.2">
-<h2 data-number="8.2" class="anchored" data-anchor-id="setup-and-data"><span class="header-section-number">8.2</span> Setup and data</h2>
+<section id="setup-and-data" class="level2" data-number="8.3">
+<h2 data-number="8.3" class="anchored" data-anchor-id="setup-and-data"><span class="header-section-number">8.3</span> Setup and data</h2>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
@@ -542,15 +551,6 @@ window.Quarto = {
 <span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
-</section>
-<section id="learning-objectives" class="level2" data-number="8.3">
-<h2 data-number="8.3" class="anchored" data-anchor-id="learning-objectives"><span class="header-section-number">8.3</span> Learning objectives</h2>
-<ol type="1">
-<li>Estimate group-time average treatment effects with <code>did::att_gt()</code> on a staggered-adoption panel. This is the workhorse of modern DiD — the estimator that replaced two-way fixed effects after the negative-weight critique.</li>
-<li>Aggregate group-time effects into event-study dynamics with <code>aggte(type = "dynamic")</code>. The aggregation step is what gives the reader a single defensible event-study plot without the contamination problems of a TWFE event study.</li>
-<li>Condition on covariates using regression, IPW, and doubly-robust estimators and pick between them based on which model the reader trusts more. The doubly-robust option is the safe default, but knowing the three lets the reader argue for a specific choice in front of a referee.</li>
-<li>Run Rambachan-Roth relative-magnitudes sensitivity analysis with <code>HonestDiD</code> and report the smallest pre-trend violation that would overturn the post-treatment conclusion. This converts an unverifiable parallel-trends assumption into a falsifiable claim about how robust the headline result is.</li>
-</ol>
 <p>The dataset ships as <code>data/cs_minwage.rds</code> in the chapter bundle. We follow the source-post convention of restricting to cohorts <span class="math inline">\(G \in
 \{0, 2004, 2006, 2007\}\)</span>, dropping the Northeast region (<code>region == "1"</code>) for comparability, and then carving out a clean working panel without the late-2007 cohort and starting in 2003.</p>
 <div class="cell">
@@ -4902,7 +4902,7 @@ Sun, L., &amp; Abraham, S. (2021). Estimating dynamic treatment effects in event
 <span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Estimate group-time average treatment effects with <span class="in">`did::att_gt()`</span> on a staggered-adoption panel. This is the workhorse of modern DiD — the estimator that replaced two-way fixed effects after the negative-weight critique.</span>
 <span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>Aggregate group-time effects into event-study dynamics with <span class="in">`aggte(type = "dynamic")`</span>. The aggregation step is what gives the reader a single defensible event-study plot without the contamination problems of a TWFE event study.</span>
-<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>Condition on covariates using regression, IPW, and doubly-robust estimators and pick between them based on which model the reader trusts more. The doubly-robust option is the safe default, but knowing the three lets the reader argue for a specific choice in front of a referee.</span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>Condition on covariates using regression, IPW, and doubly-robust estimators, and default to the doubly-robust choice. Doubly-robust estimation is consistent if *either* the outcome model or the propensity-score model is correctly specified, which is why it is the safe default — knowing all three lets the reader defend that choice against a referee.</span>
 <span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>Run Rambachan-Roth relative-magnitudes sensitivity analysis with <span class="in">`HonestDiD`</span> and report the smallest pre-trend violation that would overturn the post-treatment conclusion. This converts an unverifiable parallel-trends assumption into a falsifiable claim about how robust the headline result is.</span>
 <span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a><span class="fu">## When TWFE breaks under staggered adoption</span></span>

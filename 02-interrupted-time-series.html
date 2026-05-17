@@ -499,7 +499,7 @@ window.Quarto = {
 <ol type="1">
 <li>Fit a linear pre-period trend and an ARIMA<span class="math inline">\((p,d,q)\)</span> model to a single treated series and extrapolate each as a counterfactual. This is the technical core of ITS and the baseline every later within-unit method is judged against.</li>
 <li>Select ARIMA orders by AICc and refit explicitly on the pre-intervention window. Pinning the order before the intervention is what makes the post-period forecast a genuine out-of-sample counterfactual rather than a curve fit through the gap.</li>
-<li>Diagnose ARIMA residuals with <code>gg_tsresiduals()</code> and a Ljung-Box test. Without confirming pre-period whiteness the forecast prediction bands cannot be trusted, and a reader who skips this step risks publishing tight intervals around a misspecified model.</li>
+<li>Diagnose ARIMA residuals with <code>gg_tsresiduals()</code> and a Ljung-Box test. Whiteness is a necessary first screen against in-sample misfit, even though it cannot by itself validate the out-of-sample extrapolation that the counterfactual ultimately rests on.</li>
 <li>Compare the linear-trend and ARIMA counterfactuals on the same series and interpret their disagreement as a fragility signal, not noise. Within-unit methods cannot validate their extrapolation assumption, so cross-model disagreement is the only diagnostic the reader has.</li>
 </ol>
 </section>
@@ -589,23 +589,23 @@ Table&nbsp;2.1: Linear growth-curve ITS — pre-period fit (HAC-robust SEs).
 </figcaption>
 <div aria-describedby="tbl-fit-growth-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output-display">
-<div id="fhjaeautmv" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#fhjaeautmv table {
+<div id="hcxilpuldh" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#hcxilpuldh table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#fhjaeautmv thead, #fhjaeautmv tbody, #fhjaeautmv tfoot, #fhjaeautmv tr, #fhjaeautmv td, #fhjaeautmv th {
+#hcxilpuldh thead, #hcxilpuldh tbody, #hcxilpuldh tfoot, #hcxilpuldh tr, #hcxilpuldh td, #hcxilpuldh th {
   border-style: none;
 }
 
-#fhjaeautmv p {
+#hcxilpuldh p {
   margin: 0;
   padding: 0;
 }
 
-#fhjaeautmv .gt_table {
+#hcxilpuldh .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -631,12 +631,12 @@ Table&nbsp;2.1: Linear growth-curve ITS — pre-period fit (HAC-robust SEs).
   border-left-color: #D3D3D3;
 }
 
-#fhjaeautmv .gt_caption {
+#hcxilpuldh .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#fhjaeautmv .gt_title {
+#hcxilpuldh .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -648,7 +648,7 @@ Table&nbsp;2.1: Linear growth-curve ITS — pre-period fit (HAC-robust SEs).
   border-bottom-width: 0;
 }
 
-#fhjaeautmv .gt_subtitle {
+#hcxilpuldh .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -660,7 +660,7 @@ Table&nbsp;2.1: Linear growth-curve ITS — pre-period fit (HAC-robust SEs).
   border-top-width: 0;
 }
 
-#fhjaeautmv .gt_heading {
+#hcxilpuldh .gt_heading {
   background-color: rgba(255, 255, 255, 0);
   text-align: center;
   border-bottom-color: rgba(255, 255, 255, 0);
@@ -672,13 +672,13 @@ Table&nbsp;2.1: Linear growth-curve ITS — pre-period fit (HAC-robust SEs).
   border-right-color: #D3D3D3;
 }
 
-#fhjaeautmv .gt_bottom_border {
+#hcxilpuldh .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#fhjaeautmv .gt_col_headings {
+#hcxilpuldh .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -693,7 +693,7 @@ Table&nbsp;2.1: Linear growth-curve ITS — pre-period fit (HAC-robust SEs).
   border-right-color: #D3D3D3;
 }
 
-#fhjaeautmv .gt_col_heading {
+#hcxilpuldh .gt_col_heading {
   color: #333333;
   background-color: rgba(255, 255, 255, 0);
   font-size: 100%;
@@ -713,7 +713,7 @@ Table&nbsp;2.1: Linear growth-curve ITS — pre-period fit (HAC-robust SEs).
   overflow-x: hidden;
 }
 
-#fhjaeautmv .gt_column_spanner_outer {
+#hcxilpuldh .gt_column_spanner_outer {
   color: #333333;
   background-color: rgba(255, 255, 255, 0);
   font-size: 100%;
@@ -725,15 +725,15 @@ Table&nbsp;2.1: Linear growth-curve ITS — pre-period fit (HAC-robust SEs).
   padding-right: 4px;
 }
 
-#fhjaeautmv .gt_column_spanner_outer:first-child {
+#hcxilpuldh .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#fhjaeautmv .gt_column_spanner_outer:last-child {
+#hcxilpuldh .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#fhjaeautmv .gt_column_spanner {
+#hcxilpuldh .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -745,11 +745,11 @@ Table&nbsp;2.1: Linear growth-curve ITS — pre-period fit (HAC-robust SEs).
   width: 100%;
 }
 
-#fhjaeautmv .gt_spanner_row {
+#hcxilpuldh .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#fhjaeautmv .gt_group_heading {
+#hcxilpuldh .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -775,7 +775,7 @@ Table&nbsp;2.1: Linear growth-curve ITS — pre-period fit (HAC-robust SEs).
   text-align: left;
 }
 
-#fhjaeautmv .gt_empty_group_heading {
+#hcxilpuldh .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: rgba(255, 255, 255, 0);
@@ -790,15 +790,15 @@ Table&nbsp;2.1: Linear growth-curve ITS — pre-period fit (HAC-robust SEs).
   vertical-align: middle;
 }
 
-#fhjaeautmv .gt_from_md > :first-child {
+#hcxilpuldh .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#fhjaeautmv .gt_from_md > :last-child {
+#hcxilpuldh .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#fhjaeautmv .gt_row {
+#hcxilpuldh .gt_row {
   padding-top: 4px;
   padding-bottom: 4px;
   padding-left: 5px;
@@ -817,7 +817,7 @@ Table&nbsp;2.1: Linear growth-curve ITS — pre-period fit (HAC-robust SEs).
   overflow-x: hidden;
 }
 
-#fhjaeautmv .gt_stub {
+#hcxilpuldh .gt_stub {
   color: #333333;
   background-color: rgba(255, 255, 255, 0);
   font-size: 100%;
@@ -830,7 +830,7 @@ Table&nbsp;2.1: Linear growth-curve ITS — pre-period fit (HAC-robust SEs).
   padding-right: 5px;
 }
 
-#fhjaeautmv .gt_stub_row_group {
+#hcxilpuldh .gt_stub_row_group {
   color: #333333;
   background-color: rgba(255, 255, 255, 0);
   font-size: 100%;
@@ -844,15 +844,15 @@ Table&nbsp;2.1: Linear growth-curve ITS — pre-period fit (HAC-robust SEs).
   vertical-align: top;
 }
 
-#fhjaeautmv .gt_row_group_first td {
+#hcxilpuldh .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#fhjaeautmv .gt_row_group_first th {
+#hcxilpuldh .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#fhjaeautmv .gt_summary_row {
+#hcxilpuldh .gt_summary_row {
   color: #333333;
   background-color: rgba(255, 255, 255, 0);
   text-transform: inherit;
@@ -862,16 +862,16 @@ Table&nbsp;2.1: Linear growth-curve ITS — pre-period fit (HAC-robust SEs).
   padding-right: 5px;
 }
 
-#fhjaeautmv .gt_first_summary_row {
+#hcxilpuldh .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#fhjaeautmv .gt_first_summary_row.thick {
+#hcxilpuldh .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#fhjaeautmv .gt_last_summary_row {
+#hcxilpuldh .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -881,7 +881,7 @@ Table&nbsp;2.1: Linear growth-curve ITS — pre-period fit (HAC-robust SEs).
   border-bottom-color: #D3D3D3;
 }
 
-#fhjaeautmv .gt_grand_summary_row {
+#hcxilpuldh .gt_grand_summary_row {
   color: #333333;
   background-color: rgba(255, 255, 255, 0);
   text-transform: inherit;
@@ -891,7 +891,7 @@ Table&nbsp;2.1: Linear growth-curve ITS — pre-period fit (HAC-robust SEs).
   padding-right: 5px;
 }
 
-#fhjaeautmv .gt_first_grand_summary_row {
+#hcxilpuldh .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -901,7 +901,7 @@ Table&nbsp;2.1: Linear growth-curve ITS — pre-period fit (HAC-robust SEs).
   border-top-color: #D3D3D3;
 }
 
-#fhjaeautmv .gt_last_grand_summary_row_top {
+#hcxilpuldh .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -911,11 +911,11 @@ Table&nbsp;2.1: Linear growth-curve ITS — pre-period fit (HAC-robust SEs).
   border-bottom-color: #D3D3D3;
 }
 
-#fhjaeautmv .gt_striped {
+#hcxilpuldh .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#fhjaeautmv .gt_table_body {
+#hcxilpuldh .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -924,7 +924,7 @@ Table&nbsp;2.1: Linear growth-curve ITS — pre-period fit (HAC-robust SEs).
   border-bottom-color: #D3D3D3;
 }
 
-#fhjaeautmv .gt_footnotes {
+#hcxilpuldh .gt_footnotes {
   color: #333333;
   background-color: rgba(255, 255, 255, 0);
   border-bottom-style: none;
@@ -938,7 +938,7 @@ Table&nbsp;2.1: Linear growth-curve ITS — pre-period fit (HAC-robust SEs).
   border-right-color: #D3D3D3;
 }
 
-#fhjaeautmv .gt_footnote {
+#hcxilpuldh .gt_footnote {
   margin: 0px;
   font-size: 0.85em;
   padding-top: 6px;
@@ -947,7 +947,7 @@ Table&nbsp;2.1: Linear growth-curve ITS — pre-period fit (HAC-robust SEs).
   padding-right: 5px;
 }
 
-#fhjaeautmv .gt_sourcenotes {
+#hcxilpuldh .gt_sourcenotes {
   color: #333333;
   background-color: rgba(255, 255, 255, 0);
   border-bottom-style: none;
@@ -961,7 +961,7 @@ Table&nbsp;2.1: Linear growth-curve ITS — pre-period fit (HAC-robust SEs).
   border-right-color: #D3D3D3;
 }
 
-#fhjaeautmv .gt_sourcenote {
+#hcxilpuldh .gt_sourcenote {
   font-size: 0.85em;
   padding-top: 6px;
   padding-bottom: 6px;
@@ -969,72 +969,72 @@ Table&nbsp;2.1: Linear growth-curve ITS — pre-period fit (HAC-robust SEs).
   padding-right: 5px;
 }
 
-#fhjaeautmv .gt_left {
+#hcxilpuldh .gt_left {
   text-align: left;
 }
 
-#fhjaeautmv .gt_center {
+#hcxilpuldh .gt_center {
   text-align: center;
 }
 
-#fhjaeautmv .gt_right {
+#hcxilpuldh .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#fhjaeautmv .gt_font_normal {
+#hcxilpuldh .gt_font_normal {
   font-weight: normal;
 }
 
-#fhjaeautmv .gt_font_bold {
+#hcxilpuldh .gt_font_bold {
   font-weight: bold;
 }
 
-#fhjaeautmv .gt_font_italic {
+#hcxilpuldh .gt_font_italic {
   font-style: italic;
 }
 
-#fhjaeautmv .gt_super {
+#hcxilpuldh .gt_super {
   font-size: 65%;
 }
 
-#fhjaeautmv .gt_footnote_marks {
+#hcxilpuldh .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#fhjaeautmv .gt_asterisk {
+#hcxilpuldh .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#fhjaeautmv .gt_indent_1 {
+#hcxilpuldh .gt_indent_1 {
   text-indent: 5px;
 }
 
-#fhjaeautmv .gt_indent_2 {
+#hcxilpuldh .gt_indent_2 {
   text-indent: 10px;
 }
 
-#fhjaeautmv .gt_indent_3 {
+#hcxilpuldh .gt_indent_3 {
   text-indent: 15px;
 }
 
-#fhjaeautmv .gt_indent_4 {
+#hcxilpuldh .gt_indent_4 {
   text-indent: 20px;
 }
 
-#fhjaeautmv .gt_indent_5 {
+#hcxilpuldh .gt_indent_5 {
   text-indent: 25px;
 }
 
-#fhjaeautmv .katex-display {
+#hcxilpuldh .katex-display {
   display: inline-flex !important;
   margin-bottom: 0.75em !important;
 }
 
-#fhjaeautmv div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+#hcxilpuldh div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
   height: 0px !important;
 }
 </style>
@@ -1831,7 +1831,7 @@ Wagner, A. K., Soumerai, S. B., Zhang, F., &amp; Ross-Degnan, D. (2002). Segment
 <span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Fit a linear pre-period trend and an ARIMA$(p,d,q)$ model to a single treated series and extrapolate each as a counterfactual. This is the technical core of ITS and the baseline every later within-unit method is judged against.</span>
 <span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>Select ARIMA orders by AICc and refit explicitly on the pre-intervention window. Pinning the order before the intervention is what makes the post-period forecast a genuine out-of-sample counterfactual rather than a curve fit through the gap.</span>
-<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>Diagnose ARIMA residuals with <span class="in">`gg_tsresiduals()`</span> and a Ljung-Box test. Without confirming pre-period whiteness the forecast prediction bands cannot be trusted, and a reader who skips this step risks publishing tight intervals around a misspecified model.</span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>Diagnose ARIMA residuals with <span class="in">`gg_tsresiduals()`</span> and a Ljung-Box test. Whiteness is a necessary first screen against in-sample misfit, even though it cannot by itself validate the out-of-sample extrapolation that the counterfactual ultimately rests on.</span>
 <span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>Compare the linear-trend and ARIMA counterfactuals on the same series and interpret their disagreement as a fragility signal, not noise. Within-unit methods cannot validate their extrapolation assumption, so cross-model disagreement is the only diagnostic the reader has.</span>
 <span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a><span class="fu">## The ITS idea</span></span>

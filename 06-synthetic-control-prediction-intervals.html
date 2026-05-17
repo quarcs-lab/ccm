@@ -461,10 +461,10 @@ window.Quarto = {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#why-a-third-synthetic-control-chapter" id="toc-why-a-third-synthetic-control-chapter" class="nav-link active" data-scroll-target="#why-a-third-synthetic-control-chapter"><span class="header-section-number">6.1</span> Why a third synthetic-control chapter?</a></li>
-  <li><a href="#the-framework" id="toc-the-framework" class="nav-link" data-scroll-target="#the-framework"><span class="header-section-number">6.2</span> The framework</a></li>
-  <li><a href="#setup-and-data" id="toc-setup-and-data" class="nav-link" data-scroll-target="#setup-and-data"><span class="header-section-number">6.3</span> Setup and data</a></li>
-  <li><a href="#learning-objectives" id="toc-learning-objectives" class="nav-link" data-scroll-target="#learning-objectives"><span class="header-section-number">6.4</span> Learning objectives</a></li>
+  <li><a href="#learning-objectives" id="toc-learning-objectives" class="nav-link active" data-scroll-target="#learning-objectives"><span class="header-section-number">6.1</span> Learning objectives</a></li>
+  <li><a href="#why-a-third-synthetic-control-chapter" id="toc-why-a-third-synthetic-control-chapter" class="nav-link" data-scroll-target="#why-a-third-synthetic-control-chapter"><span class="header-section-number">6.2</span> Why a third synthetic-control chapter?</a></li>
+  <li><a href="#the-framework" id="toc-the-framework" class="nav-link" data-scroll-target="#the-framework"><span class="header-section-number">6.3</span> The framework</a></li>
+  <li><a href="#setup-and-data" id="toc-setup-and-data" class="nav-link" data-scroll-target="#setup-and-data"><span class="header-section-number">6.4</span> Setup and data</a></li>
   <li><a href="#preparing-the-data-for-scpi" id="toc-preparing-the-data-for-scpi" class="nav-link" data-scroll-target="#preparing-the-data-for-scpi"><span class="header-section-number">6.5</span> Preparing the data for <code>scpi</code></a></li>
   <li><a href="#point-estimation-across-four-weight-constraints" id="toc-point-estimation-across-four-weight-constraints" class="nav-link" data-scroll-target="#point-estimation-across-four-weight-constraints"><span class="header-section-number">6.6</span> Point estimation across four weight constraints</a></li>
   <li><a href="#donor-weights-side-by-side" id="toc-donor-weights-side-by-side" class="nav-link" data-scroll-target="#donor-weights-side-by-side"><span class="header-section-number">6.7</span> Donor weights side-by-side</a></li>
@@ -501,14 +501,23 @@ window.Quarto = {
 </header>
 
 
-<section id="why-a-third-synthetic-control-chapter" class="level2" data-number="6.1">
-<h2 data-number="6.1" class="anchored" data-anchor-id="why-a-third-synthetic-control-chapter"><span class="header-section-number">6.1</span> Why a third synthetic-control chapter?</h2>
+<section id="learning-objectives" class="level2" data-number="6.1">
+<h2 data-number="6.1" class="anchored" data-anchor-id="learning-objectives"><span class="header-section-number">6.1</span> Learning objectives</h2>
+<ol type="1">
+<li>Fit synthetic-control weights under four regularization regimes (simplex, lasso, ridge, OLS) from <code>scpi</code>’s single API. Running all four at once is how the reader checks whether their headline estimate is a constraint artifact rather than a data finding.</li>
+<li>Construct finite-sample prediction intervals by decomposing SC error into in-sample weight uncertainty and out-of-sample shocks. These are the first SC intervals in the book with proven frequentist coverage, and replacing chapter 4’s permutation <em>p</em>-value with a coverage statement is what makes the method publishable in econometrics venues.</li>
+<li>Set Bonferroni-adjusted alpha splits (<code>u.alpha</code>, <code>e.alpha</code>) so a stated joint coverage level is the actual joint coverage level. Without the split the union bound is violated and the interval’s nominal coverage is unachieved, even though the “95% PI” label still appears on the plot.</li>
+<li>Sweep confidence levels (80/90/95/99%) and report at which level the post-period outcome reliably exits the band. The sweep is the natural way to quantify evidence strength when a single conventional level is arbitrary.</li>
+</ol>
+</section>
+<section id="why-a-third-synthetic-control-chapter" class="level2" data-number="6.2">
+<h2 data-number="6.2" class="anchored" data-anchor-id="why-a-third-synthetic-control-chapter"><span class="header-section-number">6.2</span> Why a third synthetic-control chapter?</h2>
 <p>Chapter 4 fit the classical synthetic-control estimator with <code>tidysynth</code>: donor weights live on the simplex, and the inference story is the Fisher-exact placebo permutation test. Chapter 5 produced posterior credible intervals from a structural Bayesian time-series model.</p>
 <p>What is still missing is a <strong>frequentist</strong> uncertainty story for the synthetic-control estimator itself. The Fisher p-value from chapter 4 is a rank statistic — it tells us California is unusual relative to the donor pool, but it does not give us a <em>prediction interval</em> with finite-sample coverage guarantees. The <code>scpi</code> package of <span class="citation" data-cites="cattaneo2021prediction">Cattaneo et al. (<a href="references.html#ref-cattaneo2021prediction" role="doc-biblioref">2021</a>)</span> and <span class="citation" data-cites="cattaneo2025scpi">Cattaneo et al. (<a href="references.html#ref-cattaneo2025scpi" role="doc-biblioref">2025</a>)</span> closes that gap. It decomposes synthetic-control forecast error into two components — in-sample weight uncertainty and out-of-sample post-treatment shocks — and constructs an interval that covers the synthetic counterfactual with a stated probability.</p>
 <p><code>scpi</code> also generalises the weight-estimation step. The same API fits the <strong>simplex</strong> (classical Abadie–Diamond–Hainmueller), <strong>lasso</strong>, <strong>ridge</strong>, and <strong>OLS</strong> constraints from a single function call, so we can ask a sharper question than chapter 4 could: <em>is the headline ATT a consequence of the simplex constraint, or does it survive every reasonable choice of donor regularisation?</em></p>
 </section>
-<section id="the-framework" class="level2" data-number="6.2">
-<h2 data-number="6.2" class="anchored" data-anchor-id="the-framework"><span class="header-section-number">6.2</span> The framework</h2>
+<section id="the-framework" class="level2" data-number="6.3">
+<h2 data-number="6.3" class="anchored" data-anchor-id="the-framework"><span class="header-section-number">6.3</span> The framework</h2>
 <p>Let <span class="math inline">\(Y_{1t}\)</span> be the treated unit’s outcome at time <span class="math inline">\(t\)</span>, and <span class="math inline">\(Y_{0t}\)</span> the <span class="math inline">\(J\)</span>-vector of donor outcomes. The synthetic-control predictor is</p>
 <p><span class="math display">\[\widehat{Y_{1t}(0)} \,=\, \hat{w}^\top Y_{0t},\]</span></p>
 <p>with weights <span class="math inline">\(\hat{w}\)</span> chosen on the pre-period under a constraint set (simplex, lasso, ridge, or OLS). The error in estimating the <em>counterfactual</em> at any post-period <span class="math inline">\(t\)</span> decomposes as</p>
@@ -517,8 +526,8 @@ window.Quarto = {
 <p>In chapter 4’s notation we would write <span class="math inline">\(\widehat{Y_{1t}(0)} = \sum_j \hat{w}_j Y_{jt}\)</span> with the V-weighted predictor objective. Chapter 6 omits the predictor matrix <span class="math inline">\(X\)</span> entirely (see Setup) and so works directly with donor outcomes <span class="math inline">\(Y_{0t}\)</span>. A parallel frequentist-coverage literature builds prediction intervals via <em>conformal inference</em> (Chernozhukov, Wüthrich &amp; Zhu 2021, <em>JASA</em>), which trades the parametric in-sample / out-of-sample decomposition for distribution-free quantile guarantees; see Further reading.</p>
 <p>The substantive interpretation matters: a prediction interval (PI) bounds the <em>synthetic counterfactual</em>, not the observed series. The treatment effect is “statistically distinct from forecasting noise” when the observed series sits <em>outside</em> the PI band — most commonly when observed California falls <em>below</em> the lower bound of the band built around synthetic California.</p>
 </section>
-<section id="setup-and-data" class="level2" data-number="6.3">
-<h2 data-number="6.3" class="anchored" data-anchor-id="setup-and-data"><span class="header-section-number">6.3</span> Setup and data</h2>
+<section id="setup-and-data" class="level2" data-number="6.4">
+<h2 data-number="6.4" class="anchored" data-anchor-id="setup-and-data"><span class="header-section-number">6.4</span> Setup and data</h2>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
@@ -543,15 +552,6 @@ window.Quarto = {
 <span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
-</section>
-<section id="learning-objectives" class="level2" data-number="6.4">
-<h2 data-number="6.4" class="anchored" data-anchor-id="learning-objectives"><span class="header-section-number">6.4</span> Learning objectives</h2>
-<ol type="1">
-<li>Fit synthetic-control weights under four regularization regimes (simplex, lasso, ridge, OLS) from <code>scpi</code>’s single API. Running all four at once is how the reader checks whether their headline estimate is a constraint artifact rather than a data finding.</li>
-<li>Construct finite-sample prediction intervals by decomposing SC error into in-sample weight uncertainty and out-of-sample shocks. These are the first SC intervals in the book with proven frequentist coverage, and replacing chapter 4’s permutation <em>p</em>-value with a coverage statement is what makes the method publishable in econometrics venues.</li>
-<li>Set Bonferroni-adjusted alpha splits (<code>u.alpha</code>, <code>e.alpha</code>) so a stated joint coverage level is the actual joint coverage level. Without the split, a “95% PI” label overstates coverage and quietly inflates Type-I errors.</li>
-<li>Sweep confidence levels (80/90/95/99%) and report at which level the post-period outcome reliably exits the band. The sweep is the natural way to quantify evidence strength when a single conventional level is arbitrary.</li>
-</ol>
 <p>The chapter reuses the Proposition 99 dataset that powered chapters 2–6: 39 US states, 1970–2000, with <code>cigsale</code> as the outcome (per-capita cigarette sales in packs). <code>scpi</code>’s <code>scdata()</code> wants the unit identifier as character — coerce the factor before handing it off. We use only the outcome series for matching (matching the configuration of the <code>scpi_pkg</code> Python illustration in <span class="citation" data-cites="cattaneo2025scpi">Cattaneo et al. (<a href="references.html#ref-cattaneo2025scpi" role="doc-biblioref">2025</a>)</span>); the auxiliary covariates <code>lnincome</code>, <code>beer</code>, and <code>age15to24</code> carry many NAs in the early pre-period and would force row deletions that bias the donor pool.</p>
 <p>This is an intentional departure from chapter 4, which used <code>lnincome</code>, <code>beer</code>, and <code>age15to24</code> as auxiliary predictors via <code>tidysynth::generate_predictor()</code>. The covariate-rich match in chapter 4 produces a tighter pre-period fit and a more negative simplex ATT of <span class="math inline">\(-18.85\)</span>; outcome-only matching here is more conservative, is more honest about the missing-data structure, and lands at a smaller simplex ATT (≈ <span class="math inline">\(-11\)</span>, see below). We return to this comparison in the Recap.</p>
 <div class="cell">
@@ -2611,63 +2611,63 @@ Dunford, E. (2024). <em><span class="nocase">tidysynth</span> — a tidy impleme
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Synthetic Control with Prediction Intervals"</span></span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
 <span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="fu">## Why a third synthetic-control chapter?</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="fu">## Learning objectives</span></span>
 <span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>Chapter 4 fit the classical synthetic-control estimator with <span class="in">`tidysynth`</span>: donor weights live on the simplex, and the inference story is the Fisher-exact placebo permutation test. Chapter 5 produced posterior credible intervals from a structural Bayesian time-series model.</span>
-<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>What is still missing is a **frequentist** uncertainty story for the synthetic-control estimator itself. The Fisher p-value from chapter 4 is a rank statistic — it tells us California is unusual relative to the donor pool, but it does not give us a *prediction interval* with finite-sample coverage guarantees. The <span class="in">`scpi`</span> package of @cattaneo2021prediction and @cattaneo2025scpi closes that gap. It decomposes synthetic-control forecast error into two components — in-sample weight uncertainty and out-of-sample post-treatment shocks — and constructs an interval that covers the synthetic counterfactual with a stated probability.</span>
-<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a><span class="in">`scpi`</span> also generalises the weight-estimation step. The same API fits the **simplex** (classical Abadie–Diamond–Hainmueller), **lasso**, **ridge**, and **OLS** constraints from a single function call, so we can ask a sharper question than chapter 4 could: *is the headline ATT a consequence of the simplex constraint, or does it survive every reasonable choice of donor regularisation?*</span>
-<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a><span class="fu">## The framework</span></span>
-<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a>Let $Y_{1t}$ be the treated unit's outcome at time $t$, and $Y_{0t}$ the $J$-vector of donor outcomes. The synthetic-control predictor is</span>
-<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a>$$\widehat{Y_{1t}(0)} \,=\, \hat{w}^\top Y_{0t},$$</span>
-<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a>with weights $\hat{w}$ chosen on the pre-period under a constraint set (simplex, lasso, ridge, or OLS). The error in estimating the *counterfactual* at any post-period $t$ decomposes as</span>
-<span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-21"><a href="#cb15-21" aria-hidden="true" tabindex="-1"></a>$$Y_{1t}(0) \;-\; \widehat{Y_{1t}(0)} \;=\; \underbrace{(w^* - \hat{w})^\top Y_{0t}}_{\text{in-sample error}} \;+\; \underbrace{e_t}_{\text{out-of-sample error}}.$$</span>
-<span id="cb15-22"><a href="#cb15-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-23"><a href="#cb15-23" aria-hidden="true" tabindex="-1"></a>The first term, the in-sample component, comes from estimating the donor weights on a finite pre-period — sampling variability propagates into the counterfactual. The second term, $e_t$, captures post-treatment shocks and structural drift that the pre-period cannot anticipate; it grows with the forecast horizon. Since $\hat\tau_t = Y_{1t} - \widehat{Y_{1t}(0)}$, the same error decomposition translates directly into a prediction interval for $\hat\tau_t$. The placebo test in chapter 4 sidesteps the decomposition entirely — it ranks California against permuted-treatment states without modelling either error source — and so produces a $p$-value rather than an interval. <span class="in">`scpi`</span> quantifies the two error sources separately and reports an interval $<span class="co">[</span><span class="ot">\hat\tau_t - L, \, \hat\tau_t + U</span><span class="co">]</span>$ with finite-sample coverage.</span>
-<span id="cb15-24"><a href="#cb15-24" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-25"><a href="#cb15-25" aria-hidden="true" tabindex="-1"></a>In chapter 4's notation we would write $\widehat{Y_{1t}(0)} = \sum_j \hat{w}_j Y_{jt}$ with the V-weighted predictor objective. Chapter 6 omits the predictor matrix $X$ entirely (see Setup) and so works directly with donor outcomes $Y_{0t}$. A parallel frequentist-coverage literature builds prediction intervals via *conformal inference* (Chernozhukov, Wüthrich &amp; Zhu 2021, *JASA*), which trades the parametric in-sample / out-of-sample decomposition for distribution-free quantile guarantees; see Further reading.</span>
-<span id="cb15-26"><a href="#cb15-26" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-27"><a href="#cb15-27" aria-hidden="true" tabindex="-1"></a>The substantive interpretation matters: a prediction interval (PI) bounds the *synthetic counterfactual*, not the observed series. The treatment effect is "statistically distinct from forecasting noise" when the observed series sits *outside* the PI band — most commonly when observed California falls *below* the lower bound of the band built around synthetic California.</span>
-<span id="cb15-28"><a href="#cb15-28" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-29"><a href="#cb15-29" aria-hidden="true" tabindex="-1"></a><span class="fu">## Setup and data</span></span>
-<span id="cb15-30"><a href="#cb15-30" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-33"><a href="#cb15-33" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb15-34"><a href="#cb15-34" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: setup</span></span>
-<span id="cb15-35"><a href="#cb15-35" aria-hidden="true" tabindex="-1"></a><span class="co">#| message: false</span></span>
-<span id="cb15-36"><a href="#cb15-36" aria-hidden="true" tabindex="-1"></a><span class="co">#| warning: false</span></span>
-<span id="cb15-37"><a href="#cb15-37" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
-<span id="cb15-38"><a href="#cb15-38" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(scpi)</span>
-<span id="cb15-39"><a href="#cb15-39" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"R/table_helpers.R"</span>)</span>
-<span id="cb15-40"><a href="#cb15-40" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-41"><a href="#cb15-41" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
-<span id="cb15-42"><a href="#cb15-42" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-43"><a href="#cb15-43" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span>opts_chunk<span class="sc">$</span><span class="fu">set</span>(<span class="at">dev.args =</span> <span class="fu">list</span>(<span class="at">bg =</span> <span class="st">"transparent"</span>))</span>
-<span id="cb15-44"><a href="#cb15-44" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-45"><a href="#cb15-45" aria-hidden="true" tabindex="-1"></a><span class="fu">theme_set</span>(</span>
-<span id="cb15-46"><a href="#cb15-46" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">12</span>) <span class="sc">+</span></span>
-<span id="cb15-47"><a href="#cb15-47" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(</span>
-<span id="cb15-48"><a href="#cb15-48" aria-hidden="true" tabindex="-1"></a>      <span class="at">plot.background  =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">"transparent"</span>, <span class="at">color =</span> <span class="cn">NA</span>),</span>
-<span id="cb15-49"><a href="#cb15-49" aria-hidden="true" tabindex="-1"></a>      <span class="at">panel.background =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">"transparent"</span>, <span class="at">color =</span> <span class="cn">NA</span>),</span>
-<span id="cb15-50"><a href="#cb15-50" aria-hidden="true" tabindex="-1"></a>      <span class="at">panel.grid.major =</span> <span class="fu">element_line</span>(<span class="at">color =</span> <span class="st">"#94a3b8"</span>, <span class="at">linewidth =</span> <span class="fl">0.25</span>),</span>
-<span id="cb15-51"><a href="#cb15-51" aria-hidden="true" tabindex="-1"></a>      <span class="at">panel.grid.minor =</span> <span class="fu">element_line</span>(<span class="at">color =</span> <span class="st">"#94a3b8"</span>, <span class="at">linewidth =</span> <span class="fl">0.15</span>),</span>
-<span id="cb15-52"><a href="#cb15-52" aria-hidden="true" tabindex="-1"></a>      <span class="at">text             =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"#94a3b8"</span>),</span>
-<span id="cb15-53"><a href="#cb15-53" aria-hidden="true" tabindex="-1"></a>      <span class="at">axis.text        =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"#94a3b8"</span>)</span>
-<span id="cb15-54"><a href="#cb15-54" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb15-55"><a href="#cb15-55" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb15-56"><a href="#cb15-56" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb15-57"><a href="#cb15-57" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-58"><a href="#cb15-58" aria-hidden="true" tabindex="-1"></a><span class="fu">## Learning objectives</span></span>
-<span id="cb15-59"><a href="#cb15-59" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-60"><a href="#cb15-60" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Fit synthetic-control weights under four regularization regimes (simplex, lasso, ridge, OLS) from <span class="in">`scpi`</span>'s single API. Running all four at once is how the reader checks whether their headline estimate is a constraint artifact rather than a data finding.</span>
-<span id="cb15-61"><a href="#cb15-61" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>Construct finite-sample prediction intervals by decomposing SC error into in-sample weight uncertainty and out-of-sample shocks. These are the first SC intervals in the book with proven frequentist coverage, and replacing chapter 4's permutation *p*-value with a coverage statement is what makes the method publishable in econometrics venues.</span>
-<span id="cb15-62"><a href="#cb15-62" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>Set Bonferroni-adjusted alpha splits (<span class="in">`u.alpha`</span>, <span class="in">`e.alpha`</span>) so a stated joint coverage level is the actual joint coverage level. Without the split, a "95% PI" label overstates coverage and quietly inflates Type-I errors.</span>
-<span id="cb15-63"><a href="#cb15-63" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>Sweep confidence levels (80/90/95/99%) and report at which level the post-period outcome reliably exits the band. The sweep is the natural way to quantify evidence strength when a single conventional level is arbitrary.</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Fit synthetic-control weights under four regularization regimes (simplex, lasso, ridge, OLS) from <span class="in">`scpi`</span>'s single API. Running all four at once is how the reader checks whether their headline estimate is a constraint artifact rather than a data finding.</span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>Construct finite-sample prediction intervals by decomposing SC error into in-sample weight uncertainty and out-of-sample shocks. These are the first SC intervals in the book with proven frequentist coverage, and replacing chapter 4's permutation *p*-value with a coverage statement is what makes the method publishable in econometrics venues.</span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>Set Bonferroni-adjusted alpha splits (<span class="in">`u.alpha`</span>, <span class="in">`e.alpha`</span>) so a stated joint coverage level is the actual joint coverage level. Without the split the union bound is violated and the interval's nominal coverage is unachieved, even though the "95% PI" label still appears on the plot.</span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>Sweep confidence levels (80/90/95/99%) and report at which level the post-period outcome reliably exits the band. The sweep is the natural way to quantify evidence strength when a single conventional level is arbitrary.</span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a><span class="fu">## Why a third synthetic-control chapter?</span></span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>Chapter 4 fit the classical synthetic-control estimator with <span class="in">`tidysynth`</span>: donor weights live on the simplex, and the inference story is the Fisher-exact placebo permutation test. Chapter 5 produced posterior credible intervals from a structural Bayesian time-series model.</span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a>What is still missing is a **frequentist** uncertainty story for the synthetic-control estimator itself. The Fisher p-value from chapter 4 is a rank statistic — it tells us California is unusual relative to the donor pool, but it does not give us a *prediction interval* with finite-sample coverage guarantees. The <span class="in">`scpi`</span> package of @cattaneo2021prediction and @cattaneo2025scpi closes that gap. It decomposes synthetic-control forecast error into two components — in-sample weight uncertainty and out-of-sample post-treatment shocks — and constructs an interval that covers the synthetic counterfactual with a stated probability.</span>
+<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a><span class="in">`scpi`</span> also generalises the weight-estimation step. The same API fits the **simplex** (classical Abadie–Diamond–Hainmueller), **lasso**, **ridge**, and **OLS** constraints from a single function call, so we can ask a sharper question than chapter 4 could: *is the headline ATT a consequence of the simplex constraint, or does it survive every reasonable choice of donor regularisation?*</span>
+<span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a><span class="fu">## The framework</span></span>
+<span id="cb15-21"><a href="#cb15-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-22"><a href="#cb15-22" aria-hidden="true" tabindex="-1"></a>Let $Y_{1t}$ be the treated unit's outcome at time $t$, and $Y_{0t}$ the $J$-vector of donor outcomes. The synthetic-control predictor is</span>
+<span id="cb15-23"><a href="#cb15-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-24"><a href="#cb15-24" aria-hidden="true" tabindex="-1"></a>$$\widehat{Y_{1t}(0)} \,=\, \hat{w}^\top Y_{0t},$$</span>
+<span id="cb15-25"><a href="#cb15-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-26"><a href="#cb15-26" aria-hidden="true" tabindex="-1"></a>with weights $\hat{w}$ chosen on the pre-period under a constraint set (simplex, lasso, ridge, or OLS). The error in estimating the *counterfactual* at any post-period $t$ decomposes as</span>
+<span id="cb15-27"><a href="#cb15-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-28"><a href="#cb15-28" aria-hidden="true" tabindex="-1"></a>$$Y_{1t}(0) \;-\; \widehat{Y_{1t}(0)} \;=\; \underbrace{(w^* - \hat{w})^\top Y_{0t}}_{\text{in-sample error}} \;+\; \underbrace{e_t}_{\text{out-of-sample error}}.$$</span>
+<span id="cb15-29"><a href="#cb15-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-30"><a href="#cb15-30" aria-hidden="true" tabindex="-1"></a>The first term, the in-sample component, comes from estimating the donor weights on a finite pre-period — sampling variability propagates into the counterfactual. The second term, $e_t$, captures post-treatment shocks and structural drift that the pre-period cannot anticipate; it grows with the forecast horizon. Since $\hat\tau_t = Y_{1t} - \widehat{Y_{1t}(0)}$, the same error decomposition translates directly into a prediction interval for $\hat\tau_t$. The placebo test in chapter 4 sidesteps the decomposition entirely — it ranks California against permuted-treatment states without modelling either error source — and so produces a $p$-value rather than an interval. <span class="in">`scpi`</span> quantifies the two error sources separately and reports an interval $<span class="co">[</span><span class="ot">\hat\tau_t - L, \, \hat\tau_t + U</span><span class="co">]</span>$ with finite-sample coverage.</span>
+<span id="cb15-31"><a href="#cb15-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-32"><a href="#cb15-32" aria-hidden="true" tabindex="-1"></a>In chapter 4's notation we would write $\widehat{Y_{1t}(0)} = \sum_j \hat{w}_j Y_{jt}$ with the V-weighted predictor objective. Chapter 6 omits the predictor matrix $X$ entirely (see Setup) and so works directly with donor outcomes $Y_{0t}$. A parallel frequentist-coverage literature builds prediction intervals via *conformal inference* (Chernozhukov, Wüthrich &amp; Zhu 2021, *JASA*), which trades the parametric in-sample / out-of-sample decomposition for distribution-free quantile guarantees; see Further reading.</span>
+<span id="cb15-33"><a href="#cb15-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-34"><a href="#cb15-34" aria-hidden="true" tabindex="-1"></a>The substantive interpretation matters: a prediction interval (PI) bounds the *synthetic counterfactual*, not the observed series. The treatment effect is "statistically distinct from forecasting noise" when the observed series sits *outside* the PI band — most commonly when observed California falls *below* the lower bound of the band built around synthetic California.</span>
+<span id="cb15-35"><a href="#cb15-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-36"><a href="#cb15-36" aria-hidden="true" tabindex="-1"></a><span class="fu">## Setup and data</span></span>
+<span id="cb15-37"><a href="#cb15-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-40"><a href="#cb15-40" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb15-41"><a href="#cb15-41" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: setup</span></span>
+<span id="cb15-42"><a href="#cb15-42" aria-hidden="true" tabindex="-1"></a><span class="co">#| message: false</span></span>
+<span id="cb15-43"><a href="#cb15-43" aria-hidden="true" tabindex="-1"></a><span class="co">#| warning: false</span></span>
+<span id="cb15-44"><a href="#cb15-44" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb15-45"><a href="#cb15-45" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(scpi)</span>
+<span id="cb15-46"><a href="#cb15-46" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"R/table_helpers.R"</span>)</span>
+<span id="cb15-47"><a href="#cb15-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-48"><a href="#cb15-48" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
+<span id="cb15-49"><a href="#cb15-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-50"><a href="#cb15-50" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span>opts_chunk<span class="sc">$</span><span class="fu">set</span>(<span class="at">dev.args =</span> <span class="fu">list</span>(<span class="at">bg =</span> <span class="st">"transparent"</span>))</span>
+<span id="cb15-51"><a href="#cb15-51" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-52"><a href="#cb15-52" aria-hidden="true" tabindex="-1"></a><span class="fu">theme_set</span>(</span>
+<span id="cb15-53"><a href="#cb15-53" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">12</span>) <span class="sc">+</span></span>
+<span id="cb15-54"><a href="#cb15-54" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(</span>
+<span id="cb15-55"><a href="#cb15-55" aria-hidden="true" tabindex="-1"></a>      <span class="at">plot.background  =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">"transparent"</span>, <span class="at">color =</span> <span class="cn">NA</span>),</span>
+<span id="cb15-56"><a href="#cb15-56" aria-hidden="true" tabindex="-1"></a>      <span class="at">panel.background =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">"transparent"</span>, <span class="at">color =</span> <span class="cn">NA</span>),</span>
+<span id="cb15-57"><a href="#cb15-57" aria-hidden="true" tabindex="-1"></a>      <span class="at">panel.grid.major =</span> <span class="fu">element_line</span>(<span class="at">color =</span> <span class="st">"#94a3b8"</span>, <span class="at">linewidth =</span> <span class="fl">0.25</span>),</span>
+<span id="cb15-58"><a href="#cb15-58" aria-hidden="true" tabindex="-1"></a>      <span class="at">panel.grid.minor =</span> <span class="fu">element_line</span>(<span class="at">color =</span> <span class="st">"#94a3b8"</span>, <span class="at">linewidth =</span> <span class="fl">0.15</span>),</span>
+<span id="cb15-59"><a href="#cb15-59" aria-hidden="true" tabindex="-1"></a>      <span class="at">text             =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"#94a3b8"</span>),</span>
+<span id="cb15-60"><a href="#cb15-60" aria-hidden="true" tabindex="-1"></a>      <span class="at">axis.text        =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"#94a3b8"</span>)</span>
+<span id="cb15-61"><a href="#cb15-61" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb15-62"><a href="#cb15-62" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb15-63"><a href="#cb15-63" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb15-64"><a href="#cb15-64" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb15-65"><a href="#cb15-65" aria-hidden="true" tabindex="-1"></a>The chapter reuses the Proposition 99 dataset that powered chapters 2–6: 39 US states, 1970–2000, with <span class="in">`cigsale`</span> as the outcome (per-capita cigarette sales in packs). <span class="in">`scpi`</span>'s <span class="in">`scdata()`</span> wants the unit identifier as character — coerce the factor before handing it off. We use only the outcome series for matching (matching the configuration of the <span class="in">`scpi_pkg`</span> Python illustration in @cattaneo2025scpi); the auxiliary covariates <span class="in">`lnincome`</span>, <span class="in">`beer`</span>, and <span class="in">`age15to24`</span> carry many NAs in the early pre-period and would force row deletions that bias the donor pool.</span>
 <span id="cb15-66"><a href="#cb15-66" aria-hidden="true" tabindex="-1"></a></span>

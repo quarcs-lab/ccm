@@ -461,9 +461,9 @@ window.Quarto = {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#where-gsynth-fits" id="toc-where-gsynth-fits" class="nav-link active" data-scroll-target="#where-gsynth-fits"><span class="header-section-number">10.1</span> Where gsynth fits</a></li>
-  <li><a href="#setup-and-data" id="toc-setup-and-data" class="nav-link" data-scroll-target="#setup-and-data"><span class="header-section-number">10.2</span> Setup and data</a></li>
-  <li><a href="#learning-objectives" id="toc-learning-objectives" class="nav-link" data-scroll-target="#learning-objectives"><span class="header-section-number">10.3</span> Learning objectives</a></li>
+  <li><a href="#learning-objectives" id="toc-learning-objectives" class="nav-link active" data-scroll-target="#learning-objectives"><span class="header-section-number">10.1</span> Learning objectives</a></li>
+  <li><a href="#where-gsynth-fits" id="toc-where-gsynth-fits" class="nav-link" data-scroll-target="#where-gsynth-fits"><span class="header-section-number">10.2</span> Where gsynth fits</a></li>
+  <li><a href="#setup-and-data" id="toc-setup-and-data" class="nav-link" data-scroll-target="#setup-and-data"><span class="header-section-number">10.3</span> Setup and data</a></li>
   <li><a href="#treatment-timing" id="toc-treatment-timing" class="nav-link" data-scroll-target="#treatment-timing"><span class="header-section-number">10.4</span> Treatment timing</a></li>
   <li><a href="#baseline-and-factor-selection" id="toc-baseline-and-factor-selection" class="nav-link" data-scroll-target="#baseline-and-factor-selection"><span class="header-section-number">10.5</span> Baseline and factor selection</a></li>
   <li><a href="#standard-gsynth-plots" id="toc-standard-gsynth-plots" class="nav-link" data-scroll-target="#standard-gsynth-plots"><span class="header-section-number">10.6</span> Standard gsynth plots</a>
@@ -505,8 +505,17 @@ window.Quarto = {
 </header>
 
 
-<section id="where-gsynth-fits" class="level2" data-number="10.1">
-<h2 data-number="10.1" class="anchored" data-anchor-id="where-gsynth-fits"><span class="header-section-number">10.1</span> Where gsynth fits</h2>
+<section id="learning-objectives" class="level2" data-number="10.1">
+<h2 data-number="10.1" class="anchored" data-anchor-id="learning-objectives"><span class="header-section-number">10.1</span> Learning objectives</h2>
+<ol type="1">
+<li>Estimate latent factors on the never-treated subpanel with <code>gsynth</code> and project each treated unit onto factor space. This is what scales single-unit synthetic control (chapter 4) to dozens of treated units with unit-specific counterfactuals.</li>
+<li>Select the factor count via information criterion and check robustness across the factor grid. Information criteria break ties when the data only weakly prefer a model — without the grid check the reader is one rounding decision away from a different headline ATT.</li>
+<li>Extract and interpret implicit donor weights for each treated unit. The weights ground the abstract latent-factor model in observable donor units, exposing which control counties drive each treated unit’s counterfactual.</li>
+<li>Diagnose extrapolation failure via convex-hull checks on the loadings plot. Treated units whose factor loadings fall outside the control cloud are extrapolations, not interpolations, and flagging them is the difference between an honest and an overstated estimate.</li>
+</ol>
+</section>
+<section id="where-gsynth-fits" class="level2" data-number="10.2">
+<h2 data-number="10.2" class="anchored" data-anchor-id="where-gsynth-fits"><span class="header-section-number">10.2</span> Where gsynth fits</h2>
 <p>Earlier chapters have asked the same counterfactual question in different ways. Chapter 4 (classical SCM) hand-built a weighted donor average for a single treated unit. Chapter 7 layered a spatial prior on top. Chapter 8 abandoned the single-treated-unit framing entirely and aggregated group-time ATTs under a parallel-trends assumption. Chapter 9 (when read in sequence) introduces the interactive-fixed-effects family through <code>fect</code>; this chapter does the focused walkthrough of one specific estimator in that family — <strong>generalized synthetic control (gsynth)</strong> <span class="citation" data-cites="xu2017generalized">(<a href="references.html#ref-xu2017generalized" role="doc-biblioref">Xu, 2017</a>)</span> — using the standalone <code>gsynth</code> package on the same Callaway-Sant’Anna minimum-wage panel as chapter 8.</p>
 <p>gsynth sits at the intersection of SCM and panel DiD. Like SCM, it imputes a counterfactual outcome path for each treated unit using only never-treated controls. Like staggered DiD, it accommodates many treated units adopting at different times. The way it threads that needle is by fitting an <strong>interactive fixed effects</strong> (IFE) model on the never-treated panel,</p>
 <p><span class="math display">\[Y_{it}(0) = \alpha_i + \xi_t + \lambda_i' f_t + X_{it}'\beta +
@@ -532,8 +541,8 @@ window.Quarto = {
 </div>
 </div>
 </section>
-<section id="setup-and-data" class="level2" data-number="10.2">
-<h2 data-number="10.2" class="anchored" data-anchor-id="setup-and-data"><span class="header-section-number">10.2</span> Setup and data</h2>
+<section id="setup-and-data" class="level2" data-number="10.3">
+<h2 data-number="10.3" class="anchored" data-anchor-id="setup-and-data"><span class="header-section-number">10.3</span> Setup and data</h2>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
@@ -561,15 +570,6 @@ window.Quarto = {
 <span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
-</section>
-<section id="learning-objectives" class="level2" data-number="10.3">
-<h2 data-number="10.3" class="anchored" data-anchor-id="learning-objectives"><span class="header-section-number">10.3</span> Learning objectives</h2>
-<ol type="1">
-<li>Estimate latent factors on the never-treated subpanel with <code>gsynth</code> and project each treated unit onto factor space. This is what scales single-unit synthetic control (chapter 4) to dozens of treated units with unit-specific counterfactuals.</li>
-<li>Select the factor count via information criterion and check robustness across the factor grid. Information criteria break ties when the data only weakly prefer a model — without the grid check the reader is one rounding decision away from a different headline ATT.</li>
-<li>Extract and interpret implicit donor weights for each treated unit. Tying abstract factor loadings back to concrete donor mixtures is what makes a <code>gsynth</code> result legible to a non-technical audience.</li>
-<li>Diagnose extrapolation failure via convex-hull checks on the loadings plot. Treated units whose factor loadings fall outside the control cloud are extrapolations, not interpolations, and flagging them is the difference between an honest and an overstated estimate.</li>
-</ol>
 <p>The dataset ships as <code>data/cs_minwage.rds</code> in the chapter bundle. We restrict to cohorts <span class="math inline">\(G \in \{0, 2004, 2006\}\)</span> and drop the Northeast region (<code>region == "1"</code>) for comparability with chapter 8. <code>gsynth()</code> expects a base <code>data.frame</code> — passing a tibble silently breaks its internal indexing — so we cast with <code>as.data.frame()</code>.</p>
 <div class="cell">
 <details class="code-fold">
@@ -3561,7 +3561,7 @@ Xu, Y. (2017). Generalized synthetic control method: Causal inference with inter
 <span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Estimate latent factors on the never-treated subpanel with <span class="in">`gsynth`</span> and project each treated unit onto factor space. This is what scales single-unit synthetic control (chapter 4) to dozens of treated units with unit-specific counterfactuals.</span>
 <span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>Select the factor count via information criterion and check robustness across the factor grid. Information criteria break ties when the data only weakly prefer a model — without the grid check the reader is one rounding decision away from a different headline ATT.</span>
-<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>Extract and interpret implicit donor weights for each treated unit. Tying abstract factor loadings back to concrete donor mixtures is what makes a <span class="in">`gsynth`</span> result legible to a non-technical audience.</span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>Extract and interpret implicit donor weights for each treated unit. The weights ground the abstract latent-factor model in observable donor units, exposing which control counties drive each treated unit's counterfactual.</span>
 <span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>Diagnose extrapolation failure via convex-hull checks on the loadings plot. Treated units whose factor loadings fall outside the control cloud are extrapolations, not interpolations, and flagging them is the difference between an honest and an overstated estimate.</span>
 <span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a><span class="fu">## Where gsynth fits</span></span>
