@@ -1,27 +1,46 @@
 /* ============================================================
    Comparative Causal Metrics — custom.css
-   Palette adapted from intro2causal:
-     CausalBlue   #2563eb (light) / #38bdf8 (dark)
-     MethodPurple #7c3aed (light) / #a78bfa (dark)
-     EvidenceGreen #059669 (light) / #34d399 (dark)
+   Palette aligned with the Quarcs-lab "metricsai" book:
+     ElectricCyan   #008CB7 (light) / #22d3ee (dark)
+     SynapsePurple  #7A209F (light) / #c084fc (dark)
+     DataPink       #C21E72 (light) / #e2e8f0 (dark — fades to near-white)
+     DeepNavy       #0B1021 (light) / #94a3b8 (dark — fades to slate)
+   Dark mode page background overrides Darkly's #222 with brand navy #12162c.
    ============================================================ */
 
 :root {
-  --ccm-blue: #2563eb;
-  --ccm-purple: #7c3aed;
-  --ccm-green: #059669;
+  --ccm-cyan: #008CB7;
+  --ccm-purple: #7A209F;
+  --ccm-pink: #C21E72;
+  --ccm-navy: #0B1021;
   --ccm-slate: #475569;
-  --ccm-code-bg: rgba(37, 99, 235, 0.06);
-  --ccm-code-border: rgba(37, 99, 235, 0.35);
+  --ccm-code-bg: #f7fafc;
+  --ccm-inline-code-bg: #edf2f7;
 }
 
-[data-bs-theme="dark"] {
-  --ccm-blue: #38bdf8;
-  --ccm-purple: #a78bfa;
-  --ccm-green: #34d399;
-  --ccm-slate: #94a3b8;
-  --ccm-code-bg: rgba(56, 189, 248, 0.08);
-  --ccm-code-border: rgba(56, 189, 248, 0.45);
+[data-bs-theme="dark"],
+.quarto-dark {
+  --ccm-cyan: #22d3ee;
+  --ccm-purple: #c084fc;
+  --ccm-pink: #e2e8f0;
+  --ccm-navy: #94a3b8;
+  --ccm-slate: #cbd5e0;
+  --ccm-code-bg: #152238;
+  --ccm-inline-code-bg: rgba(255, 255, 255, 0.1);
+}
+
+/* Override Darkly's default gray with brand navy */
+.quarto-dark {
+  --bs-body-bg: #12162c !important;
+  background-color: #12162c !important;
+}
+
+.quarto-dark #quarto-header {
+  background-color: #0e1224 !important;
+}
+
+.quarto-dark #quarto-sidebar {
+  background-color: #12162c !important;
 }
 
 /* ---- Typography --------------------------------------------- */
@@ -34,7 +53,7 @@ body {
 /* ---- Heading colors by level -------------------------------- */
 
 h1, .h1 {
-  color: var(--ccm-blue);
+  color: var(--ccm-cyan);
   font-weight: 700;
 }
 
@@ -47,12 +66,12 @@ h2, .h2 {
 }
 
 h3, .h3 {
-  color: var(--ccm-green);
+  color: var(--ccm-pink);
   font-weight: 600;
 }
 
 h4, .h4 {
-  color: var(--ccm-slate);
+  color: var(--ccm-navy);
   font-weight: 600;
 }
 
@@ -61,24 +80,28 @@ h4, .h4 {
 p code,
 li code,
 td code {
-  background-color: var(--ccm-code-bg);
+  background-color: var(--ccm-inline-code-bg);
   color: inherit;
   padding: 0.1em 0.45em;
   border-radius: 0.4em;
   font-size: 0.92em;
 }
 
-/* ---- Code block left border --------------------------------- */
+/* ---- Code blocks: cyan left border with tinted background --- */
 
 div.sourceCode {
-  border-left: 3px solid var(--ccm-code-border);
-  border-radius: 4px;
   background-color: var(--ccm-code-bg);
+  border-left: 3px solid var(--ccm-cyan);
+  border-radius: 4px;
 }
 
 div.sourceCode pre {
   padding: 0.75rem 1rem;
   margin-bottom: 0;
+}
+
+.quarto-dark div.sourceCode pre {
+  color: #e2e8f0;
 }
 
 /* ---- Callouts: subtle accent line --------------------------- */
@@ -90,13 +113,55 @@ div.sourceCode pre {
 /* ---- Links -------------------------------------------------- */
 
 a {
+  color: var(--ccm-cyan);
   text-decoration: none;
 }
 
 a:hover {
+  color: var(--ccm-purple);
   text-decoration: underline;
   text-decoration-thickness: 1.5px;
   text-underline-offset: 3px;
+}
+
+/* ---- Title block: soft gradient header with cyan underline -- */
+
+header#title-block-header {
+  background: linear-gradient(135deg, #f7fafc 0%, #eef6ff 100%);
+  border-bottom: 3px solid var(--ccm-cyan);
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  border-radius: 0 0 8px 8px;
+}
+
+.quarto-dark header#title-block-header {
+  background: rgba(34, 211, 238, 0.05);
+  border-bottom-color: var(--ccm-cyan);
+}
+
+/* ---- Right-side TOC card ------------------------------------ */
+
+#TOC {
+  background: linear-gradient(180deg, #f7fafc 0%, #ffffff 100%);
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 0.75rem;
+}
+
+.quarto-dark #TOC {
+  background: #12162c;
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+#TOC h2 {
+  color: var(--ccm-purple) !important;
+  font-size: 0.95rem;
+  font-weight: 700;
+  border-left: none;
+  border-bottom: 2px solid var(--ccm-cyan);
+  padding-left: 0;
+  padding-bottom: 0.4rem;
+  margin-bottom: 0.75rem;
 }
 
 /* ---- Cover image on Preface --------------------------------- */
@@ -132,5 +197,10 @@ table.gt_table,
   div.sourceCode {
     border-left-width: 2px;
     background-color: transparent;
+  }
+  header#title-block-header,
+  #TOC {
+    background: transparent !important;
+    border: none !important;
   }
 }
