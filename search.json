@@ -1,0 +1,382 @@
+[
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Preface {.unnumbered}",
+    "section": "",
+    "text": "0.1 About this book\nComparative Causal Metrics is an introduction to regional impact evaluation using modern causal-inference methods implemented entirely in R and rendered with Quarto. The book is organized around a small set of quasi-experimental techniques that have become workhorses for evaluating the effects of policies, shocks, and interventions on regional outcomes:\nEach chapter pairs the conceptual logic of the method with a worked R example using publicly available data, so readers can reproduce every estimate end-to-end.",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Preface {.unnumbered}</span>"
+    ]
+  },
+  {
+    "objectID": "index.html#about-this-book",
+    "href": "index.html#about-this-book",
+    "title": "Preface {.unnumbered}",
+    "section": "",
+    "text": "Interrupted time series — modeling a single region’s outcome before and after a discrete event.\nRegression discontinuity in time — exploiting sharp temporal cutoffs as natural experiments.\nClassical synthetic control — constructing a weighted comparison region from a donor pool.\nStructural Bayesian time series — uncertainty-aware counterfactual estimation via state-space models.",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Preface {.unnumbered}</span>"
+    ]
+  },
+  {
+    "objectID": "index.html#how-to-read-this-book",
+    "href": "index.html#how-to-read-this-book",
+    "title": "Preface {.unnumbered}",
+    "section": "0.2 How to read this book",
+    "text": "0.2 How to read this book\nThe chapters are designed to be read sequentially but each is self-contained. Code is folded by default — click &lt;/&gt; Code in any chapter to reveal the underlying R. The full source is available on GitHub, and PDF / EPUB downloads are linked in the navbar.",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Preface {.unnumbered}</span>"
+    ]
+  },
+  {
+    "objectID": "index.html#acknowledgments",
+    "href": "index.html#acknowledgments",
+    "title": "Preface {.unnumbered}",
+    "section": "0.3 Acknowledgments",
+    "text": "0.3 Acknowledgments\nThis book builds on the infrastructure of the companion project Mastering Causal Metrics and on a long tradition of applied econometric scholarship.",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Preface {.unnumbered}</span>"
+    ]
+  },
+  {
+    "objectID": "01-introduction.html",
+    "href": "01-introduction.html",
+    "title": "2  Introduction",
+    "section": "",
+    "text": "2.1 Overview\nPlaceholder. This chapter introduces the comparative-causal framework for regional impact evaluation and motivates the four method families covered in the rest of the book.",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Introduction</span>"
+    ]
+  },
+  {
+    "objectID": "01-introduction.html#what-is-regional-impact-evaluation",
+    "href": "01-introduction.html#what-is-regional-impact-evaluation",
+    "title": "2  Introduction",
+    "section": "2.2 What is regional impact evaluation?",
+    "text": "2.2 What is regional impact evaluation?\nThe native approach and the need for a comparative-causal framework.",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Introduction</span>"
+    ]
+  },
+  {
+    "objectID": "01-introduction.html#the-potential-outcomes-framework",
+    "href": "01-introduction.html#the-potential-outcomes-framework",
+    "title": "2  Introduction",
+    "section": "2.3 The potential outcomes framework",
+    "text": "2.3 The potential outcomes framework\nPlaceholder.",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Introduction</span>"
+    ]
+  },
+  {
+    "objectID": "01-introduction.html#a-roadmap-for-the-book",
+    "href": "01-introduction.html#a-roadmap-for-the-book",
+    "title": "2  Introduction",
+    "section": "2.4 A roadmap for the book",
+    "text": "2.4 A roadmap for the book\nPlaceholder.",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Introduction</span>"
+    ]
+  },
+  {
+    "objectID": "01-introduction.html#setup",
+    "href": "01-introduction.html#setup",
+    "title": "2  Introduction",
+    "section": "2.5 Setup",
+    "text": "2.5 Setup\n\n\nCode\nlibrary(tidyverse)\nlibrary(fixest)\nlibrary(modelsummary)",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Introduction</span>"
+    ]
+  },
+  {
+    "objectID": "01-introduction.html#worked-example-simple-synthetic-control",
+    "href": "01-introduction.html#worked-example-simple-synthetic-control",
+    "title": "2  Introduction",
+    "section": "2.6 Worked example: Simple synthetic control",
+    "text": "2.6 Worked example: Simple synthetic control\nPlaceholder. Each subsequent chapter follows this structure: motivation, identifying assumptions, estimation in R, and a regional case study.",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Introduction</span>"
+    ]
+  },
+  {
+    "objectID": "01-introduction.html#further-reading",
+    "href": "01-introduction.html#further-reading",
+    "title": "2  Introduction",
+    "section": "2.7 Further reading",
+    "text": "2.7 Further reading\nPlaceholder.",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Introduction</span>"
+    ]
+  },
+  {
+    "objectID": "02-interrupted-time-series.html",
+    "href": "02-interrupted-time-series.html",
+    "title": "3  Interrupted Time Series",
+    "section": "",
+    "text": "3.1 Overview\nPlaceholder. Interrupted time series (ITS) designs estimate the effect of a discrete intervention on a single region’s outcome trajectory by modeling pre- and post-intervention trends.",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Interrupted Time Series</span>"
+    ]
+  },
+  {
+    "objectID": "02-interrupted-time-series.html#identifying-assumptions",
+    "href": "02-interrupted-time-series.html#identifying-assumptions",
+    "title": "3  Interrupted Time Series",
+    "section": "3.2 Identifying assumptions",
+    "text": "3.2 Identifying assumptions\nPlaceholder.",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Interrupted Time Series</span>"
+    ]
+  },
+  {
+    "objectID": "02-interrupted-time-series.html#estimation-in-r",
+    "href": "02-interrupted-time-series.html#estimation-in-r",
+    "title": "3  Interrupted Time Series",
+    "section": "3.3 Estimation in R",
+    "text": "3.3 Estimation in R\n\n\nCode\nlibrary(tidyverse)\nlibrary(fixest)\nlibrary(segmented)\nlibrary(nlme)\n\n\n\n\nCode\n# Placeholder: load a regional time series, fit a segmented regression\n# with an intervention dummy and post-trend interaction.",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Interrupted Time Series</span>"
+    ]
+  },
+  {
+    "objectID": "02-interrupted-time-series.html#regional-case-study",
+    "href": "02-interrupted-time-series.html#regional-case-study",
+    "title": "3  Interrupted Time Series",
+    "section": "3.4 Regional case study",
+    "text": "3.4 Regional case study\nPlaceholder.",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Interrupted Time Series</span>"
+    ]
+  },
+  {
+    "objectID": "02-interrupted-time-series.html#diagnostics",
+    "href": "02-interrupted-time-series.html#diagnostics",
+    "title": "3  Interrupted Time Series",
+    "section": "3.5 Diagnostics",
+    "text": "3.5 Diagnostics\nPlaceholder.",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Interrupted Time Series</span>"
+    ]
+  },
+  {
+    "objectID": "02-interrupted-time-series.html#further-reading",
+    "href": "02-interrupted-time-series.html#further-reading",
+    "title": "3  Interrupted Time Series",
+    "section": "3.6 Further reading",
+    "text": "3.6 Further reading\nPlaceholder.",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Interrupted Time Series</span>"
+    ]
+  },
+  {
+    "objectID": "03-rd-in-time.html",
+    "href": "03-rd-in-time.html",
+    "title": "4  Regression Discontinuity in Time",
+    "section": "",
+    "text": "4.1 Overview\nPlaceholder. Regression discontinuity in time (RDiT) extends classical RD designs to settings where the running variable is time itself, with treatment switching on at a known calendar cutoff.",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Regression Discontinuity in Time</span>"
+    ]
+  },
+  {
+    "objectID": "03-rd-in-time.html#identifying-assumptions",
+    "href": "03-rd-in-time.html#identifying-assumptions",
+    "title": "4  Regression Discontinuity in Time",
+    "section": "4.2 Identifying assumptions",
+    "text": "4.2 Identifying assumptions\nPlaceholder.",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Regression Discontinuity in Time</span>"
+    ]
+  },
+  {
+    "objectID": "03-rd-in-time.html#estimation-in-r",
+    "href": "03-rd-in-time.html#estimation-in-r",
+    "title": "4  Regression Discontinuity in Time",
+    "section": "4.3 Estimation in R",
+    "text": "4.3 Estimation in R\n\n\nCode\nlibrary(tidyverse)\nlibrary(fixest)\nlibrary(rdrobust)\n\n\n\n\nCode\n# Placeholder: bandwidth selection, local linear regression around the\n# cutoff date, robust bias-corrected standard errors.",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Regression Discontinuity in Time</span>"
+    ]
+  },
+  {
+    "objectID": "03-rd-in-time.html#bandwidth-selection",
+    "href": "03-rd-in-time.html#bandwidth-selection",
+    "title": "4  Regression Discontinuity in Time",
+    "section": "4.4 Bandwidth selection",
+    "text": "4.4 Bandwidth selection\nPlaceholder.",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Regression Discontinuity in Time</span>"
+    ]
+  },
+  {
+    "objectID": "03-rd-in-time.html#threats-to-validity",
+    "href": "03-rd-in-time.html#threats-to-validity",
+    "title": "4  Regression Discontinuity in Time",
+    "section": "4.5 Threats to validity",
+    "text": "4.5 Threats to validity\nPlaceholder. RDiT designs are vulnerable to time-varying confounders, autocorrelation, and anticipation effects.",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Regression Discontinuity in Time</span>"
+    ]
+  },
+  {
+    "objectID": "03-rd-in-time.html#regional-case-study",
+    "href": "03-rd-in-time.html#regional-case-study",
+    "title": "4  Regression Discontinuity in Time",
+    "section": "4.6 Regional case study",
+    "text": "4.6 Regional case study\nPlaceholder.",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Regression Discontinuity in Time</span>"
+    ]
+  },
+  {
+    "objectID": "03-rd-in-time.html#further-reading",
+    "href": "03-rd-in-time.html#further-reading",
+    "title": "4  Regression Discontinuity in Time",
+    "section": "4.7 Further reading",
+    "text": "4.7 Further reading\nPlaceholder.",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Regression Discontinuity in Time</span>"
+    ]
+  },
+  {
+    "objectID": "04-classical-synthetic-control.html",
+    "href": "04-classical-synthetic-control.html",
+    "title": "5  Classical Synthetic Control",
+    "section": "",
+    "text": "5.1 Overview\nPlaceholder. The synthetic control method constructs a counterfactual for a single treated region as a convex combination of untreated donor regions, choosing weights to minimize pre-treatment outcome divergence.",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Classical Synthetic Control</span>"
+    ]
+  },
+  {
+    "objectID": "04-classical-synthetic-control.html#the-method",
+    "href": "04-classical-synthetic-control.html#the-method",
+    "title": "5  Classical Synthetic Control",
+    "section": "5.2 The method",
+    "text": "5.2 The method\nPlaceholder.",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Classical Synthetic Control</span>"
+    ]
+  },
+  {
+    "objectID": "04-classical-synthetic-control.html#estimation-in-r",
+    "href": "04-classical-synthetic-control.html#estimation-in-r",
+    "title": "5  Classical Synthetic Control",
+    "section": "5.3 Estimation in R",
+    "text": "5.3 Estimation in R\n\n\nCode\nlibrary(tidyverse)\nlibrary(tidysynth)\n\n\n\n\nCode\n# Placeholder: assemble a donor pool, fit a synthetic control with\n# tidysynth, plot treated vs. synthetic trajectories.",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Classical Synthetic Control</span>"
+    ]
+  },
+  {
+    "objectID": "04-classical-synthetic-control.html#inference-placebo-tests",
+    "href": "04-classical-synthetic-control.html#inference-placebo-tests",
+    "title": "5  Classical Synthetic Control",
+    "section": "5.4 Inference: placebo tests",
+    "text": "5.4 Inference: placebo tests\nPlaceholder.",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Classical Synthetic Control</span>"
+    ]
+  },
+  {
+    "objectID": "04-classical-synthetic-control.html#regional-case-study",
+    "href": "04-classical-synthetic-control.html#regional-case-study",
+    "title": "5  Classical Synthetic Control",
+    "section": "5.5 Regional case study",
+    "text": "5.5 Regional case study\nPlaceholder.",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Classical Synthetic Control</span>"
+    ]
+  },
+  {
+    "objectID": "04-classical-synthetic-control.html#limitations",
+    "href": "04-classical-synthetic-control.html#limitations",
+    "title": "5  Classical Synthetic Control",
+    "section": "5.6 Limitations",
+    "text": "5.6 Limitations\nPlaceholder. Classical synthetic control is sensitive to donor-pool composition, requires sufficient pre-treatment history, and offers limited frequentist inference.",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Classical Synthetic Control</span>"
+    ]
+  },
+  {
+    "objectID": "04-classical-synthetic-control.html#further-reading",
+    "href": "04-classical-synthetic-control.html#further-reading",
+    "title": "5  Classical Synthetic Control",
+    "section": "5.7 Further reading",
+    "text": "5.7 Further reading\nPlaceholder.",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Classical Synthetic Control</span>"
+    ]
+  },
+  {
+    "objectID": "05-structural-bayesian-ts.html",
+    "href": "05-structural-bayesian-ts.html",
+    "title": "6  Structural Bayesian Time Series",
+    "section": "",
+    "text": "6.1 Overview\nPlaceholder. Structural Bayesian time-series models (e.g., Google’s CausalImpact) estimate the causal effect of an intervention as the difference between observed post-intervention outcomes and a Bayesian counterfactual forecast built from pre-intervention dynamics and contemporaneous control series.",
+    "crumbs": [
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Structural Bayesian Time Series</span>"
+    ]
+  },
+  {
+    "objectID": "05-structural-bayesian-ts.html#the-model",
+    "href": "05-structural-bayesian-ts.html#the-model",
+    "title": "6  Structural Bayesian Time Series",
+    "section": "6.2 The model",
+    "text": "6.2 The model\nPlaceholder. A state-space decomposition into local-trend, seasonal, and regression components, fit by bsts.",
+    "crumbs": [
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Structural Bayesian Time Series</span>"
+    ]
+  },
+  {
+    "objectID": "05-structural-bayesian-ts.html#estimation-in-r",
+    "href": "05-structural-bayesian-ts.html#estimation-in-r",
+    "title": "6  Structural Bayesian Time Series",
+    "section": "6.3 Estimation in R",
+    "text": "6.3 Estimation in R\n\n\nCode\nlibrary(tidyverse)\nlibrary(CausalImpact)\nlibrary(bsts)\n\n\n\n\nCode\n# Placeholder: build a CausalImpact input frame with the treated series\n# and donor controls, call CausalImpact(), summarize and plot.",
+    "crumbs": [
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Structural Bayesian Time Series</span>"
+    ]
+  },
+  {
+    "objectID": "05-structural-bayesian-ts.html#interpreting-posterior-intervals",
+    "href": "05-structural-bayesian-ts.html#interpreting-posterior-intervals",
+    "title": "6  Structural Bayesian Time Series",
+    "section": "6.4 Interpreting posterior intervals",
+    "text": "6.4 Interpreting posterior intervals\nPlaceholder.",
+    "crumbs": [
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Structural Bayesian Time Series</span>"
+    ]
+  },
+  {
+    "objectID": "05-structural-bayesian-ts.html#regional-case-study",
+    "href": "05-structural-bayesian-ts.html#regional-case-study",
+    "title": "6  Structural Bayesian Time Series",
+    "section": "6.5 Regional case study",
+    "text": "6.5 Regional case study\nPlaceholder.",
+    "crumbs": [
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Structural Bayesian Time Series</span>"
+    ]
+  },
+  {
+    "objectID": "05-structural-bayesian-ts.html#comparison-with-synthetic-control",
+    "href": "05-structural-bayesian-ts.html#comparison-with-synthetic-control",
+    "title": "6  Structural Bayesian Time Series",
+    "section": "6.6 Comparison with synthetic control",
+    "text": "6.6 Comparison with synthetic control\nPlaceholder. CausalImpact and classical synthetic control answer related questions with different assumptions; this section compares estimates on the same data.",
+    "crumbs": [
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Structural Bayesian Time Series</span>"
+    ]
+  },
+  {
+    "objectID": "05-structural-bayesian-ts.html#further-reading",
+    "href": "05-structural-bayesian-ts.html#further-reading",
+    "title": "6  Structural Bayesian Time Series",
+    "section": "6.7 Further reading",
+    "text": "6.7 Further reading\nPlaceholder.",
+    "crumbs": [
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Structural Bayesian Time Series</span>"
+    ]
+  }
+]
