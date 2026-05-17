@@ -473,6 +473,7 @@ window.Quarto = {
   <li><a href="#common-pitfall" id="toc-common-pitfall" class="nav-link" data-scroll-target="#common-pitfall"><span class="header-section-number">9.10</span> Common pitfall</a></li>
   <li><a href="#further-reading" id="toc-further-reading" class="nav-link" data-scroll-target="#further-reading"><span class="header-section-number">9.11</span> Further reading</a></li>
   <li><a href="#exercises" id="toc-exercises" class="nav-link" data-scroll-target="#exercises"><span class="header-section-number">9.12</span> Exercises</a></li>
+  <li><a href="#key-takeaways" id="toc-key-takeaways" class="nav-link" data-scroll-target="#key-takeaways">Key takeaways</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/quarcs-lab/ccm/edit/main/09-matrix-completion-and-ife.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/quarcs-lab/ccm/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
@@ -2244,16 +2245,9 @@ Table&nbsp;9.3: Average post-treatment ATT under IFEct and MC, with bootstrap st
 <li>Add the two-covariate extension <code>lemp ~ D + lpop + lavg_pay</code> to both <code>fect()</code> calls, refit, and compare the ATT trajectory and the numeric headline ATT against <a href="#tbl-att" class="quarto-xref">Table&nbsp;<span>9.3</span></a>. Does conditioning on log population and log average pay move the gap plot meaningfully?</li>
 <li>Re-fit <code>out_mc</code> on a tighter window (<code>year &gt;= 2002</code>) so cohort 2004 has 2 pre-periods instead of 3. At what window does the MC counterfactual visibly break (sharp pre-trend in the gap plot)?</li>
 </ol>
-<div class="callout callout-style-default callout-important callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Important</span>Key takeaways
-</div>
-</div>
-<div class="callout-body-container callout-body">
+</section>
+<section id="key-takeaways" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="key-takeaways">Key takeaways</h2>
 <ul>
 <li><strong>Method:</strong> <em>Recap, in one line, what the method does and what it estimates.</em></li>
 <li><strong>Method:</strong> <em>Note the key identifying assumption or estimand-specific nuance.</em></li>
@@ -2263,8 +2257,6 @@ Table&nbsp;9.3: Average post-treatment ATT under IFEct and MC, with bootstrap st
 <li><strong>Caveat:</strong> <em>Flag the leading limitation (data, assumption, or inference).</em></li>
 <li><strong>Caveat:</strong> <em>Flag a secondary caveat or scope condition.</em></li>
 </ul>
-</div>
-</div>
 
 
 <!-- -->
@@ -3193,17 +3185,15 @@ Xu, Y. (2017). Generalized synthetic control method: Causal inference with inter
 <span id="cb11-440"><a href="#cb11-440" aria-hidden="true" tabindex="-1"></a>   2004 has 2 pre-periods instead of 3. At what window does the MC</span>
 <span id="cb11-441"><a href="#cb11-441" aria-hidden="true" tabindex="-1"></a>   counterfactual visibly break (sharp pre-trend in the gap plot)?</span>
 <span id="cb11-442"><a href="#cb11-442" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-443"><a href="#cb11-443" aria-hidden="true" tabindex="-1"></a>::: {.callout-important}</span>
-<span id="cb11-444"><a href="#cb11-444" aria-hidden="true" tabindex="-1"></a><span class="fu">## Key takeaways</span></span>
-<span id="cb11-445"><a href="#cb11-445" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-446"><a href="#cb11-446" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Method:** _Recap, in one line, what the method does and what it estimates._</span>
-<span id="cb11-447"><a href="#cb11-447" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Method:** _Note the key identifying assumption or estimand-specific nuance._</span>
-<span id="cb11-448"><a href="#cb11-448" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Lesson:** _State the main empirical lesson from this chapter's case study._</span>
-<span id="cb11-449"><a href="#cb11-449" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Lesson:** _State a second lesson — e.g., what changed vs. the prior chapter's method._</span>
-<span id="cb11-450"><a href="#cb11-450" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Lesson:** _Optional third lesson — diagnostics, sensitivity, or interpretation tip._</span>
-<span id="cb11-451"><a href="#cb11-451" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Caveat:** _Flag the leading limitation (data, assumption, or inference)._</span>
-<span id="cb11-452"><a href="#cb11-452" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Caveat:** _Flag a secondary caveat or scope condition._</span>
-<span id="cb11-453"><a href="#cb11-453" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb11-443"><a href="#cb11-443" aria-hidden="true" tabindex="-1"></a><span class="fu">## Key takeaways {.unnumbered}</span></span>
+<span id="cb11-444"><a href="#cb11-444" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-445"><a href="#cb11-445" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Method:** _Recap, in one line, what the method does and what it estimates._</span>
+<span id="cb11-446"><a href="#cb11-446" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Method:** _Note the key identifying assumption or estimand-specific nuance._</span>
+<span id="cb11-447"><a href="#cb11-447" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Lesson:** _State the main empirical lesson from this chapter's case study._</span>
+<span id="cb11-448"><a href="#cb11-448" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Lesson:** _State a second lesson — e.g., what changed vs. the prior chapter's method._</span>
+<span id="cb11-449"><a href="#cb11-449" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Lesson:** _Optional third lesson — diagnostics, sensitivity, or interpretation tip._</span>
+<span id="cb11-450"><a href="#cb11-450" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Caveat:** _Flag the leading limitation (data, assumption, or inference)._</span>
+<span id="cb11-451"><a href="#cb11-451" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Caveat:** _Flag a secondary caveat or scope condition._</span>
 </code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->

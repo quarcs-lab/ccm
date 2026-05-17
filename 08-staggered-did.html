@@ -475,6 +475,7 @@ window.Quarto = {
   <li><a href="#common-pitfall" id="toc-common-pitfall" class="nav-link" data-scroll-target="#common-pitfall"><span class="header-section-number">8.9</span> Common pitfall</a></li>
   <li><a href="#further-reading" id="toc-further-reading" class="nav-link" data-scroll-target="#further-reading"><span class="header-section-number">8.10</span> Further reading</a></li>
   <li><a href="#exercises" id="toc-exercises" class="nav-link" data-scroll-target="#exercises"><span class="header-section-number">8.11</span> Exercises</a></li>
+  <li><a href="#key-takeaways" id="toc-key-takeaways" class="nav-link" data-scroll-target="#key-takeaways">Key takeaways</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/quarcs-lab/ccm/edit/main/08-staggered-did.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/quarcs-lab/ccm/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
@@ -4360,16 +4361,9 @@ Figure&nbsp;8.2: HonestDiD sensitivity: as <span class="math inline">\(\bar M\)<
 <li>Use <code>did::aggte(attgt, type = "calendar")</code> to aggregate by <em>calendar year</em> rather than event time. Which calendar year shows the largest treatment effect, and what substantive story does that suggest?</li>
 <li>Run <code>HonestDiD</code> with <code>type = "smoothness"</code> instead of <code>"relative_magnitude"</code>, supplying <code>Mvec = seq(0, 0.05, by = 0.01)</code>. What does the breakdown <span class="math inline">\(M\)</span> say about the credibility of the parallel-trends assumption in this dataset?</li>
 </ol>
-<div class="callout callout-style-default callout-important callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Important</span>Key takeaways
-</div>
-</div>
-<div class="callout-body-container callout-body">
+</section>
+<section id="key-takeaways" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="key-takeaways">Key takeaways</h2>
 <ul>
 <li><strong>Method:</strong> <em>Recap, in one line, what the method does and what it estimates.</em></li>
 <li><strong>Method:</strong> <em>Note the key identifying assumption or estimand-specific nuance.</em></li>
@@ -4379,8 +4373,6 @@ Figure&nbsp;8.2: HonestDiD sensitivity: as <span class="math inline">\(\bar M\)<
 <li><strong>Caveat:</strong> <em>Flag the leading limitation (data, assumption, or inference).</em></li>
 <li><strong>Caveat:</strong> <em>Flag a secondary caveat or scope condition.</em></li>
 </ul>
-</div>
-</div>
 
 
 <!-- -->
@@ -5398,17 +5390,15 @@ Sun, L., &amp; Abraham, S. (2021). Estimating dynamic treatment effects in event
 <span id="cb13-524"><a href="#cb13-524" aria-hidden="true" tabindex="-1"></a>   What does the breakdown $M$ say about the credibility of the</span>
 <span id="cb13-525"><a href="#cb13-525" aria-hidden="true" tabindex="-1"></a>   parallel-trends assumption in this dataset?</span>
 <span id="cb13-526"><a href="#cb13-526" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-527"><a href="#cb13-527" aria-hidden="true" tabindex="-1"></a>::: {.callout-important}</span>
-<span id="cb13-528"><a href="#cb13-528" aria-hidden="true" tabindex="-1"></a><span class="fu">## Key takeaways</span></span>
-<span id="cb13-529"><a href="#cb13-529" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-530"><a href="#cb13-530" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Method:** _Recap, in one line, what the method does and what it estimates._</span>
-<span id="cb13-531"><a href="#cb13-531" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Method:** _Note the key identifying assumption or estimand-specific nuance._</span>
-<span id="cb13-532"><a href="#cb13-532" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Lesson:** _State the main empirical lesson from this chapter's case study._</span>
-<span id="cb13-533"><a href="#cb13-533" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Lesson:** _State a second lesson — e.g., what changed vs. the prior chapter's method._</span>
-<span id="cb13-534"><a href="#cb13-534" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Lesson:** _Optional third lesson — diagnostics, sensitivity, or interpretation tip._</span>
-<span id="cb13-535"><a href="#cb13-535" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Caveat:** _Flag the leading limitation (data, assumption, or inference)._</span>
-<span id="cb13-536"><a href="#cb13-536" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Caveat:** _Flag a secondary caveat or scope condition._</span>
-<span id="cb13-537"><a href="#cb13-537" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb13-527"><a href="#cb13-527" aria-hidden="true" tabindex="-1"></a><span class="fu">## Key takeaways {.unnumbered}</span></span>
+<span id="cb13-528"><a href="#cb13-528" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-529"><a href="#cb13-529" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Method:** _Recap, in one line, what the method does and what it estimates._</span>
+<span id="cb13-530"><a href="#cb13-530" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Method:** _Note the key identifying assumption or estimand-specific nuance._</span>
+<span id="cb13-531"><a href="#cb13-531" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Lesson:** _State the main empirical lesson from this chapter's case study._</span>
+<span id="cb13-532"><a href="#cb13-532" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Lesson:** _State a second lesson — e.g., what changed vs. the prior chapter's method._</span>
+<span id="cb13-533"><a href="#cb13-533" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Lesson:** _Optional third lesson — diagnostics, sensitivity, or interpretation tip._</span>
+<span id="cb13-534"><a href="#cb13-534" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Caveat:** _Flag the leading limitation (data, assumption, or inference)._</span>
+<span id="cb13-535"><a href="#cb13-535" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Caveat:** _Flag a secondary caveat or scope condition._</span>
 </code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->

@@ -479,6 +479,7 @@ window.Quarto = {
   <li><a href="#common-pitfall" id="toc-common-pitfall" class="nav-link" data-scroll-target="#common-pitfall"><span class="header-section-number">10.10</span> Common pitfall</a></li>
   <li><a href="#further-reading" id="toc-further-reading" class="nav-link" data-scroll-target="#further-reading"><span class="header-section-number">10.11</span> Further reading</a></li>
   <li><a href="#exercises" id="toc-exercises" class="nav-link" data-scroll-target="#exercises"><span class="header-section-number">10.12</span> Exercises</a></li>
+  <li><a href="#key-takeaways" id="toc-key-takeaways" class="nav-link" data-scroll-target="#key-takeaways">Key takeaways</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/quarcs-lab/ccm/edit/main/10-gsynth.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/quarcs-lab/ccm/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
@@ -3031,16 +3032,9 @@ Figure&nbsp;10.7: Cumulative ATT trajectory. The x-axis is event time (years sin
 <li>Compare gsynth’s overall ATT to the doubly-robust Callaway-Sant’Anna estimate from chapter 8 (<span class="math inline">\(-0.065\)</span>). Which would you report as the headline, and what design feature of the data drives your choice?</li>
 <li>Flip the pedagogical compute toggles to research-grade: <code>nboots = 1000</code> and <code>parallel = TRUE</code>. Refit at <span class="math inline">\(r = r^*\)</span>. By how much does the 95% CI tighten, and is the change material for any of the substantive claims the chapter makes? (The <code>seed = 42</code> argument passed to <code>gsynth()</code> makes the bootstrap CIs exactly reproducible across <code>nboots</code> levels, so your numbers should match an independent re-run.)</li>
 </ol>
-<div class="callout callout-style-default callout-important callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Important</span>Key takeaways
-</div>
-</div>
-<div class="callout-body-container callout-body">
+</section>
+<section id="key-takeaways" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="key-takeaways">Key takeaways</h2>
 <ul>
 <li><strong>Method:</strong> <em>Recap, in one line, what the method does and what it estimates.</em></li>
 <li><strong>Method:</strong> <em>Note the key identifying assumption or estimand-specific nuance.</em></li>
@@ -3050,8 +3044,6 @@ Figure&nbsp;10.7: Cumulative ATT trajectory. The x-axis is event time (years sin
 <li><strong>Caveat:</strong> <em>Flag the leading limitation (data, assumption, or inference).</em></li>
 <li><strong>Caveat:</strong> <em>Flag a secondary caveat or scope condition.</em></li>
 </ul>
-</div>
-</div>
 
 
 <!-- -->
@@ -4115,17 +4107,15 @@ Xu, Y. (2017). Generalized synthetic control method: Causal inference with inter
 <span id="cb18-590"><a href="#cb18-590" aria-hidden="true" tabindex="-1"></a>   exactly reproducible across <span class="in">`nboots`</span> levels, so your numbers</span>
 <span id="cb18-591"><a href="#cb18-591" aria-hidden="true" tabindex="-1"></a>   should match an independent re-run.)</span>
 <span id="cb18-592"><a href="#cb18-592" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-593"><a href="#cb18-593" aria-hidden="true" tabindex="-1"></a>::: {.callout-important}</span>
-<span id="cb18-594"><a href="#cb18-594" aria-hidden="true" tabindex="-1"></a><span class="fu">## Key takeaways</span></span>
-<span id="cb18-595"><a href="#cb18-595" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-596"><a href="#cb18-596" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Method:** _Recap, in one line, what the method does and what it estimates._</span>
-<span id="cb18-597"><a href="#cb18-597" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Method:** _Note the key identifying assumption or estimand-specific nuance._</span>
-<span id="cb18-598"><a href="#cb18-598" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Lesson:** _State the main empirical lesson from this chapter's case study._</span>
-<span id="cb18-599"><a href="#cb18-599" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Lesson:** _State a second lesson — e.g., what changed vs. the prior chapter's method._</span>
-<span id="cb18-600"><a href="#cb18-600" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Lesson:** _Optional third lesson — diagnostics, sensitivity, or interpretation tip._</span>
-<span id="cb18-601"><a href="#cb18-601" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Caveat:** _Flag the leading limitation (data, assumption, or inference)._</span>
-<span id="cb18-602"><a href="#cb18-602" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Caveat:** _Flag a secondary caveat or scope condition._</span>
-<span id="cb18-603"><a href="#cb18-603" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb18-593"><a href="#cb18-593" aria-hidden="true" tabindex="-1"></a><span class="fu">## Key takeaways {.unnumbered}</span></span>
+<span id="cb18-594"><a href="#cb18-594" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-595"><a href="#cb18-595" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Method:** _Recap, in one line, what the method does and what it estimates._</span>
+<span id="cb18-596"><a href="#cb18-596" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Method:** _Note the key identifying assumption or estimand-specific nuance._</span>
+<span id="cb18-597"><a href="#cb18-597" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Lesson:** _State the main empirical lesson from this chapter's case study._</span>
+<span id="cb18-598"><a href="#cb18-598" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Lesson:** _State a second lesson — e.g., what changed vs. the prior chapter's method._</span>
+<span id="cb18-599"><a href="#cb18-599" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Lesson:** _Optional third lesson — diagnostics, sensitivity, or interpretation tip._</span>
+<span id="cb18-600"><a href="#cb18-600" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Caveat:** _Flag the leading limitation (data, assumption, or inference)._</span>
+<span id="cb18-601"><a href="#cb18-601" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Caveat:** _Flag a secondary caveat or scope condition._</span>
 </code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->

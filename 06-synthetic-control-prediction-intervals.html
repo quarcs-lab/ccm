@@ -475,6 +475,7 @@ window.Quarto = {
   <li><a href="#common-pitfall" id="toc-common-pitfall" class="nav-link" data-scroll-target="#common-pitfall"><span class="header-section-number">6.12</span> Common pitfall</a></li>
   <li><a href="#recap" id="toc-recap" class="nav-link" data-scroll-target="#recap"><span class="header-section-number">6.13</span> Recap</a></li>
   <li><a href="#further-reading" id="toc-further-reading" class="nav-link" data-scroll-target="#further-reading"><span class="header-section-number">6.14</span> Further reading</a></li>
+  <li><a href="#key-takeaways" id="toc-key-takeaways" class="nav-link" data-scroll-target="#key-takeaways">Key takeaways</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/quarcs-lab/ccm/edit/main/06-synthetic-control-prediction-intervals.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/quarcs-lab/ccm/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
@@ -2082,16 +2083,9 @@ Figure&nbsp;6.5: Sensitivity to the joint confidence level (simplex constraint).
 <li>The companion <strong>Python (<code>scpi_pkg</code>) and Stata (<code>scpi</code>)</strong> packages, documented at <a href="https://nppackages.github.io/scpi/" class="uri">https://nppackages.github.io/scpi/</a>, expose the same API as the R package used in this chapter.</li>
 </ul>
 <p><strong>Coming up.</strong> Chapter 7 builds a <em>fourth</em> synthetic-control perspective: a Bayesian horseshoe-prior weight model coupled with a spatial-autoregressive donor data-generating process. That chapter is the first in the book that relaxes the stable-unit-treatment-value assumption (SUTVA) — donors are allowed to be themselves affected by California’s policy.</p>
-<div class="callout callout-style-default callout-important callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Important</span>Key takeaways
-</div>
-</div>
-<div class="callout-body-container callout-body">
+</section>
+<section id="key-takeaways" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="key-takeaways">Key takeaways</h2>
 <ul>
 <li><strong>Method:</strong> <em>Recap, in one line, what the method does and what it estimates.</em></li>
 <li><strong>Method:</strong> <em>Note the key identifying assumption or estimand-specific nuance.</em></li>
@@ -2101,8 +2095,6 @@ Figure&nbsp;6.5: Sensitivity to the joint confidence level (simplex constraint).
 <li><strong>Caveat:</strong> <em>Flag the leading limitation (data, assumption, or inference).</em></li>
 <li><strong>Caveat:</strong> <em>Flag a secondary caveat or scope condition.</em></li>
 </ul>
-</div>
-</div>
 
 
 <!-- -->
@@ -3076,17 +3068,15 @@ Dunford, E. (2024). <em><span class="nocase">tidysynth</span> — a tidy impleme
 <span id="cb15-495"><a href="#cb15-495" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb15-496"><a href="#cb15-496" aria-hidden="true" tabindex="-1"></a>**Coming up.** Chapter 7 builds a *fourth* synthetic-control perspective: a Bayesian horseshoe-prior weight model coupled with a spatial-autoregressive donor data-generating process. That chapter is the first in the book that relaxes the stable-unit-treatment-value assumption (SUTVA) — donors are allowed to be themselves affected by California's policy.</span>
 <span id="cb15-497"><a href="#cb15-497" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-498"><a href="#cb15-498" aria-hidden="true" tabindex="-1"></a>::: {.callout-important}</span>
-<span id="cb15-499"><a href="#cb15-499" aria-hidden="true" tabindex="-1"></a><span class="fu">## Key takeaways</span></span>
-<span id="cb15-500"><a href="#cb15-500" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-501"><a href="#cb15-501" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Method:** _Recap, in one line, what the method does and what it estimates._</span>
-<span id="cb15-502"><a href="#cb15-502" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Method:** _Note the key identifying assumption or estimand-specific nuance._</span>
-<span id="cb15-503"><a href="#cb15-503" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Lesson:** _State the main empirical lesson from this chapter's case study._</span>
-<span id="cb15-504"><a href="#cb15-504" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Lesson:** _State a second lesson — e.g., what changed vs. the prior chapter's method._</span>
-<span id="cb15-505"><a href="#cb15-505" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Lesson:** _Optional third lesson — diagnostics, sensitivity, or interpretation tip._</span>
-<span id="cb15-506"><a href="#cb15-506" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Caveat:** _Flag the leading limitation (data, assumption, or inference)._</span>
-<span id="cb15-507"><a href="#cb15-507" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Caveat:** _Flag a secondary caveat or scope condition._</span>
-<span id="cb15-508"><a href="#cb15-508" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb15-498"><a href="#cb15-498" aria-hidden="true" tabindex="-1"></a><span class="fu">## Key takeaways {.unnumbered}</span></span>
+<span id="cb15-499"><a href="#cb15-499" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-500"><a href="#cb15-500" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Method:** _Recap, in one line, what the method does and what it estimates._</span>
+<span id="cb15-501"><a href="#cb15-501" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Method:** _Note the key identifying assumption or estimand-specific nuance._</span>
+<span id="cb15-502"><a href="#cb15-502" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Lesson:** _State the main empirical lesson from this chapter's case study._</span>
+<span id="cb15-503"><a href="#cb15-503" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Lesson:** _State a second lesson — e.g., what changed vs. the prior chapter's method._</span>
+<span id="cb15-504"><a href="#cb15-504" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Lesson:** _Optional third lesson — diagnostics, sensitivity, or interpretation tip._</span>
+<span id="cb15-505"><a href="#cb15-505" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Caveat:** _Flag the leading limitation (data, assumption, or inference)._</span>
+<span id="cb15-506"><a href="#cb15-506" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Caveat:** _Flag a secondary caveat or scope condition._</span>
 </code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->

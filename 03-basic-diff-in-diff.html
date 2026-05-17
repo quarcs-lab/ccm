@@ -472,6 +472,7 @@ window.Quarto = {
   <li><a href="#fit-and-hac-inference" id="toc-fit-and-hac-inference" class="nav-link" data-scroll-target="#fit-and-hac-inference"><span class="header-section-number">3.5</span> Fit and HAC inference</a></li>
   <li><a href="#visual-diagnostic" id="toc-visual-diagnostic" class="nav-link" data-scroll-target="#visual-diagnostic"><span class="header-section-number">3.6</span> Visual diagnostic</a></li>
   <li><a href="#further-reading" id="toc-further-reading" class="nav-link" data-scroll-target="#further-reading"><span class="header-section-number">3.7</span> Further reading</a></li>
+  <li><a href="#key-takeaways" id="toc-key-takeaways" class="nav-link" data-scroll-target="#key-takeaways">Key takeaways</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/quarcs-lab/ccm/edit/main/03-basic-diff-in-diff.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/quarcs-lab/ccm/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
@@ -1735,16 +1736,9 @@ Table&nbsp;3.2: Formal pre-trends test: California × year slope difference on t
 <h2 data-number="3.7" class="anchored" data-anchor-id="further-reading"><span class="header-section-number">3.7</span> Further reading</h2>
 <p>This chapter is the <strong>canonical 2×2 / single-shock DiD</strong>: one treated unit (California), one control unit (Nevada), one pre-period, one post-period. <strong>Chapter 8 (Part II)</strong> revisits DiD in the <em>staggered-adoption</em> setting — many treated units that switch at different dates — using the Callaway–Sant’Anna group-time ATT estimator <span class="citation" data-cites="callaway2021difference">(<a href="references.html#ref-callaway2021difference" role="doc-biblioref">Callaway &amp; Sant’Anna, 2021</a>)</span>, the Sun–Abraham interaction-weighted estimator <span class="citation" data-cites="sun2021estimating">(<a href="references.html#ref-sun2021estimating" role="doc-biblioref">Sun &amp; Abraham, 2021</a>)</span>, and the Rambachan–Roth honest-DiD sensitivity bounds <span class="citation" data-cites="rambachan2023more">(<a href="references.html#ref-rambachan2023more" role="doc-biblioref">Rambachan &amp; Roth, 2023</a>)</span> on a Callaway-Sant’Anna minimum-wage county panel. The two chapters together cover the modern DiD toolkit.</p>
 <p><strong>Classical references.</strong> <span class="citation" data-cites="cardkrueger1994minimum">Card &amp; Krueger (<a href="references.html#ref-cardkrueger1994minimum" role="doc-biblioref">1994</a>)</span> is the textbook applied 2×2 DiD (New Jersey vs Pennsylvania minimum wage and fast-food employment). <span class="citation" data-cites="bertrand2004how">Bertrand et al. (<a href="references.html#ref-bertrand2004how" role="doc-biblioref">2004</a>)</span> is the seminal warning that DiD standard errors are biased toward zero under residual autocorrelation — the reason this chapter’s inference choice is non-trivial. <span class="citation" data-cites="bernal2017interrupted">Bernal et al. (<a href="references.html#ref-bernal2017interrupted" role="doc-biblioref">2017</a>)</span> is the practitioner reference for parallel-trends <em>visual</em> diagnostics. For modern multi-period DiD with staggered adoption, <code>did</code> (Callaway–Sant’Anna) and <code>fixest::feols</code> (two-way fixed effects with cluster-robust SEs — but <strong>only when there are enough clusters</strong>) are the standard R workhorses.</p>
-<div class="callout callout-style-default callout-important callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Important</span>Key takeaways
-</div>
-</div>
-<div class="callout-body-container callout-body">
+</section>
+<section id="key-takeaways" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="key-takeaways">Key takeaways</h2>
 <ul>
 <li><strong>Method:</strong> <em>Recap, in one line, what the method does and what it estimates.</em></li>
 <li><strong>Method:</strong> <em>Note the key identifying assumption or estimand-specific nuance.</em></li>
@@ -1754,8 +1748,6 @@ Table&nbsp;3.2: Formal pre-trends test: California × year slope difference on t
 <li><strong>Caveat:</strong> <em>Flag the leading limitation (data, assumption, or inference).</em></li>
 <li><strong>Caveat:</strong> <em>Flag a secondary caveat or scope condition.</em></li>
 </ul>
-</div>
-</div>
 
 
 <!-- -->
@@ -2455,17 +2447,15 @@ Sun, L., &amp; Abraham, S. (2021). Estimating dynamic treatment effects in event
 <span id="cb6-199"><a href="#cb6-199" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-200"><a href="#cb6-200" aria-hidden="true" tabindex="-1"></a>**Classical references.** @cardkrueger1994minimum is the textbook applied 2×2 DiD (New Jersey vs Pennsylvania minimum wage and fast-food employment). @bertrand2004how is the seminal warning that DiD standard errors are biased toward zero under residual autocorrelation — the reason this chapter's inference choice is non-trivial. @bernal2017interrupted is the practitioner reference for parallel-trends *visual* diagnostics. For modern multi-period DiD with staggered adoption, `did` (Callaway–Sant'Anna) and `fixest::feols` (two-way fixed effects with cluster-robust SEs — but **only when there are enough clusters**) are the standard R workhorses.</span>
 <span id="cb6-201"><a href="#cb6-201" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-202"><a href="#cb6-202" aria-hidden="true" tabindex="-1"></a>::: {.callout-important}</span>
-<span id="cb6-203"><a href="#cb6-203" aria-hidden="true" tabindex="-1"></a><span class="fu">## Key takeaways</span></span>
-<span id="cb6-204"><a href="#cb6-204" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-205"><a href="#cb6-205" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Method:** _Recap, in one line, what the method does and what it estimates._</span>
-<span id="cb6-206"><a href="#cb6-206" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Method:** _Note the key identifying assumption or estimand-specific nuance._</span>
-<span id="cb6-207"><a href="#cb6-207" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Lesson:** _State the main empirical lesson from this chapter's case study._</span>
-<span id="cb6-208"><a href="#cb6-208" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Lesson:** _State a second lesson — e.g., what changed vs. the prior chapter's method._</span>
-<span id="cb6-209"><a href="#cb6-209" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Lesson:** _Optional third lesson — diagnostics, sensitivity, or interpretation tip._</span>
-<span id="cb6-210"><a href="#cb6-210" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Caveat:** _Flag the leading limitation (data, assumption, or inference)._</span>
-<span id="cb6-211"><a href="#cb6-211" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Caveat:** _Flag a secondary caveat or scope condition._</span>
-<span id="cb6-212"><a href="#cb6-212" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb6-202"><a href="#cb6-202" aria-hidden="true" tabindex="-1"></a><span class="fu">## Key takeaways {.unnumbered}</span></span>
+<span id="cb6-203"><a href="#cb6-203" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-204"><a href="#cb6-204" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Method:** _Recap, in one line, what the method does and what it estimates._</span>
+<span id="cb6-205"><a href="#cb6-205" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Method:** _Note the key identifying assumption or estimand-specific nuance._</span>
+<span id="cb6-206"><a href="#cb6-206" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Lesson:** _State the main empirical lesson from this chapter's case study._</span>
+<span id="cb6-207"><a href="#cb6-207" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Lesson:** _State a second lesson — e.g., what changed vs. the prior chapter's method._</span>
+<span id="cb6-208"><a href="#cb6-208" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Lesson:** _Optional third lesson — diagnostics, sensitivity, or interpretation tip._</span>
+<span id="cb6-209"><a href="#cb6-209" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Caveat:** _Flag the leading limitation (data, assumption, or inference)._</span>
+<span id="cb6-210"><a href="#cb6-210" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Caveat:** _Flag a secondary caveat or scope condition._</span>
 </code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
