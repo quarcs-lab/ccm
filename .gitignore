@@ -4,6 +4,9 @@
 /_freeze/
 *.quarto_ipynb
 
+# Per-chapter downloadable bundles (built by R/build_chapter_zips.R pre-render hook)
+/downloads/
+
 # R / RStudio
 .Rproj.user/
 .Rhistory
@@ -21,6 +24,11 @@ renv/sandbox/
 .DS_Store
 .idea/
 .vscode/
+
+# Rcpp build artifacts written next to .cpp by Rcpp::sourceCpp (chapter 7)
+R/scspill/*.o
+R/scspill/*.so
+R/scspill/.cache/
 
 # Quarto outputs accidentally rendered to root
 /index.html

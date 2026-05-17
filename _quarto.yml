@@ -1,6 +1,10 @@
 project:
   type: book
   output-dir: _book
+  pre-render: R/build_chapter_zips.R
+  resources:
+    - images/cover1.jpg
+    - downloads
 
 execute:
   freeze: auto
@@ -19,7 +23,6 @@ book:
   sharing: [twitter, linkedin]
   downloads: [pdf]
   favicon: images/favicon.svg
-  cover-image: images/cover.jpg
   chapters:
     - index.qmd
     - 01-introduction.qmd
@@ -28,6 +31,7 @@ book:
     - 04-basic-diff-in-diff.qmd
     - 05-classical-synthetic-control.qmd
     - 06-structural-bayesian-ts.qmd
+    - 07-bayesian-spatial-sc.qmd
     - references.qmd
 
 bibliography: references.bib
@@ -36,8 +40,8 @@ csl: apa.csl
 format:
   html:
     theme:
-      light: cosmo
       dark: darkly
+      light: cosmo
     respect-user-color-scheme: false
     toc: true
     toc-depth: 3
@@ -55,6 +59,41 @@ format:
     mainfont: "Inter"
     monofont: "JetBrains Mono"
     css: custom.css
+    mermaid:
+      theme: neutral
+    include-after-body:
+      text: |
+        <script>
+        document.addEventListener('DOMContentLoaded', function() {
+          var tocNav = document.getElementById('TOC');
+          if (tocNav) {
+            var coverDiv = document.createElement('div');
+            coverDiv.id = 'toc-cover-image';
+            var img = document.createElement('img');
+            img.src = 'images/cover1.jpg';
+            img.alt = 'Comparative Causal Metrics';
+            coverDiv.appendChild(img);
+            tocNav.parentNode.insertBefore(coverDiv, tocNav);
+          }
+        });
+        document.addEventListener('DOMContentLoaded', function() {
+          var parts = window.location.pathname.replace(/\/$/, '').split('/');
+          var basename = parts[parts.length - 1].replace(/\.html$/, '');
+          var m = basename.match(/^(\d{2})-/);
+          if (!m) return;
+          var btn = document.getElementById('quarto-code-tools-menu');
+          if (!btn) return;
+          var menu = btn.nextElementSibling;
+          if (!menu || !menu.classList.contains('dropdown-menu')) return;
+          var divider = document.createElement('li');
+          divider.innerHTML = '<hr class="dropdown-divider">';
+          menu.appendChild(divider);
+          var item = document.createElement('li');
+          item.innerHTML = '<a class="dropdown-item" href="downloads/chapter-' +
+            m[1] + '.zip" download><i class="bi bi-download"></i> Download chapter (.zip)</a>';
+          menu.appendChild(item);
+        });
+        </script>
   # NOTE: Quarto book projects do not currently support `format: typst`.
   # Book-wide PDF output requires LaTeX. CI installs TinyTeX automatically.
   pdf:

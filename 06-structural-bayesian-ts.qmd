@@ -17,6 +17,8 @@ $$y_{1t} = \mu_t + \beta^\top x_t + \varepsilon_t, \quad t \le t^*$$
 where $\mu_t$ is a local-level trend, $x_t$ are the control-series regressors (other states' `cigsale`, plus optional covariates), and $t^*$ is the intervention date. California's outcome is *a slowly-evolving trend* **plus** *a linear combination of donor-state series* **plus** *a random error*.
 
 ```{mermaid}
+%%| label: fig-bsts-counterfactual
+%%| fig-cap: "Decomposition of the BSTS counterfactual: a local-level trend, a regression on donor cigsale + covariates, and random error sum to ŷ₁ₜ, which is then subtracted from the observed series to give the policy effect."
 flowchart TB
     subgraph "BSTS counterfactual ŷ₁ₜ"
         TREND["μₜ — local-level trend<br/>(absorbs dynamics no control can explain)"]
@@ -28,16 +30,18 @@ flowchart TB
     ERR --> Y
     Y --> CMP["Observed y₁ₜ − ŷ₁ₜ<br/>= policy effect (with credible band)"]
 
-    style TREND fill:#6a9bcc,stroke:#141413,color:#fff
-    style REG fill:#00d4c8,stroke:#141413,color:#141413
-    style ERR fill:#7a8395,stroke:#141413,color:#fff
-    style Y fill:#1f2b5e,stroke:#141413,color:#fff
-    style CMP fill:#d97757,stroke:#141413,color:#fff
+    style TREND fill:#6a9bcc,stroke:#cbd5e0,color:#fff
+    style REG fill:#00d4c8,stroke:#cbd5e0,color:#141413
+    style ERR fill:#7a8395,stroke:#cbd5e0,color:#fff
+    style Y fill:#7A209F,stroke:#cbd5e0,color:#fff
+    style CMP fill:#d97757,stroke:#cbd5e0,color:#fff
 ```
 
 The trend $\mu_t$ absorbs the dynamics that no control series can explain; the regression term $\beta^\top x_t$ borrows information from the donor pool. After the model is fit on $t \le t^*$, it is projected forward and the posterior over $y_{1t} - \hat{y}_{1t}$ gives the credible interval for the policy effect.
 
 ## Setup and data
+
+**Packages.** `tidyverse` covers wrangling and plotting. `CausalImpact` is Google's wrapper around the `bsts` (Bayesian Structural Time Series) package: it takes a wide matrix with the treated outcome in column 1 and donor series in the remaining columns, fits a Bayesian state-space model on the pre-period, projects forward as the counterfactual, and returns posterior means + 95% credible intervals on the pointwise and cumulative effects. `mice` provides multiple imputation by chained equations — we use its random-forest mode to fill the missing covariate values before pivoting to wide form. The `R/table_helpers.R` helper provides `gt_pretty()` for the summary table.
 
 ```{r}
 #| label: setup
@@ -46,14 +50,33 @@ The trend $\mu_t$ absorbs the dynamics that no control series can explain; the r
 library(tidyverse)
 library(CausalImpact)
 library(mice)
+source("R/table_helpers.R")
 
 set.seed(42)
+
+knitr::opts_chunk$set(dev.args = list(bg = "transparent"))
+
+theme_set(
+  theme_minimal(base_size = 12) +
+    theme(
+      plot.background  = element_rect(fill = "transparent", color = NA),
+      panel.background = element_rect(fill = "transparent", color = NA),
+      panel.grid.major = element_line(color = "#94a3b8", linewidth = 0.25),
+      panel.grid.minor = element_line(color = "#94a3b8", linewidth = 0.15),
+      text             = element_text(color = "#94a3b8"),
+      axis.text        = element_text(color = "#94a3b8")
+    )
+)
 ```
+
+**Dataset.** Like Synthetic Control, this method uses the **full 39-state × 31-year panel**: every state other than California is potentially a regressor in the Bayesian counterfactual model, and the four covariates (`lnincome`, `retprice`, `age15to24`, `beer`) are candidate predictors too. We do not pre-filter or restrict the window. The dataset is loaded as-is and then reshaped from long to wide in the next section, which is the form `CausalImpact` requires.
 
 ```{r}
 #| label: data-load
 prop99 <- read_rds("data/proposition99.rds") |> as_tibble()
 ```
+
+The loaded `prop99` is the same 1,209-row × 7-column tibble used in chapter 5 (39 states × 31 years × the `cigsale` outcome and four covariates). The next section deals with the missing covariate values and the long-to-wide reshape that CausalImpact requires.
 
 ## Imputation and wide pivot
 
@@ -83,10 +106,15 @@ prop99_wide <- prop99_imputed |>
 dim(prop99_wide)
 ```
 
+The reported `dim()` confirms the reshape: `prop99_wide` is **31 rows × 195 columns** — one row per year 1970–2000, and 39 states × 5 variables in the columns (`cigsale_*`, `lnincome_*`, `beer_*`, `age15to24_*`, `retprice_*` for each of the 39 states), with `year` dropped and `cigsale_California` relocated to column 1 because that's what `CausalImpact()` expects as the treated outcome.
+
 ## Fit the Bayesian structural TS model
 
+**The fit.** The chunk below calls `CausalImpact(prop99_wide, pre.period, post.period)` with the pre and post windows expressed as *integer row indices* (not years): row 1 is 1970, row 19 is 1988 (the last pre-period year), row 20 is 1989, row 31 is 2000. The seed is reset just before the call because `bsts` uses an MCMC sampler under the hood; a fixed seed makes the posterior draws reproducible from one render to the next. The returned `impact_full$summary` is a two-row data frame — one row for the *average* effect over 1989–2000 and one row for the *cumulative* effect — with posterior means and 95% credible bounds for each. The helper code below the `CausalImpact()` call just formats those columns into the table.
+
 ```{r}
-#| label: fit-causalimpact
+#| label: tbl-causalimpact
+#| tbl-cap: "CausalImpact posterior summary; brackets are 95% credible intervals."
 #| message: false
 #| warning: false
 # CausalImpact takes integer row indices, not years.
@@ -101,7 +129,23 @@ set.seed(42)
 impact_full <- CausalImpact(prop99_wide,
                             pre.period  = pre_idx,
                             post.period = post_idx)
-summary(impact_full)
+
+ci_summary <- impact_full$summary |>
+  tibble::rownames_to_column("Horizon") |>
+  dplyr::transmute(
+    Horizon,
+    Actual            = sprintf("%.1f", Actual),
+    Prediction        = sprintf("%.1f [%.1f, %.1f]",
+                                Pred, Pred.lower, Pred.upper),
+    `Absolute effect` = sprintf("%.1f [%.1f, %.1f]",
+                                AbsEffect, AbsEffect.lower, AbsEffect.upper),
+    `Relative effect` = sprintf("%.1f%% [%.1f%%, %.1f%%]",
+                                RelEffect * 100, RelEffect.lower * 100,
+                                RelEffect.upper * 100),
+    `Posterior p`     = sprintf("%.3f", p)
+  )
+
+gt_pretty(ci_summary)
 ```
 
 **Reading the output.**
@@ -113,6 +157,8 @@ summary(impact_full)
 If we drop the covariates and use only other states' cigarette sales as controls, the point estimate strengthens to around $-21$ packs and the posterior probability rises to ≈ 97%. The covariates absorb some of the variation the simpler model was attributing to Proposition 99 — which can be read as either "added robustness" or "watered-down signal" depending on how much you trust the imputed beer-and-income covariates.
 
 ## The two-panel diagnostic
+
+**What to look for.** Calling `plot()` on a `CausalImpact` object returns its default two-panel figure: the **top panel** shows observed California (solid line) against the Bayesian counterfactual (dashed) with its 95% credible band; the **bottom panel** shows the *cumulative* gap — the running sum of `observed − counterfactual` from the intervention date onwards, with its own credible band. Read the top panel for whether and when the policy effect opens up, and the bottom panel for whether the cumulative effect's credible band excludes zero by the end of the series.
 
 ```{r}
 #| label: fig-causalimpact
@@ -126,7 +172,11 @@ The top panel shows the pointwise picture: observed California opens a steady ga
 
 ## Common pitfall
 
-Imputing missing covariates without thinking about the imputation model. The random-forest fill we use here is a single-imputation shortcut for tutorial speed. With multiple imputation ($m > 1$) or a different model, the estimate can move by 1–3 packs — and worse, an imputation that uses California itself to fill donor covariates would build an artificial post-period correlation that biases the result *toward* zero.
+Imputing missing covariates without thinking about the imputation model. The random-forest fill we use here is a single-imputation shortcut for tutorial speed. With multiple imputation ($m > 1$) or a different model, the estimate can move by 1–3 packs. Two concrete failure modes are worth spelling out, because they affect the credibility of the headline number rather than just its width.
+
+**Example 1 — Imputing donor covariates with a model that "sees" California.** Our `mice(prop99, ...)` call passes the entire panel — California rows included — into the imputation model. For this dataset, with only four covariates and most missingness clustered in `beer` (≈55%) and `age15to24` (≈32%) on donor states, the consequence is usually mild. But if you were to feed the *full panel with the post-period California outcome attached* into an imputer that also uses `cigsale` as a predictor, the imputer could learn from California's post-1989 trajectory and propagate that information back into donor states' missing covariate cells. CausalImpact would then build a counterfactual that mechanically tracks California's post-period — biasing the estimated effect *toward zero* by construction. The safe pattern is to impute donor covariates *before* the treated outcome is in scope, or to drop the treated unit from the imputer entirely and impute donors only.
+
+**Example 2 — Single (`m = 1`) vs multiple (`m = 5`) imputation.** Single imputation treats the imputed values as if they were observed, then propagates that pretend-observed dataset through `CausalImpact`. The posterior credible band you get back is the model's uncertainty *given* the imputed cells — it knows nothing about the uncertainty *introduced by the imputation itself*. With proper multiple imputation (`mice(..., m = 5)` and Rubin's-rules pooling across the five resulting fits), the credible band widens by roughly 1–3 packs on this dataset because the across-imputation variance is added to the within-imputation variance. The point estimate barely moves; the interval does. For a tutorial we keep `m = 1` for speed and clarity, but a published number should use `m ≥ 5` and report a pooled estimate.
 
 ## Recap
 

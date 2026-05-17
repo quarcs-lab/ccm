@@ -123,8 +123,23 @@ We load the packages we need with `library()` calls. Every package below is pinn
 library(tidyverse)
 library(sandwich)
 library(lmtest)
+source("R/table_helpers.R")
 
 set.seed(42)
+
+knitr::opts_chunk$set(dev.args = list(bg = "transparent"))
+
+theme_set(
+  theme_minimal(base_size = 12) +
+    theme(
+      plot.background  = element_rect(fill = "transparent", color = NA),
+      panel.background = element_rect(fill = "transparent", color = NA),
+      panel.grid.major = element_line(color = "#94a3b8", linewidth = 0.25),
+      panel.grid.minor = element_line(color = "#94a3b8", linewidth = 0.15),
+      text             = element_text(color = "#94a3b8"),
+      axis.text        = element_text(color = "#94a3b8")
+    )
+)
 ```
 
 The dataset is cached in the repository at `data/proposition99.rds`. It is a panel of 39 U.S. states observed 1970–2000, with per-capita cigarette pack sales (`cigsale`) as the outcome and four covariates.
@@ -137,13 +152,24 @@ prop99 <- read_rds("data/proposition99.rds") |> as_tibble()
 prop99_cali <- prop99 |>
   filter(state == "California") |>
   mutate(prepost = factor(year > 1988, labels = c("Pre", "Post")))
+```
 
+With California isolated and tagged by period, the first thing to look at is the raw pre-vs-post mean. This is the *baseline number* every subsequent method in the book will try to refine.
+
+```{r}
+#| label: tbl-prepost-means
+#| tbl-cap: "Pre vs post means in California (Proposition 99)."
 prop99_cali |>
   group_by(prepost) |>
   summarize(n            = n(),
             mean_cigsale = mean(cigsale),
             sd_cigsale   = sd(cigsale),
-            .groups = "drop")
+            .groups = "drop") |>
+  gt_pretty(decimals = 2) |>
+  cols_label(prepost      = "Period",
+             n            = "Years",
+             mean_cigsale = "Mean cigsale",
+             sd_cigsale   = "SD")
 ```
 
 California's average per-capita cigarette sales fell from about 116 packs (1970–1988) to about 60 packs (1989–2000) — a within-state drop of roughly 56 packs, or 48% of the pre-period mean. That is the *raw* before/after change. The rest of the book is about how much of that drop we can credibly attribute to Proposition 99 rather than to the broader American secular decline in smoking.

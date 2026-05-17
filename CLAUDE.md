@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 A **Quarto book** ("Comparative Causal Metrics") authored in R and published to GitHub Pages. It is not an R package — `DESCRIPTION` exists only as a human-readable dep manifest so RStudio's "Install Dependencies" button works. Do not treat it as CRAN-bound.
 
-The book is **in progress**: ch. 1 (Introduction) and ch. 2 (Interrupted Time Series) are drafted with live R chunks against the Proposition 99 dataset; ch. 3–6 are still stubs with `eval: false`. See `README.md` for the current status table.
+The book is **in progress**: all six method chapters (ch. 1 Introduction through ch. 6 Bayesian Structural TS) are drafted with live R chunks against the Proposition 99 dataset. No `eval: false` stubs remain. The preface (`index.qmd`) and a planned cross-method comparison chapter are still to do. See `README.md` for the current status table.
 
 ## Common commands
 
@@ -36,8 +36,9 @@ quarto render --to pdf                               # needs TinyTeX; Quarto pro
 
 - **`_quarto.yml`** is the source of truth for chapter ordering, theming (`cosmo` light / `darkly` dark), and the configured output formats (HTML and PDF — EPUB has been removed). New chapters must be added to the `chapters:` list there, not just dropped in the directory.
 - **`execute: freeze: auto`** in `_quarto.yml` caches chunk output in `_freeze/`. The cache is gitignored; expect first renders on a clean checkout to be slower.
-- **Chapter stubs use `#| eval: false`** on R chunks so the book renders before analyses are written. When you actually implement a chapter, remove `eval: false` chunk-by-chunk as the code becomes runnable — flipping a whole file at once can break the build on a single bad chunk.
 - **Preface and references** (`index.qmd`, `references.qmd`) use a top-level `# Heading {.unnumbered}` instead of a YAML `title:` field. That is what keeps them out of the chapter numbering. Don't "fix" them into the YAML-title style.
+- **Table rendering** is centralised in `R/table_helpers.R`, sourced from each chapter's setup chunk (`source("R/table_helpers.R")`). It exports two thin wrappers: `gt_pretty()` for data-frame / tibble output and `ms_pretty()` for regression models (built on `modelsummary`, accepts a `vcov=` function for HAC SEs). Both apply a clean academic look with a transparent background so tables read in both cosmo (light) and darkly (dark) themes.
+- **Table captions follow Quarto convention, not gt:** every chunk that emits a table uses `#| label: tbl-<slug>` plus `#| tbl-cap: "..."`. Do *not* pass `title=` / `subtitle=` to `gt_pretty()` / `ms_pretty()` — that bypasses Quarto's caption numbering and cross-references. The same rule for figures (`#| label: fig-<slug>` + `#| fig-cap`), including Mermaid blocks (use `%%| label:` / `%%| fig-cap:` inside the block).
 - **Citations** go in `references.bib` (BibTeX). They render with the APA 7 style from `apa.csl` and appear automatically on the References page — there is nothing to wire up per-citation.
 - **Theming overrides** live in `custom.css`, loaded by the HTML format only.
 
@@ -60,6 +61,10 @@ The `--no-render` flag on `publish` reuses the freshly built `_book/`, so HTML c
 4. **No CI.** The `.github/workflows` directory was intentionally removed (commits `7880ce4`, `04dde43`). All publishing is local. Do not add a render-and-deploy workflow without asking — the local-only flow is a deliberate choice driven by reproducibility friction with `renv` in CI (see commits `57eb87d`, `8369059`, `cd179e3` for the abandoned CI debugging trail).
 
 **On a fresh checkout**, the first `quarto render --to html` is slow because `execute: freeze: auto` has no cache yet. Subsequent renders only re-execute chunks whose source has changed.
+
+### Per-chapter download bundles
+
+Every `quarto render` triggers the `R/build_chapter_zips.R` pre-render hook (registered under `project: pre-render:` in `_quarto.yml`). The hook rebuilds `downloads/chapter-{01..06}.zip` — self-contained Quarto bundles a reader can unzip and render via `quarto render <chapter>.qmd` with no `renv` and no repo clone. Quarto copies `downloads/` into `_book/downloads/` because it's listed under `project: resources:`. The `downloads/` directory is gitignored — the zips are derived artifacts. The download link appears as the last item inside the **"</> Code" dropdown menu** in the upper-right of each chapter; it is injected at runtime by the JS in `format.html.include-after-body` in `_quarto.yml` for any page whose filename starts with `NN-` (so `index.qmd` and `references.qmd` correctly get nothing). If you add a new content chapter, the only manual step is appending its filename to the `chapters` vector in `R/build_chapter_zips.R` — no per-chapter `.qmd` edit is needed.
 
 ## Dependencies
 

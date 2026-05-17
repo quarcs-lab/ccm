@@ -1,7 +1,5 @@
 # Preface {.unnumbered}
 
-![](images/cover.jpg){fig-alt="Book cover" width=60%}
-
 ## About this book
 
 *Comparative Causal Metrics* is an introduction to **regional impact evaluation** using modern causal-inference methods implemented entirely in **R** and rendered with **Quarto**. The book is organized around a small set of quasi-experimental techniques that have become workhorses for evaluating the effects of policies, shocks, and interventions on regional outcomes:

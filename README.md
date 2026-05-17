@@ -12,7 +12,7 @@ Source for the Quarto book by Carlos Mendez. Built with **R + Quarto**, publishe
 
 ## Project status
 
-**Stage:** all six method chapters drafted with live R against the Proposition 99 dataset. Preface and cross-method discussion still to do.
+**Stage:** seven method chapters drafted with live R against the Proposition 99 dataset (chapter 7 uses the Sakaguchi & Tagawa spatial dataset shipped alongside its replication helpers). Preface and cross-method discussion still to do.
 
 | # | Chapter | File | Status |
 |---|---|---|---|
@@ -23,6 +23,7 @@ Source for the Quarto book by Carlos Mendez. Built with **R + Quarto**, publishe
 | 4 | Basic Differences-in-Differences | `04-basic-diff-in-diff.qmd` | first draft (live R; CA vs Nevada) |
 | 5 | Classical Synthetic Control | `05-classical-synthetic-control.qmd` | first draft (live R; full tidysynth pipeline) |
 | 6 | Structural Bayesian Time Series | `06-structural-bayesian-ts.qmd` | first draft (live R; CausalImpact + BSTS) |
+| 7 | Bayesian Spatial Synthetic Control | `07-bayesian-spatial-sc.qmd` | first draft (live R; Rcpp + SAR; Sakaguchi & Tagawa replication) |
 | — | References | `references.qmd` | 11 entries (Prop 99 sources ported) |
 
 **Infrastructure (complete):**
@@ -48,7 +49,7 @@ Source for the Quarto book by Carlos Mendez. Built with **R + Quarto**, publishe
 
 ```
 ccm/
-├── _quarto.yml                       # Book config (HTML + PDF + EPUB)
+├── _quarto.yml                       # Book config (HTML auto-publishes; PDF on demand)
 ├── index.qmd                         # Preface (unnumbered)
 ├── 01-introduction.qmd
 ├── 02-interrupted-time-series.qmd
@@ -60,6 +61,9 @@ ccm/
 ├── references.bib                    # BibTeX entries
 ├── apa.csl                           # Citation style (APA 7)
 ├── custom.css                        # Theme palette and overrides
+├── R/                                # Helpers sourced from chapter setup chunks
+│   ├── table_helpers.R               #   gt_pretty() + ms_pretty() for tables
+│   └── build_chapter_zips.R          #   pre-render hook → downloads/chapter-NN.zip
 ├── images/                           # Cover, favicon, figures
 ├── DESCRIPTION                       # Human-readable dep manifest
 ├── install_packages.R                # One-time renv bootstrap
