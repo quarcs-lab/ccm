@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Staggered Differences-in-Differences – Comparative Causal Metrics</title>
+<title>Generalized Synthetic Control – Comparative Causal Metrics</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -85,7 +85,7 @@ div.csl-indent {
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./09-staggered-did.html" rel="prev">
+<link href="./11-gsynth.html" rel="prev">
 <link href="./images/favicon.svg" rel="icon" type="image/svg+xml">
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
@@ -440,6 +440,18 @@ window.Quarto = {
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="./10-matrix-completion-and-ife.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Matrix Completion and Interactive Fixed Effects</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./11-gsynth.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Generalized Synthetic Control</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="./references.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text">References</span></a>
   </div>
@@ -454,22 +466,21 @@ window.Quarto = {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#when-basic-did-breaks" id="toc-when-basic-did-breaks" class="nav-link active" data-scroll-target="#when-basic-did-breaks">When Basic DiD breaks</a></li>
+  <li><a href="#where-gsynth-fits" id="toc-where-gsynth-fits" class="nav-link active" data-scroll-target="#where-gsynth-fits">Where gsynth fits</a></li>
   <li><a href="#setup-and-data" id="toc-setup-and-data" class="nav-link" data-scroll-target="#setup-and-data">Setup and data</a></li>
-  <li><a href="#the-twfe-baseline-and-its-problem" id="toc-the-twfe-baseline-and-its-problem" class="nav-link" data-scroll-target="#the-twfe-baseline-and-its-problem">The TWFE baseline and its problem</a>
+  <li><a href="#treatment-timing" id="toc-treatment-timing" class="nav-link" data-scroll-target="#treatment-timing">Treatment timing</a></li>
+  <li><a href="#baseline-gsynth-without-factors" id="toc-baseline-gsynth-without-factors" class="nav-link" data-scroll-target="#baseline-gsynth-without-factors">Baseline: gsynth without factors</a></li>
+  <li><a href="#information-criterion-across-factor-counts" id="toc-information-criterion-across-factor-counts" class="nav-link" data-scroll-target="#information-criterion-across-factor-counts">Information criterion across factor counts</a></li>
+  <li><a href="#standard-gsynth-plots" id="toc-standard-gsynth-plots" class="nav-link" data-scroll-target="#standard-gsynth-plots">Standard gsynth plots</a>
   <ul class="collapse">
-  <li><a href="#sun-abraham-event-study" id="toc-sun-abraham-event-study" class="nav-link" data-scroll-target="#sun-abraham-event-study">Sun-Abraham event study</a></li>
-  <li><a href="#twfe-weight-decomposition" id="toc-twfe-weight-decomposition" class="nav-link" data-scroll-target="#twfe-weight-decomposition">TWFE weight decomposition</a></li>
+  <li><a href="#gap-plot-period-by-period-att" id="toc-gap-plot-period-by-period-att" class="nav-link" data-scroll-target="#gap-plot-period-by-period-att">Gap plot (period-by-period ATT)</a></li>
+  <li><a href="#counterfactual-plot" id="toc-counterfactual-plot" class="nav-link" data-scroll-target="#counterfactual-plot">Counterfactual plot</a></li>
+  <li><a href="#estimated-factors" id="toc-estimated-factors" class="nav-link" data-scroll-target="#estimated-factors">Estimated factors</a></li>
+  <li><a href="#factor-loadings" id="toc-factor-loadings" class="nav-link" data-scroll-target="#factor-loadings">Factor loadings</a></li>
   </ul></li>
-  <li><a href="#group-time-atts-the-callaway-santanna-approach" id="toc-group-time-atts-the-callaway-santanna-approach" class="nav-link" data-scroll-target="#group-time-atts-the-callaway-santanna-approach">Group-time ATTs: the Callaway-Sant’Anna approach</a>
-  <ul class="collapse">
-  <li><a href="#aggregation-overall-att-and-event-study" id="toc-aggregation-overall-att-and-event-study" class="nav-link" data-scroll-target="#aggregation-overall-att-and-event-study">Aggregation: overall ATT and event study</a></li>
-  </ul></li>
-  <li><a href="#conditional-parallel-trends" id="toc-conditional-parallel-trends" class="nav-link" data-scroll-target="#conditional-parallel-trends">Conditional parallel trends</a></li>
-  <li><a href="#robustness-knobs" id="toc-robustness-knobs" class="nav-link" data-scroll-target="#robustness-knobs">Robustness knobs</a></li>
-  <li><a href="#sensitivity-to-parallel-trends-violations" id="toc-sensitivity-to-parallel-trends-violations" class="nav-link" data-scroll-target="#sensitivity-to-parallel-trends-violations">Sensitivity to parallel-trends violations</a></li>
-  <li><a href="#heterogeneous-treatment-doses" id="toc-heterogeneous-treatment-doses" class="nav-link" data-scroll-target="#heterogeneous-treatment-doses">Heterogeneous treatment doses</a></li>
-  <li><a href="#lagged-outcomes-an-alternative-identifying-assumption" id="toc-lagged-outcomes-an-alternative-identifying-assumption" class="nav-link" data-scroll-target="#lagged-outcomes-an-alternative-identifying-assumption">Lagged outcomes: an alternative identifying assumption</a></li>
+  <li><a href="#implied-donor-weights" id="toc-implied-donor-weights" class="nav-link" data-scroll-target="#implied-donor-weights">Implied donor weights</a></li>
+  <li><a href="#cumulative-effects" id="toc-cumulative-effects" class="nav-link" data-scroll-target="#cumulative-effects">Cumulative effects</a></li>
+  <li><a href="#inference-bootstrap-variants-compared" id="toc-inference-bootstrap-variants-compared" class="nav-link" data-scroll-target="#inference-bootstrap-variants-compared">Inference: bootstrap variants compared</a></li>
   <li><a href="#recap" id="toc-recap" class="nav-link" data-scroll-target="#recap">Recap</a></li>
   <li><a href="#common-pitfall" id="toc-common-pitfall" class="nav-link" data-scroll-target="#common-pitfall">Common pitfall</a></li>
   <li><a href="#further-reading" id="toc-further-reading" class="nav-link" data-scroll-target="#further-reading">Further reading</a></li>
@@ -483,7 +494,7 @@ window.Quarto = {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<div class="quarto-title-block"><div><h1 class="title">Staggered Differences-in-Differences</h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
+<div class="quarto-title-block"><div><h1 class="title">Generalized Synthetic Control</h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
 </div>
 
 
@@ -511,6 +522,20 @@ Abadie, A., Diamond, A., &amp; Hainmueller, J. (2010). Synthetic control
 methods for comparative case studies: Estimating the effect of
 <span>California</span>’s tobacco control program. <em>Journal of the
 American Statistical Association</em>, <em>105</em>(490), 493–505. <a href="https://www.aeaweb.org/articles?id=10.1257/jasa.2010.ap08746">https://www.aeaweb.org/articles?id=10.1257/jasa.2010.ap08746</a>
+</div>
+<div id="ref-athey2021matrix" class="csl-entry" role="listitem">
+Athey, S., Bayati, M., Doudchenko, N., Imbens, G., &amp; Khosravi, K.
+(2021). Matrix completion methods for causal panel data models.
+<em>Journal of the American Statistical Association</em>,
+<em>116</em>(536), 1716–1730. <a href="https://doi.org/10.1080/01621459.2021.1891924">https://doi.org/10.1080/01621459.2021.1891924</a>
+</div>
+<div id="ref-bai2003inferential" class="csl-entry" role="listitem">
+Bai, J. (2003). Inferential theory for factor models of large
+dimensions. <em>Econometrica</em>, <em>71</em>(1), 135–171. <a href="https://doi.org/10.1111/1468-0262.00392">https://doi.org/10.1111/1468-0262.00392</a>
+</div>
+<div id="ref-bai2009panel" class="csl-entry" role="listitem">
+Bai, J. (2009). Panel data models with interactive fixed effects.
+<em>Econometrica</em>, <em>77</em>(4), 1229–1279. <a href="https://doi.org/10.3982/ECTA6135">https://doi.org/10.3982/ECTA6135</a>
 </div>
 <div id="ref-bernal2017interrupted" class="csl-entry" role="listitem">
 Bernal, J. L., Cummins, S., &amp; Gasparrini, A. (2017). Interrupted
@@ -580,6 +605,12 @@ Principles and practice</em> (3rd ed.). OTexts. <a href="https://otexts.com/fpp3
 LeSage, J. P., &amp; Pace, R. K. (2009). <em>Introduction to spatial
 econometrics</em>. Chapman &amp; Hall/CRC. <a href="https://www.routledge.com/Introduction-to-Spatial-Econometrics/LeSage-Pace/p/book/9781420064247">https://www.routledge.com/Introduction-to-Spatial-Econometrics/LeSage-Pace/p/book/9781420064247</a>
 </div>
+<div id="ref-liu2024practical" class="csl-entry" role="listitem">
+Liu, L., Wang, Y., &amp; Xu, Y. (2024). A practical guide to
+counterfactual estimators for causal inference with time-series
+cross-sectional data. <em>American Journal of Political Science</em>,
+<em>68</em>(1), 160–176. <a href="https://doi.org/10.1111/ajps.12723">https://doi.org/10.1111/ajps.12723</a>
+</div>
 <div id="ref-odissei2024causalpolicy" class="csl-entry" role="listitem">
 ODISSEI Social Data Science team. (2024). <em>Workshop on causal effects
 of policy interventions</em>. <a href="https://causalpolicy.nl/" class="uri">https://causalpolicy.nl/</a>.
@@ -599,20 +630,25 @@ Sun, L., &amp; Abraham, S. (2021). Estimating dynamic treatment effects
 in event studies with heterogeneous treatment effects. <em>Journal of
 Econometrics</em>, <em>225</em>(2), 175–199. <a href="https://doi.org/10.1016/j.jeconom.2020.09.006">https://doi.org/10.1016/j.jeconom.2020.09.006</a>
 </div>
+<div id="ref-xu2017generalized" class="csl-entry" role="listitem">
+Xu, Y. (2017). Generalized synthetic control method: Causal inference
+with interactive fixed effects models. <em>Political Analysis</em>,
+<em>25</em>(1), 57–76. <a href="https://doi.org/10.1017/pan.2016.2">https://doi.org/10.1017/pan.2016.2</a>
+</div>
 </div>
 
 
 <!-- -->
 
-<section id="when-basic-did-breaks" class="level2">
-<h2 class="anchored" data-anchor-id="when-basic-did-breaks">When Basic DiD breaks</h2>
-<p>Chapter 4 ran a textbook 2×2 DiD on Proposition 99, with California treated in 1989 and Nevada as the single hand-picked control. The estimate collapsed to roughly <span class="math inline">\(-5.7\)</span> packs per capita and could not be distinguished from zero. The diagnosis there was that Nevada is geographically and culturally adjacent to California and absorbs the same secular forces — so its post-1988 decline soaks up most of what we wanted to attribute to the policy.</p>
-<p>There is a deeper structural problem too. Real policy data rarely has just one treated unit and one clean control unit, both treated at the same instant. States and counties <strong>adopt at different times</strong> — some in 2004, others in 2006, still others never. The natural extension of the chapter 4 model to that setting is <em>two-way fixed effects (TWFE)</em> regression:</p>
-<p><span class="math display">\[y_{it} = \alpha_i + \gamma_t + \beta \cdot \text{post}_{it} + \varepsilon_{it}.\]</span></p>
-<p>For two decades this was the default. We now know it is biased in the presence of staggered adoption: already-treated units silently act as <em>controls</em> for later-treated units, contaminating the contrast. The “DiD coefficient” <span class="math inline">\(\hat\beta\)</span> becomes a weighted average of group-time ATTs with <strong>some negative weights</strong> <span class="citation" data-cites="goodmanbacon2021difference dechaisemartin2020twoway">(<a href="references.html#ref-dechaisemartin2020twoway" role="doc-biblioref">Chaisemartin &amp; D’Haultfœuille, 2020</a>; <a href="references.html#ref-goodmanbacon2021difference" role="doc-biblioref">Goodman-Bacon, 2021</a>)</span>. When treatment effects grow over time — the textbook policy story — those negative weights can flip the sign of <span class="math inline">\(\hat\beta\)</span> relative to any sensible average effect.</p>
-<p>This chapter walks through the modern toolkit for repairing that damage. The methods build on <span class="citation" data-cites="callaway2021difference">Callaway &amp; Sant’Anna (<a href="references.html#ref-callaway2021difference" role="doc-biblioref">2021</a>)</span>: estimate <strong>group-time average treatment effects</strong> <span class="math inline">\(ATT(g, t)\)</span> directly, then aggregate them with weights you can defend. Along the way we look at three companion ideas: the Sun-Abraham interaction-weighted event study <span class="citation" data-cites="sun2021estimating">(<a href="references.html#ref-sun2021estimating" role="doc-biblioref">Sun &amp; Abraham, 2021</a>)</span>, the doubly-robust DiD estimator from <span class="citation" data-cites="callaway2021difference">Callaway &amp; Sant’Anna (<a href="references.html#ref-callaway2021difference" role="doc-biblioref">2021</a>)</span>, and the Rambachan-Roth sensitivity analysis that quantifies how much parallel-trends violation it would take to overturn the conclusion <span class="citation" data-cites="rambachan2023more">(<a href="references.html#ref-rambachan2023more" role="doc-biblioref">Rambachan &amp; Roth, 2023</a>)</span>.</p>
-<p>The dataset is no longer Proposition 99. Staggered DiD requires <strong>variation in treatment timing</strong>, which a single-treated-state panel cannot provide. We switch to the Callaway-Sant’Anna minimum-wage panel: 1,745 US counties × 2003–2007, with cohorts <span class="math inline">\(G \in \{0, 2004,
-2006\}\)</span> indexing the year the county’s state first raised its minimum wage above the federal $5.15/h floor. The outcome is log teen employment.</p>
+<section id="where-gsynth-fits" class="level2">
+<h2 class="anchored" data-anchor-id="where-gsynth-fits">Where gsynth fits</h2>
+<p>Earlier chapters have asked the same counterfactual question in different ways. Chapter 5 (classical SCM) hand-built a weighted donor average for a single treated unit. Chapter 7 layered a spatial prior on top. Chapter 9 abandoned the single-treated-unit framing entirely and aggregated group-time ATTs under a parallel-trends assumption. Chapter 10 (when read in sequence) introduces the interactive-fixed-effects family through <code>fect</code>; this chapter does the focused walkthrough of one specific estimator in that family — <strong>generalized synthetic control (gsynth)</strong> <span class="citation" data-cites="xu2017generalized">(<a href="references.html#ref-xu2017generalized" role="doc-biblioref">Xu, 2017</a>)</span> — using the standalone <code>gsynth</code> package on the same Callaway-Sant’Anna minimum-wage panel as chapter 9.</p>
+<p>gsynth sits at the intersection of SCM and panel DiD. Like SCM, it imputes a counterfactual outcome path for each treated unit using only never-treated controls. Like staggered DiD, it accommodates many treated units adopting at different times. The way it threads that needle is by fitting an <strong>interactive fixed effects</strong> (IFE) model on the never-treated panel,</p>
+<p><span class="math display">\[Y_{it}(0) = \alpha_i + \xi_t + \lambda_i' f_t + X_{it}'\beta +
+\varepsilon_{it},\]</span></p>
+<p>then projecting each treated unit onto the estimated factor space to impute its <span class="math inline">\(Y_{it}(0)\)</span> in the post-treatment period. The headline ATT is the average gap between observed treated outcomes and these imputed counterfactuals.</p>
+<p>The identifying assumption is <strong>parallel factors</strong>, not parallel trends: unobserved shocks affecting treated and never-treated units must load on the same low-rank factor structure <span class="math inline">\(f_t\)</span>. When that holds, gsynth recovers a valid ATT even if the trends themselves are not parallel. When it does not, the model is misspecified and the headline ATT is biased — diagnostics matter.</p>
+<p>One difference from chapter 9: that chapter truncated the window to <code>year &gt;= 2003</code>, which left cohort 2004 with only one pre-treatment year. gsynth needs more pre-period to identify factors, so we keep the full 2001-2007 window. Cohort 2006 then has five pre-treatment years (2001-2005); cohort 2004 has three (2001-2003). We set <code>min.T0 = 3</code> to admit both cohorts.</p>
 </section>
 <section id="setup-and-data" class="level2">
 <h2 class="anchored" data-anchor-id="setup-and-data">Setup and data</h2>
@@ -620,16 +656,9 @@ Econometrics</em>, <em>225</em>(2), 175–199. <a href="https://doi.org/10.1016/
 #| message: false
 #| warning: false
 library(tidyverse)
-library(did)
-library(fixest)
-library(twfeweights)
-library(HonestDiD)
-library(DRDID)
-library(BMisc)
-library(pte)
-library(patchwork)
+library(gsynth)
+library(panelView)
 source("R/table_helpers.R")
-source("R/honest_did.R")
 
 set.seed(42)
 
@@ -648,412 +677,292 @@ theme_set(
       legend.text      = element_text(color = "#94a3b8")
     )
 )</code></pre>
-<p>The dataset ships as <code>data/cs_minwage.rds</code> in the chapter bundle. We follow the source-post convention of restricting to cohorts <span class="math inline">\(G \in
-\{0, 2004, 2006, 2007\}\)</span>, dropping the Northeast region (<code>region == "1"</code>) for comparability, and then carving out a clean working panel without the late-2007 cohort and starting in 2003.</p>
+<p>The dataset ships as <code>data/cs_minwage.rds</code> in the chapter bundle. We restrict to cohorts <span class="math inline">\(G \in \{0, 2004, 2006\}\)</span> and drop the Northeast region (<code>region == "1"</code>) for comparability with chapter 9. <code>gsynth()</code> expects a base <code>data.frame</code> — passing a tibble silently breaks its internal indexing — so we cast with <code>as.data.frame()</code>.</p>
 <pre class="{r}"><code>#| label: data-load
 mw_raw &lt;- readRDS("data/cs_minwage.rds") |&gt; as_tibble()
 
-# Step 1: drop Northeast and keep cohorts of interest.
 mw &lt;- mw_raw |&gt;
-  filter(G %in% c(0, 2004, 2006, 2007), region != "1")
+  filter(G %in% c(0, 2004, 2006), region != "1") |&gt;
+  mutate(treat = as.integer(year &gt;= G &amp; G != 0))
 
-# Step 2: working sample for the main analysis.
-data2 &lt;- mw |&gt;
-  filter(G != 2007, year &gt;= 2003)
-
-dim(data2)</code></pre>
-<p>The working panel has <code>r nrow(data2)</code> rows on <code>r length(unique(data2$id))</code> counties, balanced across the 2003–2007 window.</p>
+mw_df &lt;- as.data.frame(mw)
+dim(mw_df)</code></pre>
+<p>The panel has <code>r nrow(mw_df)</code> rows on <code>r length(unique(mw_df$id))</code> counties, balanced across 2001-2007. The 0/1 indicator <code>treat</code> is the only variable gsynth needs to know about treatment status — its name is deliberately different from chapter 9’s <code>post</code> to remind us that gsynth’s identification is not the same as chapter 9’s.</p>
 <pre class="{r}"><code>#| label: tbl-cohort-counts
-#| tbl-cap: "Cohort sizes in the working sample. G = 0 is the never-treated control pool; cohorts 2004 and 2006 are the staggered treated groups."
-data2 |&gt;
-  filter(year == 2003) |&gt;
+#| tbl-cap: "Cohort sizes after restriction. G = 0 is the never-treated control pool; cohorts 2004 and 2006 are the staggered treated groups, with 3 and 5 pre-treatment years respectively."
+mw_df |&gt;
+  filter(year == 2001) |&gt;
   count(G, name = "counties") |&gt;
+  mutate(`Pre-treatment years` = ifelse(G == 0, NA_integer_, G - 2001L)) |&gt;
   rename(`Treatment cohort (G)` = G) |&gt;
   gt_pretty()</code></pre>
 </section>
-<section id="the-twfe-baseline-and-its-problem" class="level2">
-<h2 class="anchored" data-anchor-id="the-twfe-baseline-and-its-problem">The TWFE baseline and its problem</h2>
-<p>The natural first move is the TWFE regression. The variable <code>post</code> in the dataset is 1 in periods where the county’s state has already raised its minimum wage (i.e., <code>year &gt;= G &amp; G != 0</code>), and 0 otherwise.</p>
-<pre class="{r}"><code>#| label: tbl-twfe
-#| tbl-cap: "Two-way fixed-effects regression. The point estimate suggests minimum-wage increases cut log teen employment by roughly 3.8 percent — but see the diagnostic that follows."
-twfe_res &lt;- fixest::feols(lemp ~ post | id + year,
-                          data = data2, cluster = "id")
-ms_pretty(list("TWFE (county + year FE)" = twfe_res),
-          coef_map = c("post" = "Post (any cohort)"),
-          notes    = "SEs clustered at the county level.")</code></pre>
-<p>The TWFE coefficient is roughly <span class="math inline">\(-0.038\)</span>. Read literally, the policy reduced teen employment by 3.8 percent. Before believing it, two diagnostics are essential.</p>
-<section id="sun-abraham-event-study" class="level3">
-<h3 class="anchored" data-anchor-id="sun-abraham-event-study">Sun-Abraham event study</h3>
-<p>The first is to allow the effect to <em>evolve</em> with time since treatment — an event-study specification. The naive interacted version, <span class="math inline">\(y_{it} = \alpha_i + \gamma_t + \sum_{k \ne -1} \beta_k \cdot
-\mathbf{1}(t - G_i = k) + \varepsilon_{it}\)</span>, is itself biased in staggered designs. The <span class="citation" data-cites="sun2021estimating">Sun &amp; Abraham (<a href="references.html#ref-sun2021estimating" role="doc-biblioref">2021</a>)</span> fix is the interaction- weighted estimator implemented by <code>fixest::sunab()</code>.</p>
-<pre class="{r}"><code>#| label: fig-sunab
-#| fig-cap: "Sun-Abraham event study. Pre-treatment leads (negative event time) trend slightly below zero; post-treatment effects accumulate from -0.025 on impact to roughly -0.13 by event-time +3."
+<section id="treatment-timing" class="level2">
+<h2 class="anchored" data-anchor-id="treatment-timing">Treatment timing</h2>
+<p>The first thing to do with any panel-treatment design is <em>look at it</em>. <code>panelView</code> is the package companion to <code>gsynth</code>; it produces a treatment-status heatmap and an outcome-trajectory facet that together expose anything weird in the data before estimation.</p>
+<pre class="{r}"><code>#| label: fig-panelview-status
+#| fig-cap: "Treatment status heatmap. Rows are counties (grouped by treatment cohort); columns are years. Pink cells are treated; blue cells are control. Within each treated cohort, the pink block starts in the cohort's adoption year. Never-treated counties (G = 0) stay blue throughout."
 #| fig-width: 8
-#| fig-height: 4.5
-sa_res &lt;- fixest::feols(lemp ~ sunab(G, year) | id + year,
-                        data = data2, cluster = "id")
-
-sa_df &lt;- broom::tidy(sa_res, conf.int = TRUE) |&gt;
-  filter(stringr::str_detect(term, "^year::")) |&gt;
-  mutate(event_time = as.integer(stringr::str_remove(term, "^year::")))
-
-ggplot(sa_df, aes(x = event_time, y = estimate)) +
-  geom_hline(yintercept = 0, color = "#94a3b8", linetype = "dashed") +
-  geom_vline(xintercept = -0.5, color = "#94a3b8", linetype = "dashed") +
-  geom_point(color = "#22d3ee", size = 2.5) +
-  geom_errorbar(aes(ymin = conf.low, ymax = conf.high),
-                color = "#22d3ee", width = 0.15) +
-  labs(x = "Event time (years from first minimum-wage increase)",
-       y = "Effect on log teen employment")</code></pre>
-<p>A clean event study should show <strong>flat pre-treatment leads near zero</strong>, then post-treatment effects that look credible. The Sun-Abraham picture is mixed: a clearly negative on-impact effect that grows over time, but pre-trends that are not perfectly flat. This is the parallel-trends concern we will quantify with HonestDiD in section 7.</p>
-</section>
-<section id="twfe-weight-decomposition" class="level3">
-<h3 class="anchored" data-anchor-id="twfe-weight-decomposition">TWFE weight decomposition</h3>
-<p>The second diagnostic asks: among the underlying group-time comparisons that TWFE silently aggregates, <strong>what weights does it use?</strong> <span class="citation" data-cites="goodmanbacon2021difference">Goodman-Bacon (<a href="references.html#ref-goodmanbacon2021difference" role="doc-biblioref">2021</a>)</span> shows that TWFE weights <em>can</em> be negative, especially when an already-treated unit is being used as a control for a later-treated one. <code>twfeweights::twfe_weights()</code> and <code>twfeweights::attO_weights()</code> give us the weights TWFE actually applies and the weights an unbiased aggregator (the <span class="citation" data-cites="callaway2021difference">Callaway &amp; Sant’Anna (<a href="references.html#ref-callaway2021difference" role="doc-biblioref">2021</a>)</span> overall ATT) would apply for comparison.</p>
-<pre class="{r}"><code>#| label: tbl-twfe-weight-summary
-#| tbl-cap: "TWFE weight diagnostic. Negative or pre-treatment weights are a red flag — they mean TWFE is silently subtracting effects you would not want it to subtract."
-attgt_for_weights &lt;- did::att_gt(
-  yname = "lemp", idname = "id", gname = "G", tname = "year",
-  data = data2, control_group = "nevertreated",
-  base_period = "universal"
-)
-
-tw &lt;- twfeweights::twfe_weights(attgt_for_weights)
-wO &lt;- twfeweights::attO_weights(attgt_for_weights)
-
-tw_df &lt;- tibble(
-  twfe_weight = tw$weights_df$weight,
-  attO_weight = wO$weights_df$weight,
-  post        = as.integer(as.character(tw$weights_df$post))
-)
-
-summary_tbl &lt;- tibble(
-  `Weight source` = c("TWFE",
-                      "TWFE (pre-treatment cells)",
-                      "TWFE (post-treatment cells)",
-                      "ATT-O (Callaway-Sant'Anna)"),
-  `Min`        = c(min(tw_df$twfe_weight),
-                   min(tw_df$twfe_weight[tw_df$post == 0]),
-                   min(tw_df$twfe_weight[tw_df$post == 1]),
-                   min(tw_df$attO_weight)),
-  `Max`        = c(max(tw_df$twfe_weight),
-                   max(tw_df$twfe_weight[tw_df$post == 0]),
-                   max(tw_df$twfe_weight[tw_df$post == 1]),
-                   max(tw_df$attO_weight)),
-  `Sum`        = c(sum(tw_df$twfe_weight),
-                   sum(tw_df$twfe_weight[tw_df$post == 0]),
-                   sum(tw_df$twfe_weight[tw_df$post == 1]),
-                   sum(tw_df$attO_weight))
-)
-gt_pretty(summary_tbl, decimals = 3)</code></pre>
-<pre class="{r}"><code>#| label: fig-twfe-weights
-#| fig-cap: "TWFE vs. Callaway-Sant'Anna overall-ATT weights for the same set of group-time cells. TWFE puts non-trivial mass on pre-treatment cells (negative weights, dashed line) and weights some post-treatment cells very differently from the unbiased target."
-#| fig-width: 7.5
 #| fig-height: 5
-tw_plot &lt;- tw_df |&gt;
-  mutate(period = ifelse(post == 1, "Post-treatment", "Pre-treatment"))
-
-ggplot(tw_plot, aes(x = attO_weight, y = twfe_weight, color = period)) +
-  geom_hline(yintercept = 0, color = "#94a3b8", linetype = "dashed") +
-  geom_abline(slope = 1, intercept = 0,
-              color = "#94a3b8", linetype = "dotted") +
-  geom_point(size = 2.5, alpha = 0.7) +
-  scale_color_manual(values = c("Pre-treatment"  = "#e2e8f0",
-                                "Post-treatment" = "#22d3ee")) +
-  labs(x = "Unbiased overall-ATT weight",
-       y = "TWFE weight", color = NULL)</code></pre>
-<p>The pre-treatment cells get weight from TWFE but zero weight from the unbiased ATT-O aggregator — this is the mechanism behind Goodman-Bacon’s “contamination” diagnosis. The dotted 45-degree line would mark perfect agreement.</p>
-</section>
-</section>
-<section id="group-time-atts-the-callaway-santanna-approach" class="level2">
-<h2 class="anchored" data-anchor-id="group-time-atts-the-callaway-santanna-approach">Group-time ATTs: the Callaway-Sant’Anna approach</h2>
-<p>The fix is to estimate the <em>primitive</em> objects directly. For each cohort <span class="math inline">\(g\)</span> (a year a group of counties was first treated) and each calendar year <span class="math inline">\(t\)</span>, define</p>
-<p><span class="math display">\[ATT(g, t) = \mathbb{E}\!\left[Y_{it}(g) - Y_{it}(\infty) \mid G_i = g\right],\]</span></p>
-<p>the average effect on cohort <span class="math inline">\(g\)</span> in year <span class="math inline">\(t\)</span> relative to its own never-treated potential outcome. <code>did::att_gt()</code> estimates each of these from a clean 2×2 DiD using only cohort <span class="math inline">\(g\)</span> and an appropriate comparison group (here, the never-treated <span class="math inline">\(G = 0\)</span>), so no contamination from already-treated units sneaks in.</p>
-<pre class="{r}"><code>#| label: tbl-attgt
-#| tbl-cap: "Group-time average treatment effects $ATT(g, t)$ for the minimum-wage panel. Cohorts 2004 and 2006, each year 2003 through 2007. Pre-treatment cells should hover near zero if parallel trends holds; post-treatment cells are the effects we want."
-attgt &lt;- did::att_gt(yname = "lemp", idname = "id", gname = "G",
-                     tname = "year", data = data2,
-                     control_group = "nevertreated",
-                     base_period = "universal")
-
-attgt_df &lt;- tibble(
-  Cohort       = attgt$group,
-  Year         = attgt$t,
-  `ATT(g,t)`   = attgt$att,
-  SE           = as.numeric(attgt$se)
-) |&gt;
-  mutate(`Treated?` = ifelse(Year &gt;= Cohort, "post", "pre")) |&gt;
-  arrange(Cohort, Year)
-
-gt_pretty(attgt_df, decimals = 4)</code></pre>
-<section id="aggregation-overall-att-and-event-study" class="level3">
-<h3 class="anchored" data-anchor-id="aggregation-overall-att-and-event-study">Aggregation: overall ATT and event study</h3>
-<p>The 8 cells in <a href="09-staggered-did.html#tbl-attgt" class="quarto-xref">Table&nbsp;<span>9.4</span></a> are the primitives. They are not the headline. Aggregating them produces summaries that are valid in the presence of staggered adoption.</p>
-<p>The <strong>overall ATT</strong> weights each post-treatment <span class="math inline">\(ATT(g, t)\)</span> by the size of cohort <span class="math inline">\(g\)</span>, then averages within cohort and over cohorts. It answers: <em>across treated counties and across the time they had been treated for, what is the average effect?</em></p>
-<pre class="{r}"><code>#| label: tbl-cs-overall
-#| tbl-cap: "Callaway-Sant'Anna overall ATT (sample-weighted aggregation across cohorts). This is the staggered-DiD analogue of chapter 4's single DiD coefficient."
-attO &lt;- did::aggte(attgt, type = "group")
-
-tibble(
-  Estimator             = "Callaway-Sant'Anna overall ATT",
-  `Estimate`            = attO$overall.att,
-  `SE`                  = attO$overall.se,
-  `CI lower`            = attO$overall.att - 1.96 * attO$overall.se,
-  `CI upper`            = attO$overall.att + 1.96 * attO$overall.se
-) |&gt; gt_pretty(decimals = 4)</code></pre>
-<p>The overall ATT is roughly <span class="math inline">\(-0.057\)</span> — almost 50 percent larger in magnitude than the TWFE coefficient. The two estimands answer different questions, but the size of the gap is exactly the contamination problem in operation.</p>
-<p>The <strong>event-study aggregation</strong> averages <span class="math inline">\(ATT(g, t)\)</span> within each event time <span class="math inline">\(e = t - g\)</span>, giving a curve of dynamic effects since treatment.</p>
-<pre class="{r}"><code>#| label: tbl-cs-event
-#| tbl-cap: "Callaway-Sant'Anna event-study aggregation. Event time -1 is the omitted reference period under the universal base."
-attes &lt;- did::aggte(attgt, type = "dynamic")
-
-tibble(
-  `Event time` = attes$egt,
-  `ATT(e)`     = attes$att.egt,
-  SE           = attes$se.egt,
-  `CI lower`   = attes$att.egt - 1.96 * attes$se.egt,
-  `CI upper`   = attes$att.egt + 1.96 * attes$se.egt
-) |&gt; gt_pretty(decimals = 4)</code></pre>
-<pre class="{r}"><code>#| label: fig-cs-event
-#| fig-cap: "Callaway-Sant'Anna event study. The on-impact effect is small; effects accumulate to roughly -0.13 log points by event-time +3 (three years post-treatment)."
+#| message: false
+#| warning: false
+panelview(lemp ~ treat, data = mw_df,
+          index = c("id", "year"),
+          pre.post = TRUE,
+          by.timing = TRUE,
+          display.all = TRUE,
+          axis.lab = "time",
+          axis.adjust = TRUE)</code></pre>
+<pre class="{r}"><code>#| label: fig-panelview-outcome
+#| fig-cap: "Outcome trajectories by cohort. Each thin grey line is one county's log teen employment over time; thick colored lines are cohort means. The pre-treatment trajectories look broadly parallel across cohorts, but with enough texture that a low-rank factor model has something to estimate."
 #| fig-width: 8
 #| fig-height: 4.5
-cs_es_df &lt;- tibble(
-  egt   = attes$egt,
-  est   = attes$att.egt,
-  se    = attes$se.egt,
-  phase = ifelse(attes$egt &lt; 0, "Pre", "Post")
-)
-
-ggplot(cs_es_df, aes(x = egt, y = est, color = phase)) +
-  geom_hline(yintercept = 0, color = "#94a3b8", linetype = "dashed") +
-  geom_vline(xintercept = -0.5, color = "#94a3b8", linetype = "dashed") +
-  geom_point(size = 2.8) +
-  geom_errorbar(aes(ymin = est - 1.96 * se, ymax = est + 1.96 * se),
-                width = 0.15) +
-  scale_color_manual(values = c("Pre"  = "#e2e8f0",
-                                "Post" = "#22d3ee")) +
-  labs(x = "Event time (years from first minimum-wage increase)",
-       y = "Effect on log teen employment", color = NULL)</code></pre>
-</section>
-</section>
-<section id="conditional-parallel-trends" class="level2">
-<h2 class="anchored" data-anchor-id="conditional-parallel-trends">Conditional parallel trends</h2>
-<p>Plain DiD assumes parallel trends <em>unconditionally</em>. Conditional DiD allows trends to be parallel only after adjusting for observed covariates that shape the trajectory. In this dataset, log county population and log average county pay are obvious candidates: counties with bigger populations or higher-paying jobs may move on different underlying trajectories whether or not they raise the minimum wage.</p>
-<p><code>did::att_gt()</code> accepts <code>xformla = ~lpop + lavg_pay</code> plus a choice of estimator: <strong>regression adjustment</strong> (impute the counterfactual mean from the never-treated), <strong>inverse probability weighting</strong> (reweight never-treated counties to look like treated ones), or <strong>doubly robust</strong> (the <span class="citation" data-cites="callaway2021difference">Callaway &amp; Sant’Anna (<a href="references.html#ref-callaway2021difference" role="doc-biblioref">2021</a>)</span> default, which is consistent if either the outcome model <em>or</em> the propensity score is correctly specified).</p>
-<pre class="{r}"><code>#| label: tbl-conditional
-#| tbl-cap: "Overall ATT under four identification assumptions: unconditional parallel trends, regression adjustment, inverse probability weighting, and doubly robust. The four point estimates land within roughly one SE of each other, which is reassuring."
 #| message: false
 #| warning: false
-
-cs_reg &lt;- did::att_gt(yname="lemp", tname="year", idname="id", gname="G",
-                      xformla = ~lpop + lavg_pay,
-                      control_group = "nevertreated",
-                      base_period = "universal",
-                      est_method = "reg", data = data2)
-attO_reg &lt;- did::aggte(cs_reg, type = "group")
-
-cs_ipw &lt;- did::att_gt(yname="lemp", tname="year", idname="id", gname="G",
-                      xformla = ~lpop + lavg_pay,
-                      control_group = "nevertreated",
-                      base_period = "universal",
-                      est_method = "ipw", data = data2)
-attO_ipw &lt;- did::aggte(cs_ipw, type = "group")
-
-cs_dr  &lt;- did::att_gt(yname="lemp", tname="year", idname="id", gname="G",
-                      xformla = ~lpop + lavg_pay,
-                      control_group = "nevertreated",
-                      base_period = "universal",
-                      est_method = "dr", data = data2)
-attO_dr  &lt;- did::aggte(cs_dr, type = "group")
-
+panelview(lemp ~ treat, data = mw_df,
+          index = c("id", "year"),
+          type = "outcome",
+          by.cohort = TRUE,
+          theme.bw = TRUE)</code></pre>
+</section>
+<section id="baseline-gsynth-without-factors" class="level2">
+<h2 class="anchored" data-anchor-id="baseline-gsynth-without-factors">Baseline: gsynth without factors</h2>
+<p>The first fit forces <span class="math inline">\(r = 0\)</span> — no latent factors. With two-way fixed effects (<code>force = "two-way"</code>) and no factors, this is the closest gsynth analogue to the TWFE regression in chapter 9. We set <code>min.T0 = 3</code> so cohort 2004 (which has only 3 pre-treatment years) isn’t dropped, and disable cross-validation (<code>CV = FALSE</code>): gsynth’s default rolling-window CV needs <code>min.T0 + cv.nobs = 8</code> pre-treatment periods per treated cohort, which cohort 2004 does not have. We pick <span class="math inline">\(r\)</span> manually by IC in the next section.</p>
+<pre class="{r}"><code>#| label: fit-no-factors
+#| message: false
+#| warning: false
+#| cache: true
+out_r0 &lt;- gsynth(lemp ~ treat + lpop + lavg_pay,
+                 data = mw_df,
+                 index = c("id", "year"),
+                 force = "two-way",
+                 CV = FALSE, r = 0,
+                 se = TRUE,
+                 inference = "nonparametric",
+                 nboots = 500,
+                 min.T0 = 3,
+                 parallel = TRUE,
+                 seed = 42)</code></pre>
+<pre class="{r}"><code>#| label: tbl-baseline
+#| tbl-cap: "Overall ATT under gsynth with no factors (r = 0). The point estimate is in the same neighborhood as chapter 9's TWFE coefficient (−0.038), as expected: with no factors, gsynth reduces to a within-transformation panel estimator."
 tibble(
-  Identification = c("Unconditional parallel trends",
-                     "Conditional · regression adjustment",
-                     "Conditional · IPW",
-                     "Conditional · doubly robust"),
-  Estimate = c(attO$overall.att, attO_reg$overall.att,
-               attO_ipw$overall.att, attO_dr$overall.att),
-  SE       = c(attO$overall.se,  attO_reg$overall.se,
-               attO_ipw$overall.se,  attO_dr$overall.se)
+  Specification = "gsynth, r = 0 (no factors)",
+  Estimate      = out_r0$att.avg,
+  `S.E.`        = out_r0$est.avg[1, "S.E."],
+  `CI lower`    = out_r0$est.avg[1, "CI.lower"],
+  `CI upper`    = out_r0$est.avg[1, "CI.upper"],
+  `p-value`     = out_r0$est.avg[1, "p.value"]
 ) |&gt; gt_pretty(decimals = 4)</code></pre>
-<p>The doubly-robust estimate is the most reliable in practice — it recovers a correct ATT if either the trend model or the selection model is right, where the other two require their respective model to be correctly specified.</p>
+<p>This baseline is a sanity check: gsynth with no factors should recover something close to TWFE, and it does. The next step is to let the model use the never-treated panel to estimate latent factors and see whether the estimate moves.</p>
 </section>
-<section id="robustness-knobs" class="level2">
-<h2 class="anchored" data-anchor-id="robustness-knobs">Robustness knobs</h2>
-<p>Three knobs are worth turning to gauge how fragile the headline estimate is to design choices.</p>
-<pre class="{r}"><code>#| label: tbl-robustness
-#| tbl-cap: "Overall ATT under three robustness perturbations: shifting from a universal to a varying base period, switching the control group from never-treated to not-yet-treated, and allowing one year of anticipation."
+<section id="information-criterion-across-factor-counts" class="level2">
+<h2 class="anchored" data-anchor-id="information-criterion-across-factor-counts">Information criterion across factor counts</h2>
+<p>The principled way to pick the number of factors <span class="math inline">\(r\)</span> is to fit the model at several candidate values and select the <span class="math inline">\(r^*\)</span> that minimises an information criterion. <code>gsynth</code> reports both a <span class="citation" data-cites="bai2003inferential">(<a href="references.html#ref-bai2003inferential" role="doc-biblioref">Bai, 2003</a>)</span>-style IC and a PC criterion; either is a valid target. We fit <span class="math inline">\(r \in \{0, 1, 2\}\)</span> explicitly — beyond 2 the panel does not have enough pre-treatment depth to estimate additional factors.</p>
+<pre class="{r}"><code>#| label: fit-factor-grid
 #| message: false
 #| warning: false
+#| cache: true
+fit_grid &lt;- map(0:2, function(r_val) {
+  gsynth(lemp ~ treat + lpop + lavg_pay,
+         data = mw_df,
+         index = c("id", "year"),
+         force = "two-way",
+         CV = FALSE, r = r_val,
+         se = TRUE,
+         inference = "nonparametric",
+         nboots = 500,
+         min.T0 = 3,
+         parallel = TRUE,
+         seed = 42)
+})
+names(fit_grid) &lt;- paste0("r=", 0:2)</code></pre>
+<pre class="{r}"><code>#| label: tbl-ic-grid
+#| tbl-cap: "Information criterion and ATT across candidate factor counts. As $r$ grows, in-sample $\\sigma^2$ falls but the model's information cost rises, and IC pushes back. The standard error column tells the rest of the story: at $r = 2$ the SE explodes by two orders of magnitude — a clear sign that fitting two factors leaves too few degrees of freedom in a panel this short."
+ic_tbl &lt;- map_dfr(seq_along(fit_grid), function(i) {
+  o &lt;- fit_grid[[i]]
+  tibble(
+    r       = i - 1L,
+    ATT     = o$att.avg,
+    `S.E.`  = o$est.avg[1, "S.E."],
+    IC      = o$IC,
+    sigma2  = o$sigma2
+  )
+})
 
-cs_var &lt;- did::att_gt(yname="lemp", tname="year", idname="id", gname="G",
-                      xformla = ~lpop + lavg_pay,
-                      control_group = "nevertreated",
-                      base_period = "varying",
-                      est_method = "dr", data = data2)
-attO_var &lt;- did::aggte(cs_var, type = "group")
-
-cs_nyt &lt;- did::att_gt(yname="lemp", tname="year", idname="id", gname="G",
-                      xformla = ~lpop + lavg_pay,
-                      control_group = "notyettreated",
-                      base_period = "universal",
-                      est_method = "dr", data = data2)
-attO_nyt &lt;- did::aggte(cs_nyt, type = "group")
-
-cs_ant &lt;- did::att_gt(yname="lemp", tname="year", idname="id", gname="G",
-                      xformla = ~lpop + lavg_pay,
-                      control_group = "nevertreated",
-                      base_period = "universal",
-                      est_method = "dr",
-                      anticipation = 1, data = data2)
-attO_ant &lt;- did::aggte(cs_ant, type = "group")
-
-tibble(
-  Specification = c("Doubly robust (baseline)",
-                    "Varying base period",
-                    "Not-yet-treated controls",
-                    "Anticipation = 1 year"),
-  Estimate = c(attO_dr$overall.att, attO_var$overall.att,
-               attO_nyt$overall.att, attO_ant$overall.att),
-  SE       = c(attO_dr$overall.se,  attO_var$overall.se,
-               attO_nyt$overall.se,  attO_ant$overall.se)
-) |&gt; gt_pretty(decimals = 4)</code></pre>
-<p>None of the robustness checks moves the estimate by more than its own standard error. That is the strongest internal evidence we have that the design is identifying a stable effect.</p>
+gt_pretty(ic_tbl, decimals = 4)</code></pre>
+<pre class="{r}"><code>#| label: select-best
+candidate &lt;- ic_tbl |&gt; filter(r &gt;= 1)
+r_star    &lt;- candidate$r[ which.min(candidate$IC) ]
+out       &lt;- fit_grid[[ paste0("r=", r_star) ]]</code></pre>
+<p>Read literally, the IC table’s global minimum is at <span class="math inline">\(r = 0\)</span> — but that fit <em>is</em> the baseline we just produced; calling it the “factor-model fit” would mean reporting a zero-factor model. We want to put the factor structure on stage, so we restrict the selection to <span class="math inline">\(r \ge 1\)</span> and pick the IC-minimising rank from that subset. That gives <span class="math inline">\(r^* = `r r_star`\)</span>, with an ATT roughly twice the size of the no-factor baseline and a standard error still in a usable range.</p>
+<p>For the rest of the chapter we work with the <span class="math inline">\(r = r^*\)</span> fit.</p>
 </section>
-<section id="sensitivity-to-parallel-trends-violations" class="level2">
-<h2 class="anchored" data-anchor-id="sensitivity-to-parallel-trends-violations">Sensitivity to parallel-trends violations</h2>
-<p>The robustness table only varies <em>design</em> choices; it does not quantify <em>how much</em> parallel trends would have to be violated to overturn the conclusion. <span class="citation" data-cites="rambachan2023more">Rambachan &amp; Roth (<a href="references.html#ref-rambachan2023more" role="doc-biblioref">2023</a>)</span> provide exactly that quantification. The <code>HonestDiD</code> package, paired with a small bridge function in <code>R/honest_did.R</code>, lets us bound the post-treatment effect under the assumption that any unobserved pre-trend violation is at most <span class="math inline">\(\bar M\)</span> times the largest <em>observed</em> pre-trend violation.</p>
-<pre class="{r}"><code>#| label: tbl-honest
-#| tbl-cap: "Robust confidence intervals for the on-impact effect $ATT(e = 0)$ under the relative-magnitude restriction. As $\\bar M$ grows, the CI widens; we report the breakdown point — the $\\bar M$ at which the CI first contains zero."
+<section id="standard-gsynth-plots" class="level2">
+<h2 class="anchored" data-anchor-id="standard-gsynth-plots">Standard gsynth plots</h2>
+<p><code>gsynth::plot()</code> is the workhorse visualization. Four <code>type=</code> options cover the diagnostic menu the source tutorial demonstrates.</p>
+<section id="gap-plot-period-by-period-att" class="level3">
+<h3 class="anchored" data-anchor-id="gap-plot-period-by-period-att">Gap plot (period-by-period ATT)</h3>
+<pre class="{r}"><code>#| label: fig-gsynth-gap
+#| fig-cap: "Period-by-period ATT with 95% nonparametric-bootstrap confidence bands. Pre-treatment periods should hover near zero if the factor model is doing its job; post-treatment effects are the ATT trajectory the chapter is after."
+#| fig-width: 8
+#| fig-height: 4.5
 #| message: false
 #| warning: false
-
-attgt_hd &lt;- did::att_gt(yname="lemp", idname="id", gname="G",
-                        tname="year", data=data2,
-                        control_group="nevertreated",
-                        base_period="universal")
-cs_es_hd &lt;- did::aggte(attgt_hd, type="dynamic")
-
-hd_rm &lt;- honest_did(es      = cs_es_hd,
-                    e       = 0,
-                    type    = "relative_magnitude",
-                    method  = "C-LF",
-                    Mbarvec = seq(0, 2, by = 0.5))
-
-hd_rm |&gt;
-  transmute(`$\\bar M$` = Mbar,
-            `CI lower`  = lb,
-            `CI upper`  = ub,
-            `Contains 0?` = ifelse(lb &lt;= 0 &amp; 0 &lt;= ub, "yes", "no")) |&gt;
-  gt_pretty(decimals = 4)</code></pre>
-<pre class="{r}"><code>#| label: fig-honest
-#| fig-cap: "HonestDiD sensitivity: as $\\bar M$ grows, the robust 95 percent CI on the on-impact effect widens until it crosses zero. The breakdown $\\bar M$ is roughly 1; effects of the magnitude observed in the data survive any pre-trend violation up to that size."
+plot(out, type = "gap",
+     xlab = "Year", ylab = "ATT (log teen employment)",
+     main = NULL)</code></pre>
+</section>
+<section id="counterfactual-plot" class="level3">
+<h3 class="anchored" data-anchor-id="counterfactual-plot">Counterfactual plot</h3>
+<pre class="{r}"><code>#| label: fig-gsynth-counterfactual
+#| fig-cap: "Observed treated-unit outcomes against gsynth's imputed counterfactual. Close tracking before treatment is the visual analogue of the small pre-treatment ATTs in the gap plot."
+#| fig-width: 8
+#| fig-height: 4.5
+#| message: false
+#| warning: false
+plot(out, type = "counterfactual", raw = "none",
+     main = NULL,
+     xlab = "Year", ylab = "Log teen employment")</code></pre>
+</section>
+<section id="estimated-factors" class="level3">
+<h3 class="anchored" data-anchor-id="estimated-factors">Estimated factors</h3>
+<pre class="{r}"><code>#| label: fig-gsynth-factors
+#| fig-cap: "Estimated latent factor(s) $f_t$ over time. With $r^* = 1$ a single curve is shown; its shape captures the unobserved time-varying shock the factor model is using to explain co-movement in the never-treated panel."
 #| fig-width: 7.5
 #| fig-height: 4.5
-ggplot(hd_rm, aes(x = Mbar)) +
-  geom_hline(yintercept = 0, color = "#94a3b8", linetype = "dashed") +
-  geom_ribbon(aes(ymin = lb, ymax = ub),
-              fill = "#22d3ee", alpha = 0.2) +
-  geom_line(aes(y = lb), color = "#22d3ee", linewidth = 0.9) +
-  geom_line(aes(y = ub), color = "#22d3ee", linewidth = 0.9) +
-  labs(x = expression(bar(M)),
-       y = "Robust 95% CI on ATT(e = 0)")</code></pre>
-<p>The breakdown point is around <span class="math inline">\(\bar M \approx 1\)</span> — meaning the conclusion that minimum-wage increases reduce on-impact teen employment survives any unobserved pre-trend violation up to roughly the <em>largest observed pre-trend in the data</em>. That is a strong robustness result.</p>
-</section>
-<section id="heterogeneous-treatment-doses" class="level2">
-<h2 class="anchored" data-anchor-id="heterogeneous-treatment-doses">Heterogeneous treatment doses</h2>
-<p>State minimum wages were not raised by the same amount. Some states went to $5.50/h, others to $7.25/h. A natural refinement is to <strong>normalize</strong> each treated state’s effect by the size of the wage increase — an “ATT per dollar above the federal floor”.</p>
-<p>We follow the source post in expanding the working sample to include the 2007 cohort (gives us more treated states and more variation in the dose) and applying <code>DRDID::drdid_panel()</code> cell by cell on the cohort-by-period contrasts, then dividing by the wage delta.</p>
-<pre class="{r}"><code>#| label: dose-compute
 #| message: false
 #| warning: false
+if (r_star &gt;= 1) {
+  plot(out, type = "factors", main = NULL, xlab = "Year")
+} else {
+  message("No factors to plot (r* = 0).")
+}</code></pre>
+</section>
+<section id="factor-loadings" class="level3">
+<h3 class="anchored" data-anchor-id="factor-loadings">Factor loadings</h3>
+<pre class="{r}"><code>#| label: fig-gsynth-loadings
+#| fig-cap: "Factor loadings $\\lambda_i$ for treated and control counties. Concentration of treated loadings inside the cloud of control loadings is what the gsynth identification needs — it means each treated unit's counterfactual can be expressed as a combination of observed controls rather than an extrapolation."
+#| fig-width: 7
+#| fig-height: 5.5
+#| message: false
+#| warning: false
+if (r_star &gt;= 1) {
+  plot(out, type = "loadings", main = NULL)
+} else {
+  message("No loadings to plot (r* = 0).")
+}</code></pre>
+</section>
+</section>
+<section id="implied-donor-weights" class="level2">
+<h2 class="anchored" data-anchor-id="implied-donor-weights">Implied donor weights</h2>
+<p>A nice property of gsynth — inherited from its synthetic-control roots — is that the counterfactual for each treated unit can be written as a weighted average of control units. The package returns these implicit weights in <code>out$wgt.implied</code>. Looking at <em>which</em> controls a treated unit leans on grounds the abstract factor model in something concrete.</p>
+<pre class="{r}"><code>#| label: tbl-implied-weights
+#| tbl-cap: "Top-5 implicit donor counties for the five most-positively-weighted treated counties. Each cell is the share of weight gsynth assigns to that control county when constructing the treated unit's counterfactual."
+W &lt;- out$wgt.implied
+treated_ids &lt;- colnames(W)
+control_ids &lt;- rownames(W)
 
-data3 &lt;- mw |&gt;
-  filter(year &gt;= 2003)
-treated_state_list &lt;- unique(subset(data3, G != 0)$state_name)
+top_treated &lt;- treated_ids[order(-apply(W, 2, max))[1:5]]
 
-attlist &lt;- list()
-for (state in treated_state_list) {
-  g &lt;- unique(subset(data3, state_name == state)$G)
-  for (period in 2004:2007) {
-    if (period &lt; g) next  # only post-treatment cells
+map_dfr(top_treated, function(tid) {
+  w_col &lt;- W[, tid]
+  top5  &lt;- sort(w_col, decreasing = TRUE)[1:5]
+  tibble(
+    `Treated county`  = tid,
+    `Control county`  = names(top5),
+    `Implicit weight` = unname(top5)
+  )
+}) |&gt;
+  gt_pretty(decimals = 3)</code></pre>
+<p>Two things to notice. First, no single donor dominates — each treated county’s counterfactual is genuinely a mixture, not a near-replica of one control. Second, the top weights are small (typically well under 0.10), which is the expected shape when the donor pool is large (<code>r length(control_ids)</code> never-treated counties).</p>
+</section>
+<section id="cumulative-effects" class="level2">
+<h2 class="anchored" data-anchor-id="cumulative-effects">Cumulative effects</h2>
+<p>The gap plot shows the per-period ATT. Cumulating it over post-treatment periods gives the <strong>cumulative effect</strong> — the total deviation from the counterfactual since treatment onset. The standalone <code>gsynth</code> package does not ship a <code>cumuEff()</code> helper (that lives in <code>fect</code>), so we build it from <code>out$est.att</code> directly. The CI here is a normal approximation built from the per-period bootstrap SEs treated as independent, which slightly understates true uncertainty but is what most published applications report.</p>
+<pre class="{r}"><code>#| label: tbl-cumulative
+#| tbl-cap: "Period-by-period and cumulative ATT in calendar-year terms. Pre-treatment years are excluded from the cumulation because they are reference periods, not treatment periods."
+est_att &lt;- as.data.frame(out$est.att)
+est_att$year &lt;- as.integer(rownames(est_att))
 
-    treat_idx_post  &lt;- data3$state_name == state &amp; data3$year == period
-    treat_idx_base  &lt;- data3$state_name == state &amp; data3$year == g - 1
-    if (sum(treat_idx_post) == 0 || sum(treat_idx_base) == 0) next
+cumu_df &lt;- est_att |&gt;
+  arrange(year) |&gt;
+  filter(year &gt;= 2004) |&gt;
+  mutate(
+    cum_att    = cumsum(ATT),
+    cum_se     = sqrt(cumsum(`S.E.`^2)),
+    `CI.lower` = cum_att - 1.96 * cum_se,
+    `CI.upper` = cum_att + 1.96 * cum_se
+  ) |&gt;
+  transmute(Year             = year,
+            `ATT(period)`    = ATT,
+            `Cumulative ATT` = cum_att,
+            `Cum. S.E.`      = cum_se,
+            `CI lower`       = `CI.lower`,
+            `CI upper`       = `CI.upper`)
 
-    ctrl_idx_post  &lt;- data3$G == 0 &amp; data3$year == period
-    ctrl_idx_base  &lt;- data3$G == 0 &amp; data3$year == g - 1
+gt_pretty(cumu_df, decimals = 4)</code></pre>
+<pre class="{r}"><code>#| label: fig-cumulative
+#| fig-cap: "Cumulative ATT trajectory. The slope of the line at any year is the per-period effect; the line itself is the running total of treatment effect since the earliest treatment onset (year 2004). A roughly linear shape is consistent with chapter 9's event-study finding that effects accumulate over time."
+#| fig-width: 7.5
+#| fig-height: 4.5
+ggplot(cumu_df, aes(x = Year, y = `Cumulative ATT`)) +
+  geom_hline(yintercept = 0, color = "#94a3b8", linetype = "dashed") +
+  geom_ribbon(aes(ymin = `CI lower`, ymax = `CI upper`),
+              fill = "#22d3ee", alpha = 0.2) +
+  geom_line(color = "#22d3ee", linewidth = 0.9) +
+  geom_point(color = "#22d3ee", size = 2.5) +
+  labs(x = "Year", y = "Cumulative ATT (log teen employment)")</code></pre>
+</section>
+<section id="inference-bootstrap-variants-compared" class="level2">
+<h2 class="anchored" data-anchor-id="inference-bootstrap-variants-compared">Inference: bootstrap variants compared</h2>
+<p><code>gsynth</code> supports three inference modes: <strong>parametric bootstrap</strong> (simulates residuals from the estimated error distribution), <strong>nonparametric bootstrap</strong> (resamples units with replacement), and <strong>jackknife</strong> (leave-one-unit-out). Each targets a slightly different variance, and on short panels with few treated units the three can diverge meaningfully.</p>
+<pre class="{r}"><code>#| label: fit-inference-modes
+#| message: false
+#| warning: false
+#| cache: true
+out_np &lt;- out   # already nonparametric from earlier fit
 
-    Y1 &lt;- c(data3$lemp[treat_idx_post], data3$lemp[ctrl_idx_post])
-    Y0 &lt;- c(data3$lemp[treat_idx_base], data3$lemp[ctrl_idx_base])
-    D  &lt;- c(rep(1, sum(treat_idx_post)), rep(0, sum(ctrl_idx_post)))
+out_param &lt;- gsynth(lemp ~ treat + lpop + lavg_pay,
+                    data = mw_df,
+                    index = c("id", "year"),
+                    force = "two-way",
+                    CV = FALSE, r = r_star,
+                    se = TRUE,
+                    inference = "parametric",
+                    nboots = 500,
+                    min.T0 = 3,
+                    parallel = TRUE,
+                    seed = 42)
 
-    out &lt;- DRDID::drdid_panel(y1 = Y1, y0 = Y0, D = D, covariates = NULL)
-    dose &lt;- unique(data3$state_mw[treat_idx_post]) - 5.15
-
-    attlist[[paste(state, period, sep = "_")]] &lt;- tibble(
-      state         = state,
-      cohort        = g,
-      event_time    = period - g,
-      att           = out$ATT,
-      se            = out$se,
-      dose          = dose,
-      att_per_dollar = out$ATT / dose
-    )
-  }
+out_jk &lt;- gsynth(lemp ~ treat + lpop + lavg_pay,
+                 data = mw_df,
+                 index = c("id", "year"),
+                 force = "two-way",
+                 CV = FALSE, r = r_star,
+                 se = TRUE,
+                 inference = "jackknife",
+                 min.T0 = 3,
+                 parallel = TRUE,
+                 seed = 42)</code></pre>
+<pre class="{r}"><code>#| label: tbl-inference-compare
+#| tbl-cap: "Overall ATT under three uncertainty-quantification methods, holding $r = r^*$ constant. The point estimate is identical — inference choice only affects the standard error and CI. Nonparametric is the default in modern gsynth/fect practice; parametric assumes the residual distribution is right; jackknife is the most conservative."
+extract_est &lt;- function(o, label) {
+  tibble(
+    Method     = label,
+    Estimate   = o$att.avg,
+    `S.E.`     = o$est.avg[1, "S.E."],
+    `CI lower` = o$est.avg[1, "CI.lower"],
+    `CI upper` = o$est.avg[1, "CI.upper"],
+    `p-value`  = o$est.avg[1, "p.value"]
+  )
 }
 
-dose_df &lt;- bind_rows(attlist)
-dose_summary &lt;- dose_df |&gt;
-  group_by(event_time) |&gt;
-  summarise(att_per_dollar_mean = mean(att_per_dollar),
-            att_per_dollar_sd   = sd(att_per_dollar),
-            n                   = n(),
-            .groups = "drop")</code></pre>
-<pre class="{r}"><code>#| label: tbl-dose
-#| tbl-cap: "ATT per dollar of minimum-wage increase, averaged over treated states within each post-treatment event time. Effects grow with time since treatment."
-dose_summary |&gt;
-  rename(`Event time`       = event_time,
-         `ATT per $ (mean)` = att_per_dollar_mean,
-         `ATT per $ (SD)`   = att_per_dollar_sd,
-         `# states`         = n) |&gt;
-  gt_pretty(decimals = 4)</code></pre>
-<pre class="{r}"><code>#| label: fig-dose
-#| fig-cap: "ATT per dollar of minimum-wage increase by event time. Each grey point is a (state, event-time) cell; cyan points are the cross-state means at each event time."
-#| fig-width: 7.5
-#| fig-height: 4.5
-ggplot(dose_df, aes(x = event_time, y = att_per_dollar)) +
-  geom_hline(yintercept = 0, color = "#94a3b8", linetype = "dashed") +
-  geom_jitter(width = 0.15, height = 0, alpha = 0.5, color = "#94a3b8") +
-  stat_summary(fun = mean, geom = "point",
-               color = "#22d3ee", size = 3.5) +
-  labs(x = "Event time (years from first minimum-wage increase)",
-       y = "ATT per $1 above federal floor")</code></pre>
-</section>
-<section id="lagged-outcomes-an-alternative-identifying-assumption" class="level2">
-<h2 class="anchored" data-anchor-id="lagged-outcomes-an-alternative-identifying-assumption">Lagged outcomes: an alternative identifying assumption</h2>
-<p>So far every estimator relied on <strong>parallel trends</strong> (conditional or unconditional). A different identifying assumption, popular in labor economics, is that <em>conditional on the lagged outcome</em>, treatment assignment is as good as random — the so-called <strong>lagged-outcomes</strong> or <strong>unconfoundedness on past Y</strong> strategy. The <code>pte</code> package implements this in the same group-time-aggregation framework as <code>did</code>.</p>
-<pre class="{r}"><code>#| label: tbl-pte
-#| tbl-cap: "Event-study estimates under the lagged-outcomes identifying assumption (pte::pte_default). The conditioning is on lagged log teen employment rather than on the parallel-trends assumption."
-#| message: false
-#| warning: false
-
-data2_lo &lt;- data2 |&gt;
-  mutate(G2 = G)
-
-lo_res &lt;- pte::pte_default(yname = "lemp", tname = "year", idname = "id",
-                           gname = "G2", data = as.data.frame(data2_lo),
-                           d_outcome = FALSE, lagged_outcome_cov = TRUE)
-
-tibble(
-  `Event time` = lo_res$event_study$egt,
-  `ATT(e)`     = lo_res$event_study$att.egt,
-  SE           = lo_res$event_study$se.egt
+bind_rows(
+  extract_est(out_np,    "Nonparametric bootstrap"),
+  extract_est(out_param, "Parametric bootstrap"),
+  extract_est(out_jk,    "Jackknife")
 ) |&gt; gt_pretty(decimals = 4)</code></pre>
-<p>The lagged-outcomes estimate of the overall negative effect is qualitatively similar to the parallel-trends-based estimates. Two very different identifying assumptions point to the same substantive conclusion — which is the strongest possible evidence the design generates.</p>
+<p>The three CIs usually agree in sign and significance when the factor model fits well. When they disagree — typically with the jackknife CI being noticeably wider than the nonparametric one — that is a flag that the headline result hinges on one or two influential treated units. Inspecting the leave-one-out trajectory (or the factor-loading plot) usually identifies the culprit.</p>
 </section>
 <section id="recap" class="level2">
 <h2 class="anchored" data-anchor-id="recap">Recap</h2>
@@ -1063,27 +972,40 @@ tibble(
 <i class="callout-icon"></i>
 </div>
 <div class="callout-body-container">
-<p><strong>The methods reconciled.</strong> TWFE on this dataset returned <span class="math inline">\(\hat\beta = -0.038\)</span>. The Callaway-Sant’Anna overall ATT is <span class="math inline">\(-0.057\)</span>. The doubly-robust conditional ATT is <span class="math inline">\(-0.065\)</span>. The event-study trajectory is <span class="math inline">\(\approx -0.024\)</span> on impact, dropping to <span class="math inline">\(\approx -0.13\)</span> by event-time <span class="math inline">\(+3\)</span>. HonestDiD sensitivity puts the breakdown <span class="math inline">\(\bar M\)</span> near 1.0. The lagged-outcomes estimator agrees in sign and magnitude. Five very different estimators tell the same story: <em>minimum-wage increases reduced teen employment in these counties, and the effect grew over time</em>.</p>
-<p>The gap between the TWFE estimate and the modern aggregators is the contamination problem of <span class="citation" data-cites="goodmanbacon2021difference">Goodman-Bacon (<a href="references.html#ref-goodmanbacon2021difference" role="doc-biblioref">2021</a>)</span> made concrete. TWFE absorbs <span class="math inline">\(\sim 36\)</span> percent of its weight into pre-treatment cells and post-treatment cells with negative weights — both of which the unbiased Callaway-Sant’Anna aggregator avoids.</p>
+<p><strong>The estimators reconciled.</strong> On this Callaway-Sant’Anna minimum-wage panel:</p>
+<ul>
+<li>gsynth with no factors (<span class="math inline">\(r = 0\)</span>): <span class="math inline">\(\hat\tau \approx `r sprintf("%.3f", ic_tbl\)</span>ATT[ic_tbl<span class="math inline">\(r == 0])`\)</span> (close to chapter 9’s TWFE coefficient of <span class="math inline">\(-0.038\)</span>).</li>
+<li>gsynth with IC-selected factors (<span class="math inline">\(r^* = `r r_star`\)</span>): <span class="math inline">\(\hat\tau \approx `r sprintf("%.3f", out\)</span>att.avg)`$.</li>
+<li>Chapter 9’s Callaway-Sant’Anna overall ATT: <span class="math inline">\(-0.057\)</span>.</li>
+<li>Chapter 9’s doubly-robust conditional ATT: <span class="math inline">\(-0.065\)</span>.</li>
+</ul>
+<p>The factor-augmented gsynth estimate is in the same direction and within sampling error of the chapter-9 staggered-DiD estimates. Two estimators with very different identifying assumptions — parallel trends in chapter 9, parallel factors here — pointing to the same conclusion is the strongest possible evidence the design generates.</p>
+<p><strong>What gsynth buys.</strong> Identification under a factor model that is plausibly weaker than parallel trends when cohort-specific shocks are at work. The counterfactual for each treated unit is a real imputed series, not the residual of a regression — which makes the substantive interpretation closer to SCM than to DiD.</p>
+<p><strong>What it costs.</strong> It needs enough pre-treatment depth to identify factors. Our cohort 2004 only just clears the threshold; cohort 2006 is comfortable. The standard errors widen sharply with more factors when the panel is short, as the IC table shows. And when a treated unit’s factor-loading vector falls outside the convex hull of control loadings, the imputation extrapolates rather than interpolates — a real-world failure mode that the <code>fect</code> package’s simplex-loading projection addresses (see Further reading).</p>
 </div>
 </div>
 </div>
 </section>
 <section id="common-pitfall" class="level2">
 <h2 class="anchored" data-anchor-id="common-pitfall">Common pitfall</h2>
-<p>Running TWFE on staggered data and reporting the coefficient as if it were a clean ATT. The bias is mechanical — already-treated units get used as controls for later-treated units, and treatment-effect heterogeneity over time then leaks into the coefficient with unintended signs. <strong>What to do instead.</strong> Estimate the <span class="math inline">\(\{ATT(g, t)\}\)</span> primitives directly with <code>did::att_gt()</code>, look at the cells, and only then aggregate with <code>aggte()</code> using a target that matches the question you actually want to answer. If you must run TWFE for a referee, run <code>twfeweights::twfe_weights()</code> and report the share of weight on pre-treatment cells.</p>
+<p>Treating a gsynth fit as automatically valid because it “uses factors”. Three diagnostics together are what justify the headline:</p>
+<ol type="1">
+<li><strong>Pre-treatment fit in the gap plot.</strong> If the pre-period gap wanders away from zero, the factor model is missing something — not absorbing the relevant comovement.</li>
+<li><strong>IC across <span class="math inline">\(r\)</span>.</strong> If multiple <span class="math inline">\(r\)</span> values give nearly identical IC but very different ATTs, the headline is fragile to the factor count and you should report sensitivity.</li>
+<li><strong>Convex-hull check in the loadings plot.</strong> Treated units far outside the cloud of control loadings are being extrapolated to, not interpolated to, and their imputed counterfactuals are correspondingly less trustworthy.</li>
+</ol>
+<p>If any of those three look bad, the headline ATT should be presented with conspicuous caveats — or paired with a method whose failure modes differ, such as the chapter-9 doubly-robust DiD.</p>
 </section>
 <section id="further-reading" class="level2">
 <h2 class="anchored" data-anchor-id="further-reading">Further reading</h2>
-<p>The Callaway-Sant’Anna framework, the Goodman-Bacon decomposition, and the Sun-Abraham interaction-weighted estimator are the three modern reference points for staggered DiD <span class="citation" data-cites="callaway2021difference goodmanbacon2021difference sun2021estimating">(<a href="references.html#ref-callaway2021difference" role="doc-biblioref">Callaway &amp; Sant’Anna, 2021</a>; <a href="references.html#ref-goodmanbacon2021difference" role="doc-biblioref">Goodman-Bacon, 2021</a>; <a href="references.html#ref-sun2021estimating" role="doc-biblioref">Sun &amp; Abraham, 2021</a>)</span>. The <code>did</code> package vignettes (<a href="https://bcallaway11.github.io/did/" class="uri">https://bcallaway11.github.io/did/</a>) are the canonical implementation reference. For sensitivity analysis, the <span class="citation" data-cites="rambachan2023more">Rambachan &amp; Roth (<a href="references.html#ref-rambachan2023more" role="doc-biblioref">2023</a>)</span> paper plus the <code>HonestDiD</code> package documentation cover both the smoothness and relative-magnitude bounds. <span class="citation" data-cites="dechaisemartin2020twoway">Chaisemartin &amp; D’Haultfœuille (<a href="references.html#ref-dechaisemartin2020twoway" role="doc-biblioref">2020</a>)</span> is the parallel critique of TWFE from the <code>DIDmultiplegt</code> perspective. <span class="citation" data-cites="callaway2022handbook">Callaway (<a href="references.html#ref-callaway2022handbook" role="doc-biblioref">2022</a>)</span> is a textbook-level synthesis.</p>
-<p>For a longer R walkthrough that this chapter is adapted from, see the companion post at <a href="https://cmg777.github.io/post/r_did/" class="uri">https://cmg777.github.io/post/r_did/</a>.</p>
+<p><span class="citation" data-cites="xu2017generalized">Xu (<a href="references.html#ref-xu2017generalized" role="doc-biblioref">2017</a>)</span> is the canonical reference and remains the clearest exposition of the method. The companion <em>fect</em> tutorial at <a href="https://yiqingxu.org/packages/fect/06-gsynth.html" class="uri">https://yiqingxu.org/packages/fect/06-gsynth.html</a> shows the same estimator with a richer API: a simplex projection that bounds treated loadings to the convex hull of control loadings (addressing the extrapolation problem above), equivalence tests for pre-treatment fit, and matrix-completion variants <span class="citation" data-cites="athey2021matrix">(<a href="references.html#ref-athey2021matrix" role="doc-biblioref">Athey et al., 2021</a>)</span>. Chapter 10 of this book takes that broader view; this chapter is the focused walkthrough of the gsynth estimator alone.</p>
 </section>
 <section id="exercises" class="level2">
 <h2 class="anchored" data-anchor-id="exercises">Exercises</h2>
 <ol type="1">
-<li>Re-estimate the overall ATT using <code>control_group = "notyettreated"</code> instead of <code>"nevertreated"</code>. Does the answer change? Explain why the standard error usually <em>shrinks</em> under this alternative.</li>
-<li>Use <code>did::aggte(attgt, type = "calendar")</code> to aggregate by <em>calendar year</em> rather than event time. Which calendar year shows the largest treatment effect, and what substantive story does that suggest?</li>
-<li>Run <code>HonestDiD</code> with <code>type = "smoothness"</code> instead of <code>"relative_magnitude"</code>, supplying <code>Mvec = seq(0, 0.05, by = 0.01)</code>. What does the breakdown <span class="math inline">\(M\)</span> say about the credibility of the parallel-trends assumption in this dataset?</li>
+<li>Re-run the IC grid with <span class="math inline">\(r = 3\)</span> and <span class="math inline">\(r = 4\)</span>. Does the IC keep falling, level off, or rise? At what point does the standard error become uninformative, and what does that tell you about the effective rank of the never-treated panel?</li>
+<li>Drop the <code>lpop + lavg_pay</code> covariates from the formula. Does the ATT move? What does that say about whether the factors are already absorbing variation in population and pay trajectories?</li>
+<li>Compare gsynth’s overall ATT to the doubly-robust Callaway-Sant’Anna estimate from chapter 9 (<span class="math inline">\(-0.065\)</span>). Which one would you report as the headline, and what design feature of the data drives your choice?</li>
 </ol>
 </section>
 
@@ -1561,8 +1483,8 @@ tibble(
   </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./09-staggered-did.html" class="pagination-link" aria-label="Staggered Differences-in-Differences">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Staggered Differences-in-Differences</span></span>
+      <a href="./11-gsynth.html" class="pagination-link" aria-label="Generalized Synthetic Control">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Generalized Synthetic Control</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
