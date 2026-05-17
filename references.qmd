@@ -1,6 +1,4 @@
----
-title: "References {.unnumbered}"
----
+# References {.unnumbered}
 
 ::: {#refs}
 :::

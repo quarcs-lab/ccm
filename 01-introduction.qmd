@@ -8,9 +8,9 @@ title: "Introduction"
 
 ## What is regional impact evaluation?
 
-*Placeholder.*
+The native approach and the need for a comparative-causal framework.
 
-## The identification problem
+## The potential outcomes framework
 
 *Placeholder.*
 
@@ -30,7 +30,7 @@ library(fixest)
 library(modelsummary)
 ```
 
-## Worked example
+## Worked example: Simple synthetic control
 
 *Placeholder.* Each subsequent chapter follows this structure: motivation, identifying assumptions, estimation in R, and a regional case study.
 

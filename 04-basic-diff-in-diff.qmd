@@ -1,0 +1,45 @@
+---
+title: "Basic Differences-in-Differences"
+---
+
+## Overview
+
+*Placeholder.* The basic differences-in-differences (DiD) design estimates a
+causal effect by comparing the pre-post change in a treated region against
+the pre-post change in an untreated comparison region (or pool of regions).
+
+## Identifying assumptions
+
+*Placeholder.* Parallel trends, no anticipation, SUTVA, stable composition.
+
+## Estimation in R
+
+```{r}
+#| label: setup
+#| message: false
+#| warning: false
+#| eval: false
+library(tidyverse)
+library(fixest)
+```
+
+```{r}
+#| label: did-example
+#| eval: false
+# Placeholder: two-way fixed-effects DiD via fixest::feols(),
+#   y ~ treat * post | region + period
+# with clustered standard errors.
+```
+
+## Regional case study
+
+*Placeholder.*
+
+## Diagnostics
+
+*Placeholder.* Parallel-trends pre-period checks, event-study plots,
+placebo / falsification tests.
+
+## Further reading
+
+*Placeholder.*

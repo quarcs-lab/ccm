@@ -25,8 +25,9 @@ book:
     - 01-introduction.qmd
     - 02-interrupted-time-series.qmd
     - 03-rd-in-time.qmd
-    - 04-classical-synthetic-control.qmd
-    - 05-structural-bayesian-ts.qmd
+    - 04-basic-diff-in-diff.qmd
+    - 05-classical-synthetic-control.qmd
+    - 06-structural-bayesian-ts.qmd
     - references.qmd
 
 bibliography: references.bib
