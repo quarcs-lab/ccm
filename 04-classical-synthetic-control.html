@@ -527,10 +527,10 @@ window.Quarto = {
 <div aria-describedby="fig-tidysynth-pipeline-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div>
 <pre class="mermaid mermaid-js" data-label="fig-tidysynth-pipeline">flowchart LR
-    A["1. synthetic_control()&lt;br/&gt;declare treated unit&lt;br/&gt;and intervention time"] --&gt; B["2. generate_predictor()&lt;br/&gt;define matching variables&lt;br/&gt;(one call per time window)"]
-    B --&gt; C["3. generate_weights()&lt;br/&gt;optimise donor weights&lt;br/&gt;(quadratic programming)"]
-    C --&gt; D["4. generate_control()&lt;br/&gt;build synthetic California&lt;br/&gt;and post-period gap series"]
-    D --&gt; E["5. plot_/grab_ helpers&lt;br/&gt;trends, weights,&lt;br/&gt;placebos, MSPE ratio,&lt;br/&gt;Fisher exact p-value"]
+    A["Stage 1&lt;br/&gt;synthetic_control()&lt;br/&gt;declare treated unit&lt;br/&gt;and intervention time"] --&gt; B["Stage 2&lt;br/&gt;generate_predictor()&lt;br/&gt;define matching variables&lt;br/&gt;(one call per time window)"]
+    B --&gt; C["Stage 3&lt;br/&gt;generate_weights()&lt;br/&gt;optimise donor weights&lt;br/&gt;(quadratic programming)"]
+    C --&gt; D["Stage 4&lt;br/&gt;generate_control()&lt;br/&gt;build synthetic California&lt;br/&gt;and post-period gap series"]
+    D --&gt; E["Stage 5&lt;br/&gt;plot_/grab_ helpers&lt;br/&gt;trends, weights,&lt;br/&gt;placebos, MSPE ratio,&lt;br/&gt;Fisher exact p-value"]
 
     style A fill:#6a9bcc,stroke:#cbd5e0,color:#fff
     style B fill:#6a9bcc,stroke:#cbd5e0,color:#fff
@@ -4695,10 +4695,10 @@ Dunford, E. (2024). <em><span class="nocase">tidysynth</span> — a tidy impleme
 <span id="cb25-16"><a href="#cb25-16" aria-hidden="true" tabindex="-1"></a>%%| label: fig-tidysynth-pipeline</span>
 <span id="cb25-17"><a href="#cb25-17" aria-hidden="true" tabindex="-1"></a>%%| fig-cap: <span class="ot">"</span><span class="st">The four-stage tidysynth pipeline: declare → predictors → weights → control, with a fifth stage of plot/grab helpers.</span><span class="ot">"</span></span>
 <span id="cb25-18"><a href="#cb25-18" aria-hidden="true" tabindex="-1"></a>flowchart LR</span>
-<span id="cb25-19"><a href="#cb25-19" aria-hidden="true" tabindex="-1"></a>    A[<span class="ot">"</span><span class="st">1. synthetic_control()&lt;br/&gt;declare treated unit&lt;br/&gt;and intervention time</span><span class="ot">"</span>] --&gt; B[<span class="ot">"</span><span class="st">2. generate_predictor()&lt;br/&gt;define matching variables&lt;br/&gt;(one call per time window)</span><span class="ot">"</span>]</span>
-<span id="cb25-20"><a href="#cb25-20" aria-hidden="true" tabindex="-1"></a>    B --&gt; C[<span class="ot">"</span><span class="st">3. generate_weights()&lt;br/&gt;optimise donor weights&lt;br/&gt;(quadratic programming)</span><span class="ot">"</span>]</span>
-<span id="cb25-21"><a href="#cb25-21" aria-hidden="true" tabindex="-1"></a>    C --&gt; D[<span class="ot">"</span><span class="st">4. generate_control()&lt;br/&gt;build synthetic California&lt;br/&gt;and post-period gap series</span><span class="ot">"</span>]</span>
-<span id="cb25-22"><a href="#cb25-22" aria-hidden="true" tabindex="-1"></a>    D --&gt; E[<span class="ot">"</span><span class="st">5. plot_/grab_ helpers&lt;br/&gt;trends, weights,&lt;br/&gt;placebos, MSPE ratio,&lt;br/&gt;Fisher exact p-value</span><span class="ot">"</span>]</span>
+<span id="cb25-19"><a href="#cb25-19" aria-hidden="true" tabindex="-1"></a>    A[<span class="ot">"</span><span class="st">Stage 1&lt;br/&gt;synthetic_control()&lt;br/&gt;declare treated unit&lt;br/&gt;and intervention time</span><span class="ot">"</span>] --&gt; B[<span class="ot">"</span><span class="st">Stage 2&lt;br/&gt;generate_predictor()&lt;br/&gt;define matching variables&lt;br/&gt;(one call per time window)</span><span class="ot">"</span>]</span>
+<span id="cb25-20"><a href="#cb25-20" aria-hidden="true" tabindex="-1"></a>    B --&gt; C[<span class="ot">"</span><span class="st">Stage 3&lt;br/&gt;generate_weights()&lt;br/&gt;optimise donor weights&lt;br/&gt;(quadratic programming)</span><span class="ot">"</span>]</span>
+<span id="cb25-21"><a href="#cb25-21" aria-hidden="true" tabindex="-1"></a>    C --&gt; D[<span class="ot">"</span><span class="st">Stage 4&lt;br/&gt;generate_control()&lt;br/&gt;build synthetic California&lt;br/&gt;and post-period gap series</span><span class="ot">"</span>]</span>
+<span id="cb25-22"><a href="#cb25-22" aria-hidden="true" tabindex="-1"></a>    D --&gt; E[<span class="ot">"</span><span class="st">Stage 5&lt;br/&gt;plot_/grab_ helpers&lt;br/&gt;trends, weights,&lt;br/&gt;placebos, MSPE ratio,&lt;br/&gt;Fisher exact p-value</span><span class="ot">"</span>]</span>
 <span id="cb25-23"><a href="#cb25-23" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb25-24"><a href="#cb25-24" aria-hidden="true" tabindex="-1"></a>    style A fill:<span class="co">#6a9bcc,stroke:#cbd5e0,color:#fff</span></span>
 <span id="cb25-25"><a href="#cb25-25" aria-hidden="true" tabindex="-1"></a>    style B fill:<span class="co">#6a9bcc,stroke:#cbd5e0,color:#fff</span></span>

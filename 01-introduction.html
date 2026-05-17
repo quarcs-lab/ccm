@@ -726,7 +726,7 @@ window.Quarto = {
 
     Q1 --&gt;|Yes| Q2{"Do you want frequentist&lt;br/&gt;placebo inference,&lt;br/&gt;or Bayesian credible&lt;br/&gt;intervals?"}
     Q1 --&gt;|No, only one good control| DiD["Basic Difference-in-Differences&lt;br/&gt;(ch. 3)&lt;br/&gt;&lt;br/&gt;Cost: parallel-trends assumption&lt;br/&gt;on a single comparison unit"]
-    Q1 --&gt;|No, only the treated unit&lt;br/&gt;(model the smooth pre-trend)| ITS["Interrupted Time Series&lt;br/&gt;(ch. 2)&lt;br/&gt;&lt;br/&gt;Cost: pre-trend extrapolation&lt;br/&gt;must be specified correctly"]
+    Q1 --&gt;|"No, only the treated unit&lt;br/&gt;(model the smooth pre-trend)"| ITS["Interrupted Time Series&lt;br/&gt;(ch. 2)&lt;br/&gt;&lt;br/&gt;Cost: pre-trend extrapolation&lt;br/&gt;must be specified correctly"]
 
     Q2 --&gt;|Frequentist + tidy code| SCM["Classical Synthetic Control (ch. 4)&lt;br/&gt;+ prediction intervals via scpi (ch. 6)&lt;br/&gt;&lt;br/&gt;Cost: convex-combination of donors&lt;br/&gt;must match the treated pre-period"]
     Q2 --&gt;|Bayesian + uncertainty bands| Q3{"Do you suspect treatment&lt;br/&gt;spills over onto donor states&lt;br/&gt;(violating SUTVA)?"}
@@ -2537,7 +2537,7 @@ Xu, Y. (2017). Generalized synthetic control method: Causal inference with inter
 <span id="cb6-122"><a href="#cb6-122" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-123"><a href="#cb6-123" aria-hidden="true" tabindex="-1"></a>    Q1 --&gt;|Yes| Q2{<span class="ot">"</span><span class="st">Do you want frequentist&lt;br/&gt;placebo inference,&lt;br/&gt;or Bayesian credible&lt;br/&gt;intervals?</span><span class="ot">"</span>}</span>
 <span id="cb6-124"><a href="#cb6-124" aria-hidden="true" tabindex="-1"></a>    Q1 --&gt;|No, only one good control| DiD[<span class="ot">"</span><span class="st">Basic Difference-in-Differences&lt;br/&gt;(ch. 3)&lt;br/&gt;&lt;br/&gt;Cost: parallel-trends assumption&lt;br/&gt;on a single comparison unit</span><span class="ot">"</span>]</span>
-<span id="cb6-125"><a href="#cb6-125" aria-hidden="true" tabindex="-1"></a>    Q1 --&gt;|No, only the treated unit&lt;br/&gt;(model the smooth pre-trend)| ITS[<span class="ot">"</span><span class="st">Interrupted Time Series&lt;br/&gt;(ch. 2)&lt;br/&gt;&lt;br/&gt;Cost: pre-trend extrapolation&lt;br/&gt;must be specified correctly</span><span class="ot">"</span>]</span>
+<span id="cb6-125"><a href="#cb6-125" aria-hidden="true" tabindex="-1"></a>    Q1 --&gt;|<span class="ot">"</span><span class="st">No, only the treated unit&lt;br/&gt;(model the smooth pre-trend)</span><span class="ot">"</span>| ITS[<span class="ot">"</span><span class="st">Interrupted Time Series&lt;br/&gt;(ch. 2)&lt;br/&gt;&lt;br/&gt;Cost: pre-trend extrapolation&lt;br/&gt;must be specified correctly</span><span class="ot">"</span>]</span>
 <span id="cb6-126"><a href="#cb6-126" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-127"><a href="#cb6-127" aria-hidden="true" tabindex="-1"></a>    Q2 --&gt;|Frequentist + tidy code| SCM[<span class="ot">"</span><span class="st">Classical Synthetic Control (ch. 4)&lt;br/&gt;+ prediction intervals via scpi (ch. 6)&lt;br/&gt;&lt;br/&gt;Cost: convex-combination of donors&lt;br/&gt;must match the treated pre-period</span><span class="ot">"</span>]</span>
 <span id="cb6-128"><a href="#cb6-128" aria-hidden="true" tabindex="-1"></a>    Q2 --&gt;|Bayesian + uncertainty bands| Q3{<span class="ot">"</span><span class="st">Do you suspect treatment&lt;br/&gt;spills over onto donor states&lt;br/&gt;(violating SUTVA)?</span><span class="ot">"</span>}</span>
