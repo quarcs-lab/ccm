@@ -214,7 +214,9 @@ table.gt_table,
 .gt_table .gt_group_heading,
 .gt_table .gt_summary_row,
 .gt_table .gt_grand_summary_row,
+.gt_table .gt_sourcenotes,
 .gt_table .gt_sourcenote,
+.gt_table .gt_footnotes,
 .gt_table .gt_footnote,
 .gt_table caption {
   color: inherit !important;
