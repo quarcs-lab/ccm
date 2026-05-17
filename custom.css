@@ -200,6 +200,26 @@ table.gt_table,
   font-size: 0.95em;
 }
 
+/* gt tables: inherit text color from the body so they read correctly in
+   both cosmo (light) and darkly (dark) themes. The helper in
+   R/table_helpers.R sets a transparent background; this matches it for
+   the foreground. */
+.gt_table,
+.gt_table th,
+.gt_table td,
+.gt_table .gt_col_heading,
+.gt_table .gt_column_spanner,
+.gt_table .gt_row,
+.gt_table .gt_stub,
+.gt_table .gt_group_heading,
+.gt_table .gt_summary_row,
+.gt_table .gt_grand_summary_row,
+.gt_table .gt_sourcenote,
+.gt_table .gt_footnote,
+.gt_table caption {
+  color: inherit !important;
+}
+
 /* ---- Print / PDF fallback ----------------------------------- */
 
 @media print {
