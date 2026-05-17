@@ -716,21 +716,30 @@ window.Quarto = {
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Subset to California and add a Pre/Post factor based on the policy date.</span></span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>prop99_cali <span class="ot">&lt;-</span> prop99 <span class="sc">|&gt;</span></span>
 <span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(state <span class="sc">==</span> <span class="st">"California"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">prepost =</span> <span class="fu">factor</span>(year <span class="sc">&gt;</span> <span class="dv">1988</span>, <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Pre"</span>, <span class="st">"Post"</span>)))</span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>prop99_cali <span class="sc">|&gt;</span></span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(prepost) <span class="sc">|&gt;</span></span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">n            =</span> <span class="fu">n</span>(),</span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>            <span class="at">mean_cigsale =</span> <span class="fu">mean</span>(cigsale),</span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>            <span class="at">sd_cigsale   =</span> <span class="fu">sd</span>(cigsale),</span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>            <span class="at">.groups =</span> <span class="st">"drop"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gt_pretty</span>(<span class="at">title =</span> <span class="st">"Pre vs post means in California (Proposition 99)"</span>,</span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>            <span class="at">decimals =</span> <span class="dv">2</span>) <span class="sc">|&gt;</span></span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cols_label</span>(<span class="at">prepost      =</span> <span class="st">"Period"</span>,</span>
-<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>             <span class="at">n            =</span> <span class="st">"Years"</span>,</span>
-<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>             <span class="at">mean_cigsale =</span> <span class="st">"Mean cigsale"</span>,</span>
-<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>             <span class="at">sd_cigsale   =</span> <span class="st">"SD"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">prepost =</span> <span class="fu">factor</span>(year <span class="sc">&gt;</span> <span class="dv">1988</span>, <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Pre"</span>, <span class="st">"Post"</span>)))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>prop99_cali <span class="sc">|&gt;</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(prepost) <span class="sc">|&gt;</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">n            =</span> <span class="fu">n</span>(),</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>            <span class="at">mean_cigsale =</span> <span class="fu">mean</span>(cigsale),</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>            <span class="at">sd_cigsale   =</span> <span class="fu">sd</span>(cigsale),</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>            <span class="at">.groups =</span> <span class="st">"drop"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gt_pretty</span>(<span class="at">decimals =</span> <span class="dv">2</span>) <span class="sc">|&gt;</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cols_label</span>(<span class="at">prepost      =</span> <span class="st">"Period"</span>,</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>             <span class="at">n            =</span> <span class="st">"Years"</span>,</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>             <span class="at">mean_cigsale =</span> <span class="st">"Mean cigsale"</span>,</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>             <span class="at">sd_cigsale   =</span> <span class="st">"SD"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div id="tbl-prepost-means" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-prepost-means-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;1.1: Pre vs post means in California (Proposition 99).
+</figcaption>
+<div aria-describedby="tbl-prepost-means-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output-display">
 <div id="qeayjdrzqo" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
 <style>#qeayjdrzqo table {
@@ -1182,12 +1191,9 @@ window.Quarto = {
 }
 </style>
 
-<table class="gt_table caption-top table table-sm table-striped small" data-quarto-bootstrap="false">
+<table class="gt_table do-not-create-environment cell caption-top table table-sm table-striped small" data-quarto-bootstrap="false">
 <thead>
-<tr class="gt_heading header">
-<td colspan="4" class="gt_heading gt_title gt_font_normal gt_bottom_border">Pre vs post means in California (Proposition 99)</td>
-</tr>
-<tr class="gt_col_headings even">
+<tr class="gt_col_headings header">
 <th id="prepost" class="gt_col_heading gt_columns_bottom_border gt_center" data-quarto-table-cell-role="th" scope="col">Period</th>
 <th id="n" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">Years</th>
 <th id="mean_cigsale" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">Mean cigsale</th>
@@ -1213,30 +1219,33 @@ window.Quarto = {
 </div>
 </div>
 </div>
+</figure>
+</div>
+</div>
 <p>California’s average per-capita cigarette sales fell from about 116 packs (1970–1988) to about 60 packs (1989–2000) — a within-state drop of roughly 56 packs, or 48% of the pre-period mean. That is the <em>raw</em> before/after change. The rest of the book is about how much of that drop we can credibly attribute to Proposition 99 rather than to the broader American secular decline in smoking.</p>
 <p>Before any modelling, it helps to see all 39 series at once.</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>eda_data <span class="ot">&lt;-</span> prop99 <span class="sc">|&gt;</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">unit_type =</span> <span class="fu">if_else</span>(state <span class="sc">==</span> <span class="st">"California"</span>,</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>                             <span class="st">"California (treated)"</span>, <span class="st">"Donor state"</span>))</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(eda_data, <span class="fu">aes</span>(<span class="at">x =</span> year, <span class="at">y =</span> cigsale, <span class="at">group =</span> state,</span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>                     <span class="at">color =</span> unit_type,</span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>                     <span class="at">linewidth =</span> unit_type, <span class="at">alpha =</span> unit_type)) <span class="sc">+</span></span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span></span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="fl">1988.5</span>, <span class="at">color =</span> <span class="st">"#d97757"</span>,</span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>             <span class="at">linetype =</span> <span class="st">"dashed"</span>, <span class="at">linewidth =</span> <span class="fl">0.7</span>) <span class="sc">+</span></span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"California (treated)"</span> <span class="ot">=</span> <span class="st">"#d97757"</span>,</span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>                                <span class="st">"Donor state"</span> <span class="ot">=</span> <span class="st">"#6a9bcc"</span>)) <span class="sc">+</span></span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_linewidth_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"California (treated)"</span> <span class="ot">=</span> <span class="fl">1.2</span>,</span>
-<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>                                    <span class="st">"Donor state"</span> <span class="ot">=</span> <span class="fl">0.4</span>)) <span class="sc">+</span></span>
-<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_alpha_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"California (treated)"</span> <span class="ot">=</span> <span class="dv">1</span>,</span>
-<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>                                <span class="st">"Donor state"</span> <span class="ot">=</span> <span class="fl">0.5</span>)) <span class="sc">+</span></span>
-<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Year"</span>, <span class="at">y =</span> <span class="st">"Cigarette sales (packs per capita)"</span>,</span>
-<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>       <span class="at">color =</span> <span class="cn">NULL</span>, <span class="at">linewidth =</span> <span class="cn">NULL</span>, <span class="at">alpha =</span> <span class="cn">NULL</span>) <span class="sc">+</span></span>
-<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>eda_data <span class="ot">&lt;-</span> prop99 <span class="sc">|&gt;</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">unit_type =</span> <span class="fu">if_else</span>(state <span class="sc">==</span> <span class="st">"California"</span>,</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>                             <span class="st">"California (treated)"</span>, <span class="st">"Donor state"</span>))</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(eda_data, <span class="fu">aes</span>(<span class="at">x =</span> year, <span class="at">y =</span> cigsale, <span class="at">group =</span> state,</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>                     <span class="at">color =</span> unit_type,</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>                     <span class="at">linewidth =</span> unit_type, <span class="at">alpha =</span> unit_type)) <span class="sc">+</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="fl">1988.5</span>, <span class="at">color =</span> <span class="st">"#d97757"</span>,</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>             <span class="at">linetype =</span> <span class="st">"dashed"</span>, <span class="at">linewidth =</span> <span class="fl">0.7</span>) <span class="sc">+</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"California (treated)"</span> <span class="ot">=</span> <span class="st">"#d97757"</span>,</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>                                <span class="st">"Donor state"</span> <span class="ot">=</span> <span class="st">"#6a9bcc"</span>)) <span class="sc">+</span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_linewidth_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"California (treated)"</span> <span class="ot">=</span> <span class="fl">1.2</span>,</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>                                    <span class="st">"Donor state"</span> <span class="ot">=</span> <span class="fl">0.4</span>)) <span class="sc">+</span></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_alpha_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"California (treated)"</span> <span class="ot">=</span> <span class="dv">1</span>,</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>                                <span class="st">"Donor state"</span> <span class="ot">=</span> <span class="fl">0.5</span>)) <span class="sc">+</span></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Year"</span>, <span class="at">y =</span> <span class="st">"Cigarette sales (packs per capita)"</span>,</span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>       <span class="at">color =</span> <span class="cn">NULL</span>, <span class="at">linewidth =</span> <span class="cn">NULL</span>, <span class="at">alpha =</span> <span class="cn">NULL</span>) <span class="sc">+</span></span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output-display">
 <div id="fig-raw-series" class="quarto-float quarto-figure quarto-figure-center anchored">
@@ -1264,14 +1273,14 @@ Figure&nbsp;1.1: Per-capita cigarette sales for all 39 states 1970–2000, with 
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># OLS of California's cigsale on a Pre/Post dummy, restricted to the</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="co"># workshop's 1984-1993 window.</span></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>fit_prepost <span class="ot">&lt;-</span> <span class="fu">lm</span>(cigsale <span class="sc">~</span> prepost,</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>                  <span class="at">data =</span> prop99_cali <span class="sc">|&gt;</span> <span class="fu">filter</span>(year <span class="sc">&gt;</span> <span class="dv">1983</span>, year <span class="sc">&lt;</span> <span class="dv">1994</span>))</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Replace the default OLS standard errors with HAC (heteroskedasticity-</span></span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="co"># and-autocorrelation-consistent) errors, which short time series need.</span></span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="fu">coeftest</span>(fit_prepost, <span class="at">vcov. =</span> vcovHAC)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># OLS of California's cigsale on a Pre/Post dummy, restricted to the</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="co"># workshop's 1984-1993 window.</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>fit_prepost <span class="ot">&lt;-</span> <span class="fu">lm</span>(cigsale <span class="sc">~</span> prepost,</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>                  <span class="at">data =</span> prop99_cali <span class="sc">|&gt;</span> <span class="fu">filter</span>(year <span class="sc">&gt;</span> <span class="dv">1983</span>, year <span class="sc">&lt;</span> <span class="dv">1994</span>))</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Replace the default OLS standard errors with HAC (heteroskedasticity-</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="co"># and-autocorrelation-consistent) errors, which short time series need.</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="fu">coeftest</span>(fit_prepost, <span class="at">vcov. =</span> vcovHAC)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>
@@ -1808,256 +1817,259 @@ ODISSEI Social Data Science team. (2024). <em>Workshop on causal effects of poli
       </a>
   </div>
 </nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Introduction"</span></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="fu">## Why regional impact evaluation?</span></span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>How do you measure the causal effect of a policy when you cannot randomise who gets treated? Most policy reforms hit a *region* — a state, province, or country — as a single block. There is no randomisation, no control arm, and often a single treated unit. The job of regional impact evaluation is to recover the missing counterfactual: *what would the region have looked like without the policy?*</span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>This book is a guided tour of the small set of quasi-experimental methods that have become the workhorses of that job. Each one builds the counterfactual from a different data source — the region's own past, a single neighbour, a weighted blend of donor regions, or a Bayesian time-series model — and each one therefore pays a different price in identifying assumptions. The disagreements between methods are the lesson.</span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>We anchor the entire book around one canonical case study: **California's 1989 Proposition 99 cigarette tax**. Per-capita cigarette sales in California fell from 116 packs in 1988 to 60 packs in 2000 — almost a 50% drop. But the country as a whole was also smoking less. The question is deceptively simple:</span>
-<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; **How much of California's drop was caused by Proposition 99, and how much would have happened anyway?**</span></span>
-<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>The case study is famous: the original synthetic-control paper by @abadie2010synthetic used exactly this dataset. We replicate their estimate and then watch what happens when five other estimators are swapped in.</span>
-<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a><span class="fu">## Causal inference as a missing-data problem</span></span>
-<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>Before fitting any model, we need a vocabulary for what we are estimating. The cleanest one is the **potential outcomes framework**, due to Neyman (1923) and Rubin (1974). Its central insight is that *causal inference is a missing-data problem.*</span>
-<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a><span class="fu">### Two outcomes per unit, one observed</span></span>
-<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>For each unit $i$ at time $t$, imagine two *potential* outcomes:</span>
-<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$Y_{it}(1)$ — cigarette sales in state $i$ at year $t$ **with** Proposition 99 in force.</span>
-<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$Y_{it}(0)$ — cigarette sales in state $i$ at year $t$ **without** Proposition 99 in force.</span>
-<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a>Let $D_{it} \in <span class="sc">\{</span>0, 1<span class="sc">\}</span>$ be the treatment indicator. Here $D_{it} = 1$ for California from 1989 onward, and $D_{it} = 0$ everywhere else (every other state, plus California up to and including 1988). The outcome we *observe* is one of the two potential outcomes, never both:</span>
-<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a>$$Y_{it} \,=\, D_{it}\, Y_{it}(1) \,+\, (1 - D_{it})\, Y_{it}(0).$$</span>
-<span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a>In words: if California in 1995 was treated, we observe $Y_{1995}(1)$ — *not* the counterfactual $Y_{1995}(0)$, which is what California's smoking *would have been* in 1995 had Proposition 99 never passed. That counterfactual is the missing data.</span>
-<span id="cb6-33"><a href="#cb6-33" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-34"><a href="#cb6-34" aria-hidden="true" tabindex="-1"></a><span class="fu">### The fundamental problem of causal inference</span></span>
-<span id="cb6-35"><a href="#cb6-35" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-36"><a href="#cb6-36" aria-hidden="true" tabindex="-1"></a>Make the missing data concrete. The table below shows what is observed (✓), what is undefined because the state was never treated (—), and what is missing-and-must-be-imputed (**?**) for a handful of rows.</span>
-<span id="cb6-37"><a href="#cb6-37" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-38"><a href="#cb6-38" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> State <span class="pp">|</span> Year <span class="pp">|</span> $D_{it}$ <span class="pp">|</span> $Y_{it}(0)$ <span class="pp">|</span> $Y_{it}(1)$ <span class="pp">|</span> Observed <span class="pp">|</span></span>
-<span id="cb6-39"><a href="#cb6-39" aria-hidden="true" tabindex="-1"></a><span class="pp">|---|---:|---:|---:|---:|---:|</span></span>
-<span id="cb6-40"><a href="#cb6-40" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> California <span class="pp">|</span> 1988 <span class="pp">|</span> 0 <span class="pp">|</span> 90.1 ✓ <span class="pp">|</span> ? <span class="pp">|</span> 90.1 <span class="pp">|</span></span>
-<span id="cb6-41"><a href="#cb6-41" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> California <span class="pp">|</span> 1989 <span class="pp">|</span> 1 <span class="pp">|</span> **?** <span class="pp">|</span> 82.4 ✓ <span class="pp">|</span> 82.4 <span class="pp">|</span></span>
-<span id="cb6-42"><a href="#cb6-42" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> California <span class="pp">|</span> 1995 <span class="pp">|</span> 1 <span class="pp">|</span> **?** <span class="pp">|</span> 64.4 ✓ <span class="pp">|</span> 64.4 <span class="pp">|</span></span>
-<span id="cb6-43"><a href="#cb6-43" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> California <span class="pp">|</span> 2000 <span class="pp">|</span> 1 <span class="pp">|</span> **?** <span class="pp">|</span> 41.6 ✓ <span class="pp">|</span> 41.6 <span class="pp">|</span></span>
-<span id="cb6-44"><a href="#cb6-44" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Nevada     <span class="pp">|</span> 1988 <span class="pp">|</span> 0 <span class="pp">|</span> 134.4 ✓ <span class="pp">|</span> — <span class="pp">|</span> 134.4 <span class="pp">|</span></span>
-<span id="cb6-45"><a href="#cb6-45" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Nevada     <span class="pp">|</span> 1995 <span class="pp">|</span> 0 <span class="pp">|</span> 113.0 ✓ <span class="pp">|</span> — <span class="pp">|</span> 113.0 <span class="pp">|</span></span>
-<span id="cb6-46"><a href="#cb6-46" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Utah       <span class="pp">|</span> 1988 <span class="pp">|</span> 0 <span class="pp">|</span> 64.7 ✓ <span class="pp">|</span> — <span class="pp">|</span> 64.7 <span class="pp">|</span></span>
-<span id="cb6-47"><a href="#cb6-47" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Utah       <span class="pp">|</span> 1995 <span class="pp">|</span> 0 <span class="pp">|</span> 55.0 ✓ <span class="pp">|</span> — <span class="pp">|</span> 55.0 <span class="pp">|</span></span>
-<span id="cb6-48"><a href="#cb6-48" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-49"><a href="#cb6-49" aria-hidden="true" tabindex="-1"></a>This is what Holland (1986) called the **fundamental problem of causal inference**: for any treated unit at any time, we observe at most one of the two potential outcomes, and the other one is missing. For California after 1989 the missing column is $Y_{it}(0)$ — every "**?**" in the third column. *Every method in this book is a way to fill in those question marks.*</span>
-<span id="cb6-50"><a href="#cb6-50" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-51"><a href="#cb6-51" aria-hidden="true" tabindex="-1"></a><span class="fu">### Three estimands: ITE, ATE, ATT</span></span>
-<span id="cb6-52"><a href="#cb6-52" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-53"><a href="#cb6-53" aria-hidden="true" tabindex="-1"></a>With both potential outcomes defined, the natural causal contrasts follow.</span>
-<span id="cb6-54"><a href="#cb6-54" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-55"><a href="#cb6-55" aria-hidden="true" tabindex="-1"></a>**Individual treatment effect (ITE)** for unit $i$ at time $t$:</span>
-<span id="cb6-56"><a href="#cb6-56" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-57"><a href="#cb6-57" aria-hidden="true" tabindex="-1"></a>$$\tau_{it} = Y_{it}(1) - Y_{it}(0).$$</span>
-<span id="cb6-58"><a href="#cb6-58" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-59"><a href="#cb6-59" aria-hidden="true" tabindex="-1"></a>The ITE is the gold standard, but it is *never* directly observable for any single $(i, t)$.</span>
-<span id="cb6-60"><a href="#cb6-60" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-61"><a href="#cb6-61" aria-hidden="true" tabindex="-1"></a>**Average treatment effect (ATE)** over a population:</span>
-<span id="cb6-62"><a href="#cb6-62" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-63"><a href="#cb6-63" aria-hidden="true" tabindex="-1"></a>$$\text{ATE} = \mathbb{E}\big<span class="co">[</span><span class="ot">Y_{it}(1) - Y_{it}(0)\big</span><span class="co">]</span>.$$</span>
-<span id="cb6-64"><a href="#cb6-64" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-65"><a href="#cb6-65" aria-hidden="true" tabindex="-1"></a>How smoking *would have changed in the average state-year* if all states had been treated. The ATE is identified by a randomised experiment — but Proposition 99 was not randomised. The ATE is *not* what we are after here.</span>
-<span id="cb6-66"><a href="#cb6-66" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-67"><a href="#cb6-67" aria-hidden="true" tabindex="-1"></a>**Average treatment effect on the treated (ATT)**, restricted to units that actually received the treatment:</span>
-<span id="cb6-68"><a href="#cb6-68" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-69"><a href="#cb6-69" aria-hidden="true" tabindex="-1"></a>$$\text{ATT} = \mathbb{E}\big<span class="co">[</span><span class="ot">Y_{it}(1) - Y_{it}(0) \,\big|\, D_{it} = 1\big</span><span class="co">]</span>.$$</span>
-<span id="cb6-70"><a href="#cb6-70" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-71"><a href="#cb6-71" aria-hidden="true" tabindex="-1"></a>How much smoking changed *in California, in the post-1989 years* because of Proposition 99. This is what every causal method in this book targets. For Proposition 99 the ATT averaged over 1989–2000 expands to</span>
-<span id="cb6-72"><a href="#cb6-72" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-73"><a href="#cb6-73" aria-hidden="true" tabindex="-1"></a>$$\text{ATT}_{\text{CA, post}} = \frac{1}{T_{\text{post}}} \sum_{t &gt; t^*} \Big[Y_{1t}(1) - Y_{1t}(0)\Big],$$</span>
-<span id="cb6-74"><a href="#cb6-74" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-75"><a href="#cb6-75" aria-hidden="true" tabindex="-1"></a>where unit $i = 1$ denotes California, $t^* = 1988$ is the last pre-period year, and $T_{\text{post}} = 12$ is the number of post-period years (1989–2000). The first term — $Y_{1t}(1)$ — is *observed*. The second term — $Y_{1t}(0)$ — is *missing*.</span>
-<span id="cb6-76"><a href="#cb6-76" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-77"><a href="#cb6-77" aria-hidden="true" tabindex="-1"></a><span class="fu">### Each method is a way to impute the missing $Y(0)$</span></span>
-<span id="cb6-78"><a href="#cb6-78" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-79"><a href="#cb6-79" aria-hidden="true" tabindex="-1"></a>The table below makes this concrete: one row per method covered in this book.</span>
-<span id="cb6-80"><a href="#cb6-80" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-81"><a href="#cb6-81" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Method (chapter) <span class="pp">|</span> Estimator of the missing $Y_{1t}(0)$ <span class="pp">|</span></span>
-<span id="cb6-82"><a href="#cb6-82" aria-hidden="true" tabindex="-1"></a><span class="pp">|---|---|</span></span>
-<span id="cb6-83"><a href="#cb6-83" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Naive pre-post (this chapter) <span class="pp">|</span> $\widehat{Y_{1t}(0)} = \overline{Y}_{1, \text{pre}}$ — California's own pre-period mean. <span class="pp">|</span></span>
-<span id="cb6-84"><a href="#cb6-84" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Interrupted Time Series — growth curve (ch. 2) <span class="pp">|</span> $\widehat{Y_{1t}(0)} = \hat\alpha + \hat\beta\, t$ — extrapolate California's pre-period linear fit. <span class="pp">|</span></span>
-<span id="cb6-85"><a href="#cb6-85" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Interrupted Time Series — ARIMA (ch. 2) <span class="pp">|</span> $\widehat{Y_{1t}(0)} = $ forecast from an ARIMA model fitted on 1970–1988. <span class="pp">|</span></span>
-<span id="cb6-86"><a href="#cb6-86" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Regression Discontinuity on time (ch. 3) <span class="pp">|</span> $\widehat{Y_{1t}(0)} = \hat\alpha + \hat\beta\, (t - t^*)$ — extrapolate California's pre-period piecewise fit. <span class="pp">|</span></span>
-<span id="cb6-87"><a href="#cb6-87" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Basic Difference-in-Differences (ch. 4) <span class="pp">|</span> $\widehat{Y_{1t}(0)} = \overline{Y}_{1, \text{pre}} + \big(\overline{Y}_{0, \text{post}} - \overline{Y}_{0, \text{pre}}\big)$ — add a control state's change. <span class="pp">|</span></span>
-<span id="cb6-88"><a href="#cb6-88" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Classical Synthetic Control (ch. 5) <span class="pp">|</span> $\widehat{Y_{1t}(0)} = \sum_{i \in \text{donors}} w_i^* Y_{it}$ — weighted blend of donor states. <span class="pp">|</span></span>
-<span id="cb6-89"><a href="#cb6-89" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Structural Bayesian Time Series (ch. 6) <span class="pp">|</span> $\widehat{Y_{1t}(0)} = \mu_t + \beta^\top x_t$ — Bayesian structural time-series fit on donor data. <span class="pp">|</span></span>
-<span id="cb6-90"><a href="#cb6-90" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-91"><a href="#cb6-91" aria-hidden="true" tabindex="-1"></a>Each subsequent chapter takes one row and shows the R code that builds the corresponding $\widehat{Y_{1t}(0)}$, then subtracts it from the observed California series to recover the ATT.</span>
-<span id="cb6-92"><a href="#cb6-92" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-93"><a href="#cb6-93" aria-hidden="true" tabindex="-1"></a><span class="fu">## Which method when?</span></span>
-<span id="cb6-94"><a href="#cb6-94" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-95"><a href="#cb6-95" aria-hidden="true" tabindex="-1"></a>The methods are not interchangeable. Each is appropriate for a different data situation. The decision tree below walks through three diagnostic questions and steers you to the matching family. Apply it whenever you face a new regional policy-evaluation problem.</span>
-<span id="cb6-96"><a href="#cb6-96" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-99"><a href="#cb6-99" aria-hidden="true" tabindex="-1"></a><span class="in">```{mermaid}</span></span>
-<span id="cb6-100"><a href="#cb6-100" aria-hidden="true" tabindex="-1"></a>flowchart TB</span>
-<span id="cb6-101"><a href="#cb6-101" aria-hidden="true" tabindex="-1"></a>    Q1{<span class="ot">"</span><span class="st">Do you have a credible&lt;br/&gt;donor pool of untreated units?&lt;br/&gt;(roughly 10+ similar units&lt;br/&gt;followed over the same window)</span><span class="ot">"</span>}</span>
-<span id="cb6-102"><a href="#cb6-102" aria-hidden="true" tabindex="-1"></a>    Q1 --&gt;|Yes| Q2{<span class="ot">"</span><span class="st">Do you want frequentist&lt;br/&gt;placebo inference,&lt;br/&gt;or Bayesian credible&lt;br/&gt;intervals?</span><span class="ot">"</span>}</span>
-<span id="cb6-103"><a href="#cb6-103" aria-hidden="true" tabindex="-1"></a>    Q1 --&gt;|No, only one good control| DiD[<span class="ot">"</span><span class="st">Difference-in-Differences&lt;br/&gt;(ch. 4)&lt;br/&gt;&lt;br/&gt;Cost: parallel-trends assumption&lt;br/&gt;on a single comparison unit</span><span class="ot">"</span>]</span>
-<span id="cb6-104"><a href="#cb6-104" aria-hidden="true" tabindex="-1"></a>    Q1 --&gt;|No, only the treated unit| Q3{<span class="ot">"</span><span class="st">Is the policy date the&lt;br/&gt;only structural break&lt;br/&gt;in the series?</span><span class="ot">"</span>}</span>
-<span id="cb6-105"><a href="#cb6-105" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-106"><a href="#cb6-106" aria-hidden="true" tabindex="-1"></a>    Q2 --&gt;|Frequentist + tidy code| SCM[<span class="ot">"</span><span class="st">Synthetic Control&lt;br/&gt;(ch. 5)&lt;br/&gt;&lt;br/&gt;Cost: convex-combination&lt;br/&gt;of donors must match the&lt;br/&gt;treated pre-period</span><span class="ot">"</span>]</span>
-<span id="cb6-107"><a href="#cb6-107" aria-hidden="true" tabindex="-1"></a>    Q2 --&gt;|Bayesian + uncertainty bands| CI[<span class="ot">"</span><span class="st">Structural Bayesian TS&lt;br/&gt;(ch. 6)&lt;br/&gt;&lt;br/&gt;Cost: state-space prior;&lt;br/&gt;covariate-set choice&lt;br/&gt;affects the estimate</span><span class="ot">"</span>]</span>
-<span id="cb6-108"><a href="#cb6-108" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-109"><a href="#cb6-109" aria-hidden="true" tabindex="-1"></a>    Q3 --&gt;|Yes, sharp jump at threshold| RDD[<span class="ot">"</span><span class="st">Regression Discontinuity on time&lt;br/&gt;(ch. 3)&lt;br/&gt;&lt;br/&gt;Cost: assumes no other shock&lt;br/&gt;coincides with the threshold</span><span class="ot">"</span>]</span>
-<span id="cb6-110"><a href="#cb6-110" aria-hidden="true" tabindex="-1"></a>    Q3 --&gt;|No, model the smooth pre-trend| ITS[<span class="ot">"</span><span class="st">Interrupted Time Series&lt;br/&gt;(ch. 2)&lt;br/&gt;&lt;br/&gt;Cost: pre-trend extrapolation&lt;br/&gt;must be specified correctly</span><span class="ot">"</span>]</span>
-<span id="cb6-111"><a href="#cb6-111" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-112"><a href="#cb6-112" aria-hidden="true" tabindex="-1"></a>    NAIVE[<span class="ot">"</span><span class="st">Naive pre-post&lt;br/&gt;(this chapter)&lt;br/&gt;&lt;br/&gt;Use only as a baseline.&lt;br/&gt;Never as a causal estimate.</span><span class="ot">"</span>] -.-&gt;|<span class="ot">"</span><span class="st">baseline for everyone</span><span class="ot">"</span>| Q1</span>
-<span id="cb6-113"><a href="#cb6-113" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb6-114"><a href="#cb6-114" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-115"><a href="#cb6-115" aria-hidden="true" tabindex="-1"></a>The Synthetic Control and Bayesian structural TS branches are the most defensible families when a donor pool exists. DiD, RDD-on-time, and ITS are valid in their respective data situations but carry stronger identifying assumptions. The naive pre-post node — the rest of this chapter — is the universal baseline that *everyone* should compute first, never as the final answer, always as the bias yardstick.</span>
-<span id="cb6-116"><a href="#cb6-116" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-117"><a href="#cb6-117" aria-hidden="true" tabindex="-1"></a><span class="fu">## Setup and data</span></span>
-<span id="cb6-118"><a href="#cb6-118" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-119"><a href="#cb6-119" aria-hidden="true" tabindex="-1"></a>We load the packages we need with <span class="in">`library()`</span> calls. Every package below is pinned in <span class="in">`renv.lock`</span>, so <span class="in">`renv::restore()`</span> is enough to reproduce the environment on a fresh machine.</span>
-<span id="cb6-120"><a href="#cb6-120" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-123"><a href="#cb6-123" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb6-124"><a href="#cb6-124" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: setup</span></span>
-<span id="cb6-125"><a href="#cb6-125" aria-hidden="true" tabindex="-1"></a><span class="co">#| message: false</span></span>
-<span id="cb6-126"><a href="#cb6-126" aria-hidden="true" tabindex="-1"></a><span class="co">#| warning: false</span></span>
-<span id="cb6-127"><a href="#cb6-127" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
-<span id="cb6-128"><a href="#cb6-128" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(sandwich)</span>
-<span id="cb6-129"><a href="#cb6-129" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lmtest)</span>
-<span id="cb6-130"><a href="#cb6-130" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"R/table_helpers.R"</span>)</span>
-<span id="cb6-131"><a href="#cb6-131" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-132"><a href="#cb6-132" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
-<span id="cb6-133"><a href="#cb6-133" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-134"><a href="#cb6-134" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span>opts_chunk<span class="sc">$</span><span class="fu">set</span>(<span class="at">dev.args =</span> <span class="fu">list</span>(<span class="at">bg =</span> <span class="st">"transparent"</span>))</span>
-<span id="cb6-135"><a href="#cb6-135" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-136"><a href="#cb6-136" aria-hidden="true" tabindex="-1"></a><span class="fu">theme_set</span>(</span>
-<span id="cb6-137"><a href="#cb6-137" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">12</span>) <span class="sc">+</span></span>
-<span id="cb6-138"><a href="#cb6-138" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(</span>
-<span id="cb6-139"><a href="#cb6-139" aria-hidden="true" tabindex="-1"></a>      <span class="at">plot.background  =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">"transparent"</span>, <span class="at">color =</span> <span class="cn">NA</span>),</span>
-<span id="cb6-140"><a href="#cb6-140" aria-hidden="true" tabindex="-1"></a>      <span class="at">panel.background =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">"transparent"</span>, <span class="at">color =</span> <span class="cn">NA</span>),</span>
-<span id="cb6-141"><a href="#cb6-141" aria-hidden="true" tabindex="-1"></a>      <span class="at">panel.grid.major =</span> <span class="fu">element_line</span>(<span class="at">color =</span> <span class="st">"#94a3b8"</span>, <span class="at">linewidth =</span> <span class="fl">0.25</span>),</span>
-<span id="cb6-142"><a href="#cb6-142" aria-hidden="true" tabindex="-1"></a>      <span class="at">panel.grid.minor =</span> <span class="fu">element_line</span>(<span class="at">color =</span> <span class="st">"#94a3b8"</span>, <span class="at">linewidth =</span> <span class="fl">0.15</span>),</span>
-<span id="cb6-143"><a href="#cb6-143" aria-hidden="true" tabindex="-1"></a>      <span class="at">text             =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"#94a3b8"</span>),</span>
-<span id="cb6-144"><a href="#cb6-144" aria-hidden="true" tabindex="-1"></a>      <span class="at">axis.text        =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"#94a3b8"</span>)</span>
-<span id="cb6-145"><a href="#cb6-145" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb6-146"><a href="#cb6-146" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb6-147"><a href="#cb6-147" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb6-148"><a href="#cb6-148" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-149"><a href="#cb6-149" aria-hidden="true" tabindex="-1"></a>The dataset is cached in the repository at <span class="in">`data/proposition99.rds`</span>. It is a panel of 39 U.S. states observed 1970–2000, with per-capita cigarette pack sales (<span class="in">`cigsale`</span>) as the outcome and four covariates.</span>
-<span id="cb6-150"><a href="#cb6-150" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-153"><a href="#cb6-153" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb6-154"><a href="#cb6-154" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: data-load</span></span>
-<span id="cb6-155"><a href="#cb6-155" aria-hidden="true" tabindex="-1"></a>prop99 <span class="ot">&lt;-</span> <span class="fu">read_rds</span>(<span class="st">"data/proposition99.rds"</span>) <span class="sc">|&gt;</span> <span class="fu">as_tibble</span>()</span>
-<span id="cb6-156"><a href="#cb6-156" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-157"><a href="#cb6-157" aria-hidden="true" tabindex="-1"></a><span class="co"># Subset to California and add a Pre/Post factor based on the policy date.</span></span>
-<span id="cb6-158"><a href="#cb6-158" aria-hidden="true" tabindex="-1"></a>prop99_cali <span class="ot">&lt;-</span> prop99 <span class="sc">|&gt;</span></span>
-<span id="cb6-159"><a href="#cb6-159" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(state <span class="sc">==</span> <span class="st">"California"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb6-160"><a href="#cb6-160" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">prepost =</span> <span class="fu">factor</span>(year <span class="sc">&gt;</span> <span class="dv">1988</span>, <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Pre"</span>, <span class="st">"Post"</span>)))</span>
-<span id="cb6-161"><a href="#cb6-161" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-162"><a href="#cb6-162" aria-hidden="true" tabindex="-1"></a>prop99_cali <span class="sc">|&gt;</span></span>
-<span id="cb6-163"><a href="#cb6-163" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(prepost) <span class="sc">|&gt;</span></span>
-<span id="cb6-164"><a href="#cb6-164" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">n            =</span> <span class="fu">n</span>(),</span>
-<span id="cb6-165"><a href="#cb6-165" aria-hidden="true" tabindex="-1"></a>            <span class="at">mean_cigsale =</span> <span class="fu">mean</span>(cigsale),</span>
-<span id="cb6-166"><a href="#cb6-166" aria-hidden="true" tabindex="-1"></a>            <span class="at">sd_cigsale   =</span> <span class="fu">sd</span>(cigsale),</span>
-<span id="cb6-167"><a href="#cb6-167" aria-hidden="true" tabindex="-1"></a>            <span class="at">.groups =</span> <span class="st">"drop"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb6-168"><a href="#cb6-168" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gt_pretty</span>(<span class="at">title =</span> <span class="st">"Pre vs post means in California (Proposition 99)"</span>,</span>
-<span id="cb6-169"><a href="#cb6-169" aria-hidden="true" tabindex="-1"></a>            <span class="at">decimals =</span> <span class="dv">2</span>) <span class="sc">|&gt;</span></span>
-<span id="cb6-170"><a href="#cb6-170" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cols_label</span>(<span class="at">prepost      =</span> <span class="st">"Period"</span>,</span>
-<span id="cb6-171"><a href="#cb6-171" aria-hidden="true" tabindex="-1"></a>             <span class="at">n            =</span> <span class="st">"Years"</span>,</span>
-<span id="cb6-172"><a href="#cb6-172" aria-hidden="true" tabindex="-1"></a>             <span class="at">mean_cigsale =</span> <span class="st">"Mean cigsale"</span>,</span>
-<span id="cb6-173"><a href="#cb6-173" aria-hidden="true" tabindex="-1"></a>             <span class="at">sd_cigsale   =</span> <span class="st">"SD"</span>)</span>
-<span id="cb6-174"><a href="#cb6-174" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb6-175"><a href="#cb6-175" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-176"><a href="#cb6-176" aria-hidden="true" tabindex="-1"></a>California's average per-capita cigarette sales fell from about 116 packs (1970–1988) to about 60 packs (1989–2000) — a within-state drop of roughly 56 packs, or 48% of the pre-period mean. That is the *raw* before/after change. The rest of the book is about how much of that drop we can credibly attribute to Proposition 99 rather than to the broader American secular decline in smoking.</span>
-<span id="cb6-177"><a href="#cb6-177" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-178"><a href="#cb6-178" aria-hidden="true" tabindex="-1"></a>Before any modelling, it helps to see all 39 series at once.</span>
-<span id="cb6-179"><a href="#cb6-179" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-182"><a href="#cb6-182" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb6-183"><a href="#cb6-183" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-raw-series</span></span>
-<span id="cb6-184"><a href="#cb6-184" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Per-capita cigarette sales for all 39 states 1970–2000, with California highlighted."</span></span>
-<span id="cb6-185"><a href="#cb6-185" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-width: 8</span></span>
-<span id="cb6-186"><a href="#cb6-186" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-height: 5</span></span>
-<span id="cb6-187"><a href="#cb6-187" aria-hidden="true" tabindex="-1"></a>eda_data <span class="ot">&lt;-</span> prop99 <span class="sc">|&gt;</span></span>
-<span id="cb6-188"><a href="#cb6-188" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">unit_type =</span> <span class="fu">if_else</span>(state <span class="sc">==</span> <span class="st">"California"</span>,</span>
-<span id="cb6-189"><a href="#cb6-189" aria-hidden="true" tabindex="-1"></a>                             <span class="st">"California (treated)"</span>, <span class="st">"Donor state"</span>))</span>
-<span id="cb6-190"><a href="#cb6-190" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-191"><a href="#cb6-191" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(eda_data, <span class="fu">aes</span>(<span class="at">x =</span> year, <span class="at">y =</span> cigsale, <span class="at">group =</span> state,</span>
-<span id="cb6-192"><a href="#cb6-192" aria-hidden="true" tabindex="-1"></a>                     <span class="at">color =</span> unit_type,</span>
-<span id="cb6-193"><a href="#cb6-193" aria-hidden="true" tabindex="-1"></a>                     <span class="at">linewidth =</span> unit_type, <span class="at">alpha =</span> unit_type)) <span class="sc">+</span></span>
-<span id="cb6-194"><a href="#cb6-194" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span></span>
-<span id="cb6-195"><a href="#cb6-195" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="fl">1988.5</span>, <span class="at">color =</span> <span class="st">"#d97757"</span>,</span>
-<span id="cb6-196"><a href="#cb6-196" aria-hidden="true" tabindex="-1"></a>             <span class="at">linetype =</span> <span class="st">"dashed"</span>, <span class="at">linewidth =</span> <span class="fl">0.7</span>) <span class="sc">+</span></span>
-<span id="cb6-197"><a href="#cb6-197" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"California (treated)"</span> <span class="ot">=</span> <span class="st">"#d97757"</span>,</span>
-<span id="cb6-198"><a href="#cb6-198" aria-hidden="true" tabindex="-1"></a>                                <span class="st">"Donor state"</span> <span class="ot">=</span> <span class="st">"#6a9bcc"</span>)) <span class="sc">+</span></span>
-<span id="cb6-199"><a href="#cb6-199" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_linewidth_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"California (treated)"</span> <span class="ot">=</span> <span class="fl">1.2</span>,</span>
-<span id="cb6-200"><a href="#cb6-200" aria-hidden="true" tabindex="-1"></a>                                    <span class="st">"Donor state"</span> <span class="ot">=</span> <span class="fl">0.4</span>)) <span class="sc">+</span></span>
-<span id="cb6-201"><a href="#cb6-201" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_alpha_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"California (treated)"</span> <span class="ot">=</span> <span class="dv">1</span>,</span>
-<span id="cb6-202"><a href="#cb6-202" aria-hidden="true" tabindex="-1"></a>                                <span class="st">"Donor state"</span> <span class="ot">=</span> <span class="fl">0.5</span>)) <span class="sc">+</span></span>
-<span id="cb6-203"><a href="#cb6-203" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Year"</span>, <span class="at">y =</span> <span class="st">"Cigarette sales (packs per capita)"</span>,</span>
-<span id="cb6-204"><a href="#cb6-204" aria-hidden="true" tabindex="-1"></a>       <span class="at">color =</span> <span class="cn">NULL</span>, <span class="at">linewidth =</span> <span class="cn">NULL</span>, <span class="at">alpha =</span> <span class="cn">NULL</span>) <span class="sc">+</span></span>
-<span id="cb6-205"><a href="#cb6-205" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span>
-<span id="cb6-206"><a href="#cb6-206" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb6-207"><a href="#cb6-207" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-208"><a href="#cb6-208" aria-hidden="true" tabindex="-1"></a>California sits inside the donor cloud throughout the 1970s and 1980s, then visibly separates downward after the dashed Proposition 99 line. The pre-1988 trajectory is already slightly below the donor median, but it is not anomalous; the sharp post-1988 separation is. Visually, this is the signal every causal estimator in the book tries to quantify.</span>
-<span id="cb6-209"><a href="#cb6-209" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-210"><a href="#cb6-210" aria-hidden="true" tabindex="-1"></a><span class="fu">## A first attempt: naive pre-post</span></span>
-<span id="cb6-211"><a href="#cb6-211" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-212"><a href="#cb6-212" aria-hidden="true" tabindex="-1"></a>**The idea.** Compare California's mean cigarette sales before 1989 with its mean after 1989. Call the difference the "effect".</span>
-<span id="cb6-213"><a href="#cb6-213" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-214"><a href="#cb6-214" aria-hidden="true" tabindex="-1"></a>**The equation.**</span>
-<span id="cb6-215"><a href="#cb6-215" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-216"><a href="#cb6-216" aria-hidden="true" tabindex="-1"></a>$$\hat\tau_{\text{naive}} = \overline{Y}_{1, \text{post}} - \overline{Y}_{1, \text{pre}}.$$</span>
-<span id="cb6-217"><a href="#cb6-217" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-218"><a href="#cb6-218" aria-hidden="true" tabindex="-1"></a>In words: the naive estimate is the difference between California's observed post-period mean and California's observed pre-period mean. This corresponds to imputing $\widehat{Y_{1t}(0)} = \overline{Y}_{1, \text{pre}}$ — i.e., assuming California's counterfactual smoking would have been frozen at the pre-period average.</span>
-<span id="cb6-219"><a href="#cb6-219" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-220"><a href="#cb6-220" aria-hidden="true" tabindex="-1"></a>**Why this is wrong but still useful.** The implicit counterfactual "California's pre-period level continues unchanged" is almost certainly wrong, because smoking was declining nationwide. But the estimate is so cheap to compute that it makes a useful baseline. Every later chapter tries to fix what is broken here.</span>
-<span id="cb6-221"><a href="#cb6-221" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-222"><a href="#cb6-222" aria-hidden="true" tabindex="-1"></a>We follow the convention of the <span class="co">[</span><span class="ot">ODISSEI workshop</span><span class="co">](https://causalpolicy.nl/)</span> <span class="co">[</span><span class="ot">@odissei2024causalpolicy</span><span class="co">]</span> and restrict to the 1984–1993 window for the naive estimate. Using the full 1970–2000 window would change the numbers but not the qualitative point.</span>
-<span id="cb6-223"><a href="#cb6-223" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-226"><a href="#cb6-226" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb6-227"><a href="#cb6-227" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: naive-prepost</span></span>
-<span id="cb6-228"><a href="#cb6-228" aria-hidden="true" tabindex="-1"></a><span class="co"># OLS of California's cigsale on a Pre/Post dummy, restricted to the</span></span>
-<span id="cb6-229"><a href="#cb6-229" aria-hidden="true" tabindex="-1"></a><span class="co"># workshop's 1984-1993 window.</span></span>
-<span id="cb6-230"><a href="#cb6-230" aria-hidden="true" tabindex="-1"></a>fit_prepost <span class="ot">&lt;-</span> <span class="fu">lm</span>(cigsale <span class="sc">~</span> prepost,</span>
-<span id="cb6-231"><a href="#cb6-231" aria-hidden="true" tabindex="-1"></a>                  <span class="at">data =</span> prop99_cali <span class="sc">|&gt;</span> <span class="fu">filter</span>(year <span class="sc">&gt;</span> <span class="dv">1983</span>, year <span class="sc">&lt;</span> <span class="dv">1994</span>))</span>
-<span id="cb6-232"><a href="#cb6-232" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-233"><a href="#cb6-233" aria-hidden="true" tabindex="-1"></a><span class="co"># Replace the default OLS standard errors with HAC (heteroskedasticity-</span></span>
-<span id="cb6-234"><a href="#cb6-234" aria-hidden="true" tabindex="-1"></a><span class="co"># and-autocorrelation-consistent) errors, which short time series need.</span></span>
-<span id="cb6-235"><a href="#cb6-235" aria-hidden="true" tabindex="-1"></a><span class="fu">coeftest</span>(fit_prepost, <span class="at">vcov. =</span> vcovHAC)</span>
-<span id="cb6-236"><a href="#cb6-236" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb6-237"><a href="#cb6-237" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-238"><a href="#cb6-238" aria-hidden="true" tabindex="-1"></a>**Reading the output.** California's mean over 1984–1988 was about 99 packs/capita. The <span class="in">`prepostPost`</span> coefficient says the 1989–1993 mean is roughly 27 packs *lower*. The HAC robust standard error is small ($p &lt; 0.001$). The HAC correction comes from <span class="in">`sandwich::vcovHAC`</span> and accounts for the heteroskedasticity and autocorrelation that short time series typically exhibit; a classical OLS standard error would be wildly overconfident here.</span>
-<span id="cb6-239"><a href="#cb6-239" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-240"><a href="#cb6-240" aria-hidden="true" tabindex="-1"></a>**The estimand is purely descriptive.** This is a within-state difference of means, *not* a causal estimate. Any nationwide secular decline in smoking gets silently bundled into the $-27$. That bundling is exactly what the later chapters try to undo.</span>
-<span id="cb6-241"><a href="#cb6-241" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-242"><a href="#cb6-242" aria-hidden="true" tabindex="-1"></a>**Common pitfall.** Confusing the within-state pre-post difference with a causal effect. Anything that shifted the entire country between the two windows — federal anti-smoking campaigns, tobacco settlements, rising health awareness — gets attributed entirely to Proposition 99.</span>
-<span id="cb6-243"><a href="#cb6-243" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-244"><a href="#cb6-244" aria-hidden="true" tabindex="-1"></a><span class="fu">## Roadmap of the book</span></span>
-<span id="cb6-245"><a href="#cb6-245" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-246"><a href="#cb6-246" aria-hidden="true" tabindex="-1"></a>The remaining chapters take the same Proposition 99 dataset and the same estimand (the ATT on California, 1989–2000), and replace the naive baseline with progressively richer counterfactual constructions:</span>
-<span id="cb6-247"><a href="#cb6-247" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-248"><a href="#cb6-248" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Chapter 2 — Interrupted Time Series.** Extrapolate California's *own* pre-trend forward. Two variants: a linear growth curve and an auto-selected ARIMA forecast.</span>
-<span id="cb6-249"><a href="#cb6-249" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Chapter 3 — Regression Discontinuity in Time.** Fit a piecewise line with a level and slope break at the policy date.</span>
-<span id="cb6-250"><a href="#cb6-250" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Chapter 4 — Basic Difference-in-Differences.** Subtract a control state's pre/post change from California's.</span>
-<span id="cb6-251"><a href="#cb6-251" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Chapter 5 — Classical Synthetic Control.** Build a weighted blend of donor states that mimics California's pre-period.</span>
-<span id="cb6-252"><a href="#cb6-252" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Chapter 6 — Structural Bayesian Time Series.** Fit a Bayesian state-space model that uses donor states as predictors.</span>
-<span id="cb6-253"><a href="#cb6-253" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-254"><a href="#cb6-254" aria-hidden="true" tabindex="-1"></a>A final cross-method comparison places all the estimates on a single forest plot. Five of the six methods agree on a 13–20 pack reduction per capita. One collapses to noise. One flips sign entirely. The disagreement is the lesson.</span>
-<span id="cb6-255"><a href="#cb6-255" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-256"><a href="#cb6-256" aria-hidden="true" tabindex="-1"></a><span class="fu">## Further reading</span></span>
-<span id="cb6-257"><a href="#cb6-257" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-258"><a href="#cb6-258" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>@abadie2010synthetic — the original synthetic-control treatment of Proposition 99.</span>
-<span id="cb6-259"><a href="#cb6-259" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>@bernal2017interrupted — a practitioner's tutorial on ITS for public-health interventions.</span>
-<span id="cb6-260"><a href="#cb6-260" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>@odissei2024causalpolicy — the ODISSEI workshop this book's running example follows.</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Introduction"</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="fu">## Why regional impact evaluation?</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>How do you measure the causal effect of a policy when you cannot randomise who gets treated? Most policy reforms hit a *region* — a state, province, or country — as a single block. There is no randomisation, no control arm, and often a single treated unit. The job of regional impact evaluation is to recover the missing counterfactual: *what would the region have looked like without the policy?*</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>This book is a guided tour of the small set of quasi-experimental methods that have become the workhorses of that job. Each one builds the counterfactual from a different data source — the region's own past, a single neighbour, a weighted blend of donor regions, or a Bayesian time-series model — and each one therefore pays a different price in identifying assumptions. The disagreements between methods are the lesson.</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>We anchor the entire book around one canonical case study: **California's 1989 Proposition 99 cigarette tax**. Per-capita cigarette sales in California fell from 116 packs in 1988 to 60 packs in 2000 — almost a 50% drop. But the country as a whole was also smoking less. The question is deceptively simple:</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; **How much of California's drop was caused by Proposition 99, and how much would have happened anyway?**</span></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>The case study is famous: the original synthetic-control paper by @abadie2010synthetic used exactly this dataset. We replicate their estimate and then watch what happens when five other estimators are swapped in.</span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a><span class="fu">## Causal inference as a missing-data problem</span></span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>Before fitting any model, we need a vocabulary for what we are estimating. The cleanest one is the **potential outcomes framework**, due to Neyman (1923) and Rubin (1974). Its central insight is that *causal inference is a missing-data problem.*</span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a><span class="fu">### Two outcomes per unit, one observed</span></span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>For each unit $i$ at time $t$, imagine two *potential* outcomes:</span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$Y_{it}(1)$ — cigarette sales in state $i$ at year $t$ **with** Proposition 99 in force.</span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$Y_{it}(0)$ — cigarette sales in state $i$ at year $t$ **without** Proposition 99 in force.</span>
+<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a>Let $D_{it} \in <span class="sc">\{</span>0, 1<span class="sc">\}</span>$ be the treatment indicator. Here $D_{it} = 1$ for California from 1989 onward, and $D_{it} = 0$ everywhere else (every other state, plus California up to and including 1988). The outcome we *observe* is one of the two potential outcomes, never both:</span>
+<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a>$$Y_{it} \,=\, D_{it}\, Y_{it}(1) \,+\, (1 - D_{it})\, Y_{it}(0).$$</span>
+<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a>In words: if California in 1995 was treated, we observe $Y_{1995}(1)$ — *not* the counterfactual $Y_{1995}(0)$, which is what California's smoking *would have been* in 1995 had Proposition 99 never passed. That counterfactual is the missing data.</span>
+<span id="cb7-33"><a href="#cb7-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-34"><a href="#cb7-34" aria-hidden="true" tabindex="-1"></a><span class="fu">### The fundamental problem of causal inference</span></span>
+<span id="cb7-35"><a href="#cb7-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-36"><a href="#cb7-36" aria-hidden="true" tabindex="-1"></a>Make the missing data concrete. The table below shows what is observed (✓), what is undefined because the state was never treated (—), and what is missing-and-must-be-imputed (**?**) for a handful of rows.</span>
+<span id="cb7-37"><a href="#cb7-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-38"><a href="#cb7-38" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> State <span class="pp">|</span> Year <span class="pp">|</span> $D_{it}$ <span class="pp">|</span> $Y_{it}(0)$ <span class="pp">|</span> $Y_{it}(1)$ <span class="pp">|</span> Observed <span class="pp">|</span></span>
+<span id="cb7-39"><a href="#cb7-39" aria-hidden="true" tabindex="-1"></a><span class="pp">|---|---:|---:|---:|---:|---:|</span></span>
+<span id="cb7-40"><a href="#cb7-40" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> California <span class="pp">|</span> 1988 <span class="pp">|</span> 0 <span class="pp">|</span> 90.1 ✓ <span class="pp">|</span> ? <span class="pp">|</span> 90.1 <span class="pp">|</span></span>
+<span id="cb7-41"><a href="#cb7-41" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> California <span class="pp">|</span> 1989 <span class="pp">|</span> 1 <span class="pp">|</span> **?** <span class="pp">|</span> 82.4 ✓ <span class="pp">|</span> 82.4 <span class="pp">|</span></span>
+<span id="cb7-42"><a href="#cb7-42" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> California <span class="pp">|</span> 1995 <span class="pp">|</span> 1 <span class="pp">|</span> **?** <span class="pp">|</span> 64.4 ✓ <span class="pp">|</span> 64.4 <span class="pp">|</span></span>
+<span id="cb7-43"><a href="#cb7-43" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> California <span class="pp">|</span> 2000 <span class="pp">|</span> 1 <span class="pp">|</span> **?** <span class="pp">|</span> 41.6 ✓ <span class="pp">|</span> 41.6 <span class="pp">|</span></span>
+<span id="cb7-44"><a href="#cb7-44" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Nevada     <span class="pp">|</span> 1988 <span class="pp">|</span> 0 <span class="pp">|</span> 134.4 ✓ <span class="pp">|</span> — <span class="pp">|</span> 134.4 <span class="pp">|</span></span>
+<span id="cb7-45"><a href="#cb7-45" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Nevada     <span class="pp">|</span> 1995 <span class="pp">|</span> 0 <span class="pp">|</span> 113.0 ✓ <span class="pp">|</span> — <span class="pp">|</span> 113.0 <span class="pp">|</span></span>
+<span id="cb7-46"><a href="#cb7-46" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Utah       <span class="pp">|</span> 1988 <span class="pp">|</span> 0 <span class="pp">|</span> 64.7 ✓ <span class="pp">|</span> — <span class="pp">|</span> 64.7 <span class="pp">|</span></span>
+<span id="cb7-47"><a href="#cb7-47" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Utah       <span class="pp">|</span> 1995 <span class="pp">|</span> 0 <span class="pp">|</span> 55.0 ✓ <span class="pp">|</span> — <span class="pp">|</span> 55.0 <span class="pp">|</span></span>
+<span id="cb7-48"><a href="#cb7-48" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-49"><a href="#cb7-49" aria-hidden="true" tabindex="-1"></a>This is what Holland (1986) called the **fundamental problem of causal inference**: for any treated unit at any time, we observe at most one of the two potential outcomes, and the other one is missing. For California after 1989 the missing column is $Y_{it}(0)$ — every "**?**" in the third column. *Every method in this book is a way to fill in those question marks.*</span>
+<span id="cb7-50"><a href="#cb7-50" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-51"><a href="#cb7-51" aria-hidden="true" tabindex="-1"></a><span class="fu">### Three estimands: ITE, ATE, ATT</span></span>
+<span id="cb7-52"><a href="#cb7-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-53"><a href="#cb7-53" aria-hidden="true" tabindex="-1"></a>With both potential outcomes defined, the natural causal contrasts follow.</span>
+<span id="cb7-54"><a href="#cb7-54" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-55"><a href="#cb7-55" aria-hidden="true" tabindex="-1"></a>**Individual treatment effect (ITE)** for unit $i$ at time $t$:</span>
+<span id="cb7-56"><a href="#cb7-56" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-57"><a href="#cb7-57" aria-hidden="true" tabindex="-1"></a>$$\tau_{it} = Y_{it}(1) - Y_{it}(0).$$</span>
+<span id="cb7-58"><a href="#cb7-58" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-59"><a href="#cb7-59" aria-hidden="true" tabindex="-1"></a>The ITE is the gold standard, but it is *never* directly observable for any single $(i, t)$.</span>
+<span id="cb7-60"><a href="#cb7-60" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-61"><a href="#cb7-61" aria-hidden="true" tabindex="-1"></a>**Average treatment effect (ATE)** over a population:</span>
+<span id="cb7-62"><a href="#cb7-62" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-63"><a href="#cb7-63" aria-hidden="true" tabindex="-1"></a>$$\text{ATE} = \mathbb{E}\big<span class="co">[</span><span class="ot">Y_{it}(1) - Y_{it}(0)\big</span><span class="co">]</span>.$$</span>
+<span id="cb7-64"><a href="#cb7-64" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-65"><a href="#cb7-65" aria-hidden="true" tabindex="-1"></a>How smoking *would have changed in the average state-year* if all states had been treated. The ATE is identified by a randomised experiment — but Proposition 99 was not randomised. The ATE is *not* what we are after here.</span>
+<span id="cb7-66"><a href="#cb7-66" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-67"><a href="#cb7-67" aria-hidden="true" tabindex="-1"></a>**Average treatment effect on the treated (ATT)**, restricted to units that actually received the treatment:</span>
+<span id="cb7-68"><a href="#cb7-68" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-69"><a href="#cb7-69" aria-hidden="true" tabindex="-1"></a>$$\text{ATT} = \mathbb{E}\big<span class="co">[</span><span class="ot">Y_{it}(1) - Y_{it}(0) \,\big|\, D_{it} = 1\big</span><span class="co">]</span>.$$</span>
+<span id="cb7-70"><a href="#cb7-70" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-71"><a href="#cb7-71" aria-hidden="true" tabindex="-1"></a>How much smoking changed *in California, in the post-1989 years* because of Proposition 99. This is what every causal method in this book targets. For Proposition 99 the ATT averaged over 1989–2000 expands to</span>
+<span id="cb7-72"><a href="#cb7-72" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-73"><a href="#cb7-73" aria-hidden="true" tabindex="-1"></a>$$\text{ATT}_{\text{CA, post}} = \frac{1}{T_{\text{post}}} \sum_{t &gt; t^*} \Big[Y_{1t}(1) - Y_{1t}(0)\Big],$$</span>
+<span id="cb7-74"><a href="#cb7-74" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-75"><a href="#cb7-75" aria-hidden="true" tabindex="-1"></a>where unit $i = 1$ denotes California, $t^* = 1988$ is the last pre-period year, and $T_{\text{post}} = 12$ is the number of post-period years (1989–2000). The first term — $Y_{1t}(1)$ — is *observed*. The second term — $Y_{1t}(0)$ — is *missing*.</span>
+<span id="cb7-76"><a href="#cb7-76" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-77"><a href="#cb7-77" aria-hidden="true" tabindex="-1"></a><span class="fu">### Each method is a way to impute the missing $Y(0)$</span></span>
+<span id="cb7-78"><a href="#cb7-78" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-79"><a href="#cb7-79" aria-hidden="true" tabindex="-1"></a>The table below makes this concrete: one row per method covered in this book.</span>
+<span id="cb7-80"><a href="#cb7-80" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-81"><a href="#cb7-81" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Method (chapter) <span class="pp">|</span> Estimator of the missing $Y_{1t}(0)$ <span class="pp">|</span></span>
+<span id="cb7-82"><a href="#cb7-82" aria-hidden="true" tabindex="-1"></a><span class="pp">|---|---|</span></span>
+<span id="cb7-83"><a href="#cb7-83" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Naive pre-post (this chapter) <span class="pp">|</span> $\widehat{Y_{1t}(0)} = \overline{Y}_{1, \text{pre}}$ — California's own pre-period mean. <span class="pp">|</span></span>
+<span id="cb7-84"><a href="#cb7-84" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Interrupted Time Series — growth curve (ch. 2) <span class="pp">|</span> $\widehat{Y_{1t}(0)} = \hat\alpha + \hat\beta\, t$ — extrapolate California's pre-period linear fit. <span class="pp">|</span></span>
+<span id="cb7-85"><a href="#cb7-85" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Interrupted Time Series — ARIMA (ch. 2) <span class="pp">|</span> $\widehat{Y_{1t}(0)} = $ forecast from an ARIMA model fitted on 1970–1988. <span class="pp">|</span></span>
+<span id="cb7-86"><a href="#cb7-86" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Regression Discontinuity on time (ch. 3) <span class="pp">|</span> $\widehat{Y_{1t}(0)} = \hat\alpha + \hat\beta\, (t - t^*)$ — extrapolate California's pre-period piecewise fit. <span class="pp">|</span></span>
+<span id="cb7-87"><a href="#cb7-87" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Basic Difference-in-Differences (ch. 4) <span class="pp">|</span> $\widehat{Y_{1t}(0)} = \overline{Y}_{1, \text{pre}} + \big(\overline{Y}_{0, \text{post}} - \overline{Y}_{0, \text{pre}}\big)$ — add a control state's change. <span class="pp">|</span></span>
+<span id="cb7-88"><a href="#cb7-88" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Classical Synthetic Control (ch. 5) <span class="pp">|</span> $\widehat{Y_{1t}(0)} = \sum_{i \in \text{donors}} w_i^* Y_{it}$ — weighted blend of donor states. <span class="pp">|</span></span>
+<span id="cb7-89"><a href="#cb7-89" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Structural Bayesian Time Series (ch. 6) <span class="pp">|</span> $\widehat{Y_{1t}(0)} = \mu_t + \beta^\top x_t$ — Bayesian structural time-series fit on donor data. <span class="pp">|</span></span>
+<span id="cb7-90"><a href="#cb7-90" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-91"><a href="#cb7-91" aria-hidden="true" tabindex="-1"></a>Each subsequent chapter takes one row and shows the R code that builds the corresponding $\widehat{Y_{1t}(0)}$, then subtracts it from the observed California series to recover the ATT.</span>
+<span id="cb7-92"><a href="#cb7-92" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-93"><a href="#cb7-93" aria-hidden="true" tabindex="-1"></a><span class="fu">## Which method when?</span></span>
+<span id="cb7-94"><a href="#cb7-94" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-95"><a href="#cb7-95" aria-hidden="true" tabindex="-1"></a>The methods are not interchangeable. Each is appropriate for a different data situation. The decision tree below walks through three diagnostic questions and steers you to the matching family. Apply it whenever you face a new regional policy-evaluation problem.</span>
+<span id="cb7-96"><a href="#cb7-96" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-99"><a href="#cb7-99" aria-hidden="true" tabindex="-1"></a><span class="in">```{mermaid}</span></span>
+<span id="cb7-100"><a href="#cb7-100" aria-hidden="true" tabindex="-1"></a>flowchart TB</span>
+<span id="cb7-101"><a href="#cb7-101" aria-hidden="true" tabindex="-1"></a>    Q1{<span class="ot">"</span><span class="st">Do you have a credible&lt;br/&gt;donor pool of untreated units?&lt;br/&gt;(roughly 10+ similar units&lt;br/&gt;followed over the same window)</span><span class="ot">"</span>}</span>
+<span id="cb7-102"><a href="#cb7-102" aria-hidden="true" tabindex="-1"></a>    Q1 --&gt;|Yes| Q2{<span class="ot">"</span><span class="st">Do you want frequentist&lt;br/&gt;placebo inference,&lt;br/&gt;or Bayesian credible&lt;br/&gt;intervals?</span><span class="ot">"</span>}</span>
+<span id="cb7-103"><a href="#cb7-103" aria-hidden="true" tabindex="-1"></a>    Q1 --&gt;|No, only one good control| DiD[<span class="ot">"</span><span class="st">Difference-in-Differences&lt;br/&gt;(ch. 4)&lt;br/&gt;&lt;br/&gt;Cost: parallel-trends assumption&lt;br/&gt;on a single comparison unit</span><span class="ot">"</span>]</span>
+<span id="cb7-104"><a href="#cb7-104" aria-hidden="true" tabindex="-1"></a>    Q1 --&gt;|No, only the treated unit| Q3{<span class="ot">"</span><span class="st">Is the policy date the&lt;br/&gt;only structural break&lt;br/&gt;in the series?</span><span class="ot">"</span>}</span>
+<span id="cb7-105"><a href="#cb7-105" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-106"><a href="#cb7-106" aria-hidden="true" tabindex="-1"></a>    Q2 --&gt;|Frequentist + tidy code| SCM[<span class="ot">"</span><span class="st">Synthetic Control&lt;br/&gt;(ch. 5)&lt;br/&gt;&lt;br/&gt;Cost: convex-combination&lt;br/&gt;of donors must match the&lt;br/&gt;treated pre-period</span><span class="ot">"</span>]</span>
+<span id="cb7-107"><a href="#cb7-107" aria-hidden="true" tabindex="-1"></a>    Q2 --&gt;|Bayesian + uncertainty bands| CI[<span class="ot">"</span><span class="st">Structural Bayesian TS&lt;br/&gt;(ch. 6)&lt;br/&gt;&lt;br/&gt;Cost: state-space prior;&lt;br/&gt;covariate-set choice&lt;br/&gt;affects the estimate</span><span class="ot">"</span>]</span>
+<span id="cb7-108"><a href="#cb7-108" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-109"><a href="#cb7-109" aria-hidden="true" tabindex="-1"></a>    Q3 --&gt;|Yes, sharp jump at threshold| RDD[<span class="ot">"</span><span class="st">Regression Discontinuity on time&lt;br/&gt;(ch. 3)&lt;br/&gt;&lt;br/&gt;Cost: assumes no other shock&lt;br/&gt;coincides with the threshold</span><span class="ot">"</span>]</span>
+<span id="cb7-110"><a href="#cb7-110" aria-hidden="true" tabindex="-1"></a>    Q3 --&gt;|No, model the smooth pre-trend| ITS[<span class="ot">"</span><span class="st">Interrupted Time Series&lt;br/&gt;(ch. 2)&lt;br/&gt;&lt;br/&gt;Cost: pre-trend extrapolation&lt;br/&gt;must be specified correctly</span><span class="ot">"</span>]</span>
+<span id="cb7-111"><a href="#cb7-111" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-112"><a href="#cb7-112" aria-hidden="true" tabindex="-1"></a>    NAIVE[<span class="ot">"</span><span class="st">Naive pre-post&lt;br/&gt;(this chapter)&lt;br/&gt;&lt;br/&gt;Use only as a baseline.&lt;br/&gt;Never as a causal estimate.</span><span class="ot">"</span>] -.-&gt;|<span class="ot">"</span><span class="st">baseline for everyone</span><span class="ot">"</span>| Q1</span>
+<span id="cb7-113"><a href="#cb7-113" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb7-114"><a href="#cb7-114" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-115"><a href="#cb7-115" aria-hidden="true" tabindex="-1"></a>The Synthetic Control and Bayesian structural TS branches are the most defensible families when a donor pool exists. DiD, RDD-on-time, and ITS are valid in their respective data situations but carry stronger identifying assumptions. The naive pre-post node — the rest of this chapter — is the universal baseline that *everyone* should compute first, never as the final answer, always as the bias yardstick.</span>
+<span id="cb7-116"><a href="#cb7-116" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-117"><a href="#cb7-117" aria-hidden="true" tabindex="-1"></a><span class="fu">## Setup and data</span></span>
+<span id="cb7-118"><a href="#cb7-118" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-119"><a href="#cb7-119" aria-hidden="true" tabindex="-1"></a>We load the packages we need with <span class="in">`library()`</span> calls. Every package below is pinned in <span class="in">`renv.lock`</span>, so <span class="in">`renv::restore()`</span> is enough to reproduce the environment on a fresh machine.</span>
+<span id="cb7-120"><a href="#cb7-120" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-123"><a href="#cb7-123" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb7-124"><a href="#cb7-124" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: setup</span></span>
+<span id="cb7-125"><a href="#cb7-125" aria-hidden="true" tabindex="-1"></a><span class="co">#| message: false</span></span>
+<span id="cb7-126"><a href="#cb7-126" aria-hidden="true" tabindex="-1"></a><span class="co">#| warning: false</span></span>
+<span id="cb7-127"><a href="#cb7-127" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb7-128"><a href="#cb7-128" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(sandwich)</span>
+<span id="cb7-129"><a href="#cb7-129" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lmtest)</span>
+<span id="cb7-130"><a href="#cb7-130" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"R/table_helpers.R"</span>)</span>
+<span id="cb7-131"><a href="#cb7-131" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-132"><a href="#cb7-132" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
+<span id="cb7-133"><a href="#cb7-133" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-134"><a href="#cb7-134" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span>opts_chunk<span class="sc">$</span><span class="fu">set</span>(<span class="at">dev.args =</span> <span class="fu">list</span>(<span class="at">bg =</span> <span class="st">"transparent"</span>))</span>
+<span id="cb7-135"><a href="#cb7-135" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-136"><a href="#cb7-136" aria-hidden="true" tabindex="-1"></a><span class="fu">theme_set</span>(</span>
+<span id="cb7-137"><a href="#cb7-137" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">12</span>) <span class="sc">+</span></span>
+<span id="cb7-138"><a href="#cb7-138" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(</span>
+<span id="cb7-139"><a href="#cb7-139" aria-hidden="true" tabindex="-1"></a>      <span class="at">plot.background  =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">"transparent"</span>, <span class="at">color =</span> <span class="cn">NA</span>),</span>
+<span id="cb7-140"><a href="#cb7-140" aria-hidden="true" tabindex="-1"></a>      <span class="at">panel.background =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">"transparent"</span>, <span class="at">color =</span> <span class="cn">NA</span>),</span>
+<span id="cb7-141"><a href="#cb7-141" aria-hidden="true" tabindex="-1"></a>      <span class="at">panel.grid.major =</span> <span class="fu">element_line</span>(<span class="at">color =</span> <span class="st">"#94a3b8"</span>, <span class="at">linewidth =</span> <span class="fl">0.25</span>),</span>
+<span id="cb7-142"><a href="#cb7-142" aria-hidden="true" tabindex="-1"></a>      <span class="at">panel.grid.minor =</span> <span class="fu">element_line</span>(<span class="at">color =</span> <span class="st">"#94a3b8"</span>, <span class="at">linewidth =</span> <span class="fl">0.15</span>),</span>
+<span id="cb7-143"><a href="#cb7-143" aria-hidden="true" tabindex="-1"></a>      <span class="at">text             =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"#94a3b8"</span>),</span>
+<span id="cb7-144"><a href="#cb7-144" aria-hidden="true" tabindex="-1"></a>      <span class="at">axis.text        =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"#94a3b8"</span>)</span>
+<span id="cb7-145"><a href="#cb7-145" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb7-146"><a href="#cb7-146" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb7-147"><a href="#cb7-147" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb7-148"><a href="#cb7-148" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-149"><a href="#cb7-149" aria-hidden="true" tabindex="-1"></a>The dataset is cached in the repository at <span class="in">`data/proposition99.rds`</span>. It is a panel of 39 U.S. states observed 1970–2000, with per-capita cigarette pack sales (<span class="in">`cigsale`</span>) as the outcome and four covariates.</span>
+<span id="cb7-150"><a href="#cb7-150" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-153"><a href="#cb7-153" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb7-154"><a href="#cb7-154" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: data-load</span></span>
+<span id="cb7-155"><a href="#cb7-155" aria-hidden="true" tabindex="-1"></a>prop99 <span class="ot">&lt;-</span> <span class="fu">read_rds</span>(<span class="st">"data/proposition99.rds"</span>) <span class="sc">|&gt;</span> <span class="fu">as_tibble</span>()</span>
+<span id="cb7-156"><a href="#cb7-156" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-157"><a href="#cb7-157" aria-hidden="true" tabindex="-1"></a><span class="co"># Subset to California and add a Pre/Post factor based on the policy date.</span></span>
+<span id="cb7-158"><a href="#cb7-158" aria-hidden="true" tabindex="-1"></a>prop99_cali <span class="ot">&lt;-</span> prop99 <span class="sc">|&gt;</span></span>
+<span id="cb7-159"><a href="#cb7-159" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(state <span class="sc">==</span> <span class="st">"California"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb7-160"><a href="#cb7-160" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">prepost =</span> <span class="fu">factor</span>(year <span class="sc">&gt;</span> <span class="dv">1988</span>, <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Pre"</span>, <span class="st">"Post"</span>)))</span>
+<span id="cb7-161"><a href="#cb7-161" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb7-162"><a href="#cb7-162" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-165"><a href="#cb7-165" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb7-166"><a href="#cb7-166" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: tbl-prepost-means</span></span>
+<span id="cb7-167"><a href="#cb7-167" aria-hidden="true" tabindex="-1"></a><span class="co">#| tbl-cap: "Pre vs post means in California (Proposition 99)."</span></span>
+<span id="cb7-168"><a href="#cb7-168" aria-hidden="true" tabindex="-1"></a>prop99_cali <span class="sc">|&gt;</span></span>
+<span id="cb7-169"><a href="#cb7-169" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(prepost) <span class="sc">|&gt;</span></span>
+<span id="cb7-170"><a href="#cb7-170" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">n            =</span> <span class="fu">n</span>(),</span>
+<span id="cb7-171"><a href="#cb7-171" aria-hidden="true" tabindex="-1"></a>            <span class="at">mean_cigsale =</span> <span class="fu">mean</span>(cigsale),</span>
+<span id="cb7-172"><a href="#cb7-172" aria-hidden="true" tabindex="-1"></a>            <span class="at">sd_cigsale   =</span> <span class="fu">sd</span>(cigsale),</span>
+<span id="cb7-173"><a href="#cb7-173" aria-hidden="true" tabindex="-1"></a>            <span class="at">.groups =</span> <span class="st">"drop"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb7-174"><a href="#cb7-174" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gt_pretty</span>(<span class="at">decimals =</span> <span class="dv">2</span>) <span class="sc">|&gt;</span></span>
+<span id="cb7-175"><a href="#cb7-175" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cols_label</span>(<span class="at">prepost      =</span> <span class="st">"Period"</span>,</span>
+<span id="cb7-176"><a href="#cb7-176" aria-hidden="true" tabindex="-1"></a>             <span class="at">n            =</span> <span class="st">"Years"</span>,</span>
+<span id="cb7-177"><a href="#cb7-177" aria-hidden="true" tabindex="-1"></a>             <span class="at">mean_cigsale =</span> <span class="st">"Mean cigsale"</span>,</span>
+<span id="cb7-178"><a href="#cb7-178" aria-hidden="true" tabindex="-1"></a>             <span class="at">sd_cigsale   =</span> <span class="st">"SD"</span>)</span>
+<span id="cb7-179"><a href="#cb7-179" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb7-180"><a href="#cb7-180" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-181"><a href="#cb7-181" aria-hidden="true" tabindex="-1"></a>California's average per-capita cigarette sales fell from about 116 packs (1970–1988) to about 60 packs (1989–2000) — a within-state drop of roughly 56 packs, or 48% of the pre-period mean. That is the *raw* before/after change. The rest of the book is about how much of that drop we can credibly attribute to Proposition 99 rather than to the broader American secular decline in smoking.</span>
+<span id="cb7-182"><a href="#cb7-182" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-183"><a href="#cb7-183" aria-hidden="true" tabindex="-1"></a>Before any modelling, it helps to see all 39 series at once.</span>
+<span id="cb7-184"><a href="#cb7-184" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-187"><a href="#cb7-187" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb7-188"><a href="#cb7-188" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-raw-series</span></span>
+<span id="cb7-189"><a href="#cb7-189" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Per-capita cigarette sales for all 39 states 1970–2000, with California highlighted."</span></span>
+<span id="cb7-190"><a href="#cb7-190" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-width: 8</span></span>
+<span id="cb7-191"><a href="#cb7-191" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-height: 5</span></span>
+<span id="cb7-192"><a href="#cb7-192" aria-hidden="true" tabindex="-1"></a>eda_data <span class="ot">&lt;-</span> prop99 <span class="sc">|&gt;</span></span>
+<span id="cb7-193"><a href="#cb7-193" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">unit_type =</span> <span class="fu">if_else</span>(state <span class="sc">==</span> <span class="st">"California"</span>,</span>
+<span id="cb7-194"><a href="#cb7-194" aria-hidden="true" tabindex="-1"></a>                             <span class="st">"California (treated)"</span>, <span class="st">"Donor state"</span>))</span>
+<span id="cb7-195"><a href="#cb7-195" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-196"><a href="#cb7-196" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(eda_data, <span class="fu">aes</span>(<span class="at">x =</span> year, <span class="at">y =</span> cigsale, <span class="at">group =</span> state,</span>
+<span id="cb7-197"><a href="#cb7-197" aria-hidden="true" tabindex="-1"></a>                     <span class="at">color =</span> unit_type,</span>
+<span id="cb7-198"><a href="#cb7-198" aria-hidden="true" tabindex="-1"></a>                     <span class="at">linewidth =</span> unit_type, <span class="at">alpha =</span> unit_type)) <span class="sc">+</span></span>
+<span id="cb7-199"><a href="#cb7-199" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span></span>
+<span id="cb7-200"><a href="#cb7-200" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="fl">1988.5</span>, <span class="at">color =</span> <span class="st">"#d97757"</span>,</span>
+<span id="cb7-201"><a href="#cb7-201" aria-hidden="true" tabindex="-1"></a>             <span class="at">linetype =</span> <span class="st">"dashed"</span>, <span class="at">linewidth =</span> <span class="fl">0.7</span>) <span class="sc">+</span></span>
+<span id="cb7-202"><a href="#cb7-202" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"California (treated)"</span> <span class="ot">=</span> <span class="st">"#d97757"</span>,</span>
+<span id="cb7-203"><a href="#cb7-203" aria-hidden="true" tabindex="-1"></a>                                <span class="st">"Donor state"</span> <span class="ot">=</span> <span class="st">"#6a9bcc"</span>)) <span class="sc">+</span></span>
+<span id="cb7-204"><a href="#cb7-204" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_linewidth_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"California (treated)"</span> <span class="ot">=</span> <span class="fl">1.2</span>,</span>
+<span id="cb7-205"><a href="#cb7-205" aria-hidden="true" tabindex="-1"></a>                                    <span class="st">"Donor state"</span> <span class="ot">=</span> <span class="fl">0.4</span>)) <span class="sc">+</span></span>
+<span id="cb7-206"><a href="#cb7-206" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_alpha_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"California (treated)"</span> <span class="ot">=</span> <span class="dv">1</span>,</span>
+<span id="cb7-207"><a href="#cb7-207" aria-hidden="true" tabindex="-1"></a>                                <span class="st">"Donor state"</span> <span class="ot">=</span> <span class="fl">0.5</span>)) <span class="sc">+</span></span>
+<span id="cb7-208"><a href="#cb7-208" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Year"</span>, <span class="at">y =</span> <span class="st">"Cigarette sales (packs per capita)"</span>,</span>
+<span id="cb7-209"><a href="#cb7-209" aria-hidden="true" tabindex="-1"></a>       <span class="at">color =</span> <span class="cn">NULL</span>, <span class="at">linewidth =</span> <span class="cn">NULL</span>, <span class="at">alpha =</span> <span class="cn">NULL</span>) <span class="sc">+</span></span>
+<span id="cb7-210"><a href="#cb7-210" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span>
+<span id="cb7-211"><a href="#cb7-211" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb7-212"><a href="#cb7-212" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-213"><a href="#cb7-213" aria-hidden="true" tabindex="-1"></a>California sits inside the donor cloud throughout the 1970s and 1980s, then visibly separates downward after the dashed Proposition 99 line. The pre-1988 trajectory is already slightly below the donor median, but it is not anomalous; the sharp post-1988 separation is. Visually, this is the signal every causal estimator in the book tries to quantify.</span>
+<span id="cb7-214"><a href="#cb7-214" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-215"><a href="#cb7-215" aria-hidden="true" tabindex="-1"></a><span class="fu">## A first attempt: naive pre-post</span></span>
+<span id="cb7-216"><a href="#cb7-216" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-217"><a href="#cb7-217" aria-hidden="true" tabindex="-1"></a>**The idea.** Compare California's mean cigarette sales before 1989 with its mean after 1989. Call the difference the "effect".</span>
+<span id="cb7-218"><a href="#cb7-218" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-219"><a href="#cb7-219" aria-hidden="true" tabindex="-1"></a>**The equation.**</span>
+<span id="cb7-220"><a href="#cb7-220" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-221"><a href="#cb7-221" aria-hidden="true" tabindex="-1"></a>$$\hat\tau_{\text{naive}} = \overline{Y}_{1, \text{post}} - \overline{Y}_{1, \text{pre}}.$$</span>
+<span id="cb7-222"><a href="#cb7-222" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-223"><a href="#cb7-223" aria-hidden="true" tabindex="-1"></a>In words: the naive estimate is the difference between California's observed post-period mean and California's observed pre-period mean. This corresponds to imputing $\widehat{Y_{1t}(0)} = \overline{Y}_{1, \text{pre}}$ — i.e., assuming California's counterfactual smoking would have been frozen at the pre-period average.</span>
+<span id="cb7-224"><a href="#cb7-224" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-225"><a href="#cb7-225" aria-hidden="true" tabindex="-1"></a>**Why this is wrong but still useful.** The implicit counterfactual "California's pre-period level continues unchanged" is almost certainly wrong, because smoking was declining nationwide. But the estimate is so cheap to compute that it makes a useful baseline. Every later chapter tries to fix what is broken here.</span>
+<span id="cb7-226"><a href="#cb7-226" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-227"><a href="#cb7-227" aria-hidden="true" tabindex="-1"></a>We follow the convention of the <span class="co">[</span><span class="ot">ODISSEI workshop</span><span class="co">](https://causalpolicy.nl/)</span> <span class="co">[</span><span class="ot">@odissei2024causalpolicy</span><span class="co">]</span> and restrict to the 1984–1993 window for the naive estimate. Using the full 1970–2000 window would change the numbers but not the qualitative point.</span>
+<span id="cb7-228"><a href="#cb7-228" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-231"><a href="#cb7-231" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb7-232"><a href="#cb7-232" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: naive-prepost</span></span>
+<span id="cb7-233"><a href="#cb7-233" aria-hidden="true" tabindex="-1"></a><span class="co"># OLS of California's cigsale on a Pre/Post dummy, restricted to the</span></span>
+<span id="cb7-234"><a href="#cb7-234" aria-hidden="true" tabindex="-1"></a><span class="co"># workshop's 1984-1993 window.</span></span>
+<span id="cb7-235"><a href="#cb7-235" aria-hidden="true" tabindex="-1"></a>fit_prepost <span class="ot">&lt;-</span> <span class="fu">lm</span>(cigsale <span class="sc">~</span> prepost,</span>
+<span id="cb7-236"><a href="#cb7-236" aria-hidden="true" tabindex="-1"></a>                  <span class="at">data =</span> prop99_cali <span class="sc">|&gt;</span> <span class="fu">filter</span>(year <span class="sc">&gt;</span> <span class="dv">1983</span>, year <span class="sc">&lt;</span> <span class="dv">1994</span>))</span>
+<span id="cb7-237"><a href="#cb7-237" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-238"><a href="#cb7-238" aria-hidden="true" tabindex="-1"></a><span class="co"># Replace the default OLS standard errors with HAC (heteroskedasticity-</span></span>
+<span id="cb7-239"><a href="#cb7-239" aria-hidden="true" tabindex="-1"></a><span class="co"># and-autocorrelation-consistent) errors, which short time series need.</span></span>
+<span id="cb7-240"><a href="#cb7-240" aria-hidden="true" tabindex="-1"></a><span class="fu">coeftest</span>(fit_prepost, <span class="at">vcov. =</span> vcovHAC)</span>
+<span id="cb7-241"><a href="#cb7-241" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb7-242"><a href="#cb7-242" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-243"><a href="#cb7-243" aria-hidden="true" tabindex="-1"></a>**Reading the output.** California's mean over 1984–1988 was about 99 packs/capita. The <span class="in">`prepostPost`</span> coefficient says the 1989–1993 mean is roughly 27 packs *lower*. The HAC robust standard error is small ($p &lt; 0.001$). The HAC correction comes from <span class="in">`sandwich::vcovHAC`</span> and accounts for the heteroskedasticity and autocorrelation that short time series typically exhibit; a classical OLS standard error would be wildly overconfident here.</span>
+<span id="cb7-244"><a href="#cb7-244" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-245"><a href="#cb7-245" aria-hidden="true" tabindex="-1"></a>**The estimand is purely descriptive.** This is a within-state difference of means, *not* a causal estimate. Any nationwide secular decline in smoking gets silently bundled into the $-27$. That bundling is exactly what the later chapters try to undo.</span>
+<span id="cb7-246"><a href="#cb7-246" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-247"><a href="#cb7-247" aria-hidden="true" tabindex="-1"></a>**Common pitfall.** Confusing the within-state pre-post difference with a causal effect. Anything that shifted the entire country between the two windows — federal anti-smoking campaigns, tobacco settlements, rising health awareness — gets attributed entirely to Proposition 99.</span>
+<span id="cb7-248"><a href="#cb7-248" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-249"><a href="#cb7-249" aria-hidden="true" tabindex="-1"></a><span class="fu">## Roadmap of the book</span></span>
+<span id="cb7-250"><a href="#cb7-250" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-251"><a href="#cb7-251" aria-hidden="true" tabindex="-1"></a>The remaining chapters take the same Proposition 99 dataset and the same estimand (the ATT on California, 1989–2000), and replace the naive baseline with progressively richer counterfactual constructions:</span>
+<span id="cb7-252"><a href="#cb7-252" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-253"><a href="#cb7-253" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Chapter 2 — Interrupted Time Series.** Extrapolate California's *own* pre-trend forward. Two variants: a linear growth curve and an auto-selected ARIMA forecast.</span>
+<span id="cb7-254"><a href="#cb7-254" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Chapter 3 — Regression Discontinuity in Time.** Fit a piecewise line with a level and slope break at the policy date.</span>
+<span id="cb7-255"><a href="#cb7-255" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Chapter 4 — Basic Difference-in-Differences.** Subtract a control state's pre/post change from California's.</span>
+<span id="cb7-256"><a href="#cb7-256" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Chapter 5 — Classical Synthetic Control.** Build a weighted blend of donor states that mimics California's pre-period.</span>
+<span id="cb7-257"><a href="#cb7-257" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Chapter 6 — Structural Bayesian Time Series.** Fit a Bayesian state-space model that uses donor states as predictors.</span>
+<span id="cb7-258"><a href="#cb7-258" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-259"><a href="#cb7-259" aria-hidden="true" tabindex="-1"></a>A final cross-method comparison places all the estimates on a single forest plot. Five of the six methods agree on a 13–20 pack reduction per capita. One collapses to noise. One flips sign entirely. The disagreement is the lesson.</span>
+<span id="cb7-260"><a href="#cb7-260" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-261"><a href="#cb7-261" aria-hidden="true" tabindex="-1"></a><span class="fu">## Further reading</span></span>
+<span id="cb7-262"><a href="#cb7-262" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-263"><a href="#cb7-263" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>@abadie2010synthetic — the original synthetic-control treatment of Proposition 99.</span>
+<span id="cb7-264"><a href="#cb7-264" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>@bernal2017interrupted — a practitioner's tutorial on ITS for public-health interventions.</span>
+<span id="cb7-265"><a href="#cb7-265" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>@odissei2024causalpolicy — the ODISSEI workshop this book's running example follows.</span>
 </code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->

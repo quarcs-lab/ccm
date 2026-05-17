@@ -540,10 +540,15 @@ window.Quarto = {
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>fit_growth <span class="ot">&lt;-</span> <span class="fu">lm</span>(cigsale <span class="sc">~</span> year, <span class="at">data =</span> prop99_ts <span class="sc">|&gt;</span> <span class="fu">filter</span>(prepost <span class="sc">==</span> <span class="st">"Pre"</span>))</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="fu">ms_pretty</span>(<span class="fu">list</span>(<span class="st">"Pre-period linear trend"</span> <span class="ot">=</span> fit_growth),</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>          <span class="at">title    =</span> <span class="st">"Linear growth-curve ITS — pre-period fit"</span>,</span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>          <span class="at">coef_map =</span> <span class="fu">c</span>(<span class="st">"(Intercept)"</span> <span class="ot">=</span> <span class="st">"Intercept"</span>,</span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>                       <span class="st">"year"</span>        <span class="ot">=</span> <span class="st">"Year"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>          <span class="at">coef_map =</span> <span class="fu">c</span>(<span class="st">"(Intercept)"</span> <span class="ot">=</span> <span class="st">"Intercept"</span>,</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>                       <span class="st">"year"</span>        <span class="ot">=</span> <span class="st">"Year"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
+<div id="tbl-fit-growth" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-fit-growth-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;2.1: Linear growth-curve ITS — pre-period fit.
+</figcaption>
+<div aria-describedby="tbl-fit-growth-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output-display">
 <div id="qeayjdrzqo" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
 <style>#qeayjdrzqo table {
@@ -995,8 +1000,7 @@ window.Quarto = {
 }
 </style>
 
-<table class="gt_table caption-top table table-sm table-striped small" data-quarto-bootstrap="false">
-<caption>Linear growth-curve ITS — pre-period fit</caption>
+<table class="gt_table do-not-create-environment cell caption-top table table-sm table-striped small" data-quarto-bootstrap="false">
 <thead>
 <tr class="gt_col_headings header">
 <th id="a-" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col"></th>
@@ -1037,6 +1041,9 @@ window.Quarto = {
 </table>
 
 </div>
+</div>
+</div>
+</figure>
 </div>
 </div>
 <p>The pre-period linear trend is about <span class="math inline">\(-1.78\)</span> packs per capita per year (<span class="math inline">\(p &lt; 10^{-5}\)</span>, <span class="math inline">\(R^2 \approx 0.73\)</span>) — so California was already declining about 1.8 packs per year before Proposition 99. To estimate the policy effect we extrapolate that line forward to 2000 and average the gap.</p>
@@ -1759,12 +1766,12 @@ Hyndman, R. J., &amp; Athanasopoulos, G. (2021). <em>Forecasting: Principles and
 <span id="cb12-80"><a href="#cb12-80" aria-hidden="true" tabindex="-1"></a>In words: a single straight line, fit on 1970–1988 cigarette sales in California, becomes the counterfactual for 1989–2000. The policy effect is the *average* of the per-year residuals between what was actually observed and what the extrapolated line predicted. The slope $\hat\beta$ captures whatever secular trend California was already on; only deviations *from* that trend after 1989 are attributed to Proposition 99.</span>
 <span id="cb12-81"><a href="#cb12-81" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb12-84"><a href="#cb12-84" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb12-85"><a href="#cb12-85" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fit-growth</span></span>
-<span id="cb12-86"><a href="#cb12-86" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit a linear pre-period trend (cigsale on year, 1970-1988 only).</span></span>
-<span id="cb12-87"><a href="#cb12-87" aria-hidden="true" tabindex="-1"></a>fit_growth <span class="ot">&lt;-</span> <span class="fu">lm</span>(cigsale <span class="sc">~</span> year, <span class="at">data =</span> prop99_ts <span class="sc">|&gt;</span> <span class="fu">filter</span>(prepost <span class="sc">==</span> <span class="st">"Pre"</span>))</span>
-<span id="cb12-88"><a href="#cb12-88" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-89"><a href="#cb12-89" aria-hidden="true" tabindex="-1"></a><span class="fu">ms_pretty</span>(<span class="fu">list</span>(<span class="st">"Pre-period linear trend"</span> <span class="ot">=</span> fit_growth),</span>
-<span id="cb12-90"><a href="#cb12-90" aria-hidden="true" tabindex="-1"></a>          <span class="at">title    =</span> <span class="st">"Linear growth-curve ITS — pre-period fit"</span>,</span>
+<span id="cb12-85"><a href="#cb12-85" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: tbl-fit-growth</span></span>
+<span id="cb12-86"><a href="#cb12-86" aria-hidden="true" tabindex="-1"></a><span class="co">#| tbl-cap: "Linear growth-curve ITS — pre-period fit."</span></span>
+<span id="cb12-87"><a href="#cb12-87" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit a linear pre-period trend (cigsale on year, 1970-1988 only).</span></span>
+<span id="cb12-88"><a href="#cb12-88" aria-hidden="true" tabindex="-1"></a>fit_growth <span class="ot">&lt;-</span> <span class="fu">lm</span>(cigsale <span class="sc">~</span> year, <span class="at">data =</span> prop99_ts <span class="sc">|&gt;</span> <span class="fu">filter</span>(prepost <span class="sc">==</span> <span class="st">"Pre"</span>))</span>
+<span id="cb12-89"><a href="#cb12-89" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-90"><a href="#cb12-90" aria-hidden="true" tabindex="-1"></a><span class="fu">ms_pretty</span>(<span class="fu">list</span>(<span class="st">"Pre-period linear trend"</span> <span class="ot">=</span> fit_growth),</span>
 <span id="cb12-91"><a href="#cb12-91" aria-hidden="true" tabindex="-1"></a>          <span class="at">coef_map =</span> <span class="fu">c</span>(<span class="st">"(Intercept)"</span> <span class="ot">=</span> <span class="st">"Intercept"</span>,</span>
 <span id="cb12-92"><a href="#cb12-92" aria-hidden="true" tabindex="-1"></a>                       <span class="st">"year"</span>        <span class="ot">=</span> <span class="st">"Year"</span>))</span>
 <span id="cb12-93"><a href="#cb12-93" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>

@@ -528,13 +528,18 @@ window.Quarto = {
 <span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="co"># HAC-robust standard errors for the four coefficients.</span></span>
 <span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="fu">ms_pretty</span>(<span class="fu">list</span>(<span class="st">"Piecewise OLS, HAC SEs"</span> <span class="ot">=</span> fit_rdd),</span>
 <span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>          <span class="at">vcov     =</span> sandwich<span class="sc">::</span>vcovHAC,</span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>          <span class="at">title    =</span> <span class="st">"RD-in-time fit (HAC-robust SEs)"</span>,</span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>          <span class="at">coef_map =</span> <span class="fu">c</span>(<span class="st">"(Intercept)"</span>         <span class="ot">=</span> <span class="st">"Pre-period intercept"</span>,</span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>                       <span class="st">"year0"</span>               <span class="ot">=</span> <span class="st">"Pre-period slope"</span>,</span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>                       <span class="st">"prepostPost"</span>         <span class="ot">=</span> <span class="st">"Level break at 1989"</span>,</span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>                       <span class="st">"year0:prepostPost"</span>   <span class="ot">=</span> <span class="st">"Slope change post-1989"</span>),</span>
-<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>          <span class="at">notes    =</span> <span class="st">"Standard errors HAC-robust via sandwich::vcovHAC."</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>          <span class="at">coef_map =</span> <span class="fu">c</span>(<span class="st">"(Intercept)"</span>         <span class="ot">=</span> <span class="st">"Pre-period intercept"</span>,</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>                       <span class="st">"year0"</span>               <span class="ot">=</span> <span class="st">"Pre-period slope"</span>,</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>                       <span class="st">"prepostPost"</span>         <span class="ot">=</span> <span class="st">"Level break at 1989"</span>,</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>                       <span class="st">"year0:prepostPost"</span>   <span class="ot">=</span> <span class="st">"Slope change post-1989"</span>),</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>          <span class="at">notes    =</span> <span class="st">"Standard errors HAC-robust via sandwich::vcovHAC."</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
+<div id="tbl-fit-rdd" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-fit-rdd-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;3.1: RD-in-time fit (HAC-robust SEs).
+</figcaption>
+<div aria-describedby="tbl-fit-rdd-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output-display">
 <div id="qeayjdrzqo" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
 <style>#qeayjdrzqo table {
@@ -986,8 +991,7 @@ window.Quarto = {
 }
 </style>
 
-<table class="gt_table caption-top table table-sm table-striped small" data-quarto-bootstrap="false">
-<caption>RD-in-time fit (HAC-robust SEs)</caption>
+<table class="gt_table do-not-create-environment cell caption-top table table-sm table-striped small" data-quarto-bootstrap="false">
 <thead>
 <tr class="gt_col_headings header">
 <th id="a-" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col"></th>
@@ -1051,6 +1055,9 @@ window.Quarto = {
 </table>
 
 </div>
+</div>
+</div>
+</figure>
 </div>
 </div>
 <p><strong>Reading the output.</strong> Three coefficients matter.</p>
@@ -1669,16 +1676,16 @@ Figure&nbsp;3.1: RDD on time: piecewise pre/post linear fit with level and slope
 <span id="cb5-76"><a href="#cb5-76" aria-hidden="true" tabindex="-1"></a><span class="fu">## Fit and HAC inference</span></span>
 <span id="cb5-77"><a href="#cb5-77" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-80"><a href="#cb5-80" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb5-81"><a href="#cb5-81" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fit-rdd</span></span>
-<span id="cb5-82"><a href="#cb5-82" aria-hidden="true" tabindex="-1"></a><span class="co"># Piecewise OLS: pre-period slope, level break at threshold, slope change</span></span>
-<span id="cb5-83"><a href="#cb5-83" aria-hidden="true" tabindex="-1"></a><span class="co"># after threshold. year0 = year - 1989 (already constructed above).</span></span>
-<span id="cb5-84"><a href="#cb5-84" aria-hidden="true" tabindex="-1"></a>fit_rdd <span class="ot">&lt;-</span> <span class="fu">lm</span>(cigsale <span class="sc">~</span> year0 <span class="sc">+</span> prepost <span class="sc">+</span> year0<span class="sc">:</span>prepost,</span>
-<span id="cb5-85"><a href="#cb5-85" aria-hidden="true" tabindex="-1"></a>              <span class="at">data =</span> <span class="fu">as_tibble</span>(prop99_ts))</span>
-<span id="cb5-86"><a href="#cb5-86" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-87"><a href="#cb5-87" aria-hidden="true" tabindex="-1"></a><span class="co"># HAC-robust standard errors for the four coefficients.</span></span>
-<span id="cb5-88"><a href="#cb5-88" aria-hidden="true" tabindex="-1"></a><span class="fu">ms_pretty</span>(<span class="fu">list</span>(<span class="st">"Piecewise OLS, HAC SEs"</span> <span class="ot">=</span> fit_rdd),</span>
-<span id="cb5-89"><a href="#cb5-89" aria-hidden="true" tabindex="-1"></a>          <span class="at">vcov     =</span> sandwich<span class="sc">::</span>vcovHAC,</span>
-<span id="cb5-90"><a href="#cb5-90" aria-hidden="true" tabindex="-1"></a>          <span class="at">title    =</span> <span class="st">"RD-in-time fit (HAC-robust SEs)"</span>,</span>
+<span id="cb5-81"><a href="#cb5-81" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: tbl-fit-rdd</span></span>
+<span id="cb5-82"><a href="#cb5-82" aria-hidden="true" tabindex="-1"></a><span class="co">#| tbl-cap: "RD-in-time fit (HAC-robust SEs)."</span></span>
+<span id="cb5-83"><a href="#cb5-83" aria-hidden="true" tabindex="-1"></a><span class="co"># Piecewise OLS: pre-period slope, level break at threshold, slope change</span></span>
+<span id="cb5-84"><a href="#cb5-84" aria-hidden="true" tabindex="-1"></a><span class="co"># after threshold. year0 = year - 1989 (already constructed above).</span></span>
+<span id="cb5-85"><a href="#cb5-85" aria-hidden="true" tabindex="-1"></a>fit_rdd <span class="ot">&lt;-</span> <span class="fu">lm</span>(cigsale <span class="sc">~</span> year0 <span class="sc">+</span> prepost <span class="sc">+</span> year0<span class="sc">:</span>prepost,</span>
+<span id="cb5-86"><a href="#cb5-86" aria-hidden="true" tabindex="-1"></a>              <span class="at">data =</span> <span class="fu">as_tibble</span>(prop99_ts))</span>
+<span id="cb5-87"><a href="#cb5-87" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-88"><a href="#cb5-88" aria-hidden="true" tabindex="-1"></a><span class="co"># HAC-robust standard errors for the four coefficients.</span></span>
+<span id="cb5-89"><a href="#cb5-89" aria-hidden="true" tabindex="-1"></a><span class="fu">ms_pretty</span>(<span class="fu">list</span>(<span class="st">"Piecewise OLS, HAC SEs"</span> <span class="ot">=</span> fit_rdd),</span>
+<span id="cb5-90"><a href="#cb5-90" aria-hidden="true" tabindex="-1"></a>          <span class="at">vcov     =</span> sandwich<span class="sc">::</span>vcovHAC,</span>
 <span id="cb5-91"><a href="#cb5-91" aria-hidden="true" tabindex="-1"></a>          <span class="at">coef_map =</span> <span class="fu">c</span>(<span class="st">"(Intercept)"</span>         <span class="ot">=</span> <span class="st">"Pre-period intercept"</span>,</span>
 <span id="cb5-92"><a href="#cb5-92" aria-hidden="true" tabindex="-1"></a>                       <span class="st">"year0"</span>               <span class="ot">=</span> <span class="st">"Pre-period slope"</span>,</span>
 <span id="cb5-93"><a href="#cb5-93" aria-hidden="true" tabindex="-1"></a>                       <span class="st">"prepostPost"</span>         <span class="ot">=</span> <span class="st">"Level break at 1989"</span>,</span>
