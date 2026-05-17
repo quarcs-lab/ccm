@@ -164,14 +164,23 @@ header#title-block-header {
   margin-bottom: 0.75rem;
 }
 
-/* ---- Cover image on Preface --------------------------------- */
+/* ---- Book cover above right-side TOC ------------------------ */
 
-#title-block-header + p img,
-.quarto-title-block + p img {
-  border-radius: 8px;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
-  display: block;
-  margin: 1rem auto 2rem;
+#toc-cover-image {
+  text-align: center;
+  padding: 0 0.5rem 1rem 0.5rem;
+  margin-bottom: 0.5rem;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+#toc-cover-image img {
+  max-width: 100%;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.quarto-dark #toc-cover-image {
+  border-bottom-color: rgba(255, 255, 255, 0.15);
 }
 
 /* ---- Responsive: keep sidebar comfortable on mid screens ---- */
