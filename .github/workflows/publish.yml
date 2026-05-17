@@ -31,22 +31,25 @@ jobs:
           restore-keys: |
             renv-${{ runner.os }}-
 
-      - name: Restore renv from CRAN (bypass setup-renv to avoid PPM rewrite)
-        # setup-renv@v2 internally allows renv to rewrite the active repo to
-        # Posit Package Manager on Linux runners. RSPM noble lags CRAN on
-        # recent versions (e.g. bslib 0.11.0 — RSPM still has 0.10.0), so the
-        # rewrite causes lockfile-vs-RSPM mismatches and 404s. Doing restore
-        # ourselves with explicit repos + RENV_CONFIG_PPM_ENABLED=FALSE keeps
-        # renv pinned to CRAN, where every locked version is available.
+      - name: Restore renv from CRAN (bypass setup-renv + PPM rewrite)
+        # Background: setup-renv@v2 lets renv rewrite the active repo to PPM
+        # (packagemanager.posit.co) on Linux runners. RSPM-noble lags CRAN
+        # (e.g. has bslib 0.10.0 while our lockfile pins 0.11.0), causing
+        # 404s. ppm.enabled in settings.json was insufficient. The hardest
+        # override is RENV_CONFIG_REPOS_OVERRIDE — renv reads it before any
+        # other repo resolution and uses ONLY the URL(s) given.
         env:
+          RENV_CONFIG_REPOS_OVERRIDE: "CRAN=https://cloud.r-project.org"
           RENV_CONFIG_PPM_ENABLED: "FALSE"
           RENV_PATHS_LIBRARY: renv/library
         run: |
-          options(
-            repos = c(CRAN = "https://cloud.r-project.org"),
-            renv.config.ppm.enabled = FALSE
-          )
+          cat("--- renv environment ---\n")
+          cat("RENV_CONFIG_REPOS_OVERRIDE:", Sys.getenv("RENV_CONFIG_REPOS_OVERRIDE"), "\n")
+          cat("RENV_CONFIG_PPM_ENABLED:", Sys.getenv("RENV_CONFIG_PPM_ENABLED"), "\n")
+          cat("options(repos):\n"); print(getOption("repos"))
+          cat("--- bootstrapping renv ---\n")
           install.packages("renv", repos = "https://cloud.r-project.org")
+          cat("--- renv::restore() ---\n")
           renv::restore()
         shell: Rscript {0}
 
