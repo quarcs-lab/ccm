@@ -473,6 +473,16 @@ window.Quarto = {
   <li><a href="#sensitivity-to-confidence-level" id="toc-sensitivity-to-confidence-level" class="nav-link" data-scroll-target="#sensitivity-to-confidence-level"><span class="header-section-number">7.10</span> Sensitivity to confidence level</a></li>
   <li><a href="#recap" id="toc-recap" class="nav-link" data-scroll-target="#recap"><span class="header-section-number">7.11</span> Recap</a></li>
   <li><a href="#further-reading" id="toc-further-reading" class="nav-link" data-scroll-target="#further-reading"><span class="header-section-number">7.12</span> Further reading</a></li>
+  <li><a href="#preface" id="toc-preface" class="nav-link" data-scroll-target="#preface">Preface</a>
+  <ul class="collapse">
+  <li><a href="#about-this-book" id="toc-about-this-book" class="nav-link" data-scroll-target="#about-this-book"><span class="header-section-number">7.13</span> About this book</a>
+  <ul class="collapse">
+  <li><a href="#part-i-one-region-one-shock" id="toc-part-i-one-region-one-shock" class="nav-link" data-scroll-target="#part-i-one-region-one-shock"><span class="header-section-number">7.13.1</span> Part I — One region, one shock</a></li>
+  <li><a href="#part-ii-many-regions-staggered-adoption" id="toc-part-ii-many-regions-staggered-adoption" class="nav-link" data-scroll-target="#part-ii-many-regions-staggered-adoption"><span class="header-section-number">7.13.2</span> Part II — Many regions, staggered adoption</a></li>
+  </ul></li>
+  <li><a href="#how-to-read-this-book" id="toc-how-to-read-this-book" class="nav-link" data-scroll-target="#how-to-read-this-book"><span class="header-section-number">7.14</span> How to read this book</a></li>
+  <li><a href="#acknowledgments" id="toc-acknowledgments" class="nav-link" data-scroll-target="#acknowledgments"><span class="header-section-number">7.15</span> Acknowledgments</a></li>
+  </ul></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/quarcs-lab/ccm/edit/main/07-synthetic-control-prediction-intervals.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/quarcs-lab/ccm/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
@@ -2051,6 +2061,44 @@ Figure&nbsp;7.5: Sensitivity to the joint confidence level (simplex constraint).
 
 <!-- -->
 
+</section>
+<section id="preface" class="level1 unnumbered">
+<h1 class="unnumbered">Preface</h1>
+<p><img src="images/cover1wide.jpg" class="preview-image img-fluid" alt="Comparative Causal Metrics cover image"></p>
+<section id="about-this-book" class="level2" data-number="7.13">
+<h2 data-number="7.13" class="anchored" data-anchor-id="about-this-book"><span class="header-section-number">7.13</span> About this book</h2>
+<p><em>Comparative Causal Metrics</em> is an introduction to <strong>regional impact evaluation</strong> using modern causal-inference methods implemented entirely in <strong>R</strong> and rendered with <strong>Quarto</strong>. The book is organized in two parts, each anchored by a running case study and a different family of estimators.</p>
+<section id="part-i-one-region-one-shock" class="level3" data-number="7.13.1">
+<h3 data-number="7.13.1" class="anchored" data-anchor-id="part-i-one-region-one-shock"><span class="header-section-number">7.13.1</span> Part I — One region, one shock</h3>
+<p>Chapters 1–7 evaluate <strong>California’s 1989 Proposition 99 cigarette tax</strong>, the canonical single-treated-unit policy evaluation. Every method in this half builds a counterfactual for California from a different data source — the state’s own past, a neighbour, a weighted blend of donor states, or a Bayesian time-series model — and reports the average treatment effect on the treated (ATT) between 1989 and 2000.</p>
+<ul>
+<li><strong>Interrupted time series</strong> — extrapolating California’s pre-period trajectory forward.</li>
+<li><strong>Basic difference-in-differences</strong> — subtracting a single control state’s pre-to-post change.</li>
+<li><strong>Classical synthetic control</strong> — building a weighted donor blend that matches the pre-period.</li>
+<li><strong>Structural Bayesian time series</strong> — state-space counterfactuals with posterior credible intervals.</li>
+<li><strong>Bayesian spatial synthetic control</strong> — a horseshoe-prior donor blend with spatial spillovers onto neighbours.</li>
+<li><strong>Synthetic control with prediction intervals</strong> — frequentist forecast-error decomposition via the <code>scpi</code> package.</li>
+</ul>
+</section>
+<section id="part-ii-many-regions-staggered-adoption" class="level3" data-number="7.13.2">
+<h3 data-number="7.13.2" class="anchored" data-anchor-id="part-ii-many-regions-staggered-adoption"><span class="header-section-number">7.13.2</span> Part II — Many regions, staggered adoption</h3>
+<p>Chapters 8–10 evaluate the <strong>Callaway-Sant’Anna minimum-wage county panel</strong>, where thousands of counties adopted different state minimum-wage levels at different years. The single-treated-unit toolkit no longer applies: the estimand becomes a family of cohort-specific ATTs indexed by adoption year, and the methods exploit the panel’s panel-data structure rather than a single time series.</p>
+<ul>
+<li><strong>Staggered difference-in-differences</strong> — group-time ATT(g, t) estimators that avoid two-way fixed-effects bias.</li>
+<li><strong>Matrix completion and interactive fixed effects</strong> — factor models that relax parallel trends.</li>
+<li><strong>Generalized synthetic control</strong> — projecting treated units onto factors estimated from never-treated controls.</li>
+</ul>
+<p>Each chapter pairs the conceptual logic of the method with a worked R example using publicly available data, so readers can reproduce every estimate end-to-end.</p>
+</section>
+</section>
+<section id="how-to-read-this-book" class="level2" data-number="7.14">
+<h2 data-number="7.14" class="anchored" data-anchor-id="how-to-read-this-book"><span class="header-section-number">7.14</span> How to read this book</h2>
+<p>The chapters are designed to be read sequentially but each is self-contained. Code is folded by default — click <strong><code>&lt;/&gt; Code</code></strong> in any chapter to reveal the underlying R. The full source is available on <a href="https://github.com/cmg777/ccm">GitHub</a>, and the entire book is available as a PDF download in the navbar.</p>
+<p>For readers who want to render a single chapter without cloning the repo, every numbered chapter offers a self-contained <code>.zip</code> bundle (chapter source, dataset, and a minimal <code>_quarto.yml</code>) at the bottom of the same <strong><code>&lt;/&gt; Code</code></strong> dropdown. Unzip and run <code>quarto render &lt;chapter&gt;.qmd</code> — no <code>renv</code> setup required.</p>
+</section>
+<section id="acknowledgments" class="level2" data-number="7.15">
+<h2 data-number="7.15" class="anchored" data-anchor-id="acknowledgments"><span class="header-section-number">7.15</span> Acknowledgments</h2>
+<p>This book builds on the infrastructure of the companion project <a href="https://github.com/cmg777/intro2causal"><em>Mastering Causal Metrics</em></a> and on a long tradition of applied econometric scholarship.</p>
 <div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" data-line-spacing="2" role="list" style="display: none">
 <div id="ref-abadie2021using" class="csl-entry" role="listitem">
 Abadie, A. (2021). Using synthetic controls: Feasibility, data requirements, and methodological aspects. <em>Journal of Economic Literature</em>, <em>59</em>(2), 391–425. <a href="https://www.aeaweb.org/articles?id=10.1257/jel.20191450">https://www.aeaweb.org/articles?id=10.1257/jel.20191450</a>
@@ -2065,6 +2113,7 @@ Cattaneo, M. D., Feng, Y., &amp; Titiunik, R. (2021). Prediction intervals for s
 Dunford, E. (2024). <em>Tidysynth — a tidy implementation of the synthetic control method in <span>R</span></em>. GitHub repository. <a href="https://github.com/edunford/tidysynth">https://github.com/edunford/tidysynth</a>
 </div>
 </div>
+</section>
 </section>
 
 </main> <!-- /main -->
