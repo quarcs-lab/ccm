@@ -1,0 +1,39 @@
+---
+title: "Introduction"
+---
+
+## Overview
+
+*Placeholder.* This chapter introduces the comparative-causal framework for regional impact evaluation and motivates the four method families covered in the rest of the book.
+
+## What is regional impact evaluation?
+
+*Placeholder.*
+
+## The identification problem
+
+*Placeholder.*
+
+## A roadmap for the book
+
+*Placeholder.*
+
+## Setup
+
+```{r}
+#| label: setup
+#| message: false
+#| warning: false
+#| eval: false
+library(tidyverse)
+library(fixest)
+library(modelsummary)
+```
+
+## Worked example
+
+*Placeholder.* Each subsequent chapter follows this structure: motivation, identifying assumptions, estimation in R, and a regional case study.
+
+## Further reading
+
+*Placeholder.*

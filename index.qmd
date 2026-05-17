@@ -1,0 +1,24 @@
+---
+title: "Preface {.unnumbered}"
+---
+
+![](images/cover.jpg){fig-alt="Book cover" width=60%}
+
+## About this book
+
+*Comparative Causal Metrics* is an introduction to **regional impact evaluation** using modern causal-inference methods implemented entirely in **R** and rendered with **Quarto**. The book is organized around a small set of quasi-experimental techniques that have become workhorses for evaluating the effects of policies, shocks, and interventions on regional outcomes:
+
+- **Interrupted time series** — modeling a single region's outcome before and after a discrete event.
+- **Regression discontinuity in time** — exploiting sharp temporal cutoffs as natural experiments.
+- **Classical synthetic control** — constructing a weighted comparison region from a donor pool.
+- **Structural Bayesian time series** — uncertainty-aware counterfactual estimation via state-space models.
+
+Each chapter pairs the conceptual logic of the method with a worked R example using publicly available data, so readers can reproduce every estimate end-to-end.
+
+## How to read this book
+
+The chapters are designed to be read sequentially but each is self-contained. Code is folded by default — click **`</> Code`** in any chapter to reveal the underlying R. The full source is available on [GitHub](https://github.com/cmg777/ccm), and PDF / EPUB downloads are linked in the navbar.
+
+## Acknowledgments
+
+This book builds on the infrastructure of the companion project [*Mastering Causal Metrics*](https://github.com/cmg777/intro2causal) and on a long tradition of applied econometric scholarship.

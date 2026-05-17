@@ -1,0 +1,136 @@
+/* ============================================================
+   Comparative Causal Metrics — custom.css
+   Palette adapted from intro2causal:
+     CausalBlue   #2563eb (light) / #38bdf8 (dark)
+     MethodPurple #7c3aed (light) / #a78bfa (dark)
+     EvidenceGreen #059669 (light) / #34d399 (dark)
+   ============================================================ */
+
+:root {
+  --ccm-blue: #2563eb;
+  --ccm-purple: #7c3aed;
+  --ccm-green: #059669;
+  --ccm-slate: #475569;
+  --ccm-code-bg: rgba(37, 99, 235, 0.06);
+  --ccm-code-border: rgba(37, 99, 235, 0.35);
+}
+
+[data-bs-theme="dark"] {
+  --ccm-blue: #38bdf8;
+  --ccm-purple: #a78bfa;
+  --ccm-green: #34d399;
+  --ccm-slate: #94a3b8;
+  --ccm-code-bg: rgba(56, 189, 248, 0.08);
+  --ccm-code-border: rgba(56, 189, 248, 0.45);
+}
+
+/* ---- Typography --------------------------------------------- */
+
+body {
+  font-feature-settings: "ss01", "cv11";
+  text-rendering: optimizeLegibility;
+}
+
+/* ---- Heading colors by level -------------------------------- */
+
+h1, .h1 {
+  color: var(--ccm-blue);
+  font-weight: 700;
+}
+
+h2, .h2 {
+  color: var(--ccm-purple);
+  font-weight: 600;
+  border-left: 4px solid var(--ccm-purple);
+  padding-left: 0.6rem;
+  margin-top: 2rem;
+}
+
+h3, .h3 {
+  color: var(--ccm-green);
+  font-weight: 600;
+}
+
+h4, .h4 {
+  color: var(--ccm-slate);
+  font-weight: 600;
+}
+
+/* ---- Inline code (pill style) ------------------------------- */
+
+p code,
+li code,
+td code {
+  background-color: var(--ccm-code-bg);
+  color: inherit;
+  padding: 0.1em 0.45em;
+  border-radius: 0.4em;
+  font-size: 0.92em;
+}
+
+/* ---- Code block left border --------------------------------- */
+
+div.sourceCode {
+  border-left: 3px solid var(--ccm-code-border);
+  border-radius: 4px;
+  background-color: var(--ccm-code-bg);
+}
+
+div.sourceCode pre {
+  padding: 0.75rem 1rem;
+  margin-bottom: 0;
+}
+
+/* ---- Callouts: subtle accent line --------------------------- */
+
+.callout {
+  border-left-width: 4px !important;
+}
+
+/* ---- Links -------------------------------------------------- */
+
+a {
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 3px;
+}
+
+/* ---- Cover image on Preface --------------------------------- */
+
+#title-block-header + p img,
+.quarto-title-block + p img {
+  border-radius: 8px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+  display: block;
+  margin: 1rem auto 2rem;
+}
+
+/* ---- Responsive: keep sidebar comfortable on mid screens ---- */
+
+@media (max-width: 992px) {
+  h2, .h2 {
+    border-left-width: 3px;
+    padding-left: 0.5rem;
+  }
+}
+
+/* ---- Tables (modelsummary output) --------------------------- */
+
+table.dataframe,
+table.gt_table,
+.cell-output-display table {
+  font-size: 0.95em;
+}
+
+/* ---- Print / PDF fallback ----------------------------------- */
+
+@media print {
+  div.sourceCode {
+    border-left-width: 2px;
+    background-color: transparent;
+  }
+}

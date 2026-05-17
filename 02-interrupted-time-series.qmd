@@ -1,0 +1,43 @@
+---
+title: "Interrupted Time Series"
+---
+
+## Overview
+
+*Placeholder.* Interrupted time series (ITS) designs estimate the effect of a discrete intervention on a single region's outcome trajectory by modeling pre- and post-intervention trends.
+
+## Identifying assumptions
+
+*Placeholder.*
+
+## Estimation in R
+
+```{r}
+#| label: setup
+#| message: false
+#| warning: false
+#| eval: false
+library(tidyverse)
+library(fixest)
+library(segmented)
+library(nlme)
+```
+
+```{r}
+#| label: its-example
+#| eval: false
+# Placeholder: load a regional time series, fit a segmented regression
+# with an intervention dummy and post-trend interaction.
+```
+
+## Regional case study
+
+*Placeholder.*
+
+## Diagnostics
+
+*Placeholder.*
+
+## Further reading
+
+*Placeholder.*

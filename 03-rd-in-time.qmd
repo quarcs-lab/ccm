@@ -1,0 +1,46 @@
+---
+title: "Regression Discontinuity in Time"
+---
+
+## Overview
+
+*Placeholder.* Regression discontinuity in time (RDiT) extends classical RD designs to settings where the running variable is time itself, with treatment switching on at a known calendar cutoff.
+
+## Identifying assumptions
+
+*Placeholder.*
+
+## Estimation in R
+
+```{r}
+#| label: setup
+#| message: false
+#| warning: false
+#| eval: false
+library(tidyverse)
+library(fixest)
+library(rdrobust)
+```
+
+```{r}
+#| label: rdit-example
+#| eval: false
+# Placeholder: bandwidth selection, local linear regression around the
+# cutoff date, robust bias-corrected standard errors.
+```
+
+## Bandwidth selection
+
+*Placeholder.*
+
+## Threats to validity
+
+*Placeholder.* RDiT designs are vulnerable to time-varying confounders, autocorrelation, and anticipation effects.
+
+## Regional case study
+
+*Placeholder.*
+
+## Further reading
+
+*Placeholder.*

@@ -1,0 +1,34 @@
+# Quarto
+/_book/
+/.quarto/
+/_freeze/
+*.quarto_ipynb
+
+# R / RStudio
+.Rproj.user/
+.Rhistory
+.RData
+.Ruserdata
+
+# renv: keep lockfile + activate.R, ignore the library
+renv/library/
+renv/local/
+renv/staging/
+renv/python/
+renv/sandbox/
+
+# macOS / editors
+.DS_Store
+.idea/
+.vscode/
+
+# Quarto outputs accidentally rendered to root
+/index.html
+/01-introduction.html
+/02-interrupted-time-series.html
+/03-rd-in-time.html
+/04-classical-synthetic-control.html
+/05-structural-bayesian-ts.html
+/references.html
+
+**/*.quarto_ipynb

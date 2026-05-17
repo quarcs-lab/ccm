@@ -1,0 +1,45 @@
+---
+title: "Classical Synthetic Control"
+---
+
+## Overview
+
+*Placeholder.* The synthetic control method constructs a counterfactual for a single treated region as a convex combination of untreated donor regions, choosing weights to minimize pre-treatment outcome divergence.
+
+## The method
+
+*Placeholder.*
+
+## Estimation in R
+
+```{r}
+#| label: setup
+#| message: false
+#| warning: false
+#| eval: false
+library(tidyverse)
+library(tidysynth)
+```
+
+```{r}
+#| label: synth-example
+#| eval: false
+# Placeholder: assemble a donor pool, fit a synthetic control with
+# tidysynth, plot treated vs. synthetic trajectories.
+```
+
+## Inference: placebo tests
+
+*Placeholder.*
+
+## Regional case study
+
+*Placeholder.*
+
+## Limitations
+
+*Placeholder.* Classical synthetic control is sensitive to donor-pool composition, requires sufficient pre-treatment history, and offers limited frequentist inference.
+
+## Further reading
+
+*Placeholder.*

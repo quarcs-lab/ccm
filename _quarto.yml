@@ -1,0 +1,73 @@
+project:
+  type: book
+  output-dir: _book
+
+execute:
+  freeze: auto
+
+book:
+  title: "Comparative Causal Metrics"
+  subtitle: "An Introduction to Regional Impact Evaluation"
+  author: "Carlos Mendez"
+  date: "2026-05-17"
+  date-format: "MMMM D, YYYY [(in progress)]"
+  search: true
+  page-navigation: true
+  repo-url: https://github.com/quarcs-lab/ccm
+  repo-branch: main
+  repo-actions: [edit, issue]
+  sharing: [twitter, linkedin]
+  downloads: [pdf, epub]
+  favicon: images/favicon.svg
+  cover-image: images/cover.jpg
+  chapters:
+    - index.qmd
+    - 01-introduction.qmd
+    - 02-interrupted-time-series.qmd
+    - 03-rd-in-time.qmd
+    - 04-classical-synthetic-control.qmd
+    - 05-structural-bayesian-ts.qmd
+    - references.qmd
+
+bibliography: references.bib
+csl: apa.csl
+
+format:
+  html:
+    theme:
+      light: cosmo
+      dark: darkly
+    respect-user-color-scheme: false
+    toc: true
+    toc-depth: 3
+    code-fold: true
+    code-tools: true
+    code-copy: hover
+    code-overflow: wrap
+    highlight-style: github
+    smooth-scroll: true
+    anchor-sections: true
+    link-external-icon: true
+    link-external-newwindow: true
+    fontsize: 1.05em
+    linestretch: 1.6
+    mainfont: "Inter"
+    monofont: "JetBrains Mono"
+    css: custom.css
+  # NOTE: Quarto book projects do not currently support `format: typst`.
+  # Book-wide PDF output requires LaTeX. CI installs TinyTeX automatically.
+  pdf:
+    documentclass: scrreprt
+    papersize: a4
+    geometry:
+      - top=2.5cm
+      - bottom=2.5cm
+      - left=2.5cm
+      - right=2.5cm
+    toc: true
+    number-sections: true
+    colorlinks: true
+  epub:
+    toc: true
+    number-sections: true
+    cover-image: images/cover.jpg

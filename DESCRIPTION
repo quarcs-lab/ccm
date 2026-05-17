@@ -1,0 +1,26 @@
+Package: ccm
+Title: Comparative Causal Metrics — An Introduction to Regional Impact Evaluation
+Version: 0.0.0.9000
+Authors@R: person("Carlos", "Mendez", email = "carlosmendez777@gmail.com", role = c("aut", "cre"))
+Description: Source for the Quarto book "Comparative Causal Metrics". This
+    DESCRIPTION file is not a CRAN package — it exists to expose dependencies
+    to RStudio's "Install Dependencies" button and to provide a human-readable
+    manifest alongside renv.lock.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Imports:
+    tidyverse,
+    fixest,
+    modelsummary,
+    gt,
+    tidysynth,
+    Synth,
+    CausalImpact,
+    bsts,
+    segmented,
+    nlme,
+    rdrobust,
+    scales,
+    knitr,
+    rmarkdown,
+    renv

@@ -1,0 +1,46 @@
+---
+title: "Structural Bayesian Time Series"
+---
+
+## Overview
+
+*Placeholder.* Structural Bayesian time-series models (e.g., Google's `CausalImpact`) estimate the causal effect of an intervention as the difference between observed post-intervention outcomes and a Bayesian counterfactual forecast built from pre-intervention dynamics and contemporaneous control series.
+
+## The model
+
+*Placeholder.* A state-space decomposition into local-trend, seasonal, and regression components, fit by `bsts`.
+
+## Estimation in R
+
+```{r}
+#| label: setup
+#| message: false
+#| warning: false
+#| eval: false
+library(tidyverse)
+library(CausalImpact)
+library(bsts)
+```
+
+```{r}
+#| label: ci-example
+#| eval: false
+# Placeholder: build a CausalImpact input frame with the treated series
+# and donor controls, call CausalImpact(), summarize and plot.
+```
+
+## Interpreting posterior intervals
+
+*Placeholder.*
+
+## Regional case study
+
+*Placeholder.*
+
+## Comparison with synthetic control
+
+*Placeholder.* CausalImpact and classical synthetic control answer related questions with different assumptions; this section compares estimates on the same data.
+
+## Further reading
+
+*Placeholder.*
