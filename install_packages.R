@@ -26,7 +26,12 @@ pkgs <- c(
   "rdrobust",
   "scales",
   "knitr",
-  "rmarkdown"
+  "rmarkdown",
+  "sandwich",
+  "lmtest",
+  "broom",
+  "fpp3",
+  "glue"
 )
 
 renv::install(pkgs)

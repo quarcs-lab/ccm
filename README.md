@@ -12,18 +12,18 @@ Source for the Quarto book by Carlos Mendez. Built with **R + Quarto**, publishe
 
 ## Project status
 
-**Stage:** scaffolding complete; chapter content in progress.
+**Stage:** scaffolding complete; chapters 1–2 drafted with live R; chapters 3–6 still stubs.
 
 | # | Chapter | File | Status |
 |---|---|---|---|
 | — | Preface | `index.qmd` | stub |
-| 1 | Introduction | `01-introduction.qmd` | stub (outline in place) |
-| 2 | Interrupted Time Series | `02-interrupted-time-series.qmd` | stub |
+| 1 | Introduction | `01-introduction.qmd` | first draft (live R; Prop 99 example) |
+| 2 | Interrupted Time Series | `02-interrupted-time-series.qmd` | first draft (live R; growth-curve + ARIMA) |
 | 3 | Regression Discontinuity in Time | `03-rd-in-time.qmd` | stub |
 | 4 | Basic Differences-in-Differences | `04-basic-diff-in-diff.qmd` | stub |
 | 5 | Classical Synthetic Control | `05-classical-synthetic-control.qmd` | stub |
 | 6 | Structural Bayesian Time Series | `06-structural-bayesian-ts.qmd` | stub |
-| — | References | `references.qmd` | empty (one example bib entry) |
+| — | References | `references.qmd` | 11 entries (Prop 99 sources ported) |
 
 **Infrastructure (complete):**
 
@@ -34,9 +34,11 @@ Source for the Quarto book by Carlos Mendez. Built with **R + Quarto**, publishe
 - [x] Cover image and favicon
 - [x] Live site on GitHub Pages via `quarto publish gh-pages`
 
-**What each chapter stub contains:** YAML title, Overview / Identifying assumptions / Estimation in R / Regional case study / Diagnostics / Further reading sections, and a `library()` setup chunk with `eval: false` so the book renders cleanly before any R code is written.
+**What the drafted chapters contain:** ch. 1 ports the potential-outcomes framework, the "which method when" decision tree, and a naive pre-post worked example on Proposition 99 from the companion blog post. Ch. 2 fits two ITS variants on the same data (linear growth curve and AICc-selected ARIMA). All R chunks render live; the dataset is cached at `data/proposition99.rds`.
 
-**Next:** flesh out the Introduction (currently has the section outline), then work through chapters 2–6 in order.
+**What the remaining stubs contain:** YAML title, Overview / Identifying assumptions / Estimation in R / Regional case study / Diagnostics / Further reading sections, and a `library()` setup chunk with `eval: false` so the book renders cleanly before any R code is written.
+
+**Next:** chapters 3–6 in order, adapting the same Proposition 99 case study from the companion blog post (RDD-on-time → DiD → Synthetic Control → Structural Bayesian TS).
 
 ---
 
