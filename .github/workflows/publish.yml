@@ -25,6 +25,13 @@ jobs:
         with:
           use-public-rspm: true
 
+      - name: Add CRAN as fallback repo
+        # RSPM ships binary packages quickly but sometimes lags on very recent
+        # source versions (e.g. bslib 0.11.0 not yet mirrored to noble). Adding
+        # CRAN as a secondary repo lets renv fall back to source when needed.
+        run: |
+          echo 'options(repos = c(getOption("repos"), CRAN = "https://cloud.r-project.org"))' >> ~/.Rprofile
+
       - name: Restore renv environment
         uses: r-lib/actions/setup-renv@v2
 
