@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>6&nbsp; Bayesian Spatial Synthetic Control – Comparative Causal Metrics</title>
+<title>7&nbsp; Bayesian Spatial Synthetic Control – Comparative Causal Metrics</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -85,8 +85,8 @@ div.csl-indent {
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./07-synthetic-control-prediction-intervals.html" rel="next">
-<link href="./05-structural-bayesian-ts.html" rel="prev">
+<link href="./08-staggered-did.html" rel="next">
+<link href="./06-synthetic-control-prediction-intervals.html" rel="prev">
 <link href="./images/favicon.svg" rel="icon" type="image/svg+xml">
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
@@ -336,7 +336,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./06-bayesian-spatial-sc.html"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Bayesian Spatial Synthetic Control</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./07-bayesian-spatial-sc.html"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Bayesian Spatial Synthetic Control</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -421,14 +421,14 @@ window.Quarto = {
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./06-bayesian-spatial-sc.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Bayesian Spatial Synthetic Control</span></span></a>
+  <a href="./06-synthetic-control-prediction-intervals.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Synthetic Control with Prediction Intervals</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./07-synthetic-control-prediction-intervals.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Synthetic Control with Prediction Intervals</span></span></a>
+  <a href="./07-bayesian-spatial-sc.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Bayesian Spatial Synthetic Control</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -465,31 +465,21 @@ window.Quarto = {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#why-a-third-synthetic-control-chapter" id="toc-why-a-third-synthetic-control-chapter" class="nav-link active" data-scroll-target="#why-a-third-synthetic-control-chapter"><span class="header-section-number">6.1</span> Why a third synthetic-control chapter?</a></li>
-  <li><a href="#the-three-stage-pipeline" id="toc-the-three-stage-pipeline" class="nav-link" data-scroll-target="#the-three-stage-pipeline"><span class="header-section-number">6.2</span> The three-stage pipeline</a></li>
-  <li><a href="#setup-and-data" id="toc-setup-and-data" class="nav-link" data-scroll-target="#setup-and-data"><span class="header-section-number">6.3</span> Setup and data</a></li>
-  <li><a href="#stage-1-classical-synthetic-control" id="toc-stage-1-classical-synthetic-control" class="nav-link" data-scroll-target="#stage-1-classical-synthetic-control"><span class="header-section-number">6.4</span> Stage 1 — Classical synthetic control</a></li>
-  <li><a href="#stage-2-bayesian-synthetic-control-with-a-horseshoe-prior" id="toc-stage-2-bayesian-synthetic-control-with-a-horseshoe-prior" class="nav-link" data-scroll-target="#stage-2-bayesian-synthetic-control-with-a-horseshoe-prior"><span class="header-section-number">6.5</span> Stage 2 — Bayesian synthetic control with a horseshoe prior</a></li>
-  <li><a href="#stage-3-bayesian-spatial-synthetic-control-with-sar-spillovers" id="toc-stage-3-bayesian-spatial-synthetic-control-with-sar-spillovers" class="nav-link" data-scroll-target="#stage-3-bayesian-spatial-synthetic-control-with-sar-spillovers"><span class="header-section-number">6.6</span> Stage 3 — Bayesian spatial synthetic control with SAR spillovers</a>
+  <li><a href="#why-a-third-synthetic-control-chapter" id="toc-why-a-third-synthetic-control-chapter" class="nav-link active" data-scroll-target="#why-a-third-synthetic-control-chapter"><span class="header-section-number">7.1</span> Why a third synthetic-control chapter?</a></li>
+  <li><a href="#the-three-stage-pipeline" id="toc-the-three-stage-pipeline" class="nav-link" data-scroll-target="#the-three-stage-pipeline"><span class="header-section-number">7.2</span> The three-stage pipeline</a></li>
+  <li><a href="#setup-and-data" id="toc-setup-and-data" class="nav-link" data-scroll-target="#setup-and-data"><span class="header-section-number">7.3</span> Setup and data</a></li>
+  <li><a href="#stage-1-classical-synthetic-control" id="toc-stage-1-classical-synthetic-control" class="nav-link" data-scroll-target="#stage-1-classical-synthetic-control"><span class="header-section-number">7.4</span> Stage 1 — Classical synthetic control</a></li>
+  <li><a href="#stage-2-bayesian-synthetic-control-with-a-horseshoe-prior" id="toc-stage-2-bayesian-synthetic-control-with-a-horseshoe-prior" class="nav-link" data-scroll-target="#stage-2-bayesian-synthetic-control-with-a-horseshoe-prior"><span class="header-section-number">7.5</span> Stage 2 — Bayesian synthetic control with a horseshoe prior</a></li>
+  <li><a href="#stage-3-bayesian-spatial-synthetic-control-with-sar-spillovers" id="toc-stage-3-bayesian-spatial-synthetic-control-with-sar-spillovers" class="nav-link" data-scroll-target="#stage-3-bayesian-spatial-synthetic-control-with-sar-spillovers"><span class="header-section-number">7.6</span> Stage 3 — Bayesian spatial synthetic control with SAR spillovers</a>
   <ul class="collapse">
-  <li><a href="#spillover-effects-on-donor-states" id="toc-spillover-effects-on-donor-states" class="nav-link" data-scroll-target="#spillover-effects-on-donor-states"><span class="header-section-number">6.6.1</span> Spillover effects on donor states</a></li>
+  <li><a href="#spillover-effects-on-donor-states" id="toc-spillover-effects-on-donor-states" class="nav-link" data-scroll-target="#spillover-effects-on-donor-states"><span class="header-section-number">7.6.1</span> Spillover effects on donor states</a></li>
   </ul></li>
-  <li><a href="#prior-predictive-diagnostic" id="toc-prior-predictive-diagnostic" class="nav-link" data-scroll-target="#prior-predictive-diagnostic"><span class="header-section-number">6.7</span> Prior predictive diagnostic</a></li>
-  <li><a href="#cross-stage-comparison" id="toc-cross-stage-comparison" class="nav-link" data-scroll-target="#cross-stage-comparison"><span class="header-section-number">6.8</span> Cross-stage comparison</a></li>
-  <li><a href="#recap" id="toc-recap" class="nav-link" data-scroll-target="#recap"><span class="header-section-number">6.9</span> Recap</a></li>
-  <li><a href="#further-reading" id="toc-further-reading" class="nav-link" data-scroll-target="#further-reading"><span class="header-section-number">6.10</span> Further reading</a></li>
-  <li><a href="#preface" id="toc-preface" class="nav-link" data-scroll-target="#preface">Preface</a>
-  <ul class="collapse">
-  <li><a href="#about-this-book" id="toc-about-this-book" class="nav-link" data-scroll-target="#about-this-book"><span class="header-section-number">6.11</span> About this book</a>
-  <ul class="collapse">
-  <li><a href="#part-i-one-region-one-shock" id="toc-part-i-one-region-one-shock" class="nav-link" data-scroll-target="#part-i-one-region-one-shock"><span class="header-section-number">6.11.1</span> Part I — One region, one shock</a></li>
-  <li><a href="#part-ii-many-regions-staggered-adoption" id="toc-part-ii-many-regions-staggered-adoption" class="nav-link" data-scroll-target="#part-ii-many-regions-staggered-adoption"><span class="header-section-number">6.11.2</span> Part II — Many regions, staggered adoption</a></li>
-  </ul></li>
-  <li><a href="#how-to-read-this-book" id="toc-how-to-read-this-book" class="nav-link" data-scroll-target="#how-to-read-this-book"><span class="header-section-number">6.12</span> How to read this book</a></li>
-  <li><a href="#acknowledgments" id="toc-acknowledgments" class="nav-link" data-scroll-target="#acknowledgments"><span class="header-section-number">6.13</span> Acknowledgments</a></li>
-  </ul></li>
+  <li><a href="#prior-predictive-diagnostic" id="toc-prior-predictive-diagnostic" class="nav-link" data-scroll-target="#prior-predictive-diagnostic"><span class="header-section-number">7.7</span> Prior predictive diagnostic</a></li>
+  <li><a href="#cross-stage-comparison" id="toc-cross-stage-comparison" class="nav-link" data-scroll-target="#cross-stage-comparison"><span class="header-section-number">7.8</span> Cross-stage comparison</a></li>
+  <li><a href="#recap" id="toc-recap" class="nav-link" data-scroll-target="#recap"><span class="header-section-number">7.9</span> Recap</a></li>
+  <li><a href="#further-reading" id="toc-further-reading" class="nav-link" data-scroll-target="#further-reading"><span class="header-section-number">7.10</span> Further reading</a></li>
   </ul>
-<div class="toc-actions"><ul><li><a href="https://github.com/quarcs-lab/ccm/edit/main/06-bayesian-spatial-sc.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/quarcs-lab/ccm/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
+<div class="toc-actions"><ul><li><a href="https://github.com/quarcs-lab/ccm/edit/main/07-bayesian-spatial-sc.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/quarcs-lab/ccm/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
@@ -497,7 +487,7 @@ window.Quarto = {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Bayesian Spatial Synthetic Control</span></h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li><li><hr class="dropdown-divider"></li><li><a id="quarto-view-source" class="dropdown-item" href="javascript:void(0)" role="button">View Source</a></li></ul></div></div>
+<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Bayesian Spatial Synthetic Control</span></h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li><li><hr class="dropdown-divider"></li><li><a id="quarto-view-source" class="dropdown-item" href="javascript:void(0)" role="button">View Source</a></li></ul></div></div>
 </div>
 
 
@@ -514,8 +504,8 @@ window.Quarto = {
 </header>
 
 
-<section id="why-a-third-synthetic-control-chapter" class="level2" data-number="6.1">
-<h2 data-number="6.1" class="anchored" data-anchor-id="why-a-third-synthetic-control-chapter"><span class="header-section-number">6.1</span> Why a third synthetic-control chapter?</h2>
+<section id="why-a-third-synthetic-control-chapter" class="level2" data-number="7.1">
+<h2 data-number="7.1" class="anchored" data-anchor-id="why-a-third-synthetic-control-chapter"><span class="header-section-number">7.1</span> Why a third synthetic-control chapter?</h2>
 <p>Chapter 4 fit a <em>classical</em> Synthetic Control: donor weights live on the simplex and are chosen by a quadratic optimiser. Chapter 5 borrowed donor information in a different way — through a Bayesian structural time-series model. Both treat the donor states’ outcomes as <em>unaffected</em> by California’s policy. That assumption — the <strong>stable unit treatment value assumption (SUTVA)</strong> — is the price of any synthetic-control estimate.</p>
 <p>For tobacco, SUTVA is empirically suspect. When California raised retail prices in 1989, cross-border-shopping into Nevada changed cigarette sales <em>on both sides of the line</em>. If donor sales themselves shift because of the treatment, then the “counterfactual” we build from them is contaminated.</p>
 <p>This chapter ports the replication of <span class="citation" data-cites="sakaguchi2026spatial">Sakaguchi &amp; Tagawa (<a href="references.html#ref-sakaguchi2026spatial" role="doc-biblioref">2026</a>)</span>, which relaxes both ingredients in two stages:</p>
@@ -525,8 +515,8 @@ window.Quarto = {
 </ol>
 <p>We rerun Stage 1 in this chapter too, so the three estimates sit in one table. The donor pool here is the 38 US states; the treated unit is California; the outcome is per-capita cigarette sales over 1970–2000.</p>
 </section>
-<section id="the-three-stage-pipeline" class="level2" data-number="6.2">
-<h2 data-number="6.2" class="anchored" data-anchor-id="the-three-stage-pipeline"><span class="header-section-number">6.2</span> The three-stage pipeline</h2>
+<section id="the-three-stage-pipeline" class="level2" data-number="7.2">
+<h2 data-number="7.2" class="anchored" data-anchor-id="the-three-stage-pipeline"><span class="header-section-number">7.2</span> The three-stage pipeline</h2>
 <div class="cell" data-layout-align="default">
 <div class="cell-output-display">
 <div id="fig-stages-pipeline" class="quarto-float quarto-figure quarto-figure-center anchored">
@@ -546,15 +536,15 @@ window.Quarto = {
 </div>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-stages-pipeline-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;6.1: The three-stage Sakaguchi &amp; Tagawa pipeline: classical Abadie SCM, then Bayesian horseshoe SCM, then Bayesian spatial SCM. Each stage relaxes one assumption — Stage 2 the simplex, Stage 3 SUTVA.
+Figure&nbsp;7.1: The three-stage Sakaguchi &amp; Tagawa pipeline: classical Abadie SCM, then Bayesian horseshoe SCM, then Bayesian spatial SCM. Each stage relaxes one assumption — Stage 2 the simplex, Stage 3 SUTVA.
 </figcaption>
 </figure>
 </div>
 </div>
 </div>
 </section>
-<section id="setup-and-data" class="level2" data-number="6.3">
-<h2 data-number="6.3" class="anchored" data-anchor-id="setup-and-data"><span class="header-section-number">6.3</span> Setup and data</h2>
+<section id="setup-and-data" class="level2" data-number="7.3">
+<h2 data-number="7.3" class="anchored" data-anchor-id="setup-and-data"><span class="header-section-number">7.3</span> Setup and data</h2>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
@@ -647,8 +637,8 @@ Treated: California | Donors: 38 | Pre: 1970-1987 | Post: 1988-2000</code></pre>
 </div>
 <p>The bundled <code>california_smoking.rda</code> carries only <code>cigsale</code> and <code>retprice</code> — narrower than the predictor set chapter 4 used (which also included <code>lnincome</code>, <code>age15to24</code>, and <code>beer</code>). That is the dominant reason the Stage 1 ATT below (<span class="math inline">\(\approx -18.5\)</span>) is slightly smaller in magnitude than chapter 4’s <span class="math inline">\(-18.85\)</span>: the methodological pipeline is identical, but the inputs differ. The <code>.rda</code> <em>also</em> ships two spatial structures we need in Stage 3 — California’s contiguity row <code>w</code> (Arizona, Nevada, and Oregon non-zero) and the <span class="math inline">\(38 \times 38\)</span> donor contiguity matrix <code>W</code> — which the richer Proposition 99 dataset does not have.</p>
 </section>
-<section id="stage-1-classical-synthetic-control" class="level2" data-number="6.4">
-<h2 data-number="6.4" class="anchored" data-anchor-id="stage-1-classical-synthetic-control"><span class="header-section-number">6.4</span> Stage 1 — Classical synthetic control</h2>
+<section id="stage-1-classical-synthetic-control" class="level2" data-number="7.4">
+<h2 data-number="7.4" class="anchored" data-anchor-id="stage-1-classical-synthetic-control"><span class="header-section-number">7.4</span> Stage 1 — Classical synthetic control</h2>
 <p>Classical SCM picks donor weights on the simplex that minimise the pre-treatment fit error between California and the synthetic. Formally,</p>
 <p><span class="math display">\[\widehat\alpha \,=\, \arg\min_\alpha \, \big\| Y_{1,\text{pre}} - Y_{c,\text{pre}}\, \alpha \big\|^2 \;\; \text{s.t.} \;\; \alpha_j \ge 0, \;\; \sum_j \alpha_j = 1.\]</span></p>
 <p>We use <code>tidysynth</code> with a small set of predictors (the mean of <code>cigsale</code> and <code>retprice</code> over the pre-period, plus three single-year lags of <code>cigsale</code>).</p>
@@ -693,7 +683,7 @@ Treated: California | Donors: 38 | Pre: 1970-1987 | Post: 1988-2000</code></pre>
 <div id="tbl-stage1-weights" class="cell quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-stage1-weights-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Table&nbsp;6.1: Stage 1 — top-5 donor weights from the classical simplex optimiser.
+Table&nbsp;7.1: Stage 1 — top-5 donor weights from the classical simplex optimiser.
 </figcaption>
 <div aria-describedby="tbl-stage1-weights-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output-display">
@@ -1197,10 +1187,10 @@ Table&nbsp;6.1: Stage 1 — top-5 donor weights from the classical simplex optim
 <div id="fig-stage1-paths" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-stage1-paths-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="06-bayesian-spatial-sc_files/figure-html/fig-stage1-paths-1.png" class="img-fluid figure-img" width="768">
+<img src="07-bayesian-spatial-sc_files/figure-html/fig-stage1-paths-1.png" class="img-fluid figure-img" width="768">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-stage1-paths-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;6.2: Stage 1 — California (observed, orange) vs the classical-SCM synthetic (steel blue). Pre-1988 the two paths are nearly indistinguishable; post-1988 California falls visibly below.
+Figure&nbsp;7.2: Stage 1 — California (observed, orange) vs the classical-SCM synthetic (steel blue). Pre-1988 the two paths are nearly indistinguishable; post-1988 California falls visibly below.
 </figcaption>
 </figure>
 </div>
@@ -1217,8 +1207,8 @@ Figure&nbsp;6.2: Stage 1 — California (observed, orange) vs the classical-SCM 
 </div>
 <p>Utah, Nevada, Montana, and Connecticut together carry essentially all the weight; the remaining 34 donors are flat zero. The ATT of about <span class="math inline">\(-18.5\)</span> packs/capita is recovered from a <em>near-deterministic</em> synthetic. Two questions follow: is the four-donor sparsity a feature of the data or an artefact of the simplex constraint, and is Nevada’s weight contaminated by spillovers from California? Stages 2 and 3 attack these one at a time.</p>
 </section>
-<section id="stage-2-bayesian-synthetic-control-with-a-horseshoe-prior" class="level2" data-number="6.5">
-<h2 data-number="6.5" class="anchored" data-anchor-id="stage-2-bayesian-synthetic-control-with-a-horseshoe-prior"><span class="header-section-number">6.5</span> Stage 2 — Bayesian synthetic control with a horseshoe prior</h2>
+<section id="stage-2-bayesian-synthetic-control-with-a-horseshoe-prior" class="level2" data-number="7.5">
+<h2 data-number="7.5" class="anchored" data-anchor-id="stage-2-bayesian-synthetic-control-with-a-horseshoe-prior"><span class="header-section-number">7.5</span> Stage 2 — Bayesian synthetic control with a horseshoe prior</h2>
 <p>The horseshoe of <span class="citation" data-cites="carvalho2010horseshoe">Carvalho et al. (<a href="references.html#ref-carvalho2010horseshoe" role="doc-biblioref">2010</a>)</span> replaces the simplex with a heavy-tailed prior that <em>prefers</em> zero but does not rule out large weights:</p>
 <p><span class="math display">\[\alpha_j \mid \tau, \lambda_j \,\sim\, \mathcal{N}\big(0, \, \tau^2 \lambda_j^2\big), \quad \lambda_j \sim \mathcal{C}^+(0,1), \quad \tau \sim \mathcal{C}^+(0,1).\]</span></p>
 <p>The package’s C++ Gibbs sampler <code>hs_alpha_gibbs_cpp()</code> returns post-burn draws of <span class="math inline">\(\alpha\)</span> from the resulting hierarchy. We construct the pre-treatment matrices and call it directly.</p>
@@ -1292,7 +1282,7 @@ Figure&nbsp;6.2: Stage 1 — California (observed, orange) vs the classical-SCM 
 <div id="tbl-stage2-weights" class="cell quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-stage2-weights-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Table&nbsp;6.2: Stage 2 — top-5 donor weights from the horseshoe posterior. Only Nevada’s 95% credible interval excludes zero.
+Table&nbsp;7.2: Stage 2 — top-5 donor weights from the horseshoe posterior. Only Nevada’s 95% credible interval excludes zero.
 </figcaption>
 <div aria-describedby="tbl-stage2-weights-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output-display">
@@ -1817,10 +1807,10 @@ Table&nbsp;6.2: Stage 2 — top-5 donor weights from the horseshoe posterior. On
 <div id="fig-stage2-weights" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-stage2-weights-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="06-bayesian-spatial-sc_files/figure-html/fig-stage2-weights-1.png" class="img-fluid figure-img" width="768">
+<img src="07-bayesian-spatial-sc_files/figure-html/fig-stage2-weights-1.png" class="img-fluid figure-img" width="768">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-stage2-weights-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;6.3: Stage 2 — posterior mean donor weights with 95% credible intervals, sorted by mean. Most donors hug zero; Nevada is the only top weight whose interval excludes zero.
+Figure&nbsp;7.3: Stage 2 — posterior mean donor weights with 95% credible intervals, sorted by mean. Most donors hug zero; Nevada is the only top weight whose interval excludes zero.
 </figcaption>
 </figure>
 </div>
@@ -1858,10 +1848,10 @@ Figure&nbsp;6.3: Stage 2 — posterior mean donor weights with 95% credible inte
 <div id="fig-stage2-paths" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-stage2-paths-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="06-bayesian-spatial-sc_files/figure-html/fig-stage2-paths-1.png" class="img-fluid figure-img" width="768">
+<img src="07-bayesian-spatial-sc_files/figure-html/fig-stage2-paths-1.png" class="img-fluid figure-img" width="768">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-stage2-paths-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;6.4: Stage 2 — California (orange) vs the horseshoe-posterior-mean synthetic (steel blue), with a 95% credible band on the post-period gap.
+Figure&nbsp;7.4: Stage 2 — California (orange) vs the horseshoe-posterior-mean synthetic (steel blue), with a 95% credible band on the post-period gap.
 </figcaption>
 </figure>
 </div>
@@ -1870,8 +1860,8 @@ Figure&nbsp;6.4: Stage 2 — California (orange) vs the horseshoe-posterior-mean
 <p>The donor pool <strong>broadens dramatically</strong>. About 23 of 38 donors carry posterior mean weight above 0.01, versus four under the classical simplex. Crucially, even among the top-five posterior means, only Nevada’s 95% credible interval excludes zero — every other top weight is statistically consistent with no contribution. The teaching point is that classical SCM’s sparsity is partly a constraint artefact: when we admit posterior uncertainty over weights, the data do not strongly insist on a four-donor synthetic.</p>
 <p>The ATT also moves — from <span class="math inline">\(-18.5\)</span> to about <span class="math inline">\(-15.8\)</span> packs/capita — and its 95% credible interval is wider than Stage 1’s bootstrap CI by design. The horseshoe propagates donor-weight uncertainty into the gap series rather than treating <span class="math inline">\(\alpha\)</span> as fixed at the optimiser’s best guess. The interval still never reaches zero.</p>
 </section>
-<section id="stage-3-bayesian-spatial-synthetic-control-with-sar-spillovers" class="level2" data-number="6.6">
-<h2 data-number="6.6" class="anchored" data-anchor-id="stage-3-bayesian-spatial-synthetic-control-with-sar-spillovers"><span class="header-section-number">6.6</span> Stage 3 — Bayesian spatial synthetic control with SAR spillovers</h2>
+<section id="stage-3-bayesian-spatial-synthetic-control-with-sar-spillovers" class="level2" data-number="7.6">
+<h2 data-number="7.6" class="anchored" data-anchor-id="stage-3-bayesian-spatial-synthetic-control-with-sar-spillovers"><span class="header-section-number">7.6</span> Stage 3 — Bayesian spatial synthetic control with SAR spillovers</h2>
 <p>Stage 2 relaxed the simplex but kept SUTVA. Stage 3 drops SUTVA by adding a SAR layer to the donor data-generating process:</p>
 <p><span class="math display">\[Y_{c,t} \,=\, \rho \, W \, Y_{c,t} \,+\, X_{c,t}\beta \,+\, Y_c^{\text{lag}}\, \alpha \,+\, \varepsilon_t.\]</span></p>
 <p>Each donor state’s cigarette sales at time <span class="math inline">\(t\)</span> depend on a row-normalised average of its neighbours’ sales (the spatial lag <span class="math inline">\(W Y_{c,t}\)</span> weighted by the autocorrelation parameter <span class="math inline">\(\rho\)</span>), on covariates (<span class="math inline">\(X = \text{retprice}\)</span> here), on the donor-side outcomes via the horseshoe weights <span class="math inline">\(\alpha\)</span>, and on idiosyncratic noise. When <span class="math inline">\(\rho = 0\)</span> the SAR layer collapses and Stage 3 reduces to Stage 2.</p>
@@ -1958,17 +1948,17 @@ Stage 3 ATT (Bayesian Spatial SAR): -16.59 packs/capita, 95% CrI [-16.78, -16.39
 <div id="fig-stage3-paths" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-stage3-paths-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="06-bayesian-spatial-sc_files/figure-html/fig-stage3-paths-1.png" class="img-fluid figure-img" width="768">
+<img src="07-bayesian-spatial-sc_files/figure-html/fig-stage3-paths-1.png" class="img-fluid figure-img" width="768">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-stage3-paths-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;6.5: Stage 3 — California (orange) vs the SAR-spillover-corrected synthetic (teal). The treatment effect widens roughly linearly post-1988.
+Figure&nbsp;7.5: Stage 3 — California (orange) vs the SAR-spillover-corrected synthetic (teal). The treatment effect widens roughly linearly post-1988.
 </figcaption>
 </figure>
 </div>
 </div>
 </div>
-<section id="spillover-effects-on-donor-states" class="level3" data-number="6.6.1">
-<h3 data-number="6.6.1" class="anchored" data-anchor-id="spillover-effects-on-donor-states"><span class="header-section-number">6.6.1</span> Spillover effects on donor states</h3>
+<section id="spillover-effects-on-donor-states" class="level3" data-number="7.6.1">
+<h3 data-number="7.6.1" class="anchored" data-anchor-id="spillover-effects-on-donor-states"><span class="header-section-number">7.6.1</span> Spillover effects on donor states</h3>
 <p>The interesting output of the SAR layer is the per-donor spillover. The framework computes the average post-treatment effect on each donor by forward-simulating the SAR DGP with and without California’s treatment, integrating over the posterior draws of <span class="math inline">\(\rho\)</span>.</p>
 <div class="cell">
 <details class="code-fold">
@@ -1988,7 +1978,7 @@ Figure&nbsp;6.5: Stage 3 — California (orange) vs the SAR-spillover-corrected 
 <div id="tbl-spillover-top8" class="cell quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-spillover-top8-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Table&nbsp;6.3: Top-8 donor states by absolute post-1988 mean spillover. Nevada absorbs roughly 16x the next state.
+Table&nbsp;7.3: Top-8 donor states by absolute post-1988 mean spillover. Nevada absorbs roughly 16x the next state.
 </figcaption>
 <div aria-describedby="tbl-spillover-top8-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output-display">
@@ -2505,10 +2495,10 @@ Table&nbsp;6.3: Top-8 donor states by absolute post-1988 mean spillover. Nevada 
 <div id="fig-spillover-bars" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-spillover-bars-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="06-bayesian-spatial-sc_files/figure-html/fig-spillover-bars-1.png" class="img-fluid figure-img" width="768">
+<img src="07-bayesian-spatial-sc_files/figure-html/fig-spillover-bars-1.png" class="img-fluid figure-img" width="768">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-spillover-bars-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;6.6: Top-8 donor states by absolute spillover. Nevada dominates by an order of magnitude — the empirical signature of SUTVA failure for this case study.
+Figure&nbsp;7.6: Top-8 donor states by absolute spillover. Nevada dominates by an order of magnitude — the empirical signature of SUTVA failure for this case study.
 </figcaption>
 </figure>
 </div>
@@ -2517,8 +2507,8 @@ Figure&nbsp;6.6: Top-8 donor states by absolute spillover. Nevada dominates by a
 <p><strong>Nevada is the dominant spillover-receiver by an order of magnitude.</strong> Idaho and Utah trail far behind; every other donor’s spillover is small enough to be policy-noise. The story is consistent with cross-border tobacco flows reshaping consumption on both sides of the California–Nevada line — the empirical signature of SUTVA failure for this case study.</p>
 </section>
 </section>
-<section id="prior-predictive-diagnostic" class="level2" data-number="6.7">
-<h2 data-number="6.7" class="anchored" data-anchor-id="prior-predictive-diagnostic"><span class="header-section-number">6.7</span> Prior predictive diagnostic</h2>
+<section id="prior-predictive-diagnostic" class="level2" data-number="7.7">
+<h2 data-number="7.7" class="anchored" data-anchor-id="prior-predictive-diagnostic"><span class="header-section-number">7.7</span> Prior predictive diagnostic</h2>
 <p>Before reading Stage 3 as a posterior, we want to confirm that the prior specification is <em>compatible</em> with what the data actually look like. The helper <code>prior_predictive()</code> draws <span class="math inline">\(R = 1{,}000\)</span> joint prior samples, forward-simulates a synthetic donor panel under each draw, computes a battery of summary statistics, and compares them to the observed statistics from the real donor panel.</p>
 <div class="cell">
 <details class="code-fold">
@@ -2574,10 +2564,10 @@ Figure&nbsp;6.6: Top-8 donor states by absolute spillover. Nevada dominates by a
 <div id="fig-prior-predictive" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-prior-predictive-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="06-bayesian-spatial-sc_files/figure-html/fig-prior-predictive-1.png" class="img-fluid figure-img" width="864">
+<img src="07-bayesian-spatial-sc_files/figure-html/fig-prior-predictive-1.png" class="img-fluid figure-img" width="864">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-prior-predictive-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;6.7: Prior predictive check on four summary statistics. Histograms are R = 1,000 simulated prior draws; the orange line is the observed value. All four observed lines land inside the simulated prior cloud — the prior is compatible with the data, not overwhelming it.
+Figure&nbsp;7.7: Prior predictive check on four summary statistics. Histograms are R = 1,000 simulated prior draws; the orange line is the observed value. All four observed lines land inside the simulated prior cloud — the prior is compatible with the data, not overwhelming it.
 </figcaption>
 </figure>
 </div>
@@ -2585,8 +2575,8 @@ Figure&nbsp;6.7: Prior predictive check on four summary statistics. Histograms a
 </div>
 <p>All four observed orange lines land <em>inside</em> the simulated prior cloud rather than in the tails: the prior is compatible with the data, not overwhelming it. Had any observed statistic landed deep in a prior tail, the corresponding posterior estimate would have been pulled by the prior rather than the likelihood.</p>
 </section>
-<section id="cross-stage-comparison" class="level2" data-number="6.8">
-<h2 data-number="6.8" class="anchored" data-anchor-id="cross-stage-comparison"><span class="header-section-number">6.8</span> Cross-stage comparison</h2>
+<section id="cross-stage-comparison" class="level2" data-number="7.8">
+<h2 data-number="7.8" class="anchored" data-anchor-id="cross-stage-comparison"><span class="header-section-number">7.8</span> Cross-stage comparison</h2>
 <p>Stacking the three estimators makes the pedagogical arc visible.</p>
 <div class="cell">
 <details class="code-fold">
@@ -2608,7 +2598,7 @@ Figure&nbsp;6.7: Prior predictive check on four summary statistics. Histograms a
 <div id="tbl-cross-stage" class="cell quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-cross-stage-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Table&nbsp;6.4: Cross-stage comparison of ATT estimates. The active-donor count rises monotonically as the prior structure relaxes; the Stage 3 CrI is artificially narrow because ESS(rho) is in single digits at tutorial scale.
+Table&nbsp;7.4: Cross-stage comparison of ATT estimates. The active-donor count rises monotonically as the prior structure relaxes; the Stage 3 CrI is artificially narrow because ESS(rho) is in single digits at tutorial scale.
 </figcaption>
 <div aria-describedby="tbl-cross-stage-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output-display">
@@ -3114,8 +3104,8 @@ Table&nbsp;6.4: Cross-stage comparison of ATT estimates. The active-donor count 
 <li><strong>The Stage 3 credible interval is the narrowest but the least trustworthy.</strong> ESS(ρ) is in single digits; downstream prose should treat that interval as illustrative.</li>
 </ul>
 </section>
-<section id="recap" class="level2" data-number="6.9">
-<h2 data-number="6.9" class="anchored" data-anchor-id="recap"><span class="header-section-number">6.9</span> Recap</h2>
+<section id="recap" class="level2" data-number="7.9">
+<h2 data-number="7.9" class="anchored" data-anchor-id="recap"><span class="header-section-number">7.9</span> Recap</h2>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 50%">
@@ -3155,8 +3145,8 @@ Table&nbsp;6.4: Cross-stage comparison of ATT estimates. The active-donor count 
 </tbody>
 </table>
 </section>
-<section id="further-reading" class="level2" data-number="6.10">
-<h2 data-number="6.10" class="anchored" data-anchor-id="further-reading"><span class="header-section-number">6.10</span> Further reading</h2>
+<section id="further-reading" class="level2" data-number="7.10">
+<h2 data-number="7.10" class="anchored" data-anchor-id="further-reading"><span class="header-section-number">7.10</span> Further reading</h2>
 <ul>
 <li><span class="citation" data-cites="sakaguchi2026spatial">Sakaguchi &amp; Tagawa (<a href="references.html#ref-sakaguchi2026spatial" role="doc-biblioref">2026</a>)</span> — the original Bayesian spatial-SCM paper this chapter replicates.</li>
 <li><span class="citation" data-cites="carvalho2010horseshoe">Carvalho et al. (<a href="references.html#ref-carvalho2010horseshoe" role="doc-biblioref">2010</a>)</span> — the horseshoe prior used in Stage 2.</li>
@@ -3168,44 +3158,6 @@ Table&nbsp;6.4: Cross-stage comparison of ATT estimates. The active-donor count 
 
 <!-- -->
 
-</section>
-<section id="preface" class="level1 unnumbered">
-<h1 class="unnumbered">Preface</h1>
-<p><img src="images/cover1wide.jpg" class="preview-image img-fluid" alt="Comparative Causal Metrics cover image"></p>
-<section id="about-this-book" class="level2" data-number="6.11">
-<h2 data-number="6.11" class="anchored" data-anchor-id="about-this-book"><span class="header-section-number">6.11</span> About this book</h2>
-<p><em>Comparative Causal Metrics</em> is an introduction to <strong>regional impact evaluation</strong> using modern causal-inference methods implemented entirely in <strong>R</strong> and rendered with <strong>Quarto</strong>. The book is organized in two parts, each anchored by a running case study and a different family of estimators.</p>
-<section id="part-i-one-region-one-shock" class="level3" data-number="6.11.1">
-<h3 data-number="6.11.1" class="anchored" data-anchor-id="part-i-one-region-one-shock"><span class="header-section-number">6.11.1</span> Part I — One region, one shock</h3>
-<p>Chapters 1–7 evaluate <strong>California’s 1989 Proposition 99 cigarette tax</strong>, the canonical single-treated-unit policy evaluation. Every method in this half builds a counterfactual for California from a different data source — the state’s own past, a neighbour, a weighted blend of donor states, or a Bayesian time-series model — and reports the average treatment effect on the treated (ATT) between 1989 and 2000.</p>
-<ul>
-<li><strong>Interrupted time series</strong> — extrapolating California’s pre-period trajectory forward.</li>
-<li><strong>Basic difference-in-differences</strong> — subtracting a single control state’s pre-to-post change.</li>
-<li><strong>Classical synthetic control</strong> — building a weighted donor blend that matches the pre-period.</li>
-<li><strong>Structural Bayesian time series</strong> — state-space counterfactuals with posterior credible intervals.</li>
-<li><strong>Bayesian spatial synthetic control</strong> — a horseshoe-prior donor blend with spatial spillovers onto neighbours.</li>
-<li><strong>Synthetic control with prediction intervals</strong> — frequentist forecast-error decomposition via the <code>scpi</code> package.</li>
-</ul>
-</section>
-<section id="part-ii-many-regions-staggered-adoption" class="level3" data-number="6.11.2">
-<h3 data-number="6.11.2" class="anchored" data-anchor-id="part-ii-many-regions-staggered-adoption"><span class="header-section-number">6.11.2</span> Part II — Many regions, staggered adoption</h3>
-<p>Chapters 8–10 evaluate the <strong>Callaway-Sant’Anna minimum-wage county panel</strong>, where thousands of counties adopted different state minimum-wage levels at different years. The single-treated-unit toolkit no longer applies: the estimand becomes a family of cohort-specific ATTs indexed by adoption year, and the methods exploit the panel’s panel-data structure rather than a single time series.</p>
-<ul>
-<li><strong>Staggered difference-in-differences</strong> — group-time ATT(g, t) estimators that avoid two-way fixed-effects bias.</li>
-<li><strong>Matrix completion and interactive fixed effects</strong> — factor models that relax parallel trends.</li>
-<li><strong>Generalized synthetic control</strong> — projecting treated units onto factors estimated from never-treated controls.</li>
-</ul>
-<p>Each chapter pairs the conceptual logic of the method with a worked R example using publicly available data, so readers can reproduce every estimate end-to-end.</p>
-</section>
-</section>
-<section id="how-to-read-this-book" class="level2" data-number="6.12">
-<h2 data-number="6.12" class="anchored" data-anchor-id="how-to-read-this-book"><span class="header-section-number">6.12</span> How to read this book</h2>
-<p>The chapters are designed to be read sequentially but each is self-contained. Code is folded by default — click <strong><code>&lt;/&gt; Code</code></strong> in any chapter to reveal the underlying R. The full source is available on <a href="https://github.com/cmg777/ccm">GitHub</a>, and the entire book is available as a PDF download in the navbar.</p>
-<p>For readers who want to render a single chapter without cloning the repo, every numbered chapter offers a self-contained <code>.zip</code> bundle (chapter source, dataset, and a minimal <code>_quarto.yml</code>) at the bottom of the same <strong><code>&lt;/&gt; Code</code></strong> dropdown. Unzip and run <code>quarto render &lt;chapter&gt;.qmd</code> — no <code>renv</code> setup required.</p>
-</section>
-<section id="acknowledgments" class="level2" data-number="6.13">
-<h2 data-number="6.13" class="anchored" data-anchor-id="acknowledgments"><span class="header-section-number">6.13</span> Acknowledgments</h2>
-<p>This book builds on the infrastructure of the companion project <a href="https://github.com/cmg777/intro2causal"><em>Mastering Causal Metrics</em></a> and on a long tradition of applied econometric scholarship.</p>
 <div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" data-line-spacing="2" role="list" style="display: none">
 <div id="ref-abadie2010synthetic" class="csl-entry" role="listitem">
 Abadie, A., Diamond, A., &amp; Hainmueller, J. (2010). Synthetic control methods for comparative case studies: Estimating the effect of <span>California</span>’s tobacco control program. <em>Journal of the American Statistical Association</em>, <em>105</em>(490), 493–505. <a href="https://www.aeaweb.org/articles?id=10.1257/jasa.2010.ap08746">https://www.aeaweb.org/articles?id=10.1257/jasa.2010.ap08746</a>
@@ -3223,7 +3175,6 @@ LeSage, J. P., &amp; Pace, R. K. (2009). <em>Introduction to spatial econometric
 Sakaguchi, S., &amp; Tagawa, H. (2026). Identification and <span>Bayesian</span> inference for synthetic control methods with spillover effects. <em>The Econometrics Journal</em>. <a href="https://doi.org/10.1093/ectj/utag006">https://doi.org/10.1093/ectj/utag006</a>
 </div>
 </div>
-</section>
 </section>
 
 </main> <!-- /main -->
@@ -3700,13 +3651,13 @@ Sakaguchi, S., &amp; Tagawa, H. (2026). Identification and <span>Bayesian</span>
   </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./05-structural-bayesian-ts.html" class="pagination-link" aria-label="Structural Bayesian Time Series">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Structural Bayesian Time Series</span></span>
+      <a href="./06-synthetic-control-prediction-intervals.html" class="pagination-link" aria-label="Synthetic Control with Prediction Intervals">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Synthetic Control with Prediction Intervals</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./07-synthetic-control-prediction-intervals.html" class="pagination-link" aria-label="Synthetic Control with Prediction Intervals">
-        <span class="nav-page-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Synthetic Control with Prediction Intervals</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="./08-staggered-did.html" class="pagination-link" aria-label="Staggered Differences-in-Differences">
+        <span class="nav-page-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Staggered Differences-in-Differences</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
@@ -4234,7 +4185,7 @@ Sakaguchi, S., &amp; Tagawa, H. (2026). Identification and <span>Bayesian</span>
 </code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
-<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/quarcs-lab/ccm/edit/main/06-bayesian-spatial-sc.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/quarcs-lab/ccm/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer><script>
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/quarcs-lab/ccm/edit/main/07-bayesian-spatial-sc.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/quarcs-lab/ccm/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer><script>
 document.addEventListener('DOMContentLoaded', function() {
   var tocNav = document.getElementById('TOC');
   if (tocNav) {

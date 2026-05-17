@@ -421,14 +421,14 @@ window.Quarto = {
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./06-bayesian-spatial-sc.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Bayesian Spatial Synthetic Control</span></span></a>
+  <a href="./06-synthetic-control-prediction-intervals.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Synthetic Control with Prediction Intervals</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./07-synthetic-control-prediction-intervals.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Synthetic Control with Prediction Intervals</span></span></a>
+  <a href="./07-bayesian-spatial-sc.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Bayesian Spatial Synthetic Control</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -482,16 +482,6 @@ window.Quarto = {
   <li><a href="#part-ii-staggered-adoption-chs.-810" id="toc-part-ii-staggered-adoption-chs.-810" class="nav-link" data-scroll-target="#part-ii-staggered-adoption-chs.-810"><span class="header-section-number">1.6.2</span> Part II — Staggered adoption (chs.&nbsp;8–10)</a></li>
   </ul></li>
   <li><a href="#further-reading" id="toc-further-reading" class="nav-link" data-scroll-target="#further-reading"><span class="header-section-number">1.7</span> Further reading</a></li>
-  <li><a href="#preface" id="toc-preface" class="nav-link" data-scroll-target="#preface">Preface</a>
-  <ul class="collapse">
-  <li><a href="#about-this-book" id="toc-about-this-book" class="nav-link" data-scroll-target="#about-this-book"><span class="header-section-number">1.8</span> About this book</a>
-  <ul class="collapse">
-  <li><a href="#part-i-one-region-one-shock" id="toc-part-i-one-region-one-shock" class="nav-link" data-scroll-target="#part-i-one-region-one-shock"><span class="header-section-number">1.8.1</span> Part I — One region, one shock</a></li>
-  <li><a href="#part-ii-many-regions-staggered-adoption" id="toc-part-ii-many-regions-staggered-adoption" class="nav-link" data-scroll-target="#part-ii-many-regions-staggered-adoption"><span class="header-section-number">1.8.2</span> Part II — Many regions, staggered adoption</a></li>
-  </ul></li>
-  <li><a href="#how-to-read-this-book" id="toc-how-to-read-this-book" class="nav-link" data-scroll-target="#how-to-read-this-book"><span class="header-section-number">1.9</span> How to read this book</a></li>
-  <li><a href="#acknowledgments" id="toc-acknowledgments" class="nav-link" data-scroll-target="#acknowledgments"><span class="header-section-number">1.10</span> Acknowledgments</a></li>
-  </ul></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/quarcs-lab/ccm/edit/main/01-introduction.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/quarcs-lab/ccm/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
@@ -1377,8 +1367,8 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 <li><strong>Chapter 3 — Basic Difference-in-Differences.</strong> Subtract a single control state’s pre/post change from California’s.</li>
 <li><strong>Chapter 4 — Classical Synthetic Control.</strong> Build a weighted blend of donor states that mimics California’s pre-period.</li>
 <li><strong>Chapter 5 — Structural Bayesian Time Series.</strong> Fit a Bayesian state-space model that uses donor states as predictors and reports posterior credible intervals.</li>
-<li><strong>Chapter 6 — Bayesian Spatial Synthetic Control.</strong> Add a horseshoe prior over donor weights and a SAR spatial term that allows treatment to spill over onto neighbouring states.</li>
-<li><strong>Chapter 7 — Synthetic Control with Prediction Intervals.</strong> Attach frequentist prediction intervals to classical SCM via the <code>scpi</code> package, decomposing forecast error into in-sample weight uncertainty and out-of-sample shocks.</li>
+<li><strong>Chapter 6 — Synthetic Control with Prediction Intervals.</strong> Attach frequentist prediction intervals to classical SCM via the <code>scpi</code> package, decomposing forecast error into in-sample weight uncertainty and out-of-sample shocks.</li>
+<li><strong>Chapter 7 — Bayesian Spatial Synthetic Control.</strong> Add a horseshoe prior over donor weights and a SAR spatial term that allows treatment to spill over onto neighbouring states.</li>
 </ul>
 </section>
 <section id="part-ii-staggered-adoption-chs.-810" class="level3" data-number="1.6.2">
@@ -1407,44 +1397,6 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 
 <!-- -->
 
-</section>
-<section id="preface" class="level1 unnumbered">
-<h1 class="unnumbered">Preface</h1>
-<p><img src="images/cover1wide.jpg" class="preview-image img-fluid" alt="Comparative Causal Metrics cover image"></p>
-<section id="about-this-book" class="level2" data-number="1.8">
-<h2 data-number="1.8" class="anchored" data-anchor-id="about-this-book"><span class="header-section-number">1.8</span> About this book</h2>
-<p><em>Comparative Causal Metrics</em> is an introduction to <strong>regional impact evaluation</strong> using modern causal-inference methods implemented entirely in <strong>R</strong> and rendered with <strong>Quarto</strong>. The book is organized in two parts, each anchored by a running case study and a different family of estimators.</p>
-<section id="part-i-one-region-one-shock" class="level3" data-number="1.8.1">
-<h3 data-number="1.8.1" class="anchored" data-anchor-id="part-i-one-region-one-shock"><span class="header-section-number">1.8.1</span> Part I — One region, one shock</h3>
-<p>Chapters 1–7 evaluate <strong>California’s 1989 Proposition 99 cigarette tax</strong>, the canonical single-treated-unit policy evaluation. Every method in this half builds a counterfactual for California from a different data source — the state’s own past, a neighbour, a weighted blend of donor states, or a Bayesian time-series model — and reports the average treatment effect on the treated (ATT) between 1989 and 2000.</p>
-<ul>
-<li><strong>Interrupted time series</strong> — extrapolating California’s pre-period trajectory forward.</li>
-<li><strong>Basic difference-in-differences</strong> — subtracting a single control state’s pre-to-post change.</li>
-<li><strong>Classical synthetic control</strong> — building a weighted donor blend that matches the pre-period.</li>
-<li><strong>Structural Bayesian time series</strong> — state-space counterfactuals with posterior credible intervals.</li>
-<li><strong>Bayesian spatial synthetic control</strong> — a horseshoe-prior donor blend with spatial spillovers onto neighbours.</li>
-<li><strong>Synthetic control with prediction intervals</strong> — frequentist forecast-error decomposition via the <code>scpi</code> package.</li>
-</ul>
-</section>
-<section id="part-ii-many-regions-staggered-adoption" class="level3" data-number="1.8.2">
-<h3 data-number="1.8.2" class="anchored" data-anchor-id="part-ii-many-regions-staggered-adoption"><span class="header-section-number">1.8.2</span> Part II — Many regions, staggered adoption</h3>
-<p>Chapters 8–10 evaluate the <strong>Callaway-Sant’Anna minimum-wage county panel</strong>, where thousands of counties adopted different state minimum-wage levels at different years. The single-treated-unit toolkit no longer applies: the estimand becomes a family of cohort-specific ATTs indexed by adoption year, and the methods exploit the panel’s panel-data structure rather than a single time series.</p>
-<ul>
-<li><strong>Staggered difference-in-differences</strong> — group-time ATT(g, t) estimators that avoid two-way fixed-effects bias.</li>
-<li><strong>Matrix completion and interactive fixed effects</strong> — factor models that relax parallel trends.</li>
-<li><strong>Generalized synthetic control</strong> — projecting treated units onto factors estimated from never-treated controls.</li>
-</ul>
-<p>Each chapter pairs the conceptual logic of the method with a worked R example using publicly available data, so readers can reproduce every estimate end-to-end.</p>
-</section>
-</section>
-<section id="how-to-read-this-book" class="level2" data-number="1.9">
-<h2 data-number="1.9" class="anchored" data-anchor-id="how-to-read-this-book"><span class="header-section-number">1.9</span> How to read this book</h2>
-<p>The chapters are designed to be read sequentially but each is self-contained. Code is folded by default — click <strong><code>&lt;/&gt; Code</code></strong> in any chapter to reveal the underlying R. The full source is available on <a href="https://github.com/cmg777/ccm">GitHub</a>, and the entire book is available as a PDF download in the navbar.</p>
-<p>For readers who want to render a single chapter without cloning the repo, every numbered chapter offers a self-contained <code>.zip</code> bundle (chapter source, dataset, and a minimal <code>_quarto.yml</code>) at the bottom of the same <strong><code>&lt;/&gt; Code</code></strong> dropdown. Unzip and run <code>quarto render &lt;chapter&gt;.qmd</code> — no <code>renv</code> setup required.</p>
-</section>
-<section id="acknowledgments" class="level2" data-number="1.10">
-<h2 data-number="1.10" class="anchored" data-anchor-id="acknowledgments"><span class="header-section-number">1.10</span> Acknowledgments</h2>
-<p>This book builds on the infrastructure of the companion project <a href="https://github.com/cmg777/intro2causal"><em>Mastering Causal Metrics</em></a> and on a long tradition of applied econometric scholarship.</p>
 <div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" data-line-spacing="2" role="list" style="display: none">
 <div id="ref-abadie2010synthetic" class="csl-entry" role="listitem">
 Abadie, A., Diamond, A., &amp; Hainmueller, J. (2010). Synthetic control methods for comparative case studies: Estimating the effect of <span>California</span>’s tobacco control program. <em>Journal of the American Statistical Association</em>, <em>105</em>(490), 493–505. <a href="https://www.aeaweb.org/articles?id=10.1257/jasa.2010.ap08746">https://www.aeaweb.org/articles?id=10.1257/jasa.2010.ap08746</a>
@@ -1468,7 +1420,6 @@ ODISSEI Social Data Science team. (2024). <em>Workshop on causal effects of poli
 Xu, Y. (2017). Generalized synthetic control method: Causal inference with interactive fixed effects models. <em>Political Analysis</em>, <em>25</em>(1), 57–76. <a href="https://doi.org/10.1017/pan.2016.2">https://doi.org/10.1017/pan.2016.2</a>
 </div>
 </div>
-</section>
 </section>
 
 </main> <!-- /main -->
@@ -2217,8 +2168,8 @@ Xu, Y. (2017). Generalized synthetic control method: Causal inference with inter
 <span id="cb7-272"><a href="#cb7-272" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Chapter 3 — Basic Difference-in-Differences.** Subtract a single control state's pre/post change from California's.</span>
 <span id="cb7-273"><a href="#cb7-273" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Chapter 4 — Classical Synthetic Control.** Build a weighted blend of donor states that mimics California's pre-period.</span>
 <span id="cb7-274"><a href="#cb7-274" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Chapter 5 — Structural Bayesian Time Series.** Fit a Bayesian state-space model that uses donor states as predictors and reports posterior credible intervals.</span>
-<span id="cb7-275"><a href="#cb7-275" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Chapter 6 — Bayesian Spatial Synthetic Control.** Add a horseshoe prior over donor weights and a SAR spatial term that allows treatment to spill over onto neighbouring states.</span>
-<span id="cb7-276"><a href="#cb7-276" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Chapter 7 — Synthetic Control with Prediction Intervals.** Attach frequentist prediction intervals to classical SCM via the <span class="in">`scpi`</span> package, decomposing forecast error into in-sample weight uncertainty and out-of-sample shocks.</span>
+<span id="cb7-275"><a href="#cb7-275" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Chapter 6 — Synthetic Control with Prediction Intervals.** Attach frequentist prediction intervals to classical SCM via the <span class="in">`scpi`</span> package, decomposing forecast error into in-sample weight uncertainty and out-of-sample shocks.</span>
+<span id="cb7-276"><a href="#cb7-276" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Chapter 7 — Bayesian Spatial Synthetic Control.** Add a horseshoe prior over donor weights and a SAR spatial term that allows treatment to spill over onto neighbouring states.</span>
 <span id="cb7-277"><a href="#cb7-277" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-278"><a href="#cb7-278" aria-hidden="true" tabindex="-1"></a><span class="fu">### Part II — Staggered adoption (chs. 8–10)</span></span>
 <span id="cb7-279"><a href="#cb7-279" aria-hidden="true" tabindex="-1"></a></span>
