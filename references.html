@@ -978,6 +978,23 @@ document.addEventListener('DOMContentLoaded', function() {
     tocNav.parentNode.insertBefore(coverDiv, tocNav);
   }
 });
+document.addEventListener('DOMContentLoaded', function() {
+  var parts = window.location.pathname.replace(/\/$/, '').split('/');
+  var basename = parts[parts.length - 1].replace(/\.html$/, '');
+  var m = basename.match(/^(\d{2})-/);
+  if (!m) return;
+  var btn = document.getElementById('quarto-code-tools-menu');
+  if (!btn) return;
+  var menu = btn.nextElementSibling;
+  if (!menu || !menu.classList.contains('dropdown-menu')) return;
+  var divider = document.createElement('li');
+  divider.innerHTML = '<hr class="dropdown-divider">';
+  menu.appendChild(divider);
+  var item = document.createElement('li');
+  item.innerHTML = '<a class="dropdown-item" href="downloads/chapter-' +
+    m[1] + '.zip" download><i class="bi bi-download"></i> Download chapter (.zip)</a>';
+  menu.appendChild(item);
+});
 </script>
 
 
