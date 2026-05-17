@@ -6,11 +6,14 @@
 chapters <- c(
   "01-introduction.qmd",
   "02-interrupted-time-series.qmd",
-  "03-rd-in-time.qmd",
-  "04-basic-diff-in-diff.qmd",
-  "05-classical-synthetic-control.qmd",
-  "06-structural-bayesian-ts.qmd",
-  "07-bayesian-spatial-sc.qmd"
+  "03-basic-diff-in-diff.qmd",
+  "04-classical-synthetic-control.qmd",
+  "05-structural-bayesian-ts.qmd",
+  "06-synthetic-control-prediction-intervals.qmd",
+  "07-bayesian-spatial-sc.qmd",
+  "08-staggered-did.qmd",
+  "09-matrix-completion-and-ife.qmd",
+  "10-gsynth.qmd"
 )
 
 # Every chapter sources R/table_helpers.R and reads data/proposition99.rds.
@@ -81,6 +84,29 @@ for (chap in chapters) {
     file.copy(scspill_files, file.path(stage, "R/scspill"), overwrite = TRUE)
     file.copy("data/california_smoking.rda",
               file.path(stage, "data/california_smoking.rda"), overwrite = TRUE)
+  }
+
+  # Chapter 8 ships the CS minimum-wage county panel and the honest_did
+  # bridge that connects did::AGGTEobj to HonestDiD.
+  if (chap == "08-staggered-did.qmd") {
+    file.copy("data/cs_minwage.rds",
+              file.path(stage, "data/cs_minwage.rds"), overwrite = TRUE)
+    file.copy("R/honest_did.R",
+              file.path(stage, "R/honest_did.R"), overwrite = TRUE)
+  }
+
+  # Chapter 9 ships the CS minimum-wage county panel so a reader can
+  # render the IFE/MC chapter standalone without the rest of the book.
+  if (chap == "09-matrix-completion-and-ife.qmd") {
+    file.copy("data/cs_minwage.rds",
+              file.path(stage, "data/cs_minwage.rds"), overwrite = TRUE)
+  }
+
+  # Chapter 10 ships the same CS minimum-wage county panel so a reader
+  # can render the gsynth chapter standalone without the rest of the book.
+  if (chap == "10-gsynth.qmd") {
+    file.copy("data/cs_minwage.rds",
+              file.path(stage, "data/cs_minwage.rds"), overwrite = TRUE)
   }
 
   pkgs <- detect_packages(c(chap, helper_files))

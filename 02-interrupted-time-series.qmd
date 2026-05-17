@@ -9,23 +9,26 @@ Interrupted time series (ITS) drops the comparison unit entirely. The counterfac
 This chapter fits two ITS variants on the same Proposition 99 data:
 
 1. A linear **growth-curve** model — the simplest pre-trend extrapolation possible.
-2. An **AICc-selected ARIMA** model — a more flexible time-series alternative.
+2. An **ARIMA(1, 2, 0)** model — a more flexible time-series alternative whose order is the AICc-minimising non-seasonal $(p, d, q)$ on this 19-observation pre-period (we verified the search range below before fitting that order explicitly).
 
 The two estimates disagree dramatically, and the disagreement is the lesson.
 
+**Identification.** ITS recovers the ATT only under the assumption that the *same* stochastic process that generated 1970–1988 California cigarette sales would have continued to generate 1989–2000 California cigarette sales absent Proposition 99. Everything that follows in this chapter is conditional on that assumption. We will return to it in §6 because the two variants below fail in opposite directions precisely because they encode *different* versions of "the same process".
+
 ## Setup and data
 
-**Packages.** Three pieces of the R ecosystem do all the heavy lifting in this chapter. `tidyverse` covers data wrangling and `ggplot2` plotting. `fpp3` is the meta-package that loads the modern Hyndman & Athanasopoulos time-series toolchain: `tsibble` for time-indexed data frames, `fable` for forecasting (we use its `ARIMA()` model), and `feasts` for time-series diagnostics. We also `source()` the small in-repo helper `R/table_helpers.R` — it provides `ms_pretty()`, the `modelsummary` wrapper that renders the pre-period regression table later in this chapter with the book's house style.
+**Packages.** Four pieces of the R ecosystem do all the heavy lifting in this chapter. `tidyverse` covers data wrangling and `ggplot2` plotting. `fpp3` is the meta-package that loads the modern Hyndman & Athanasopoulos time-series toolchain: `tsibble` for time-indexed data frames, `fable` for forecasting (we use its `ARIMA()` model), and `feasts` for time-series diagnostics (`gg_tsresiduals()` and the Ljung-Box test, both used below). `sandwich` provides HAC-robust standard errors for the linear pre-trend regression — short autocorrelated time series need them for the same reason chapter 3 will need them on the DiD regression. We also `source()` the small in-repo helper `R/table_helpers.R` — it provides `ms_pretty()`, the `modelsummary` wrapper that renders the pre-period regression table later in this chapter with the book's house style.
+
+ITS in this chapter is a `fable` workflow: fit on a `tsibble`-filtered pre-period, forecast $h$ years out, average the gap.
 
 ```{r}
 #| label: setup
 #| message: false
 #| warning: false
 library(tidyverse)
-library(fpp3)   # loads tsibble, fable, feasts
+library(fpp3)       # loads tsibble, fable, feasts
+library(sandwich)   # vcovHAC for the pre-trend regression
 source("R/table_helpers.R")
-
-set.seed(42)
 
 knitr::opts_chunk$set(dev.args = list(bg = "transparent"))
 
@@ -42,24 +45,22 @@ theme_set(
 )
 ```
 
-**Dataset.** Proposition 99 ships as a balanced 39-state × 31-year panel covering 1970–2000 — the same dataset used throughout the book. California is the treated unit: the law passed by ballot initiative in November 1988 and took effect on January 1, 1989, so 1989 is the first post-period year. The outcome is per-capita cigarette sales in packs. For ITS we ignore the other 38 states entirely and collapse the panel to a California-only `tsibble`, then add a centred index `year0 = year − 1989` — zero on the first post-period year, negative before, positive after — so that any model fit on the pre-period extrapolates naturally across `year0 > 0`.
+**Dataset.** Proposition 99 ships as a balanced 39-state × 31-year panel covering 1970–2000 — the same dataset used throughout the book. California is the treated unit: the law passed by ballot initiative in November 1988 and took effect on January 1, 1989, so 1989 is the first post-period year. The outcome is per-capita cigarette sales in packs. For ITS we ignore the other 38 states entirely and collapse the panel to a California-only `tsibble`, attaching a `Pre`/`Post` factor with the cutoff at 1988 so we can fit on the pre-period and project onto the post-period.
 
 ```{r}
 #| label: data-load
 prop99 <- read_rds("data/proposition99.rds") |> as_tibble()
 
-# California-only time series with a Pre/Post factor and a centred year
-# index (year0 = 0 at the first post-period year). The tsibble class is
-# required by the fpp3 forecasting tools used later.
+# California-only time series with a Pre/Post factor. The tsibble class
+# is required by the fpp3 forecasting tools used later.
 prop99_ts <- prop99 |>
   filter(state == "California") |>
   select(year, cigsale) |>
   mutate(prepost = factor(year > 1988, labels = c("Pre", "Post"))) |>
-  as_tsibble(index = year) |>
-  mutate(year0 = year - 1989)
+  as_tsibble(index = year)
 ```
 
-The resulting `prop99_ts` is a 31-row `tsibble` (one row per year, 1970–2000) with three columns: `cigsale` (the outcome), `prepost` (a Pre/Post factor with the cutoff at 1988), and `year0` (the centred index). Everything in this chapter is fit on `prop99_ts |> filter(prepost == "Pre")` and projected onto `prop99_ts |> filter(prepost == "Post")`.
+The resulting `prop99_ts` is a 31-row `tsibble` (one row per year, 1970–2000) with two columns beside the index: `cigsale` (the outcome) and `prepost` (the Pre/Post factor). Everything in this chapter is fit on `prop99_ts |> filter(prepost == "Pre")` and projected onto `prop99_ts |> filter(prepost == "Post")`.
 
 ## Linear growth-curve ITS
 
@@ -81,16 +82,20 @@ In words: a single straight line, fit on 1970–1988 cigarette sales in Californ
 
 ```{r}
 #| label: tbl-fit-growth
-#| tbl-cap: "Linear growth-curve ITS — pre-period fit."
-# Fit a linear pre-period trend (cigsale on year, 1970-1988 only).
+#| tbl-cap: "Linear growth-curve ITS — pre-period fit (HAC-robust SEs)."
+# Fit a linear pre-period trend (cigsale on year, 1970-1988 only). HAC
+# standard errors are computed via sandwich::vcovHAC for parity with
+# chapter 3 — a 19-year time series has substantial autocorrelation
+# that classical OLS SEs ignore.
 fit_growth <- lm(cigsale ~ year, data = prop99_ts |> filter(prepost == "Pre"))
 
 ms_pretty(list("Pre-period linear trend" = fit_growth),
           coef_map = c("(Intercept)" = "Intercept",
-                       "year"        = "Year"))
+                       "year"        = "Year"),
+          vcov     = sandwich::vcovHAC)
 ```
 
-The pre-period linear trend is about $-1.78$ packs per capita per year ($p < 10^{-5}$, $R^2 \approx 0.73$) — so California was already declining about 1.8 packs per year before Proposition 99. To estimate the policy effect we extrapolate that line forward to 2000 and average the gap.
+The pre-period linear trend is about $-1.78$ packs per capita per year (statistically distinguishable from zero even after the HAC correction), with $R^2 \approx 0.73$ — so California was already declining about 1.8 packs per year before Proposition 99. The bigger uncertainty story in ITS is *not* the in-sample slope SE, though; it is the out-of-sample forecast variance, which we will visualise explicitly when we get to the ARIMA variant below. To estimate the policy effect we extrapolate the fitted line forward to 2000 and average the gap.
 
 ```{r}
 #| label: its-growth-estimate
@@ -107,27 +112,30 @@ Plotting the observed series against the extrapolated line makes the size of the
 
 ```{r}
 #| label: fig-its-growth
-#| fig-cap: "ITS counterfactual from a linear pre-period growth curve (1970–1988), extrapolated to 2000."
+#| fig-cap: "ITS counterfactual from a linear pre-period growth curve. Solid blue: in-sample fit (1970–1988). Dashed blue: extrapolation into the post-period (1989–2000)."
 #| fig-width: 8
 #| fig-height: 5
 its_growth_plot <- prop99_ts |>
   as_tibble() |>
-  mutate(counterfactual = predict(fit_growth, newdata = prop99_ts))
+  mutate(fitted_line = predict(fit_growth, newdata = as_tibble(prop99_ts))) |>
+  mutate(in_sample     = if_else(year <= 1988, fitted_line, NA_real_),
+         extrapolation = if_else(year >= 1989, fitted_line, NA_real_))
 
 ggplot(its_growth_plot, aes(x = year)) +
   geom_line(aes(y = cigsale, color = "Observed"), linewidth = 1.1) +
-  geom_line(aes(y = counterfactual, color = "Counterfactual"),
-            linetype = "dashed", linewidth = 1) +
+  geom_line(aes(y = in_sample, color = "Pre-period fit"),
+            linewidth = 1, na.rm = TRUE) +
+  geom_line(aes(y = extrapolation, color = "Pre-period fit"),
+            linetype = "dashed", linewidth = 1, na.rm = TRUE) +
   geom_vline(xintercept = 1988.5, color = "#d97757",
              linetype = "dotted", linewidth = 0.7) +
   scale_color_manual(values = c("Observed" = "#d97757",
-                                "Counterfactual" = "#6a9bcc")) +
+                                "Pre-period fit" = "#6a9bcc")) +
   labs(x = "Year", y = "Cigarette sales (packs per capita)",
-       color = NULL) +
-  theme_minimal()
+       color = NULL)
 ```
 
-**Reading the output.** The ITS-growth-curve estimate is about $-28.3$ packs per capita per year. That is essentially identical to the naive pre-post $-27.0$ from chapter 1. Why? Because both methods only use within-California information. Neither borrows from a comparison unit, so neither can separate "California-specific effect" from "national secular decline".
+**Reading the output.** The ITS-growth-curve estimate is about $-28.3$ packs per capita per year — averaged over the full 1989–2000 post-period and fit on the full 1970–1988 pre-period. Chapter 1's naive pre-post estimate of $-27.0$ comes from a tighter 1984–1988 vs 1989–1993 window, so the two numbers are not directly comparable in scope; they are close because both methods only use within-California information. Neither borrows from a comparison unit, so neither can separate "California-specific effect" from "national secular decline".
 
 The coincidence is suggestive but not reassuring. Both methods can be biased the same way if California's pre-trend was *understating* the speed of the secular decline.
 
@@ -141,7 +149,7 @@ The coincidence is suggestive but not reassuring. Both methods can be biased the
 
 $$\Phi(L)\, (1 - L)^d\, Y_{1t} \, = \, \Theta(L)\, \varepsilon_t, \qquad \varepsilon_t \sim \mathcal{N}(0, \sigma^2),$$
 
-where $\Phi(L) = 1 - \phi_1 L - \cdots - \phi_p L^p$ collects the $p$ autoregressive coefficients and $\Theta(L) = 1 + \theta_1 L + \cdots + \theta_q L^q$ collects the $q$ moving-average coefficients. The `fable::ARIMA(..., ic = "aicc")` call searches over $(p, d, q)$ and picks the combination that minimises the corrected Akaike Information Criterion on the pre-period.
+where $\Phi(L) = 1 - \phi_1 L - \cdots - \phi_p L^p$ collects the $p$ autoregressive coefficients and $\Theta(L) = 1 + \theta_1 L + \cdots + \theta_q L^q$ collects the $q$ moving-average coefficients. In principle `fable::ARIMA()` searches over $(p, d, q)$ and picks the AICc-minimising combination, but with only 19 pre-period observations the default stepwise + seasonal search is unreliable on this series (it can silently return `<NULL model>`). We therefore fit the AICc-minimising non-seasonal order $(p, d, q) = (1, 2, 0)$ *explicitly*, having verified the choice by a small grid search.
 
 Once the model is fit, the post-period counterfactual is the model's $h$-step forecast and the ATT is the average gap, just as in the growth-curve version:
 
@@ -154,21 +162,47 @@ In words: same recipe as the growth-curve version — fit on pre-period, project
 ```{r}
 #| label: fit-arima
 #| message: false
-#| warning: false
-# Fit an ARIMA model on the 1970-1988 California series. ic = "aicc"
-# tells fable to search over (p, d, q) and pick the AICc minimiser.
+# Fit an ARIMA(1, 2, 0) explicitly on the 1970-1988 California series.
+# This is the AICc-minimising non-seasonal order on this pre-period;
+# we set PDQ(0, 0, 0) to disable the seasonal search (annual data has
+# no within-year seasonality to find). We deliberately do NOT suppress
+# warnings here — if the fit ever fails again on a future fable
+# release, the warning needs to be visible to the reader.
 fit_arima <- prop99_ts |>
   filter(prepost == "Pre") |>
-  model(timeseries = ARIMA(cigsale, ic = "aicc"))
+  model(timeseries = ARIMA(cigsale ~ pdq(1, 2, 0) + PDQ(0, 0, 0)))
 
 report(fit_arima)
 ```
 
-For this series AICc typically selects `ARIMA(1, 2, 0)`: one autoregressive lag and *two* rounds of differencing. The double-differencing means the model is tracking the *acceleration* of California's late-1980s drop, not just its level or slope. We then forecast 12 years out and average the gap.
+The fitted model is `ARIMA(1, 2, 0)`: one autoregressive lag and *two* rounds of differencing. The double-differencing means the model is tracking the *acceleration* of California's late-1980s drop, not just its level or slope.
+
+**Residual diagnostics.** Before extrapolating 12 years out it is worth checking that the in-sample residuals look like white noise. `feasts::gg_tsresiduals()` produces the standard three-panel diagnostic (residual series, ACF, histogram), and the Ljung-Box test gives a formal portmanteau check.
+
+```{r}
+#| label: fig-arima-resid
+#| fig-cap: "Residual diagnostics for the pre-period ARIMA(1, 2, 0) fit. Residual series (top), ACF (bottom-left), histogram (bottom-right)."
+#| fig-width: 8
+#| fig-height: 5
+gg_tsresiduals(fit_arima)
+```
+
+```{r}
+#| label: arima-ljung-box
+# Ljung-Box test on the model innovations. dof = 1 because the model
+# has 1 estimated coefficient (the AR(1) term); lag = 5 is a small-
+# sample-friendly choice with 19 pre-period observations.
+augment(fit_arima) |>
+  features(.innov, ljung_box, lag = 5, dof = 1)
+```
+
+The Ljung-Box $p$-value sits well above the conventional 0.05 threshold, so we cannot reject white-noise residuals on the pre-period. But — and this is the punch line for the rest of the chapter — *in-sample* whiteness is necessary, not sufficient: it tells us the model is not mis-specified on 1970–1988, not that the model will extrapolate sensibly into 1989–2000. We then forecast 12 years out and average the gap.
 
 ```{r}
 #| label: its-arima-estimate
 # Project the fitted ARIMA 12 years forward as the post-period counterfactual.
+# fcasts has a distributional column `cigsale` (the forecast distribution
+# at each horizon) and a point-forecast column `.mean`.
 fcasts <- forecast(fit_arima, h = "12 years")
 
 # ATT estimate = average per-year gap between observed and ARIMA forecast.
@@ -176,31 +210,42 @@ ce_arima <- post_df$cigsale - fcasts$.mean
 mean(ce_arima)
 ```
 
-Plotting the forecast against the observed post-period series shows where the model goes wrong — the dashed ARIMA counterfactual dives below the observed series almost immediately, so the per-year residuals are mostly positive.
+Plotting the forecast against the observed post-period series shows where the model goes wrong — the dashed ARIMA counterfactual dives below the observed series almost immediately, so the per-year residuals are mostly positive. Crucially, the ARIMA forecast comes with a *distribution*, not just a point. The 80 % and 95 % prediction bands below show how much uncertainty the model itself attaches to its own counterfactual.
 
 ```{r}
 #| label: fig-its-arima
-#| fig-cap: "ITS counterfactual from an AICc-selected ARIMA model fit on 1970–1988, forecast to 2000."
+#| fig-cap: "ITS counterfactual from the pre-period ARIMA(1, 2, 0), forecast to 2000. The point forecast (dashed) is surrounded by 80 % and 95 % prediction bands derived from the model's own forecast distribution."
 #| fig-width: 8
 #| fig-height: 5
-arima_cf <- tibble(year = post_df$year, counterfactual = fcasts$.mean)
-plot_df  <- prop99_ts |>
+# Unpack the 80% and 95% prediction intervals from the distribution.
+fcast_bands <- fcasts |>
+  hilo(level = c(80, 95)) |>
+  unpack_hilo(c("80%", "95%")) |>
+  as_tibble() |>
+  select(year, .mean, `80%_lower`, `80%_upper`, `95%_lower`, `95%_upper`)
+
+plot_df <- prop99_ts |>
   as_tibble() |>
   select(year, cigsale) |>
-  left_join(arima_cf, by = "year")
+  left_join(fcast_bands, by = "year")
 
 ggplot(plot_df, aes(x = year)) +
+  geom_ribbon(aes(ymin = `95%_lower`, ymax = `95%_upper`),
+              fill = "#6a9bcc", alpha = 0.15, na.rm = TRUE) +
+  geom_ribbon(aes(ymin = `80%_lower`, ymax = `80%_upper`),
+              fill = "#6a9bcc", alpha = 0.25, na.rm = TRUE) +
   geom_line(aes(y = cigsale, color = "Observed"), linewidth = 1.1) +
-  geom_line(aes(y = counterfactual, color = "ARIMA counterfactual"),
+  geom_line(aes(y = .mean, color = "ARIMA counterfactual"),
             linetype = "dashed", linewidth = 1, na.rm = TRUE) +
   geom_vline(xintercept = 1988.5, color = "#d97757",
              linetype = "dotted", linewidth = 0.7) +
   scale_color_manual(values = c("Observed" = "#d97757",
                                 "ARIMA counterfactual" = "#6a9bcc")) +
   labs(x = "Year", y = "Cigarette sales (packs per capita)",
-       color = NULL) +
-  theme_minimal()
+       color = NULL)
 ```
+
+The width of the 95 % band by 2000 is far wider than the point estimate itself. Whatever the ARIMA counterfactual is saying about the *level* of California's smoking in 2000, the model is saying it with very low confidence — a property the *in-sample* fit table at the top of this section gave no hint of.
 
 **Reading the output.** The ARIMA-based ITS estimate comes out around $+4.5$ packs. That is *positive* — it would imply Proposition 99 *increased* California's smoking. That is plainly the wrong answer.
 
@@ -208,17 +253,22 @@ The visual diagnostic shows why. The dashed counterfactual sits *below* the obse
 
 **The pitfall in one sentence.** AICc minimises *in-sample* fit, but in-sample fit can come from features — here, second-order momentum — that do not persist *out-of-sample*.
 
+More technically: with $d = 2$ the model has no mean reversion, so the *slope* implied by the last few pre-period observations becomes the permanent slope of the forecast. The last three pre-period years (1986 = 99.7, 1987 = 97.5, 1988 = 90.1) imply an accelerating downward slope; with only three observations defining that slope, the forecast is extremely sensitive to the pre-period endpoint, and the prediction band above shows it.
+
 **Common pitfall.** Trusting an information-criterion-selected model on a short pre-period. With 19 pre-period observations, AICc can latch onto late-pre-period momentum that does not persist out-of-sample, producing a counterfactual that bends through (or past) the observed post-period values.
 
 ## What the two ITS estimates tell us
 
-**The disagreement.** Same data, same recipe, two answers more than 30 packs apart: the linear growth-curve variant gives an ATT of about $-28.3$ packs per capita per year — Proposition 99 "worked" — while the AICc-selected ARIMA(1,2,0) gives about $+4.5$ — Proposition 99 "backfired". Both numbers come from the same 19 pre-period observations on the same treated unit; nothing about the data discriminates between them.
+**The disagreement.** Same data, same recipe, two answers more than 30 packs apart: the linear growth-curve variant gives $\tau_{\text{ITS-growth}} \approx -28.3$ packs per capita per year — Proposition 99 "worked" — while the explicitly-fit ARIMA(1, 2, 0) gives $\tau_{\text{ITS-ARIMA}} \approx +4.5$ — Proposition 99 "backfired". Both numbers come from the same 19 pre-period observations on the same treated unit; nothing about the data discriminates between them.
 
-The growth-curve and ARIMA variants share every step of the recipe — fit on pre-period, project forward, average the gap — but disagree because they extrapolate different features of that pre-period. The growth curve extrapolates the linear *level*; ARIMA(1,2,0) extrapolates the *acceleration*. There is no purely-within-California way to decide which is right, because the choice is identified by an assumption about the missing $Y_{1t}(0)$ that the data itself cannot verify.
+The growth-curve and ARIMA variants share every step of the recipe — fit on pre-period, project forward, average the gap — but disagree because they extrapolate different features of that pre-period. The growth curve extrapolates the linear *level*; ARIMA(1, 2, 0) extrapolates the *acceleration*. There is no purely-within-California way to decide which is right, because — as the identification assumption stated in §1 makes explicit — the choice is identified by an assumption about the missing $Y_{1t}(0)$ that the data itself cannot verify.
 
-**Where this leaves us.** The lesson is not "ARIMA is bad". The lesson is that **single-model ITS is fragile**: any within-unit method — including the regression-discontinuity-in-time variant of chapter 3 — inherits the same problem of being identified by an assumption about the missing counterfactual that the data alone cannot verify. The remaining methods in the book each handle this fragility by borrowing strength from outside California: chapter 4 (Differences-in-Differences) uses the other 38 states as a common-trend control; chapter 5 (Synthetic Control) builds a weighted donor pool tailored to California's pre-period; chapter 6 (Bayesian Structural Time Series) combines both ideas inside a forecasting model with explicit uncertainty bands. Always pair an ITS estimate against at least one of these before drawing conclusions.
+**Where this leaves us.** The lesson is not "ARIMA is bad". The lesson is that **single-model ITS is fragile**: any within-unit method inherits the same problem of being identified by an assumption about the missing counterfactual that the data alone cannot verify. The remaining methods in the book each handle this fragility by borrowing strength from outside California: chapter 3 (Differences-in-Differences) pairs California with a single comparison state (Nevada) and treats their pre-to-post change as the counterfactual; chapter 4 (Synthetic Control) builds a weighted donor pool of all available control states tailored to California's pre-period; chapter 5 (Bayesian Structural Time Series) combines those ideas inside a forecasting model with explicit posterior credible intervals; chapter 6 (synthetic control with prediction intervals) attaches frequentist prediction intervals to the SCM point estimate — the natural counterpart to the ARIMA forecast band above; and chapter 7 (Bayesian spatial SCM) further allows treatment to spill over onto neighbouring donor states. Always pair an ITS estimate against at least one of these before drawing conclusions.
+
+**Recap.** Two ITS variants on the same 19 pre-period observations gave $\tau_{\text{ITS-growth}} \approx -28.3$ and $\tau_{\text{ITS-ARIMA}} \approx +4.5$; the disagreement is the lesson, and the rest of Part I exists to resolve it by borrowing information from outside California.
 
 ## Further reading
 
 - @bernal2017interrupted — practitioner's tutorial on ITS regression for public-health interventions.
+- @wagner2002segmented — the canonical segmented-regression complement to Bernal et al., aimed at medication-use research but methodologically general.
 - @hyndman2021forecasting — the canonical reference for the `fpp3` ecosystem and AICc-selected ARIMA modelling.

@@ -1,0 +1,416 @@
+---
+title: "Interactive Fixed Effects and Matrix Completion"
+---
+
+## When parallel trends isn't enough
+
+Chapter 8 squeezed every drop of usable signal out of the
+Callaway-Sant'Anna minimum-wage panel under one identifying
+assumption: **parallel trends**. Conditional or unconditional, with
+or without never-treated counties, with or without anticipation
+slack, with Rambachan-Roth bounds on top — the assumption is always
+that, absent treatment, the trajectory of the treated counties would
+have moved *in parallel* with the untreated.
+
+What if it would not have? Counties select into raising the minimum
+wage non-randomly. They are not a random subset of the country in
+the time-varying dimension either: industry mix, demographics, and
+local growth trends all shape both treatment timing and outcome
+paths. Two counties can share an industry-mix-driven trajectory that
+TWFE never absorbs — and so cannot net out.
+
+This chapter relaxes parallel trends in a specific way. We model the
+counterfactual outcome as a **factor structure**:
+
+$$Y_{it}(0) \;=\; \alpha_i + \xi_t + \lambda_i' f_t + \varepsilon_{it}.$$
+
+Each unit $i$ has a loading vector $\lambda_i$; each period a factor
+vector $f_t$. Their interaction $\lambda_i' f_t$ encodes
+time-varying unobserved heterogeneity that no county or year fixed
+effect can absorb. We write the model without observable covariates
+for simplicity, but `fect()` accepts a covariate matrix
+$X_{it}$ — e.g. `lemp ~ D + lpop + lavg_pay` — and chapter 10
+exercises exactly that extension on the same panel.
+
+Two views of the same object give two estimators
+[@liu2024practical]:
+
+- **Interactive Fixed Effects (IFEct)** [@bai2009panel;
+  @xu2017generalized; @liu2024practical] treats
+  $(\alpha, \xi, \Lambda, F)$ as parameters to be estimated on
+  control observations, then imputes $Y_{it}(0)$ on treated cells.
+- **Matrix Completion (MC)** [@athey2021matrix] reframes the same
+  problem as filling missing entries of the implicit $Y(0)$ matrix:
+  mask the treated cells, then complete via nuclear-norm-regularised
+  SVD.
+
+Yiqing Xu's `fect` [@liu2024practical] package implements both with
+a common API and a common counterfactual-plot diagnostic. By
+chapter's end we compare IFEct and MC on the same panel — two
+estimators, two identifying assumptions, one substantive question.
+Chapter 10 then does the deep dive on one specific member of this
+family — generalized synthetic control via the `gsynth` package —
+using the same panel.
+
+## Setup and data
+
+```{r}
+#| label: setup
+#| message: false
+#| warning: false
+library(tidyverse)
+library(fect)
+library(panelView)
+library(patchwork)
+source("R/table_helpers.R")
+
+set.seed(42)
+
+knitr::opts_chunk$set(dev.args = list(bg = "transparent"))
+
+theme_set(
+  theme_minimal(base_size = 12) +
+    theme(
+      plot.background  = element_rect(fill = "transparent", color = NA),
+      panel.background = element_rect(fill = "transparent", color = NA),
+      panel.grid.major = element_line(color = "#94a3b8", linewidth = 0.25),
+      panel.grid.minor = element_line(color = "#94a3b8", linewidth = 0.15),
+      text             = element_text(color = "#94a3b8"),
+      axis.text        = element_text(color = "#94a3b8"),
+      strip.text       = element_text(color = "#94a3b8"),
+      legend.text      = element_text(color = "#94a3b8")
+    )
+)
+```
+
+We work from the same `cs_minwage.rds` panel as chapter 8, but with
+one small adjustment: factor-based estimators need **at least as
+many pre-treatment periods per cohort as the number of factors they
+try to fit** — concretely, identifying $r$ factors on a treated unit
+requires at least $r + 1$ pre-treatment periods for that unit.
+Chapter 8's 2003-2007 `data2` window (see
+`08-staggered-did.qmd:99`) leaves the 2004 cohort with only one
+pre-period (year 2003). To keep that cohort in the IFE sample we
+would need to set `min.T0 = 1` — the user-controlled inclusion
+threshold that drops treated units with fewer pre-periods — which
+in turn caps the identifiable rank at zero for that cohort and
+collapses IFEct back to TWFE. Widening the window to 2001-2007
+gives 2004 three pre-periods (2001-2003), so we can set
+`min.T0 = 2` and let CV search over $r \in \{0, 1, 2\}$. Everything
+else (cohort filter, region drop, treatment indicator) is identical
+to chapter 8.
+
+```{r}
+#| label: data-load
+mw_raw <- readRDS("data/cs_minwage.rds") |> as_tibble()
+
+mw <- mw_raw |>
+  filter(G %in% c(0, 2004, 2006, 2007), region != "1") |>
+  filter(G != 2007, year >= 2001) |>
+  mutate(D = as.integer(year >= G & G != 0))
+
+dim(mw)
+```
+
+```{r}
+#| label: tbl-cohorts
+#| tbl-cap: "Cohorts in the 2001-2007 working panel. $G = 0$ is the never-treated control pool; the two treated cohorts have 3 and 5 pre-treatment years respectively."
+mw |>
+  filter(year == 2001) |>
+  count(G, name = "counties") |>
+  mutate(`Pre-periods` = case_when(
+    G == 0    ~ NA_integer_,
+    G == 2004 ~ 3L,
+    G == 2006 ~ 5L
+  )) |>
+  rename(`Cohort (G)` = G) |>
+  gt_pretty()
+```
+
+The outcome `lemp` (log teen employment; see chapter 8 for full
+data provenance) and the treatment indicator `D` (1 once a county's
+state has raised its minimum wage above the federal floor, 0
+otherwise) line up with chapter 8's definitions.
+
+## Visualising the panel
+
+`panelView` is the natural opener for any FECT workflow. It draws
+units on the vertical axis and time on the horizontal, coloured by
+treatment status, so the staggered-adoption structure of the panel
+is immediate.
+
+```{r}
+#| label: fig-panelview
+#| fig-cap: "Treatment status by county and year. The two horizontal bands of pink are the 2004 and 2006 cohorts; the wide grey band underneath is the never-treated $G = 0$ control pool. The visible step in the pink rows is the staggered adoption that breaks TWFE. All 1,745 counties are shown."
+#| fig-width: 8
+#| fig-height: 6
+#| message: false
+#| warning: false
+panelview(data = as.data.frame(mw), formula = lemp ~ D,
+          index = c("id", "year"),
+          xlab = "Year", ylab = "County",
+          main = "", legendOff = FALSE,
+          display.all = TRUE,
+          theme.bw = TRUE,
+          background = "transparent")
+```
+
+## The factor model of counterfactuals
+
+Both estimators target the same object — the counterfactual matrix
+$Y(0)$ of what each county's log teen employment *would* have been
+absent any minimum-wage increase. Where they differ is in how they
+restrict that matrix.
+
+**IFEct** imposes the explicit factor decomposition $Y_{it}(0) =
+\alpha_i + \xi_t + \lambda_i' f_t + \varepsilon_{it}$, fits
+$(\alpha, \xi, \Lambda, F)$ on the **control** observations only,
+and uses those estimates to impute $Y_{it}(0)$ for treated
+cells. The choice of $r$ — how many factors — is made by
+cross-validation: hold out small blocks of control cells, refit,
+score by MSPE on the held-out cells [@xu2017generalized;
+@liu2024practical].
+
+**MC** does not write the factor model down. It assumes only that
+the matrix of $Y(0)$ outcomes is **approximately low rank**, then
+completes it by minimising a Frobenius-norm fit penalty *plus* a
+nuclear-norm penalty on the singular values. Nuclear-norm
+regularisation is the convex relaxation of "low rank" the same way
+$\ell_1$ is the convex relaxation of "sparse" [@athey2021matrix].
+Concretely, MC solves
+$$\min_{\widehat{Y(0)}} \; \|\,Y_{\mathrm{obs}} - \widehat{Y(0)}\,\|_F^2 \;+\; \eta \, \|\,\widehat{Y(0)}\,\|_*,$$
+where $\|\cdot\|_*$ (the nuclear norm) is the sum of singular
+values. As $\eta \to 0$ the fit interpolates the observed cells; as
+$\eta \to \infty$ all singular values shrink to zero and
+$\widehat{Y(0)}$ collapses to a constant. The penalty weight $\eta$
+(written as `lambda` in the `fect` API and sometimes as
+$\lambda_{\mathrm{MC}}$ in the matrix-completion literature; we use
+$\eta$ in prose to avoid confusion with the unit-level loading
+vector $\lambda_i$ from IFEct) plays the role of $r$ and is again
+chosen by cross-validation.
+
+The key practical implication: both methods bake in
+**unit-specific time trends** automatically, without you having to
+specify which units or which trend shapes. Parallel trends becomes
+a special case (the $r = 0$ corner of IFEct, or the limit
+$\eta \to \infty$ in MC) rather than an assumption.
+
+## Estimating with FECT
+
+::: {.callout-warning appearance="simple"}
+**The short-panel caveat (read first).** With $T = 7$ and 3
+pre-periods on the shorter cohort, the rank/penalty selected by
+cross-validation is borderline-identifiable; we cap $r \le 2$
+deliberately and the *effective* identification ceiling is
+$r \le \min(\text{pre-periods}) - 1 = 1$. On a genuinely short
+panel ($T \le 5$) IFE and MC become numerically delicate, and the
+honest move is to *not* run them rather than to hand-pick a rank.
+The `fect::simdata` panel ships a $T = 30$ example that shows both
+methods working at full strength. Everything in the rest of this
+chapter should be read with this caveat in mind.
+:::
+
+The two fits below cap the rank grid at $r \in \{0, 1, 2\}$. The
+identification rule is that recovering $r$ factors on a treated
+unit requires at least $r + 1$ pre-periods for that unit; with
+`min.T0 = 2` the *effective* ceiling is $r = 1$. We let CV search
+up to $r = 2$ only to verify it does not get fooled into climbing
+past the ceiling. Any $r$ larger than that would be statistical
+fantasy.
+
+::: {.callout-note appearance="simple"}
+**Learning-mode compute.** We set `nboots = 50` here so the chapter
+renders quickly. The bootstrap dominates runtime and only affects
+the *width* of confidence intervals — point estimates and the
+CV-selected rank or penalty are unchanged. For research use, bump
+`nboots` to 500-1000 so the bootstrap distribution of the ATT is
+properly resolved.
+:::
+
+```{r}
+#| label: fit-ife
+#| message: false
+#| warning: false
+out_ife <- fect(
+  lemp ~ D, data = as.data.frame(mw),
+  index    = c("id", "year"),
+  method   = "ife",
+  force    = "two-way",
+  CV       = TRUE,
+  r        = 0:2,
+  min.T0   = 2,
+  cv.nobs  = 2,
+  cv.donut = 0,
+  se       = TRUE,
+  nboots   = 50,
+  parallel = TRUE,
+  seed     = 42
+)
+```
+
+```{r}
+#| label: fit-mc
+#| message: false
+#| warning: false
+out_mc <- fect(
+  lemp ~ D, data = as.data.frame(mw),
+  index    = c("id", "year"),
+  method   = "mc",
+  force    = "two-way",
+  CV       = TRUE,
+  min.T0   = 2,
+  cv.nobs  = 2,
+  cv.donut = 0,
+  se       = TRUE,
+  nboots   = 50,
+  parallel = TRUE,
+  seed     = 42
+)
+```
+
+```{r}
+#| label: tbl-cv
+#| tbl-cap: "Hyperparameters selected by cross-validation. IFEct picks the number of latent factors $r$; MC picks the nuclear-norm penalty weight $\\eta$ (returned by `fect` as `lambda.cv`)."
+tibble(
+  Method            = c("IFEct", "MC"),
+  `CV-selected`     = c(paste0("r = ", unname(out_ife$r.cv)),
+                        sprintf("eta = %.4f", out_mc$lambda.cv))
+) |>
+  gt_pretty()
+```
+
+## Counterfactual paths and the ATT trajectory
+
+The signature FECT figure overlays the observed average outcome on
+treated units against the model-implied $Y(0)$, then plots the gap
+— the ATT path — by event time. A credible factor model should
+track the observed $Y$ closely before treatment and only diverge
+after.
+
+```{r}
+#| label: fig-ife-mc
+#| fig-cap: "Counterfactual trajectories and event-study ATT. Top row: IFEct. Bottom row: MC. Left panels overlay observed average outcome on treated units (solid) with model-implied $Y(0)$ (dashed). Right panels show the implied ATT by event time relative to a county's adoption year, with bootstrap 95% CIs."
+#| fig-width: 9
+#| fig-height: 7
+
+p_ife_ct <- plot(out_ife, type = "counterfactual",
+                 main = "IFEct: observed vs counterfactual",
+                 xlab = "Year", ylab = "Log teen employment")
+p_ife_gap <- plot(out_ife, type = "gap",
+                  main = "IFEct: event-study ATT",
+                  xlab = "Event time", ylab = "ATT")
+p_mc_ct <- plot(out_mc, type = "counterfactual",
+                main = "MC: observed vs counterfactual",
+                xlab = "Year", ylab = "Log teen employment")
+p_mc_gap <- plot(out_mc, type = "gap",
+                 main = "MC: event-study ATT",
+                 xlab = "Event time", ylab = "ATT")
+
+(p_ife_ct + p_ife_gap) / (p_mc_ct + p_mc_gap)
+```
+
+Both estimators reproduce the textbook story: a flat-ish pre-trend
+that breaks downward at event time zero. The MC counterfactual is a
+touch smoother than IFEct's, which is the regularisation doing its
+job.
+
+```{r}
+#| label: tbl-att
+#| tbl-cap: "Average post-treatment ATT under IFEct and MC, with bootstrap standard errors and 95% CIs. The two methods reach the same neighbourhood; CIs are wide because $T = 7$ and `nboots = 50`."
+tibble(
+  Method   = c("IFEct", "MC"),
+  ATT      = c(out_ife$att.avg, out_mc$att.avg),
+  `S.E.`   = c(out_ife$est.avg[1, "S.E."], out_mc$est.avg[1, "S.E."]),
+  `CI lo`  = c(out_ife$est.avg[1, "CI.lower"], out_mc$est.avg[1, "CI.lower"]),
+  `CI hi`  = c(out_ife$est.avg[1, "CI.upper"], out_mc$est.avg[1, "CI.upper"])
+) |>
+  gt_pretty(decimals = 4)
+```
+
+## IFEct and MC compared
+
+A caveat first, then the comparison. On this 7-year window, CV
+selects $r = 0$ for IFEct — meaning IFEct here operationally
+collapses to two-way fixed effects: the factor term $\lambda_i' f_t$
+drops out and the imputation reduces to $\widehat{Y_{it}(0)} =
+\widehat{\alpha}_i + \widehat{\xi}_t$. This is not a bug, it is a
+finding: with $T = 7$ and 3 pre-periods on the shorter cohort, CV
+is conservative and refuses to credit a latent factor it cannot
+validate out-of-sample. MC, by contrast, lands on a small but
+non-zero penalty ($\eta = 0.0007$), so MC retains a regularised
+low-rank deviation from TWFE.
+
+So the empirical contrast on this panel is **not** between an
+explicit factor model and a low-rank completion — it is between
+TWFE-style imputation (IFEct at $r = 0$) and nuclear-norm
+penalised imputation (MC at $\eta = 0.0007$). That two estimators
+that disagree about the identifying assumption — *in principle* an
+explicit linear factor model vs. an approximately low-rank $Y(0)$
+matrix — still point to the same sign and the same order of
+magnitude is meaningful: the qualitative conclusion is robust to
+the relaxation of parallel trends that MC offers, exactly because
+MC's relaxation is small here. The CV-selected hyperparameters are
+not directly comparable (an integer rank vs. a continuous penalty),
+but the counterfactual-path overlay, the ATT trajectory, and the
+numeric ATT in @tbl-att are. When the two methods agree, both
+relaxations of parallel trends are consistent with the same
+conclusion, which is the strongest evidence a short panel design
+can produce.
+
+## Recap
+
+::: {.callout-note appearance="simple"}
+**The methods reconciled.** Two answers to the same question on the
+2001-2007 minimum-wage panel:
+
+- *IFEct*: factor model of $Y(0)$ fit on never-treated, imputed on
+  treated, $r$ chosen by cross-validation. Here CV picks $r = 0$,
+  so IFEct collapses to two-way fixed effects — a finding, not a
+  bug.
+- *Matrix Completion*: low-rank completion of the masked $Y(0)$
+  matrix, nuclear-norm penalty $\eta$ chosen by cross-validation.
+
+Both point downward; both sit in the same neighbourhood; neither is
+uniquely correct. Factor-based estimators *relax* parallel trends
+rather than replace it — the counterfactual-path plot is the visual
+quality check, and a flat pre-treatment overlay is the signal you
+want.
+:::
+
+## Common pitfall
+
+Cranking $r$ up until the in-sample fit looks great. With a panel
+this short, an IFEct with $r$ near $T/2$ will fit the pre-treatment
+cells almost perfectly and produce an absurd counterfactual on the
+treated cells, because it has fitted noise into the loadings.
+Trust the CV-selected rank; the MC analogue is choosing $\eta$
+too small. Both are over-fitting masquerading as identification.
+
+## Further reading
+
+The factor-model formulation traces to @bai2009panel and the IFEct /
+generalised synthetic control reading is @xu2017generalized; the
+matrix-completion view is @athey2021matrix. @liu2024practical pairs
+with the `fect` package — its online companion at
+<https://yiqingxu.org/packages/fect/04-ife-mc.html> is the
+authoritative tutorial. Athey et al.'s own implementation lives in
+the `MCPanel` package
+(<https://github.com/susanathey/MCPanel>) for readers who want to
+compare `fect::mc` against the canonical reference code. Chapter 10
+zooms in on `gsynth`, the IFE estimator implemented in a
+standalone package, on the same Callaway-Sant'Anna panel.
+
+## Exercises
+
+1. Re-fit `out_ife` with `r=0:3` (raising the search ceiling
+   above the theoretical `min.T0` bound) and inspect `out_ife$MSPE`.
+   Does CV ever pick a rank above 0 on this panel? What does that
+   tell you about the data?
+2. Add the two-covariate extension `lemp ~ D + lpop + lavg_pay` to
+   both `fect()` calls, refit, and compare the ATT trajectory and
+   the numeric headline ATT against @tbl-att. Does conditioning on
+   log population and log average pay move the gap plot
+   meaningfully?
+3. Re-fit `out_mc` on a tighter window (`year >= 2002`) so cohort
+   2004 has 2 pre-periods instead of 3. At what window does the MC
+   counterfactual visibly break (sharp pre-trend in the gap plot)?

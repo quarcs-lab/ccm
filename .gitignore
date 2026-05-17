@@ -4,8 +4,16 @@
 /_freeze/
 *.quarto_ipynb
 
+# Quarto/knitr render byproducts left next to chapter sources
+*.knit.md
+*_files/
+*_cache/
+
 # Per-chapter downloadable bundles (built by R/build_chapter_zips.R pre-render hook)
 /downloads/
+
+# Claude Code session state (per-session lock files etc.)
+.claude/
 
 # R / RStudio
 .Rproj.user/

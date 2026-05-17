@@ -35,8 +35,8 @@ run_mcmc_for_posterior <- function(
   N <- ncol(Yc_obs)
   K <- if (is.null(Xc_pre)) 0L else dim(Xc_pre)[3]
 
-  W_use <- row_normalize(W)
-  w_use <- as.numeric(w)
+  W_use <- row_normalize(W_raw)
+  w_use <- as.numeric(w_raw)
   wsum <- sum(w_use)
   if (is.finite(wsum) && wsum > 1e-12) {
     w_use <- w_use / wsum
@@ -50,7 +50,7 @@ run_mcmc_for_posterior <- function(
   }
 
   if (is.null(rho_support)) {
-    bnd <- compute_bnd(W, c_stability = 0.95)
+    bnd <- compute_bnd(W_use, c_stability = 0.95)
     rho_lo <- -bnd
     rho_hi <- bnd
   } else {
@@ -173,8 +173,8 @@ prior_sensitivity <- function(
   req <- c("a0", "b0", "rho_lo", "rho_hi", "step_rho")
   stopifnot(all(req %in% names(grid)))
 
-  W_use <- row_normalize(W)
-  w_use <- as.numeric(w)
+  W_use <- row_normalize(W_raw)
+  w_use <- as.numeric(w_raw)
   wsum <- sum(w_use)
   if (is.finite(wsum) && wsum > 1e-12) {
     w_use <- w_use / wsum
@@ -425,8 +425,8 @@ prior_predictive <- function(
   N <- nrow(W_raw)
   K <- if (is.null(Xc_pre)) 0L else dim(Xc_pre)[3]
 
-  W_use <- row_normalize(W)
-  w_use <- as.numeric(w)
+  W_use <- row_normalize(W_raw)
+  w_use <- as.numeric(w_raw)
   wsum <- sum(w_use)
   if (is.finite(wsum) && wsum > 1e-12) {
     w_use <- w_use / wsum

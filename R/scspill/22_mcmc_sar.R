@@ -40,7 +40,7 @@ sar_gibbs_sampler <- function(
   }
   p <- as.integer(max(0, p_factors))
 
-  out <- sar_full_sampler_cpp(
+  out <- sar_full_sampler_cpp_step2(
     Y0_pre,
     Yc_pre,
     if (K > 0) Xvec else NULL,

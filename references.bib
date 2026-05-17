@@ -73,7 +73,7 @@
 }
 
 @misc{dunford2024tidysynth,
-  title        = {tidysynth --- A tidy implementation of the synthetic control method in {R}},
+  title        = {{tidysynth} --- A tidy implementation of the synthetic control method in {R}},
   author       = {Dunford, Eric},
   year         = {2024},
   howpublished = {GitHub repository},
@@ -83,18 +83,21 @@
 @misc{causalimpact-pkg,
   title        = {{CausalImpact} --- An {R} package for causal inference using {Bayesian} structural time-series models},
   author       = {Brodersen, Kay H. and Hauser, Alain},
+  year         = {2014},
   howpublished = {\url{https://google.github.io/CausalImpact/}}
 }
 
 @misc{fpp3-pkg,
-  title        = {fpp3 --- Forecasting: Principles and Practice (3rd edition) data and {R} package},
+  title        = {{fpp3} --- Forecasting: Principles and Practice (3rd edition) data and {R} package},
   author       = {Hyndman, Rob J. and Athanasopoulos, George},
+  year         = {2020},
   howpublished = {\url{https://cran.r-project.org/package=fpp3}}
 }
 
 @misc{brodersen-causalimpact-talk,
   title        = {Inferring the effect of an event using {CausalImpact}},
   author       = {Brodersen, Kay H.},
+  year         = {2015},
   howpublished = {YouTube talk},
   url          = {https://youtu.be/GTgZfCltMm8}
 }
@@ -120,10 +123,250 @@
   url     = {https://doi.org/10.1093/biomet/asq017}
 }
 
+@article{cattaneo2021prediction,
+  title   = {Prediction intervals for synthetic control methods},
+  author  = {Cattaneo, Matias D. and Feng, Yingjie and Titiunik, Rocio},
+  journal = {Journal of the American Statistical Association},
+  volume  = {116},
+  number  = {536},
+  pages   = {1865--1880},
+  year    = {2021},
+  doi     = {10.1080/01621459.2021.1979561},
+  url     = {https://doi.org/10.1080/01621459.2021.1979561}
+}
+
+@article{cattaneo2025scpi,
+  title   = {{scpi}: Uncertainty quantification for synthetic control methods},
+  author  = {Cattaneo, Matias D. and Feng, Yingjie and Palomba, Filippo and Titiunik, Rocio},
+  journal = {Journal of Statistical Software},
+  volume  = {113},
+  number  = {1},
+  pages   = {1--38},
+  year    = {2025},
+  doi     = {10.18637/jss.v113.i01},
+  url     = {https://doi.org/10.18637/jss.v113.i01}
+}
+
 @book{lesage2009introduction,
   title     = {Introduction to Spatial Econometrics},
   author    = {LeSage, James P. and Pace, R. Kelley},
   publisher = {Chapman \& Hall/CRC},
   year      = {2009},
   url       = {https://www.routledge.com/Introduction-to-Spatial-Econometrics/LeSage-Pace/p/book/9781420064247}
+}
+
+@article{callaway2021difference,
+  title   = {Difference-in-differences with multiple time periods},
+  author  = {Callaway, Brantly and Sant'Anna, Pedro H. C.},
+  journal = {Journal of Econometrics},
+  volume  = {225},
+  number  = {2},
+  pages   = {200--230},
+  year    = {2021},
+  doi     = {10.1016/j.jeconom.2020.12.001},
+  url     = {https://doi.org/10.1016/j.jeconom.2020.12.001}
+}
+
+@article{goodmanbacon2021difference,
+  title   = {Difference-in-differences with variation in treatment timing},
+  author  = {Goodman-Bacon, Andrew},
+  journal = {Journal of Econometrics},
+  volume  = {225},
+  number  = {2},
+  pages   = {254--277},
+  year    = {2021},
+  doi     = {10.1016/j.jeconom.2021.03.014},
+  url     = {https://doi.org/10.1016/j.jeconom.2021.03.014}
+}
+
+@article{sun2021estimating,
+  title   = {Estimating dynamic treatment effects in event studies with heterogeneous treatment effects},
+  author  = {Sun, Liyang and Abraham, Sarah},
+  journal = {Journal of Econometrics},
+  volume  = {225},
+  number  = {2},
+  pages   = {175--199},
+  year    = {2021},
+  doi     = {10.1016/j.jeconom.2020.09.006},
+  url     = {https://doi.org/10.1016/j.jeconom.2020.09.006}
+}
+
+@article{rambachan2023more,
+  title   = {A more credible approach to parallel trends},
+  author  = {Rambachan, Ashesh and Roth, Jonathan},
+  journal = {Review of Economic Studies},
+  volume  = {90},
+  number  = {5},
+  pages   = {2555--2591},
+  year    = {2023},
+  doi     = {10.1093/restud/rdad018},
+  url     = {https://doi.org/10.1093/restud/rdad018}
+}
+
+@article{dechaisemartin2020twoway,
+  title   = {Two-way fixed effects estimators with heterogeneous treatment effects},
+  author  = {de Chaisemartin, Cl{\'e}ment and D'Haultf{\oe}uille, Xavier},
+  journal = {American Economic Review},
+  volume  = {110},
+  number  = {9},
+  pages   = {2964--2996},
+  year    = {2020},
+  doi     = {10.1257/aer.20181169},
+  url     = {https://doi.org/10.1257/aer.20181169}
+}
+
+@incollection{callaway2022handbook,
+  title     = {Difference-in-differences for policy evaluation},
+  author    = {Callaway, Brantly},
+  booktitle = {Handbook of Labor, Human Resources and Population Economics},
+  editor    = {Zimmermann, Klaus F.},
+  publisher = {Springer},
+  address   = {Cham},
+  year      = {2022},
+  pages     = {1--61},
+  doi       = {10.1007/978-3-319-57365-6_352-1},
+  url       = {https://link.springer.com/referenceworkentry/10.1007/978-3-319-57365-6_352-1},
+  note      = {Handbook chapter}
+}
+
+@article{bai2003inferential,
+  title   = {Inferential theory for factor models of large dimensions},
+  author  = {Bai, Jushan},
+  journal = {Econometrica},
+  volume  = {71},
+  number  = {1},
+  pages   = {135--171},
+  year    = {2003},
+  doi     = {10.1111/1468-0262.00392},
+  url     = {https://doi.org/10.1111/1468-0262.00392}
+}
+
+@article{xu2017generalized,
+  title   = {Generalized synthetic control method: Causal inference with interactive fixed effects models},
+  author  = {Xu, Yiqing},
+  journal = {Political Analysis},
+  volume  = {25},
+  number  = {1},
+  pages   = {57--76},
+  year    = {2017},
+  doi     = {10.1017/pan.2016.2},
+  url     = {https://doi.org/10.1017/pan.2016.2}
+}
+
+@article{athey2021matrix,
+  title   = {Matrix completion methods for causal panel data models},
+  author  = {Athey, Susan and Bayati, Mohsen and Doudchenko, Nikolay and Imbens, Guido and Khosravi, Khashayar},
+  journal = {Journal of the American Statistical Association},
+  volume  = {116},
+  number  = {536},
+  pages   = {1716--1730},
+  year    = {2021},
+  doi     = {10.1080/01621459.2021.1891924},
+  url     = {https://doi.org/10.1080/01621459.2021.1891924}
+}
+
+@article{liu2024practical,
+  title   = {A practical guide to counterfactual estimators for causal inference with time-series cross-sectional data},
+  author  = {Liu, Licheng and Wang, Ye and Xu, Yiqing},
+  journal = {American Journal of Political Science},
+  volume  = {68},
+  number  = {1},
+  pages   = {160--176},
+  year    = {2024},
+  doi     = {10.1111/ajps.12723},
+  url     = {https://doi.org/10.1111/ajps.12723}
+}
+
+@article{bai2009panel,
+  title   = {Panel data models with interactive fixed effects},
+  author  = {Bai, Jushan},
+  journal = {Econometrica},
+  volume  = {77},
+  number  = {4},
+  pages   = {1229--1279},
+  year    = {2009},
+  doi     = {10.3982/ECTA6135},
+  url     = {https://doi.org/10.3982/ECTA6135}
+}
+
+@article{cardkrueger1994minimum,
+  title   = {Minimum wages and employment: A case study of the fast-food industry in {New Jersey} and {Pennsylvania}},
+  author  = {Card, David and Krueger, Alan B.},
+  journal = {American Economic Review},
+  volume  = {84},
+  number  = {4},
+  pages   = {772--793},
+  year    = {1994},
+  url     = {https://www.jstor.org/stable/2118030}
+}
+
+@article{bertrand2004how,
+  title   = {How much should we trust differences-in-differences estimates?},
+  author  = {Bertrand, Marianne and Duflo, Esther and Mullainathan, Sendhil},
+  journal = {Quarterly Journal of Economics},
+  volume  = {119},
+  number  = {1},
+  pages   = {249--275},
+  year    = {2004},
+  doi     = {10.1162/003355304772839588},
+  url     = {https://doi.org/10.1162/003355304772839588}
+}
+
+@article{scott2014predicting,
+  title   = {Predicting the present with {Bayesian} structural time series},
+  author  = {Scott, Steven L. and Varian, Hal R.},
+  journal = {International Journal of Mathematical Modelling and Numerical Optimisation},
+  volume  = {5},
+  number  = {1--2},
+  pages   = {4--23},
+  year    = {2014},
+  doi     = {10.1504/IJMMNO.2014.059942},
+  url     = {https://doi.org/10.1504/IJMMNO.2014.059942}
+}
+
+@article{wagner2002segmented,
+  title   = {Segmented regression analysis of interrupted time series studies in medication use research},
+  author  = {Wagner, A. K. and Soumerai, S. B. and Zhang, F. and Ross-Degnan, D.},
+  journal = {Journal of Clinical Pharmacy and Therapeutics},
+  volume  = {27},
+  number  = {4},
+  pages   = {299--309},
+  year    = {2002},
+  doi     = {10.1046/j.1365-2710.2002.00430.x},
+  url     = {https://doi.org/10.1046/j.1365-2710.2002.00430.x}
+}
+
+@article{vanbuuren2011mice,
+  title   = {{mice}: Multivariate Imputation by Chained Equations in {R}},
+  author  = {van Buuren, Stef and Groothuis-Oudshoorn, Karin},
+  journal = {Journal of Statistical Software},
+  volume  = {45},
+  number  = {3},
+  pages   = {1--67},
+  year    = {2011},
+  doi     = {10.18637/jss.v045.i03},
+  url     = {https://doi.org/10.18637/jss.v045.i03}
+}
+
+@article{george1997approaches,
+  title   = {Approaches for {Bayesian} variable selection},
+  author  = {George, Edward I. and McCulloch, Robert E.},
+  journal = {Statistica Sinica},
+  volume  = {7},
+  number  = {2},
+  pages   = {339--373},
+  year    = {1997},
+  url     = {https://www.jstor.org/stable/24306083}
+}
+
+@article{roth2023whats,
+  title   = {What's trending in difference-in-differences? {A} synthesis of the recent econometrics literature},
+  author  = {Roth, Jonathan and Sant'Anna, Pedro H. C. and Bilinski, Alyssa and Poe, John},
+  journal = {Journal of Econometrics},
+  volume  = {235},
+  number  = {2},
+  pages   = {2218--2244},
+  year    = {2023},
+  doi     = {10.1016/j.jeconom.2023.03.008},
+  url     = {https://doi.org/10.1016/j.jeconom.2023.03.008}
 }

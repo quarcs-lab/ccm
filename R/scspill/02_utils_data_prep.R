@@ -1,5 +1,8 @@
 #' Prepare Y matrices from long panel
 #' @keywords internal
+# Unused at present; retained as a tutorial-extension hook for users who want
+# to load a non-Prop 99 panel into the scspill pipeline. Safe to remove if
+# never extended.
 scspill_prep <- function(data, treated_unit, T0) {
   stopifnot(all(c("unit", "time", "y") %in% names(data)))
   d <- data[order(data$time, data$unit), ]

@@ -27,11 +27,14 @@ book:
     - index.qmd
     - 01-introduction.qmd
     - 02-interrupted-time-series.qmd
-    - 03-rd-in-time.qmd
-    - 04-basic-diff-in-diff.qmd
-    - 05-classical-synthetic-control.qmd
-    - 06-structural-bayesian-ts.qmd
+    - 03-basic-diff-in-diff.qmd
+    - 04-classical-synthetic-control.qmd
+    - 05-structural-bayesian-ts.qmd
+    - 06-synthetic-control-prediction-intervals.qmd
     - 07-bayesian-spatial-sc.qmd
+    - 08-staggered-did.qmd
+    - 09-matrix-completion-and-ife.qmd
+    - 10-gsynth.qmd
     - references.qmd
 
 bibliography: references.bib
@@ -61,6 +64,10 @@ format:
     css: custom.css
     mermaid:
       theme: neutral
+    page-footer:
+      left: "© 2025–2026 Carlos Mendez · Source code [MIT](https://github.com/quarcs-lab/ccm/blob/main/LICENSE)-licensed; book text [CC-BY 4.0](https://creativecommons.org/licenses/by/4.0/)."
+      center: "[Comparative Causal Metrics](https://quarcs-lab.github.io/ccm/)"
+      right: "[GitHub](https://github.com/quarcs-lab/ccm)"
     include-after-body:
       text: |
         <script>

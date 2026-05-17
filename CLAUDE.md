@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 A **Quarto book** ("Comparative Causal Metrics") authored in R and published to GitHub Pages. It is not an R package — `DESCRIPTION` exists only as a human-readable dep manifest so RStudio's "Install Dependencies" button works. Do not treat it as CRAN-bound.
 
-The book is **in progress**: all six method chapters (ch. 1 Introduction through ch. 6 Bayesian Structural TS) are drafted with live R chunks against the Proposition 99 dataset. No `eval: false` stubs remain. The preface (`index.qmd`) and a planned cross-method comparison chapter are still to do. See `README.md` for the current status table.
+The book is **in progress**: ten method chapters are drafted with live R, organised in two parts. **Part I (chs. 1–7)** runs the canonical Proposition 99 single-treated-unit case study; **Part II (chs. 8–10)** switches to the Callaway-Sant'Anna minimum-wage county panel for staggered-adoption methods. No `eval: false` stubs remain. The preface (`index.qmd`) is drafted. A planned cross-method comparison chapter is still to do. See `README.md` for the current chapter table.
 
 ## Common commands
 
@@ -20,7 +20,7 @@ renv::restore()                   # sync local library to renv.lock
 # Local authoring
 quarto preview                                       # hot-reload preview in browser
 quarto render --to html                              # default — only output we ship
-quarto render --to html 04-basic-diff-in-diff.qmd    # single-chapter iteration
+quarto render --to html 03-basic-diff-in-diff.qmd    # single-chapter iteration
 
 # Publish HTML (manual, no CI). After any .qmd edit, run these two:
 quarto render --to html
@@ -64,13 +64,14 @@ The `--no-render` flag on `publish` reuses the freshly built `_book/`, so HTML c
 
 ### Per-chapter download bundles
 
-Every `quarto render` triggers the `R/build_chapter_zips.R` pre-render hook (registered under `project: pre-render:` in `_quarto.yml`). The hook rebuilds `downloads/chapter-{01..06}.zip` — self-contained Quarto bundles a reader can unzip and render via `quarto render <chapter>.qmd` with no `renv` and no repo clone. Quarto copies `downloads/` into `_book/downloads/` because it's listed under `project: resources:`. The `downloads/` directory is gitignored — the zips are derived artifacts. The download link appears as the last item inside the **"</> Code" dropdown menu** in the upper-right of each chapter; it is injected at runtime by the JS in `format.html.include-after-body` in `_quarto.yml` for any page whose filename starts with `NN-` (so `index.qmd` and `references.qmd` correctly get nothing). If you add a new content chapter, the only manual step is appending its filename to the `chapters` vector in `R/build_chapter_zips.R` — no per-chapter `.qmd` edit is needed.
+Every `quarto render` triggers the `R/build_chapter_zips.R` pre-render hook (registered under `project: pre-render:` in `_quarto.yml`). The hook rebuilds `downloads/chapter-{01..10}.zip` — self-contained Quarto bundles a reader can unzip and render via `quarto render <chapter>.qmd` with no `renv` and no repo clone. Quarto copies `downloads/` into `_book/downloads/` because it's listed under `project: resources:`. The `downloads/` directory is gitignored — the zips are derived artifacts. The download link appears as the last item inside the **"</> Code" dropdown menu** in the upper-right of each chapter; it is injected at runtime by the JS in `format.html.include-after-body` in `_quarto.yml` for any page whose filename starts with `NN-` (so `index.qmd` and `references.qmd` correctly get nothing). If you add a new content chapter, the only manual step is appending its filename to the `chapters` vector in `R/build_chapter_zips.R` — no per-chapter `.qmd` edit is needed.
 
 ## Dependencies
 
 Pinned in `renv.lock` at **R 4.5.2** with 146 packages. The high-level deps a chapter is likely to use:
 
 - Authoring: `knitr`, `rmarkdown`, `tidyverse`, `scales`, `gt`, `modelsummary`
-- Methods: `fixest` (DiD / two-way FE), `tidysynth` + `Synth` (synthetic control), `CausalImpact` + `bsts` (Bayesian structural TS), `rdrobust` (RD), `segmented` + `nlme` (interrupted TS)
+- Part I (Prop 99): `fpp3` / `forecast` (ITS), `fixest` (basic DiD), `tidysynth` + `Synth` (classical synthetic control), `CausalImpact` + `bsts` (Bayesian structural TS), `scpi` (synthetic control with prediction intervals), `Rcpp` + the bundled `R/scspill/` helpers (Bayesian spatial SCM)
+- Part II (CS minwage panel): `did` + `HonestDiD` (staggered DiD with Rambachan-Roth sensitivity), `fect` + `panelView` (matrix completion and interactive fixed effects), `gsynth` (generalized synthetic control)
 
 If you add a package, install it via `renv::install("pkg")` then `renv::snapshot()` so `renv.lock` updates.

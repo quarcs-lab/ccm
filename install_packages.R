@@ -24,6 +24,7 @@ pkgs <- c(
   "segmented",
   "nlme",
   "rdrobust",
+  "scpi",
   "scales",
   "knitr",
   "rmarkdown",
@@ -33,7 +34,18 @@ pkgs <- c(
   "fpp3",
   "glue",
   "mice",
-  "ranger"
+  "ranger",
+  "gsynth",
+  "panelView",
+  # Part II — staggered DiD, matrix completion, IFE
+  "did",
+  "HonestDiD",
+  "DRDID",
+  "fect",
+  "twfeweights",
+  "BMisc",
+  "pte",
+  "patchwork"
 )
 
 renv::install(pkgs)

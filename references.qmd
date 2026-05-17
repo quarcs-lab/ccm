@@ -1,4 +1,6 @@
 # References {.unnumbered}
 
+The bibliography below collects every in-text citation across the book. Each chapter's "Further reading" section provides curated entry points; this page is the consolidated index, rendered in APA 7 style.
+
 ::: {#refs}
 :::

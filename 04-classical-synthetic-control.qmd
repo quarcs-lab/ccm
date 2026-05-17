@@ -6,7 +6,7 @@ title: "Classical Synthetic Control"
 
 Synthetic Control stops using one control state. Instead, it builds a *weighted combination* of donor states that matches the treated unit's pre-period as closely as possible on a chosen set of predictors. The weighted combination is "synthetic California". The gap between observed California and synthetic California is the estimated effect.
 
-**Why it works where DiD failed.** Difference-in-Differences against Nevada (chapter 4) needed parallel pre-trends with *one* neighbour. Synthetic Control needs parallel pre-trends with a *data-driven blend* of many neighbours. The optimisation does the matching, so the analyst no longer has to pick "the right" control state by hand.
+**Why it works where DiD failed.** Difference-in-Differences against Nevada (chapter 3) needed parallel pre-trends with *one* neighbour. Synthetic Control needs parallel pre-trends with a *data-driven blend* of many neighbours. The optimisation does the matching, so the analyst no longer has to pick "the right" control state by hand.
 
 ## The four-stage tidysynth pipeline
 
@@ -14,10 +14,10 @@ Synthetic Control stops using one control state. Instead, it builds a *weighted 
 %%| label: fig-tidysynth-pipeline
 %%| fig-cap: "The four-stage tidysynth pipeline: declare → predictors → weights → control, with a fifth stage of plot/grab helpers."
 flowchart LR
-    A["1. synthetic_control()<br/>declare treated unit<br/>and intervention time"] --> B["2. generate_predictor()<br/>define matching variables<br/>(one call per time window)"]
-    B --> C["3. generate_weights()<br/>optimise donor weights<br/>(quadratic programming)"]
-    C --> D["4. generate_control()<br/>build synthetic California<br/>and post-period gap series"]
-    D --> E["5. plot_/grab_ helpers<br/>trends, weights,<br/>placebos, MSPE ratio,<br/>Fisher exact p-value"]
+    A["Stage 1<br/>synthetic_control()<br/>declare treated unit<br/>and intervention time"] --> B["Stage 2<br/>generate_predictor()<br/>define matching variables<br/>(one call per time window)"]
+    B --> C["Stage 3<br/>generate_weights()<br/>optimise donor weights<br/>(quadratic programming)"]
+    C --> D["Stage 4<br/>generate_control()<br/>build synthetic California<br/>and post-period gap series"]
+    D --> E["Stage 5<br/>plot_/grab_ helpers<br/>trends, weights,<br/>placebos, MSPE ratio,<br/>Fisher exact p-value"]
 
     style A fill:#6a9bcc,stroke:#cbd5e0,color:#fff
     style B fill:#6a9bcc,stroke:#cbd5e0,color:#fff
@@ -56,6 +56,10 @@ library(tidyverse)
 library(tidysynth)
 source("R/table_helpers.R")
 
+# The tidysynth pipeline used in this chapter is deterministic (the IPOP
+# quadratic-program solver and the placebo refits do not consume RNG), so
+# this seed is set for consistency with other chapters rather than because
+# any chunk below depends on it.
 set.seed(42)
 
 knitr::opts_chunk$set(dev.args = list(bg = "transparent"))
@@ -73,7 +77,7 @@ theme_set(
 )
 ```
 
-**Dataset.** Unlike the ITS, RDD, and DiD chapters — which used only California or only California-plus-Nevada — Synthetic Control uses the **full 39-state × 31-year panel**. The donor pool *is* the point: the other 38 states are the raw material the optimiser will blend into "synthetic California". We don't pre-filter or restrict to a window here; the chapter-2 outcome `cigsale` and the covariates `lnincome`, `retprice`, `age15to24`, `beer` are all in `prop99` and are passed straight into `synthetic_control()` below.
+**Dataset.** Unlike the ITS and DiD chapters — which used only California or only California-plus-Nevada — Synthetic Control uses the **full 39-state × 31-year panel**. The donor pool *is* the point: the other 38 states are the raw material the optimiser will blend into "synthetic California". We don't pre-filter or restrict to a window here; the chapter-2 outcome `cigsale` and the covariates `lnincome`, `retprice`, `age15to24`, `beer` are all in `prop99` and are passed straight into `synthetic_control()` below.
 
 ```{r}
 #| label: data-load
@@ -133,7 +137,10 @@ The optimisation produces two weight vectors that drive the entire fit. Both are
 
 ```{r}
 #| label: tbl-donor-weights
-#| tbl-cap: "Donor unit weights (top 8 states)."
+#| tbl-cap: "Donor unit weights (top 8 states; only the top 5 carry meaningful weight)."
+# We display 8 rows for full transparency, but only the top 5 (Utah,
+# Nevada, Montana, Colorado, Connecticut) absorb essentially all the
+# donor-weight mass - the bottom three rows are effectively zero.
 grab_unit_weights(prop99_syn) |>
   arrange(desc(weight)) |>
   head(8) |>
@@ -154,8 +161,8 @@ grab_predictor_weights(prop99_syn) |>
 
 Two things to notice.
 
-1. **Five states absorb essentially 100% of the donor weight.** Utah, Nevada, Montana, Colorado, Connecticut. Every other state gets effectively zero. California is matched mostly to other Western/sunbelt states with similar age structure and cigarette price levels, plus Connecticut as a smoking-rate counterweight from the east.
-2. **The two earliest cigsale levels dominate the V matrix.** `cigsale_1975` and `cigsale_1980` together get roughly 88% of the predictor weight. The four behavioural and demographic covariates get less than 9% combined. The optimiser has effectively decided: "the best way to predict California's cigarette sales is using *other states' cigarette sales*."
+1. **Five states absorb essentially 100% of the donor weight.** Utah, Nevada, Montana, Colorado, Connecticut. Every other state gets effectively zero. California is matched mostly to other Mountain-West states with similar age structure and cigarette price levels, plus Connecticut as a smoking-rate counterweight from the east.
+2. **The two earliest cigsale levels dominate the V matrix.** `cigsale_1975` and `cigsale_1980` together get roughly 88% of the predictor weight. The four non-lagged covariates (`lnincome`, `retprice`, `age15to24`, `beer`) get less than 9% combined. The optimiser has effectively decided: "the best way to predict California's cigarette sales is using *other states' cigarette sales*."
 
 For a one-line visual of both weight vectors, tidysynth ships a `plot_weights()` helper:
 
@@ -183,8 +190,7 @@ ggplot(predw_df, aes(x = weight, y = variable)) +
   geom_col(fill = "#6a9bcc") +
   geom_text(aes(label = sprintf("%.3f", weight)), hjust = -0.12) +
   scale_x_continuous(expand = expansion(mult = c(0, 0.15))) +
-  labs(x = "V-matrix weight (predictor importance)", y = NULL) +
-  theme_minimal()
+  labs(x = "V-matrix weight (predictor importance)", y = NULL)
 ```
 
 Two readings of the same picture, one practical and one cautionary.
@@ -193,6 +199,12 @@ Two readings of the same picture, one practical and one cautionary.
 - *Cautionary reading.* The V matrix is **not a causal ranking**. It tells you which variables were *useful for matching the treated unit's pre-period*, not which variables *cause* the outcome.
 
 **Common pitfall.** Treating the V matrix as a list of causal drivers. It is a list of *good pre-period predictors for one specific unit*, not a structural model of smoking.
+
+**More pitfalls — what else can go wrong.**
+
+- *Interpolation outside the convex hull.* The simplex constraint forces $\widehat{Y_{1t}(0)}$ to be a *convex combination* of donor outcomes, so any predictor for which California sits outside the range spanned by the donor pool will be implicitly extrapolated. When that happens, the optimiser tends to pile weight onto two or three extreme donors just to span the predictor range — a sign the donor pool is not rich enough. (See @abadie2021using, p. 408.)
+- *Extreme / concentrated weights.* A weight vector that lives on only two or three donors is fragile: it makes the synthetic counterfactual hostage to those donors' idiosyncratic shocks, and a single leave-one-out perturbation can move the ATT noticeably. The robustness checks below — in-time placebo and leave-one-out — are the standard way to surface this fragility.
+- *Donor-pool contamination.* If a "control" state itself experienced a policy shock during the post-period — a cigarette-tax hike, a clean-indoor-air law — then including it biases the synthetic counterfactual *toward* the treated condition and the estimated ATT shrinks toward zero. The Abadie-Diamond-Hainmueller donor pool excludes states that adopted large tobacco-control measures during 1989–2000 precisely for this reason.
 
 ## The estimate
 
@@ -211,13 +223,14 @@ sc_post <- grab_synthetic_control(prop99_syn) |>
 mean(sc_post$dif)
 ```
 
-The Synthetic Control ATT is approximately **$-18.85$ packs/capita** averaged over 1989–2000. This is the book's primary causal estimate and within rounding of the canonical @abadie2010synthetic result.
+The Synthetic Control ATT is approximately **`r sprintf("%.2f", mean(sc_post$dif))` packs/capita** averaged over 1989–2000. This is the book's primary causal estimate and within rounding of the canonical @abadie2010synthetic result.
 
 ```{r}
 #| label: fig-sc-trends
 #| fig-cap: "Synthetic Control: California (observed) vs synthetic California (weighted donor combination)."
 #| fig-width: 8
 #| fig-height: 5
+#| warning: false
 plot_trends(prop99_syn)
 ```
 
@@ -245,6 +258,7 @@ On every variable, *synthetic California* is far closer to California than the u
 #| fig-cap: "Per-year gap between observed California and synthetic California."
 #| fig-width: 8
 #| fig-height: 5
+#| warning: false
 plot_differences(prop99_syn)
 ```
 
@@ -303,10 +317,92 @@ The same ratio plotted as a bar chart makes the rank-1 gap visible at a glance.
 #| fig-cap: "MSPE-ratio bar chart with California highlighted at rank 1 out of 39 units."
 #| fig-width: 8
 #| fig-height: 5
+#| warning: false
 plot_mspe_ratio(prop99_syn)
 ```
 
 The orange bar at the top is California; every blue bar below it is a placebo donor. The gap between California and the second-place state is enormous. That gap is the visual signature of "a real treatment effect that the donor pool does not naturally replicate".
+
+## Robustness: in-time placebo and leave-one-out
+
+The placebo permutation above is the *in-space* robustness check — refit the model treating each donor as if it had been treated, and compare gap trajectories. Two complementary checks round out the canonical ADH (2010) robustness toolkit. The **in-time placebo** asks whether the gap California opens after 1989 is unusual compared to gaps the same pipeline would produce around an arbitrary pre-period date. The **leave-one-out** check asks whether the ATT depends on any single donor — a fragility-detector for the concentrated-weights pitfall flagged above.
+
+### In-time placebo: pretend 1980 was the intervention
+
+Refit the entire pipeline pretending the intervention was 1980 (eight years before the real one), restricting the panel to pre-1989 data so the actual policy can never enter the fit. If the synthetic-control machinery is *not* picking up spurious gaps, the placebo "ATT" between 1981 and 1988 should be near zero.
+
+```{r}
+#| label: fit-syn-intime-placebo
+#| message: false
+#| warning: false
+prop99_intime <- prop99 |>
+  filter(year < 1989) |>
+  synthetic_control(
+    outcome  = cigsale, unit = state, time = year,
+    i_unit   = "California", i_time = 1980,
+    generate_placebos = FALSE
+  ) |>
+  generate_predictor(
+    time_window = 1970:1980,
+    lnincome    = mean(lnincome, na.rm = TRUE),
+    retprice    = mean(retprice, na.rm = TRUE),
+    age15to24   = mean(age15to24, na.rm = TRUE)
+  ) |>
+  generate_predictor(time_window = 1975, cigsale_1975 = cigsale) |>
+  generate_predictor(time_window = 1980, cigsale_1980 = cigsale) |>
+  generate_weights(optimization_window = 1970:1980,
+                   margin_ipop = .02, sigf_ipop = 7, bound_ipop = 6) |>
+  generate_control()
+
+intime_att <- grab_synthetic_control(prop99_intime) |>
+  filter(time_unit > 1980) |>
+  summarise(att = mean(real_y - synth_y)) |>
+  pull(att)
+
+intime_att
+```
+
+The in-time placebo "ATT" over 1981–1988 is about `r round(intime_att, 2)` packs/capita — an order of magnitude smaller than the −18.85 we found at the real intervention date. The pre-1989 series does *not* produce spurious gaps of the size we see post-1989.
+
+### Leave-one-out: drop the highest-weight donor
+
+Utah carries the largest donor weight (≈0.34). If the ATT is driven by Utah-specific noise rather than a real policy effect, dropping Utah and refitting should move the estimate substantially. Refit the pipeline with Utah excluded from the donor pool.
+
+```{r}
+#| label: fit-syn-loo-utah
+#| message: false
+#| warning: false
+prop99_loo <- prop99 |>
+  filter(state != "Utah") |>
+  synthetic_control(
+    outcome  = cigsale, unit = state, time = year,
+    i_unit   = "California", i_time = 1988,
+    generate_placebos = FALSE
+  ) |>
+  generate_predictor(
+    time_window = 1980:1988,
+    lnincome    = mean(lnincome, na.rm = TRUE),
+    retprice    = mean(retprice, na.rm = TRUE),
+    age15to24   = mean(age15to24, na.rm = TRUE)
+  ) |>
+  generate_predictor(time_window = 1984:1988,
+                     beer = mean(beer, na.rm = TRUE)) |>
+  generate_predictor(time_window = 1975, cigsale_1975 = cigsale) |>
+  generate_predictor(time_window = 1980, cigsale_1980 = cigsale) |>
+  generate_predictor(time_window = 1988, cigsale_1988 = cigsale) |>
+  generate_weights(optimization_window = 1970:1988,
+                   margin_ipop = .02, sigf_ipop = 7, bound_ipop = 6) |>
+  generate_control()
+
+loo_att <- grab_synthetic_control(prop99_loo) |>
+  filter(time_unit > 1988) |>
+  summarise(att = mean(real_y - synth_y)) |>
+  pull(att)
+
+loo_att
+```
+
+The leave-one-out ATT (Utah dropped) is approximately `r round(loo_att, 2)` packs/capita — close to the −18.85 baseline. The headline finding does not hinge on any single donor; the remaining four high-weight states (Nevada, Montana, Colorado, Connecticut) span enough of California's pre-period to recover essentially the same synthetic counterfactual on their own. A fuller robustness exercise would iterate this drop over each of the five high-weight donors, but the single-drop check is the diagnostic that matters most in practice — it rules out the "one donor is doing all the work" failure mode.
 
 ## Inspecting the nested tidysynth object
 
@@ -351,14 +447,14 @@ This is the whole point of the nested-tibble design: every step of the optimisat
 | Question | Answer |
 |---|---|
 | What does Synthetic Control estimate? | The ATT on California, 1989–2000 |
-| What is the point estimate? | **$-18.85$ packs/capita per year** |
-| What is "synthetic California"? | A convex combination of five Western/sunbelt states (Utah, Nevada, Montana, Colorado, Connecticut) |
+| What is the point estimate? | **`r sprintf("%.2f", mean(sc_post$dif))` packs/capita per year** |
+| What is "synthetic California"? | A convex combination of four Mountain-West states (Utah, Nevada, Montana, Colorado) plus Connecticut |
 | What predictors did the matching? | Mostly two lagged outcomes — `cigsale_1975` and `cigsale_1980` |
 | How is the matching quality? | Excellent — synthetic and observed California are near-identical through 1988 |
 | What is the inference statistic? | Fisher exact $p \approx 0.026$ (California ranks 1st out of 39 on the MSPE ratio) |
 | What is the design-time pitfall? | Don't read the V matrix as a list of causal drivers — it is a list of *good pre-period predictors* |
 
-Synthetic Control is the book's headline causal estimate, and the placebo / MSPE-ratio diagnostics both confirm that California's post-1989 trajectory is unusual relative to what other states experienced in the same window. In chapter 6 we hand the same donor information to a Bayesian model and ask whether a *credible interval* (a direct probability statement about the effect) tells the same story.
+Synthetic Control is the book's headline causal estimate, and the placebo / MSPE-ratio diagnostics both confirm that California's post-1989 trajectory is unusual relative to what other states experienced in the same window. In chapter 5 we hand the same donor information to a Bayesian model and ask whether a *credible interval* (a direct probability statement about the effect) tells the same story. Chapter 6 then revisits the same donor pool with `scpi`, replacing the Fisher rank-based $p$-value with finite-sample *prediction intervals* that decompose forecast error into in-sample weight uncertainty and out-of-sample post-treatment shocks. Chapter 7 closes the synthetic-control arc by relaxing SUTVA — letting donor sales themselves respond to California's policy through a spatial autoregressive layer — so that the cross-border spillover into Nevada becomes a derived quantity rather than an assumption.
 
 ## Further reading
 
