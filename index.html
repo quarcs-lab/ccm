@@ -8,7 +8,7 @@
 
 <meta name="author" content="Carlos Mendez">
 
-<title>Comparative Causal Metrics</title>
+<title>Staggered Differences-in-Differences</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -56,7 +56,27 @@ div.sourceCode
 @media screen {
 pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
-</style>
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
 <script src="site_libs/quarto-nav/quarto-nav.js"></script>
@@ -110,6 +130,35 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 }</script>
 <style>html{ scroll-behavior: smooth; }</style>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 <link rel="stylesheet" href="custom.css">
 </head>
@@ -421,6 +470,19 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </ul></li>
   <li><a href="#how-to-read-this-book" id="toc-how-to-read-this-book" class="nav-link" data-scroll-target="#how-to-read-this-book">How to read this book</a></li>
   <li><a href="#acknowledgments" id="toc-acknowledgments" class="nav-link" data-scroll-target="#acknowledgments">Acknowledgments</a></li>
+  <li><a href="#when-basic-did-breaks" id="toc-when-basic-did-breaks" class="nav-link" data-scroll-target="#when-basic-did-breaks">When Basic DiD breaks</a></li>
+  <li><a href="#setup-and-data" id="toc-setup-and-data" class="nav-link" data-scroll-target="#setup-and-data">Setup and data</a></li>
+  <li><a href="#the-twfe-baseline" id="toc-the-twfe-baseline" class="nav-link" data-scroll-target="#the-twfe-baseline">The TWFE baseline</a></li>
+  <li><a href="#group-time-atts-the-callaway-santanna-approach" id="toc-group-time-atts-the-callaway-santanna-approach" class="nav-link" data-scroll-target="#group-time-atts-the-callaway-santanna-approach">Group-time ATTs: the Callaway-Sant’Anna approach</a>
+  <ul class="collapse">
+  <li><a href="#aggregation-overall-att-and-event-study" id="toc-aggregation-overall-att-and-event-study" class="nav-link" data-scroll-target="#aggregation-overall-att-and-event-study">Aggregation: overall ATT and event study</a></li>
+  </ul></li>
+  <li><a href="#conditional-parallel-trends" id="toc-conditional-parallel-trends" class="nav-link" data-scroll-target="#conditional-parallel-trends">Conditional parallel trends</a></li>
+  <li><a href="#sensitivity-to-parallel-trends-violations" id="toc-sensitivity-to-parallel-trends-violations" class="nav-link" data-scroll-target="#sensitivity-to-parallel-trends-violations">Sensitivity to parallel-trends violations</a></li>
+  <li><a href="#recap" id="toc-recap" class="nav-link" data-scroll-target="#recap">Recap</a></li>
+  <li><a href="#common-pitfall" id="toc-common-pitfall" class="nav-link" data-scroll-target="#common-pitfall">Common pitfall</a></li>
+  <li><a href="#further-reading" id="toc-further-reading" class="nav-link" data-scroll-target="#further-reading">Further reading</a></li>
+  <li><a href="#exercises" id="toc-exercises" class="nav-link" data-scroll-target="#exercises">Exercises</a></li>
   </ul></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/quarcs-lab/ccm/edit/main/index.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/quarcs-lab/ccm/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
@@ -431,7 +493,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<div class="quarto-title-block"><div><h1 class="title">Comparative Causal Metrics</h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
+<div class="quarto-title-block"><div><h1 class="title">Staggered Differences-in-Differences</h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
 <p class="subtitle lead">An Introduction to Regional Impact Evaluation</p>
 </div>
 
@@ -502,6 +564,280 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <!-- -->
 
+</section>
+<section id="when-basic-did-breaks" class="level2">
+<h2 class="anchored" data-anchor-id="when-basic-did-breaks">When Basic DiD breaks</h2>
+<p>Chapter 3 ran a textbook 2×2 DiD on Proposition 99, with California treated in 1989 and Nevada as the single hand-picked control. The estimate collapsed to roughly <span class="math inline">\(-5.7\)</span> packs per capita and could not be distinguished from zero. The diagnosis there was that Nevada is geographically and culturally adjacent to California and absorbs the same secular forces — so its post-1988 decline soaks up most of what we wanted to attribute to the policy.</p>
+<p>There is a deeper structural problem too. Real policy data rarely has just one treated unit and one clean control unit, both treated at the same instant. States and counties <strong>adopt at different times</strong> — some in 2004, others in 2006, still others never. The natural extension of the chapter 3 model to that setting is <em>two-way fixed effects (TWFE)</em> regression:</p>
+<p><span class="math display">\[y_{it} = \alpha_i + \gamma_t + \beta \cdot \text{post}_{it} + \varepsilon_{it}.\]</span></p>
+<p>For two decades this was the default. We now know it is biased in the presence of staggered adoption: already-treated units silently act as <em>controls</em> for later-treated units, contaminating the contrast. The “DiD coefficient” <span class="math inline">\(\hat\beta\)</span> becomes a weighted average of group-time ATTs with <strong>some negative weights</strong> <span class="citation" data-cites="goodmanbacon2021difference dechaisemartin2020twoway">(<a href="references.html#ref-dechaisemartin2020twoway" role="doc-biblioref">Chaisemartin &amp; D’Haultfœuille, 2020</a>; <a href="references.html#ref-goodmanbacon2021difference" role="doc-biblioref">Goodman-Bacon, 2021</a>)</span>. When treatment effects grow over time — the textbook policy story — those negative weights can flip the sign of <span class="math inline">\(\hat\beta\)</span> relative to any sensible average effect.</p>
+<p>This chapter walks through the modern toolkit for repairing that damage. The methods build on <span class="citation" data-cites="callaway2021difference">Callaway &amp; Sant’Anna (<a href="references.html#ref-callaway2021difference" role="doc-biblioref">2021</a>)</span>: estimate <strong>group-time average treatment effects</strong> <span class="math inline">\(ATT(g, t)\)</span> directly, then aggregate them with weights you can defend. Along the way we look at three companion ideas: the Sun-Abraham interaction-weighted event study <span class="citation" data-cites="sun2021estimating">(<a href="references.html#ref-sun2021estimating" role="doc-biblioref">Sun &amp; Abraham, 2021</a>)</span>, the doubly-robust DiD estimator from <span class="citation" data-cites="callaway2021difference">Callaway &amp; Sant’Anna (<a href="references.html#ref-callaway2021difference" role="doc-biblioref">2021</a>)</span>, and the Rambachan-Roth sensitivity analysis that quantifies how much parallel-trends violation it would take to overturn the conclusion <span class="citation" data-cites="rambachan2023more">(<a href="references.html#ref-rambachan2023more" role="doc-biblioref">Rambachan &amp; Roth, 2023</a>)</span>.</p>
+<p>The dataset is no longer Proposition 99. Staggered DiD requires <strong>variation in treatment timing</strong>, which a single-treated-state panel cannot provide. We switch to the Callaway-Sant’Anna minimum-wage panel: 1,745 US counties × 2003–2007, with cohorts <span class="math inline">\(G \in \{0, 2004,
+2006\}\)</span> indexing the year the county’s state first raised its minimum wage above the federal $5.15/h floor. The outcome is log teen employment.</p>
+</section>
+<section id="setup-and-data" class="level2">
+<h2 class="anchored" data-anchor-id="setup-and-data">Setup and data</h2>
+<pre class="{r}"><code>#| label: setup
+#| message: false
+#| warning: false
+library(tidyverse)
+library(did)
+library(fixest)
+library(HonestDiD)
+source("R/table_helpers.R")
+source("R/honest_did.R")
+
+set.seed(42)
+
+knitr::opts_chunk$set(dev.args = list(bg = "transparent"))
+
+theme_set(
+  theme_minimal(base_size = 12) +
+    theme(
+      plot.background  = element_rect(fill = "transparent", color = NA),
+      panel.background = element_rect(fill = "transparent", color = NA),
+      panel.grid.major = element_line(color = "#94a3b8", linewidth = 0.25),
+      panel.grid.minor = element_line(color = "#94a3b8", linewidth = 0.15),
+      text             = element_text(color = "#94a3b8"),
+      axis.text        = element_text(color = "#94a3b8"),
+      strip.text       = element_text(color = "#94a3b8"),
+      legend.text      = element_text(color = "#94a3b8")
+    )
+)</code></pre>
+<p>The dataset ships as <code>data/cs_minwage.rds</code> in the chapter bundle. We follow the source-post convention of restricting to cohorts <span class="math inline">\(G \in
+\{0, 2004, 2006, 2007\}\)</span>, dropping the Northeast region (<code>region == "1"</code>) for comparability, and then carving out a clean working panel without the late-2007 cohort and starting in 2003.</p>
+<pre class="{r}"><code>#| label: data-load
+mw_raw &lt;- readRDS("data/cs_minwage.rds") |&gt; as_tibble()
+
+# Step 1: drop Northeast and keep cohorts of interest.
+mw &lt;- mw_raw |&gt;
+  filter(G %in% c(0, 2004, 2006, 2007), region != "1")
+
+# Step 2: working sample for the main analysis.
+data2 &lt;- mw |&gt;
+  filter(G != 2007, year &gt;= 2003)
+
+dim(data2)</code></pre>
+<p>The working panel has <code>r nrow(data2)</code> rows on <code>r length(unique(data2$id))</code> counties, balanced across the 2003–2007 window.</p>
+<pre class="{r}"><code>#| label: tbl-cohort-counts
+#| tbl-cap: "Cohort sizes in the working sample. G = 0 is the never-treated control pool; cohorts 2004 and 2006 are the staggered treated groups."
+data2 |&gt;
+  filter(year == 2003) |&gt;
+  count(G, name = "counties") |&gt;
+  rename(`Treatment cohort (G)` = G) |&gt;
+  gt_pretty()</code></pre>
+</section>
+<section id="the-twfe-baseline" class="level2">
+<h2 class="anchored" data-anchor-id="the-twfe-baseline">The TWFE baseline</h2>
+<p>The natural first move is the TWFE regression. The variable <code>post</code> in the dataset is 1 in periods where the county’s state has already raised its minimum wage (i.e., <code>year &gt;= G &amp; G != 0</code>), and 0 otherwise.</p>
+<pre class="{r}"><code>#| label: tbl-twfe
+#| tbl-cap: "Two-way fixed-effects regression. The point estimate suggests minimum-wage increases cut log teen employment by roughly 3.8 percent — but see the discussion below."
+twfe_res &lt;- fixest::feols(lemp ~ post | id + year,
+                          data = data2, cluster = "id")
+ms_pretty(list("TWFE (county + year FE)" = twfe_res),
+          coef_map = c("post" = "Post (any cohort)"),
+          notes    = "SEs clustered at the county level.")</code></pre>
+<p>The TWFE coefficient is roughly <span class="math inline">\(-0.038\)</span>. Read literally, the policy reduced teen employment by 3.8 percent. The next section estimates the same effect with an aggregator that is unbiased under staggered adoption — and gets a substantially larger magnitude. The gap between the two is the contamination problem made concrete.</p>
+</section>
+<section id="group-time-atts-the-callaway-santanna-approach" class="level2">
+<h2 class="anchored" data-anchor-id="group-time-atts-the-callaway-santanna-approach">Group-time ATTs: the Callaway-Sant’Anna approach</h2>
+<p>The fix is to estimate the <em>primitive</em> objects directly. For each cohort <span class="math inline">\(g\)</span> (a year a group of counties was first treated) and each calendar year <span class="math inline">\(t\)</span>, define</p>
+<p><span class="math display">\[ATT(g, t) = \mathbb{E}\!\left[Y_{it}(g) - Y_{it}(\infty) \mid G_i = g\right],\]</span></p>
+<p>the average effect on cohort <span class="math inline">\(g\)</span> in year <span class="math inline">\(t\)</span> relative to its own never-treated potential outcome. <code>did::att_gt()</code> estimates each of these from a clean 2×2 DiD using only cohort <span class="math inline">\(g\)</span> and an appropriate comparison group (here, the never-treated <span class="math inline">\(G = 0\)</span>), so no contamination from already-treated units sneaks in.</p>
+<pre class="{r}"><code>#| label: tbl-attgt
+#| tbl-cap: "Group-time average treatment effects $ATT(g, t)$ for the minimum-wage panel. Cohorts 2004 and 2006, each year 2003 through 2007. Pre-treatment cells should hover near zero if parallel trends holds; post-treatment cells are the effects we want."
+attgt &lt;- did::att_gt(yname = "lemp", idname = "id", gname = "G",
+                     tname = "year", data = data2,
+                     control_group = "nevertreated",
+                     base_period = "universal")
+
+attgt_df &lt;- tibble(
+  Cohort       = attgt$group,
+  Year         = attgt$t,
+  `ATT(g,t)`   = attgt$att,
+  SE           = as.numeric(attgt$se)
+) |&gt;
+  mutate(`Treated?` = ifelse(Year &gt;= Cohort, "post", "pre")) |&gt;
+  arrange(Cohort, Year)
+
+gt_pretty(attgt_df, decimals = 4)</code></pre>
+<section id="aggregation-overall-att-and-event-study" class="level3">
+<h3 class="anchored" data-anchor-id="aggregation-overall-att-and-event-study">Aggregation: overall ATT and event study</h3>
+<p>The 8 cells in <a href="08-staggered-did.html#tbl-attgt" class="quarto-xref">Table&nbsp;<span>8.3</span></a> are the primitives. They are not the headline. Aggregating them produces summaries that are valid in the presence of staggered adoption.</p>
+<p>The <strong>overall ATT</strong> weights each post-treatment <span class="math inline">\(ATT(g, t)\)</span> by the size of cohort <span class="math inline">\(g\)</span>, then averages within cohort and over cohorts. It answers: <em>across treated counties and across the time they had been treated for, what is the average effect?</em></p>
+<pre class="{r}"><code>#| label: tbl-cs-overall
+#| tbl-cap: "Callaway-Sant'Anna overall ATT (sample-weighted aggregation across cohorts). This is the staggered-DiD analogue of chapter 3's single DiD coefficient."
+attO &lt;- did::aggte(attgt, type = "group")
+
+tibble(
+  Estimator             = "Callaway-Sant'Anna overall ATT",
+  `Estimate`            = attO$overall.att,
+  `SE`                  = attO$overall.se,
+  `CI lower`            = attO$overall.att - 1.96 * attO$overall.se,
+  `CI upper`            = attO$overall.att + 1.96 * attO$overall.se
+) |&gt; gt_pretty(decimals = 4)</code></pre>
+<p>The overall ATT is roughly <span class="math inline">\(-0.057\)</span> — almost 50 percent larger in magnitude than the TWFE coefficient. The two estimands answer different questions, but the size of the gap is exactly the contamination problem in operation.</p>
+<p>The <strong>event-study aggregation</strong> averages <span class="math inline">\(ATT(g, t)\)</span> within each event time <span class="math inline">\(e = t - g\)</span>, giving a curve of dynamic effects since treatment.</p>
+<pre class="{r}"><code>#| label: tbl-cs-event
+#| tbl-cap: "Callaway-Sant'Anna event-study aggregation. Event time -1 is the omitted reference period under the universal base."
+attes &lt;- did::aggte(attgt, type = "dynamic")
+
+tibble(
+  `Event time` = attes$egt,
+  `ATT(e)`     = attes$att.egt,
+  SE           = attes$se.egt,
+  `CI lower`   = attes$att.egt - 1.96 * attes$se.egt,
+  `CI upper`   = attes$att.egt + 1.96 * attes$se.egt
+) |&gt; gt_pretty(decimals = 4)</code></pre>
+<pre class="{r}"><code>#| label: fig-cs-event
+#| fig-cap: "Callaway-Sant'Anna event study. The on-impact effect is small; effects accumulate to roughly -0.13 log points by event-time +3 (three years post-treatment)."
+#| fig-width: 8
+#| fig-height: 4.5
+cs_es_df &lt;- tibble(
+  egt   = attes$egt,
+  est   = attes$att.egt,
+  se    = attes$se.egt,
+  phase = ifelse(attes$egt &lt; 0, "Pre", "Post")
+)
+
+ggplot(cs_es_df, aes(x = egt, y = est, color = phase)) +
+  geom_hline(yintercept = 0, color = "#94a3b8", linetype = "dashed") +
+  geom_vline(xintercept = -0.5, color = "#94a3b8", linetype = "dashed") +
+  geom_point(size = 2.8) +
+  geom_errorbar(aes(ymin = est - 1.96 * se, ymax = est + 1.96 * se),
+                width = 0.15) +
+  scale_color_manual(values = c("Pre"  = "#e2e8f0",
+                                "Post" = "#22d3ee")) +
+  labs(x = "Event time (years from first minimum-wage increase)",
+       y = "Effect on log teen employment", color = NULL)</code></pre>
+</section>
+</section>
+<section id="conditional-parallel-trends" class="level2">
+<h2 class="anchored" data-anchor-id="conditional-parallel-trends">Conditional parallel trends</h2>
+<p>Plain DiD assumes parallel trends <em>unconditionally</em>. Conditional DiD allows trends to be parallel only after adjusting for observed covariates that shape the trajectory. In this dataset, log county population and log average county pay are obvious candidates: counties with bigger populations or higher-paying jobs may move on different underlying trajectories whether or not they raise the minimum wage.</p>
+<p><code>did::att_gt()</code> accepts <code>xformla = ~lpop + lavg_pay</code> plus a choice of estimator: <strong>regression adjustment</strong> (impute the counterfactual mean from the never-treated), <strong>inverse probability weighting</strong> (reweight never-treated counties to look like treated ones), or <strong>doubly robust</strong> (the <span class="citation" data-cites="callaway2021difference">Callaway &amp; Sant’Anna (<a href="references.html#ref-callaway2021difference" role="doc-biblioref">2021</a>)</span> default, which is consistent if either the outcome model <em>or</em> the propensity score is correctly specified).</p>
+<pre class="{r}"><code>#| label: tbl-conditional
+#| tbl-cap: "Overall ATT under four identification assumptions: unconditional parallel trends, regression adjustment, inverse probability weighting, and doubly robust. The four point estimates land within roughly one SE of each other, which is reassuring."
+#| message: false
+#| warning: false
+
+cs_reg &lt;- did::att_gt(yname="lemp", tname="year", idname="id", gname="G",
+                      xformla = ~lpop + lavg_pay,
+                      control_group = "nevertreated",
+                      base_period = "universal",
+                      est_method = "reg", data = data2)
+attO_reg &lt;- did::aggte(cs_reg, type = "group")
+
+cs_ipw &lt;- did::att_gt(yname="lemp", tname="year", idname="id", gname="G",
+                      xformla = ~lpop + lavg_pay,
+                      control_group = "nevertreated",
+                      base_period = "universal",
+                      est_method = "ipw", data = data2)
+attO_ipw &lt;- did::aggte(cs_ipw, type = "group")
+
+cs_dr  &lt;- did::att_gt(yname="lemp", tname="year", idname="id", gname="G",
+                      xformla = ~lpop + lavg_pay,
+                      control_group = "nevertreated",
+                      base_period = "universal",
+                      est_method = "dr", data = data2)
+attO_dr  &lt;- did::aggte(cs_dr, type = "group")
+
+tibble(
+  Identification = c("Unconditional parallel trends",
+                     "Conditional · regression adjustment",
+                     "Conditional · IPW",
+                     "Conditional · doubly robust"),
+  Estimate = c(attO$overall.att, attO_reg$overall.att,
+               attO_ipw$overall.att, attO_dr$overall.att),
+  SE       = c(attO$overall.se,  attO_reg$overall.se,
+               attO_ipw$overall.se,  attO_dr$overall.se)
+) |&gt; gt_pretty(decimals = 4)</code></pre>
+<p>The doubly-robust estimate is the most reliable in practice — it recovers a correct ATT if either the trend model or the selection model is right, where the other two require their respective model to be correctly specified.</p>
+</section>
+<section id="sensitivity-to-parallel-trends-violations" class="level2">
+<h2 class="anchored" data-anchor-id="sensitivity-to-parallel-trends-violations">Sensitivity to parallel-trends violations</h2>
+<p>The robustness table only varies <em>design</em> choices; it does not quantify <em>how much</em> parallel trends would have to be violated to overturn the conclusion. <span class="citation" data-cites="rambachan2023more">Rambachan &amp; Roth (<a href="references.html#ref-rambachan2023more" role="doc-biblioref">2023</a>)</span> provide exactly that quantification. The <code>HonestDiD</code> package, paired with a small bridge function in <code>R/honest_did.R</code>, lets us bound the post-treatment effect under the assumption that any unobserved pre-trend violation is at most <span class="math inline">\(\bar M\)</span> times the largest <em>observed</em> pre-trend violation.</p>
+<pre class="{r}"><code>#| label: tbl-honest
+#| tbl-cap: "Robust confidence intervals for the on-impact effect $ATT(e = 0)$ under the relative-magnitude restriction. As $\\bar M$ grows, the CI widens; we report the breakdown point — the $\\bar M$ at which the CI first contains zero."
+#| message: false
+#| warning: false
+
+hd_rm &lt;- honest_did(es      = attes,
+                    e       = 0,
+                    type    = "relative_magnitude",
+                    method  = "C-LF",
+                    Mbarvec = seq(0, 2, by = 0.5))
+
+hd_rm |&gt;
+  transmute(`$\\bar M$` = Mbar,
+            `CI lower`  = lb,
+            `CI upper`  = ub,
+            `Contains 0?` = ifelse(lb &lt;= 0 &amp; 0 &lt;= ub, "yes", "no")) |&gt;
+  gt_pretty(decimals = 4)</code></pre>
+<pre class="{r}"><code>#| label: fig-honest
+#| fig-cap: "HonestDiD sensitivity: as $\\bar M$ grows, the robust 95 percent CI on the on-impact effect widens until it crosses zero. The breakdown $\\bar M$ is roughly 1; effects of the magnitude observed in the data survive any pre-trend violation up to that size."
+#| fig-width: 7.5
+#| fig-height: 4.5
+ggplot(hd_rm, aes(x = Mbar)) +
+  geom_hline(yintercept = 0, color = "#94a3b8", linetype = "dashed") +
+  geom_ribbon(aes(ymin = lb, ymax = ub),
+              fill = "#22d3ee", alpha = 0.2) +
+  geom_line(aes(y = lb), color = "#22d3ee", linewidth = 0.9) +
+  geom_line(aes(y = ub), color = "#22d3ee", linewidth = 0.9) +
+  labs(x = expression(bar(M)),
+       y = "Robust 95% CI on ATT(e = 0)")</code></pre>
+<p>The breakdown point is around <span class="math inline">\(\bar M \approx 1\)</span> — meaning the conclusion that minimum-wage increases reduce on-impact teen employment survives any unobserved pre-trend violation up to roughly the <em>largest observed pre-trend in the data</em>. That is a strong robustness result.</p>
+</section>
+<section id="recap" class="level2">
+<h2 class="anchored" data-anchor-id="recap">Recap</h2>
+<div class="callout callout-style-simple callout-note">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-body-container">
+<p><strong>The methods reconciled.</strong> TWFE on this dataset returned <span class="math inline">\(\hat\beta = -0.038\)</span>. The Callaway-Sant’Anna overall ATT is <span class="math inline">\(-0.057\)</span>. The doubly-robust conditional ATT is <span class="math inline">\(-0.065\)</span>. The event-study trajectory is <span class="math inline">\(\approx -0.024\)</span> on impact, dropping to <span class="math inline">\(\approx -0.13\)</span> by event-time <span class="math inline">\(+3\)</span>. HonestDiD sensitivity puts the breakdown <span class="math inline">\(\bar M\)</span> near 1.0. Four very different estimators tell the same story: <em>minimum-wage increases reduced teen employment in these counties, and the effect grew over time</em>.</p>
+<p>The gap between the TWFE estimate and the modern aggregators is the contamination problem of <span class="citation" data-cites="goodmanbacon2021difference">Goodman-Bacon (<a href="references.html#ref-goodmanbacon2021difference" role="doc-biblioref">2021</a>)</span> made concrete: TWFE silently uses already-treated units as controls for later-treated units, and treatment-effect heterogeneity over time leaks into the coefficient with unintended signs. The Callaway-Sant’Anna aggregator avoids that by estimating the <span class="math inline">\(ATT(g, t)\)</span> primitives directly and weighting them in a defensible way.</p>
+</div>
+</div>
+</div>
+</section>
+<section id="common-pitfall" class="level2">
+<h2 class="anchored" data-anchor-id="common-pitfall">Common pitfall</h2>
+<p>Running TWFE on staggered data and reporting the coefficient as if it were a clean ATT. The bias is mechanical — already-treated units get used as controls for later-treated units, and treatment-effect heterogeneity over time then leaks into the coefficient with unintended signs. <strong>What to do instead.</strong> Estimate the <span class="math inline">\(\{ATT(g, t)\}\)</span> primitives directly with <code>did::att_gt()</code>, look at the cells, and only then aggregate with <code>aggte()</code> using a target that matches the question you actually want to answer. If you must run TWFE for a referee, also report the Callaway-Sant’Anna overall ATT for comparison so the magnitude of the contamination is visible.</p>
+</section>
+<section id="further-reading" class="level2">
+<h2 class="anchored" data-anchor-id="further-reading">Further reading</h2>
+<p>The Callaway-Sant’Anna framework, the Goodman-Bacon decomposition, and the Sun-Abraham interaction-weighted estimator are the three modern reference points for staggered DiD <span class="citation" data-cites="callaway2021difference goodmanbacon2021difference sun2021estimating">(<a href="references.html#ref-callaway2021difference" role="doc-biblioref">Callaway &amp; Sant’Anna, 2021</a>; <a href="references.html#ref-goodmanbacon2021difference" role="doc-biblioref">Goodman-Bacon, 2021</a>; <a href="references.html#ref-sun2021estimating" role="doc-biblioref">Sun &amp; Abraham, 2021</a>)</span>. The <code>did</code> package vignettes (<a href="https://bcallaway11.github.io/did/" class="uri">https://bcallaway11.github.io/did/</a>) are the canonical implementation reference. For sensitivity analysis, the <span class="citation" data-cites="rambachan2023more">Rambachan &amp; Roth (<a href="references.html#ref-rambachan2023more" role="doc-biblioref">2023</a>)</span> paper plus the <code>HonestDiD</code> package documentation cover both the smoothness and relative-magnitude bounds. <span class="citation" data-cites="dechaisemartin2020twoway">Chaisemartin &amp; D’Haultfœuille (<a href="references.html#ref-dechaisemartin2020twoway" role="doc-biblioref">2020</a>)</span> is the parallel critique of TWFE from the <code>DIDmultiplegt</code> perspective. <span class="citation" data-cites="callaway2022handbook">Callaway (<a href="references.html#ref-callaway2022handbook" role="doc-biblioref">2022</a>)</span> is a textbook-level synthesis.</p>
+<p>For a longer R walkthrough that this chapter is adapted from, see the companion post at <a href="https://cmg777.github.io/post/r_did/" class="uri">https://cmg777.github.io/post/r_did/</a>.</p>
+</section>
+<section id="exercises" class="level2">
+<h2 class="anchored" data-anchor-id="exercises">Exercises</h2>
+<ol type="1">
+<li>Re-estimate the overall ATT using <code>control_group = "notyettreated"</code> instead of <code>"nevertreated"</code>. Does the answer change? Explain why the standard error usually <em>shrinks</em> under this alternative.</li>
+<li>Use <code>did::aggte(attgt, type = "calendar")</code> to aggregate by <em>calendar year</em> rather than event time. Which calendar year shows the largest treatment effect, and what substantive story does that suggest?</li>
+<li>Run <code>HonestDiD</code> with <code>type = "smoothness"</code> instead of <code>"relative_magnitude"</code>, supplying <code>Mvec = seq(0, 0.05, by = 0.01)</code>. What does the breakdown <span class="math inline">\(M\)</span> say about the credibility of the parallel-trends assumption in this dataset?</li>
+</ol>
+<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" data-line-spacing="2" role="list" style="display: none">
+<div id="ref-callaway2022handbook" class="csl-entry" role="listitem">
+Callaway, B. (2022). Difference-in-differences for policy evaluation. <em>Handbook of Labor, Human Resources, and Population Economics</em>. <a href="https://link.springer.com/referencework/10.1007/978-3-319-57365-6">https://link.springer.com/referencework/10.1007/978-3-319-57365-6</a>
+</div>
+<div id="ref-callaway2021difference" class="csl-entry" role="listitem">
+Callaway, B., &amp; Sant’Anna, P. H. C. (2021). Difference-in-differences with multiple time periods. <em>Journal of Econometrics</em>, <em>225</em>(2), 200–230. <a href="https://doi.org/10.1016/j.jeconom.2020.12.001">https://doi.org/10.1016/j.jeconom.2020.12.001</a>
+</div>
+<div id="ref-dechaisemartin2020twoway" class="csl-entry" role="listitem">
+Chaisemartin, C. de, &amp; D’Haultfœuille, X. (2020). Two-way fixed effects estimators with heterogeneous treatment effects. <em>American Economic Review</em>, <em>110</em>(9), 2964–2996. <a href="https://doi.org/10.1257/aer.20181169">https://doi.org/10.1257/aer.20181169</a>
+</div>
+<div id="ref-goodmanbacon2021difference" class="csl-entry" role="listitem">
+Goodman-Bacon, A. (2021). Difference-in-differences with variation in treatment timing. <em>Journal of Econometrics</em>, <em>225</em>(2), 254–277. <a href="https://doi.org/10.1016/j.jeconom.2021.03.014">https://doi.org/10.1016/j.jeconom.2021.03.014</a>
+</div>
+<div id="ref-rambachan2023more" class="csl-entry" role="listitem">
+Rambachan, A., &amp; Roth, J. (2023). A more credible approach to parallel trends. <em>Review of Economic Studies</em>, <em>90</em>(5), 2555–2591. <a href="https://doi.org/10.1093/restud/rdad018">https://doi.org/10.1093/restud/rdad018</a>
+</div>
+<div id="ref-sun2021estimating" class="csl-entry" role="listitem">
+Sun, L., &amp; Abraham, S. (2021). Estimating dynamic treatment effects in event studies with heterogeneous treatment effects. <em>Journal of Econometrics</em>, <em>225</em>(2), 175–199. <a href="https://doi.org/10.1016/j.jeconom.2020.09.006">https://doi.org/10.1016/j.jeconom.2020.09.006</a>
+</div>
+</div>
 </section>
 </section>
 
