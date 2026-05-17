@@ -484,6 +484,7 @@ window.Quarto = {
 </header>
 
 
+<p><a href="downloads/chapter-05.zip">⬇ Download this chapter as a self-contained Quarto bundle (.zip)</a></p>
 <section id="the-scm-idea" class="level2" data-number="5.1">
 <h2 data-number="5.1" class="anchored" data-anchor-id="the-scm-idea"><span class="header-section-number">5.1</span> The SCM idea</h2>
 <p>Synthetic Control stops using one control state. Instead, it builds a <em>weighted combination</em> of donor states that matches the treated unit’s pre-period as closely as possible on a chosen set of predictors. The weighted combination is “synthetic California”. The gap between observed California and synthetic California is the estimated effect.</p>
@@ -4567,355 +4568,357 @@ Dunford, E. (2024). <em>Tidysynth — a tidy implementation of the synthetic con
 <span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Classical Synthetic Control"</span></span>
 <span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
 <span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a><span class="fu">## The SCM idea</span></span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="ot">⬇ Download this chapter as a self-contained Quarto bundle (.zip)</span><span class="co">](downloads/chapter-05.zip)</span></span>
 <span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>Synthetic Control stops using one control state. Instead, it builds a *weighted combination* of donor states that matches the treated unit's pre-period as closely as possible on a chosen set of predictors. The weighted combination is "synthetic California". The gap between observed California and synthetic California is the estimated effect.</span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a><span class="fu">## The SCM idea</span></span>
 <span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>**Why it works where DiD failed.** Difference-in-Differences against Nevada (chapter 4) needed parallel pre-trends with *one* neighbour. Synthetic Control needs parallel pre-trends with a *data-driven blend* of many neighbours. The optimisation does the matching, so the analyst no longer has to pick "the right" control state by hand.</span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>Synthetic Control stops using one control state. Instead, it builds a *weighted combination* of donor states that matches the treated unit's pre-period as closely as possible on a chosen set of predictors. The weighted combination is "synthetic California". The gap between observed California and synthetic California is the estimated effect.</span>
 <span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a><span class="fu">## The four-stage tidysynth pipeline</span></span>
+<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a>**Why it works where DiD failed.** Difference-in-Differences against Nevada (chapter 4) needed parallel pre-trends with *one* neighbour. Synthetic Control needs parallel pre-trends with a *data-driven blend* of many neighbours. The optimisation does the matching, so the analyst no longer has to pick "the right" control state by hand.</span>
 <span id="cb24-12"><a href="#cb24-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-15"><a href="#cb24-15" aria-hidden="true" tabindex="-1"></a><span class="in">```{mermaid}</span></span>
-<span id="cb24-16"><a href="#cb24-16" aria-hidden="true" tabindex="-1"></a>%%| label: fig-tidysynth-pipeline</span>
-<span id="cb24-17"><a href="#cb24-17" aria-hidden="true" tabindex="-1"></a>%%| fig-cap: <span class="ot">"</span><span class="st">The four-stage tidysynth pipeline: declare → predictors → weights → control, with a fifth stage of plot/grab helpers.</span><span class="ot">"</span></span>
-<span id="cb24-18"><a href="#cb24-18" aria-hidden="true" tabindex="-1"></a>flowchart LR</span>
-<span id="cb24-19"><a href="#cb24-19" aria-hidden="true" tabindex="-1"></a>    A[<span class="ot">"</span><span class="st">1. synthetic_control()&lt;br/&gt;declare treated unit&lt;br/&gt;and intervention time</span><span class="ot">"</span>] --&gt; B[<span class="ot">"</span><span class="st">2. generate_predictor()&lt;br/&gt;define matching variables&lt;br/&gt;(one call per time window)</span><span class="ot">"</span>]</span>
-<span id="cb24-20"><a href="#cb24-20" aria-hidden="true" tabindex="-1"></a>    B --&gt; C[<span class="ot">"</span><span class="st">3. generate_weights()&lt;br/&gt;optimise donor weights&lt;br/&gt;(quadratic programming)</span><span class="ot">"</span>]</span>
-<span id="cb24-21"><a href="#cb24-21" aria-hidden="true" tabindex="-1"></a>    C --&gt; D[<span class="ot">"</span><span class="st">4. generate_control()&lt;br/&gt;build synthetic California&lt;br/&gt;and post-period gap series</span><span class="ot">"</span>]</span>
-<span id="cb24-22"><a href="#cb24-22" aria-hidden="true" tabindex="-1"></a>    D --&gt; E[<span class="ot">"</span><span class="st">5. plot_/grab_ helpers&lt;br/&gt;trends, weights,&lt;br/&gt;placebos, MSPE ratio,&lt;br/&gt;Fisher exact p-value</span><span class="ot">"</span>]</span>
-<span id="cb24-23"><a href="#cb24-23" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-24"><a href="#cb24-24" aria-hidden="true" tabindex="-1"></a>    style A fill:<span class="co">#6a9bcc,stroke:#cbd5e0,color:#fff</span></span>
-<span id="cb24-25"><a href="#cb24-25" aria-hidden="true" tabindex="-1"></a>    style B fill:<span class="co">#6a9bcc,stroke:#cbd5e0,color:#fff</span></span>
-<span id="cb24-26"><a href="#cb24-26" aria-hidden="true" tabindex="-1"></a>    style C fill:<span class="co">#6a9bcc,stroke:#cbd5e0,color:#fff</span></span>
-<span id="cb24-27"><a href="#cb24-27" aria-hidden="true" tabindex="-1"></a>    style D fill:<span class="co">#d97757,stroke:#cbd5e0,color:#fff</span></span>
-<span id="cb24-28"><a href="#cb24-28" aria-hidden="true" tabindex="-1"></a>    style E fill:<span class="co">#00d4c8,stroke:#cbd5e0,color:#141413</span></span>
-<span id="cb24-29"><a href="#cb24-29" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb24-30"><a href="#cb24-30" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-31"><a href="#cb24-31" aria-hidden="true" tabindex="-1"></a>Stages 1–4 produce the estimate. Stage 5 is a battery of inspection helpers — <span class="in">`plot_trends()`</span>, <span class="in">`plot_differences()`</span>, <span class="in">`plot_weights()`</span>, <span class="in">`plot_placebos()`</span>, <span class="in">`plot_mspe_ratio()`</span>, <span class="in">`grab_unit_weights()`</span>, <span class="in">`grab_predictor_weights()`</span>, <span class="in">`grab_balance_table()`</span>, <span class="in">`grab_significance()`</span> — that turn the fitted object into figures and tables. We use all of them below.</span>
+<span id="cb24-13"><a href="#cb24-13" aria-hidden="true" tabindex="-1"></a><span class="fu">## The four-stage tidysynth pipeline</span></span>
+<span id="cb24-14"><a href="#cb24-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-17"><a href="#cb24-17" aria-hidden="true" tabindex="-1"></a><span class="in">```{mermaid}</span></span>
+<span id="cb24-18"><a href="#cb24-18" aria-hidden="true" tabindex="-1"></a>%%| label: fig-tidysynth-pipeline</span>
+<span id="cb24-19"><a href="#cb24-19" aria-hidden="true" tabindex="-1"></a>%%| fig-cap: <span class="ot">"</span><span class="st">The four-stage tidysynth pipeline: declare → predictors → weights → control, with a fifth stage of plot/grab helpers.</span><span class="ot">"</span></span>
+<span id="cb24-20"><a href="#cb24-20" aria-hidden="true" tabindex="-1"></a>flowchart LR</span>
+<span id="cb24-21"><a href="#cb24-21" aria-hidden="true" tabindex="-1"></a>    A[<span class="ot">"</span><span class="st">1. synthetic_control()&lt;br/&gt;declare treated unit&lt;br/&gt;and intervention time</span><span class="ot">"</span>] --&gt; B[<span class="ot">"</span><span class="st">2. generate_predictor()&lt;br/&gt;define matching variables&lt;br/&gt;(one call per time window)</span><span class="ot">"</span>]</span>
+<span id="cb24-22"><a href="#cb24-22" aria-hidden="true" tabindex="-1"></a>    B --&gt; C[<span class="ot">"</span><span class="st">3. generate_weights()&lt;br/&gt;optimise donor weights&lt;br/&gt;(quadratic programming)</span><span class="ot">"</span>]</span>
+<span id="cb24-23"><a href="#cb24-23" aria-hidden="true" tabindex="-1"></a>    C --&gt; D[<span class="ot">"</span><span class="st">4. generate_control()&lt;br/&gt;build synthetic California&lt;br/&gt;and post-period gap series</span><span class="ot">"</span>]</span>
+<span id="cb24-24"><a href="#cb24-24" aria-hidden="true" tabindex="-1"></a>    D --&gt; E[<span class="ot">"</span><span class="st">5. plot_/grab_ helpers&lt;br/&gt;trends, weights,&lt;br/&gt;placebos, MSPE ratio,&lt;br/&gt;Fisher exact p-value</span><span class="ot">"</span>]</span>
+<span id="cb24-25"><a href="#cb24-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-26"><a href="#cb24-26" aria-hidden="true" tabindex="-1"></a>    style A fill:<span class="co">#6a9bcc,stroke:#cbd5e0,color:#fff</span></span>
+<span id="cb24-27"><a href="#cb24-27" aria-hidden="true" tabindex="-1"></a>    style B fill:<span class="co">#6a9bcc,stroke:#cbd5e0,color:#fff</span></span>
+<span id="cb24-28"><a href="#cb24-28" aria-hidden="true" tabindex="-1"></a>    style C fill:<span class="co">#6a9bcc,stroke:#cbd5e0,color:#fff</span></span>
+<span id="cb24-29"><a href="#cb24-29" aria-hidden="true" tabindex="-1"></a>    style D fill:<span class="co">#d97757,stroke:#cbd5e0,color:#fff</span></span>
+<span id="cb24-30"><a href="#cb24-30" aria-hidden="true" tabindex="-1"></a>    style E fill:<span class="co">#00d4c8,stroke:#cbd5e0,color:#141413</span></span>
+<span id="cb24-31"><a href="#cb24-31" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb24-32"><a href="#cb24-32" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-33"><a href="#cb24-33" aria-hidden="true" tabindex="-1"></a><span class="fu">## The equation</span></span>
+<span id="cb24-33"><a href="#cb24-33" aria-hidden="true" tabindex="-1"></a>Stages 1–4 produce the estimate. Stage 5 is a battery of inspection helpers — <span class="in">`plot_trends()`</span>, <span class="in">`plot_differences()`</span>, <span class="in">`plot_weights()`</span>, <span class="in">`plot_placebos()`</span>, <span class="in">`plot_mspe_ratio()`</span>, <span class="in">`grab_unit_weights()`</span>, <span class="in">`grab_predictor_weights()`</span>, <span class="in">`grab_balance_table()`</span>, <span class="in">`grab_significance()`</span> — that turn the fitted object into figures and tables. We use all of them below.</span>
 <span id="cb24-34"><a href="#cb24-34" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-35"><a href="#cb24-35" aria-hidden="true" tabindex="-1"></a>Let $X_1$ be the vector of $k$ pre-period predictors for the treated unit (California), and let $X_0$ be the $k \times J$ matrix holding the same predictors for the $J = 38$ donor states. The Synthetic Control estimator chooses donor weights $w$ to minimise the (V-weighted) discrepancy between treated and synthetic on the predictors:</span>
+<span id="cb24-35"><a href="#cb24-35" aria-hidden="true" tabindex="-1"></a><span class="fu">## The equation</span></span>
 <span id="cb24-36"><a href="#cb24-36" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-37"><a href="#cb24-37" aria-hidden="true" tabindex="-1"></a>$$w^* \, = \, \arg\min_{w \in \mathcal{W}} \, \big(X_1 - X_0 w\big)^\top V \big(X_1 - X_0 w\big),$$</span>
+<span id="cb24-37"><a href="#cb24-37" aria-hidden="true" tabindex="-1"></a>Let $X_1$ be the vector of $k$ pre-period predictors for the treated unit (California), and let $X_0$ be the $k \times J$ matrix holding the same predictors for the $J = 38$ donor states. The Synthetic Control estimator chooses donor weights $w$ to minimise the (V-weighted) discrepancy between treated and synthetic on the predictors:</span>
 <span id="cb24-38"><a href="#cb24-38" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-39"><a href="#cb24-39" aria-hidden="true" tabindex="-1"></a>subject to</span>
+<span id="cb24-39"><a href="#cb24-39" aria-hidden="true" tabindex="-1"></a>$$w^* \, = \, \arg\min_{w \in \mathcal{W}} \, \big(X_1 - X_0 w\big)^\top V \big(X_1 - X_0 w\big),$$</span>
 <span id="cb24-40"><a href="#cb24-40" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-41"><a href="#cb24-41" aria-hidden="true" tabindex="-1"></a>$$\mathcal{W} = \big<span class="sc">\{</span>w \in \mathbb{R}^J \,:\, w_j \ge 0 \,\, \forall j, \,\, \textstyle\sum_{j=1}^J w_j = 1\big<span class="sc">\}</span>.$$</span>
+<span id="cb24-41"><a href="#cb24-41" aria-hidden="true" tabindex="-1"></a>subject to</span>
 <span id="cb24-42"><a href="#cb24-42" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-43"><a href="#cb24-43" aria-hidden="true" tabindex="-1"></a>The diagonal matrix $V$ holds the **predictor** importance weights — the optimiser can care more about pre-period cigarette sales than about, say, beer consumption (we inspect $V$ below). Once $w^*$ is solved, the synthetic California outcome at any year $t$ is</span>
+<span id="cb24-43"><a href="#cb24-43" aria-hidden="true" tabindex="-1"></a>$$\mathcal{W} = \big<span class="sc">\{</span>w \in \mathbb{R}^J \,:\, w_j \ge 0 \,\, \forall j, \,\, \textstyle\sum_{j=1}^J w_j = 1\big<span class="sc">\}</span>.$$</span>
 <span id="cb24-44"><a href="#cb24-44" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-45"><a href="#cb24-45" aria-hidden="true" tabindex="-1"></a>$$\widehat{Y_{1t}(0)} = \sum_{j=1}^J w_j^* \, Y_{jt},$$</span>
+<span id="cb24-45"><a href="#cb24-45" aria-hidden="true" tabindex="-1"></a>The diagonal matrix $V$ holds the **predictor** importance weights — the optimiser can care more about pre-period cigarette sales than about, say, beer consumption (we inspect $V$ below). Once $w^*$ is solved, the synthetic California outcome at any year $t$ is</span>
 <span id="cb24-46"><a href="#cb24-46" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-47"><a href="#cb24-47" aria-hidden="true" tabindex="-1"></a>and the ATT over 1989–2000 is the mean post-period gap between observed California and that synthetic counterfactual.</span>
+<span id="cb24-47"><a href="#cb24-47" aria-hidden="true" tabindex="-1"></a>$$\widehat{Y_{1t}(0)} = \sum_{j=1}^J w_j^* \, Y_{jt},$$</span>
 <span id="cb24-48"><a href="#cb24-48" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-49"><a href="#cb24-49" aria-hidden="true" tabindex="-1"></a><span class="fu">## Setup and data</span></span>
+<span id="cb24-49"><a href="#cb24-49" aria-hidden="true" tabindex="-1"></a>and the ATT over 1989–2000 is the mean post-period gap between observed California and that synthetic counterfactual.</span>
 <span id="cb24-50"><a href="#cb24-50" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-53"><a href="#cb24-53" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb24-54"><a href="#cb24-54" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: setup</span></span>
-<span id="cb24-55"><a href="#cb24-55" aria-hidden="true" tabindex="-1"></a><span class="co">#| message: false</span></span>
-<span id="cb24-56"><a href="#cb24-56" aria-hidden="true" tabindex="-1"></a><span class="co">#| warning: false</span></span>
-<span id="cb24-57"><a href="#cb24-57" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
-<span id="cb24-58"><a href="#cb24-58" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidysynth)</span>
-<span id="cb24-59"><a href="#cb24-59" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"R/table_helpers.R"</span>)</span>
-<span id="cb24-60"><a href="#cb24-60" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-61"><a href="#cb24-61" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
+<span id="cb24-51"><a href="#cb24-51" aria-hidden="true" tabindex="-1"></a><span class="fu">## Setup and data</span></span>
+<span id="cb24-52"><a href="#cb24-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-55"><a href="#cb24-55" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb24-56"><a href="#cb24-56" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: setup</span></span>
+<span id="cb24-57"><a href="#cb24-57" aria-hidden="true" tabindex="-1"></a><span class="co">#| message: false</span></span>
+<span id="cb24-58"><a href="#cb24-58" aria-hidden="true" tabindex="-1"></a><span class="co">#| warning: false</span></span>
+<span id="cb24-59"><a href="#cb24-59" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb24-60"><a href="#cb24-60" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidysynth)</span>
+<span id="cb24-61"><a href="#cb24-61" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"R/table_helpers.R"</span>)</span>
 <span id="cb24-62"><a href="#cb24-62" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-63"><a href="#cb24-63" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span>opts_chunk<span class="sc">$</span><span class="fu">set</span>(<span class="at">dev.args =</span> <span class="fu">list</span>(<span class="at">bg =</span> <span class="st">"transparent"</span>))</span>
+<span id="cb24-63"><a href="#cb24-63" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
 <span id="cb24-64"><a href="#cb24-64" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-65"><a href="#cb24-65" aria-hidden="true" tabindex="-1"></a><span class="fu">theme_set</span>(</span>
-<span id="cb24-66"><a href="#cb24-66" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">12</span>) <span class="sc">+</span></span>
-<span id="cb24-67"><a href="#cb24-67" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(</span>
-<span id="cb24-68"><a href="#cb24-68" aria-hidden="true" tabindex="-1"></a>      <span class="at">plot.background  =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">"transparent"</span>, <span class="at">color =</span> <span class="cn">NA</span>),</span>
-<span id="cb24-69"><a href="#cb24-69" aria-hidden="true" tabindex="-1"></a>      <span class="at">panel.background =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">"transparent"</span>, <span class="at">color =</span> <span class="cn">NA</span>),</span>
-<span id="cb24-70"><a href="#cb24-70" aria-hidden="true" tabindex="-1"></a>      <span class="at">panel.grid.major =</span> <span class="fu">element_line</span>(<span class="at">color =</span> <span class="st">"#94a3b8"</span>, <span class="at">linewidth =</span> <span class="fl">0.25</span>),</span>
-<span id="cb24-71"><a href="#cb24-71" aria-hidden="true" tabindex="-1"></a>      <span class="at">panel.grid.minor =</span> <span class="fu">element_line</span>(<span class="at">color =</span> <span class="st">"#94a3b8"</span>, <span class="at">linewidth =</span> <span class="fl">0.15</span>),</span>
-<span id="cb24-72"><a href="#cb24-72" aria-hidden="true" tabindex="-1"></a>      <span class="at">text             =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"#94a3b8"</span>),</span>
-<span id="cb24-73"><a href="#cb24-73" aria-hidden="true" tabindex="-1"></a>      <span class="at">axis.text        =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"#94a3b8"</span>)</span>
-<span id="cb24-74"><a href="#cb24-74" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb24-75"><a href="#cb24-75" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb24-76"><a href="#cb24-76" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb24-77"><a href="#cb24-77" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-80"><a href="#cb24-80" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb24-81"><a href="#cb24-81" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: data-load</span></span>
-<span id="cb24-82"><a href="#cb24-82" aria-hidden="true" tabindex="-1"></a>prop99 <span class="ot">&lt;-</span> <span class="fu">read_rds</span>(<span class="st">"data/proposition99.rds"</span>) <span class="sc">|&gt;</span> <span class="fu">as_tibble</span>()</span>
-<span id="cb24-83"><a href="#cb24-83" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb24-84"><a href="#cb24-84" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-85"><a href="#cb24-85" aria-hidden="true" tabindex="-1"></a><span class="fu">## Fit the synthetic-control pipeline</span></span>
+<span id="cb24-65"><a href="#cb24-65" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span>opts_chunk<span class="sc">$</span><span class="fu">set</span>(<span class="at">dev.args =</span> <span class="fu">list</span>(<span class="at">bg =</span> <span class="st">"transparent"</span>))</span>
+<span id="cb24-66"><a href="#cb24-66" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-67"><a href="#cb24-67" aria-hidden="true" tabindex="-1"></a><span class="fu">theme_set</span>(</span>
+<span id="cb24-68"><a href="#cb24-68" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">12</span>) <span class="sc">+</span></span>
+<span id="cb24-69"><a href="#cb24-69" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(</span>
+<span id="cb24-70"><a href="#cb24-70" aria-hidden="true" tabindex="-1"></a>      <span class="at">plot.background  =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">"transparent"</span>, <span class="at">color =</span> <span class="cn">NA</span>),</span>
+<span id="cb24-71"><a href="#cb24-71" aria-hidden="true" tabindex="-1"></a>      <span class="at">panel.background =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">"transparent"</span>, <span class="at">color =</span> <span class="cn">NA</span>),</span>
+<span id="cb24-72"><a href="#cb24-72" aria-hidden="true" tabindex="-1"></a>      <span class="at">panel.grid.major =</span> <span class="fu">element_line</span>(<span class="at">color =</span> <span class="st">"#94a3b8"</span>, <span class="at">linewidth =</span> <span class="fl">0.25</span>),</span>
+<span id="cb24-73"><a href="#cb24-73" aria-hidden="true" tabindex="-1"></a>      <span class="at">panel.grid.minor =</span> <span class="fu">element_line</span>(<span class="at">color =</span> <span class="st">"#94a3b8"</span>, <span class="at">linewidth =</span> <span class="fl">0.15</span>),</span>
+<span id="cb24-74"><a href="#cb24-74" aria-hidden="true" tabindex="-1"></a>      <span class="at">text             =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"#94a3b8"</span>),</span>
+<span id="cb24-75"><a href="#cb24-75" aria-hidden="true" tabindex="-1"></a>      <span class="at">axis.text        =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"#94a3b8"</span>)</span>
+<span id="cb24-76"><a href="#cb24-76" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb24-77"><a href="#cb24-77" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb24-78"><a href="#cb24-78" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb24-79"><a href="#cb24-79" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-82"><a href="#cb24-82" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb24-83"><a href="#cb24-83" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: data-load</span></span>
+<span id="cb24-84"><a href="#cb24-84" aria-hidden="true" tabindex="-1"></a>prop99 <span class="ot">&lt;-</span> <span class="fu">read_rds</span>(<span class="st">"data/proposition99.rds"</span>) <span class="sc">|&gt;</span> <span class="fu">as_tibble</span>()</span>
+<span id="cb24-85"><a href="#cb24-85" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb24-86"><a href="#cb24-86" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-89"><a href="#cb24-89" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb24-90"><a href="#cb24-90" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fit-syn</span></span>
-<span id="cb24-91"><a href="#cb24-91" aria-hidden="true" tabindex="-1"></a><span class="co">#| message: false</span></span>
-<span id="cb24-92"><a href="#cb24-92" aria-hidden="true" tabindex="-1"></a><span class="co">#| warning: false</span></span>
-<span id="cb24-93"><a href="#cb24-93" aria-hidden="true" tabindex="-1"></a>prop99_syn <span class="ot">&lt;-</span> prop99 <span class="sc">|&gt;</span></span>
-<span id="cb24-94"><a href="#cb24-94" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 1. Declare the panel structure: outcome, unit, time, treated unit</span></span>
-<span id="cb24-95"><a href="#cb24-95" aria-hidden="true" tabindex="-1"></a>  <span class="co">#    ("California"), and the last full pre-period year (1988).</span></span>
-<span id="cb24-96"><a href="#cb24-96" aria-hidden="true" tabindex="-1"></a>  <span class="co">#    generate_placebos = TRUE also fits the model treating each donor</span></span>
-<span id="cb24-97"><a href="#cb24-97" aria-hidden="true" tabindex="-1"></a>  <span class="co">#    state as treated, for the permutation test below.</span></span>
-<span id="cb24-98"><a href="#cb24-98" aria-hidden="true" tabindex="-1"></a>  <span class="fu">synthetic_control</span>(</span>
-<span id="cb24-99"><a href="#cb24-99" aria-hidden="true" tabindex="-1"></a>    <span class="at">outcome  =</span> cigsale, <span class="at">unit =</span> state, <span class="at">time =</span> year,</span>
-<span id="cb24-100"><a href="#cb24-100" aria-hidden="true" tabindex="-1"></a>    <span class="at">i_unit   =</span> <span class="st">"California"</span>, <span class="at">i_time =</span> <span class="dv">1988</span>,</span>
-<span id="cb24-101"><a href="#cb24-101" aria-hidden="true" tabindex="-1"></a>    <span class="at">generate_placebos =</span> <span class="cn">TRUE</span></span>
-<span id="cb24-102"><a href="#cb24-102" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
-<span id="cb24-103"><a href="#cb24-103" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 2. Predictors averaged over the full pre-period (1980-1988).</span></span>
-<span id="cb24-104"><a href="#cb24-104" aria-hidden="true" tabindex="-1"></a>  <span class="fu">generate_predictor</span>(</span>
-<span id="cb24-105"><a href="#cb24-105" aria-hidden="true" tabindex="-1"></a>    <span class="at">time_window =</span> <span class="dv">1980</span><span class="sc">:</span><span class="dv">1988</span>,</span>
-<span id="cb24-106"><a href="#cb24-106" aria-hidden="true" tabindex="-1"></a>    <span class="at">lnincome    =</span> <span class="fu">mean</span>(lnincome, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb24-107"><a href="#cb24-107" aria-hidden="true" tabindex="-1"></a>    <span class="at">retprice    =</span> <span class="fu">mean</span>(retprice, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb24-108"><a href="#cb24-108" aria-hidden="true" tabindex="-1"></a>    <span class="at">age15to24   =</span> <span class="fu">mean</span>(age15to24, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb24-109"><a href="#cb24-109" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
-<span id="cb24-110"><a href="#cb24-110" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 2b. beer is sparser, so use a narrower window where data is densest.</span></span>
-<span id="cb24-111"><a href="#cb24-111" aria-hidden="true" tabindex="-1"></a>  <span class="fu">generate_predictor</span>(<span class="at">time_window =</span> <span class="dv">1984</span><span class="sc">:</span><span class="dv">1988</span>,</span>
-<span id="cb24-112"><a href="#cb24-112" aria-hidden="true" tabindex="-1"></a>                     <span class="at">beer =</span> <span class="fu">mean</span>(beer, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)) <span class="sc">|&gt;</span></span>
-<span id="cb24-113"><a href="#cb24-113" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 2c. Three "lagged outcomes" - cigsale at three pre-period dates.</span></span>
-<span id="cb24-114"><a href="#cb24-114" aria-hidden="true" tabindex="-1"></a>  <span class="co">#     These pin synthetic California's pre-period trajectory.</span></span>
-<span id="cb24-115"><a href="#cb24-115" aria-hidden="true" tabindex="-1"></a>  <span class="fu">generate_predictor</span>(<span class="at">time_window =</span> <span class="dv">1975</span>, <span class="at">cigsale_1975 =</span> cigsale) <span class="sc">|&gt;</span></span>
-<span id="cb24-116"><a href="#cb24-116" aria-hidden="true" tabindex="-1"></a>  <span class="fu">generate_predictor</span>(<span class="at">time_window =</span> <span class="dv">1980</span>, <span class="at">cigsale_1980 =</span> cigsale) <span class="sc">|&gt;</span></span>
-<span id="cb24-117"><a href="#cb24-117" aria-hidden="true" tabindex="-1"></a>  <span class="fu">generate_predictor</span>(<span class="at">time_window =</span> <span class="dv">1988</span>, <span class="at">cigsale_1988 =</span> cigsale) <span class="sc">|&gt;</span></span>
-<span id="cb24-118"><a href="#cb24-118" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 3. Solve the constrained QP for donor weights w*. The three IPOP</span></span>
-<span id="cb24-119"><a href="#cb24-119" aria-hidden="true" tabindex="-1"></a>  <span class="co">#    parameters are tuning knobs for the interior-point optimiser.</span></span>
-<span id="cb24-120"><a href="#cb24-120" aria-hidden="true" tabindex="-1"></a>  <span class="fu">generate_weights</span>(<span class="at">optimization_window =</span> <span class="dv">1970</span><span class="sc">:</span><span class="dv">1988</span>,</span>
-<span id="cb24-121"><a href="#cb24-121" aria-hidden="true" tabindex="-1"></a>                   <span class="at">margin_ipop =</span> .<span class="dv">02</span>,</span>
-<span id="cb24-122"><a href="#cb24-122" aria-hidden="true" tabindex="-1"></a>                   <span class="at">sigf_ipop   =</span> <span class="dv">7</span>,</span>
-<span id="cb24-123"><a href="#cb24-123" aria-hidden="true" tabindex="-1"></a>                   <span class="at">bound_ipop  =</span> <span class="dv">6</span>) <span class="sc">|&gt;</span></span>
-<span id="cb24-124"><a href="#cb24-124" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 4. Compute the synthetic California series from w* and donor outcomes.</span></span>
-<span id="cb24-125"><a href="#cb24-125" aria-hidden="true" tabindex="-1"></a>  <span class="fu">generate_control</span>()</span>
-<span id="cb24-126"><a href="#cb24-126" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb24-127"><a href="#cb24-127" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-128"><a href="#cb24-128" aria-hidden="true" tabindex="-1"></a>**Predictor choices.** Seven predictors are passed in. Three are pre-period covariate averages over the full pre-period (<span class="in">`lnincome`</span>, <span class="in">`retprice`</span>, <span class="in">`age15to24`</span> over 1980–1988). One uses a narrower window where data is densest (<span class="in">`beer`</span> over 1984–1988). Three are *lagged outcomes* — cigarette sales themselves at 1975, 1980, and 1988. The lagged outcomes are the most important trick: anchoring the synthetic control on the treated unit's own pre-period *outcome levels* at multiple time points forces the synthetic series to track California's pre-1988 trajectory closely.</span>
+<span id="cb24-87"><a href="#cb24-87" aria-hidden="true" tabindex="-1"></a><span class="fu">## Fit the synthetic-control pipeline</span></span>
+<span id="cb24-88"><a href="#cb24-88" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-91"><a href="#cb24-91" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb24-92"><a href="#cb24-92" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fit-syn</span></span>
+<span id="cb24-93"><a href="#cb24-93" aria-hidden="true" tabindex="-1"></a><span class="co">#| message: false</span></span>
+<span id="cb24-94"><a href="#cb24-94" aria-hidden="true" tabindex="-1"></a><span class="co">#| warning: false</span></span>
+<span id="cb24-95"><a href="#cb24-95" aria-hidden="true" tabindex="-1"></a>prop99_syn <span class="ot">&lt;-</span> prop99 <span class="sc">|&gt;</span></span>
+<span id="cb24-96"><a href="#cb24-96" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 1. Declare the panel structure: outcome, unit, time, treated unit</span></span>
+<span id="cb24-97"><a href="#cb24-97" aria-hidden="true" tabindex="-1"></a>  <span class="co">#    ("California"), and the last full pre-period year (1988).</span></span>
+<span id="cb24-98"><a href="#cb24-98" aria-hidden="true" tabindex="-1"></a>  <span class="co">#    generate_placebos = TRUE also fits the model treating each donor</span></span>
+<span id="cb24-99"><a href="#cb24-99" aria-hidden="true" tabindex="-1"></a>  <span class="co">#    state as treated, for the permutation test below.</span></span>
+<span id="cb24-100"><a href="#cb24-100" aria-hidden="true" tabindex="-1"></a>  <span class="fu">synthetic_control</span>(</span>
+<span id="cb24-101"><a href="#cb24-101" aria-hidden="true" tabindex="-1"></a>    <span class="at">outcome  =</span> cigsale, <span class="at">unit =</span> state, <span class="at">time =</span> year,</span>
+<span id="cb24-102"><a href="#cb24-102" aria-hidden="true" tabindex="-1"></a>    <span class="at">i_unit   =</span> <span class="st">"California"</span>, <span class="at">i_time =</span> <span class="dv">1988</span>,</span>
+<span id="cb24-103"><a href="#cb24-103" aria-hidden="true" tabindex="-1"></a>    <span class="at">generate_placebos =</span> <span class="cn">TRUE</span></span>
+<span id="cb24-104"><a href="#cb24-104" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb24-105"><a href="#cb24-105" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 2. Predictors averaged over the full pre-period (1980-1988).</span></span>
+<span id="cb24-106"><a href="#cb24-106" aria-hidden="true" tabindex="-1"></a>  <span class="fu">generate_predictor</span>(</span>
+<span id="cb24-107"><a href="#cb24-107" aria-hidden="true" tabindex="-1"></a>    <span class="at">time_window =</span> <span class="dv">1980</span><span class="sc">:</span><span class="dv">1988</span>,</span>
+<span id="cb24-108"><a href="#cb24-108" aria-hidden="true" tabindex="-1"></a>    <span class="at">lnincome    =</span> <span class="fu">mean</span>(lnincome, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb24-109"><a href="#cb24-109" aria-hidden="true" tabindex="-1"></a>    <span class="at">retprice    =</span> <span class="fu">mean</span>(retprice, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb24-110"><a href="#cb24-110" aria-hidden="true" tabindex="-1"></a>    <span class="at">age15to24   =</span> <span class="fu">mean</span>(age15to24, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb24-111"><a href="#cb24-111" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb24-112"><a href="#cb24-112" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 2b. beer is sparser, so use a narrower window where data is densest.</span></span>
+<span id="cb24-113"><a href="#cb24-113" aria-hidden="true" tabindex="-1"></a>  <span class="fu">generate_predictor</span>(<span class="at">time_window =</span> <span class="dv">1984</span><span class="sc">:</span><span class="dv">1988</span>,</span>
+<span id="cb24-114"><a href="#cb24-114" aria-hidden="true" tabindex="-1"></a>                     <span class="at">beer =</span> <span class="fu">mean</span>(beer, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb24-115"><a href="#cb24-115" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 2c. Three "lagged outcomes" - cigsale at three pre-period dates.</span></span>
+<span id="cb24-116"><a href="#cb24-116" aria-hidden="true" tabindex="-1"></a>  <span class="co">#     These pin synthetic California's pre-period trajectory.</span></span>
+<span id="cb24-117"><a href="#cb24-117" aria-hidden="true" tabindex="-1"></a>  <span class="fu">generate_predictor</span>(<span class="at">time_window =</span> <span class="dv">1975</span>, <span class="at">cigsale_1975 =</span> cigsale) <span class="sc">|&gt;</span></span>
+<span id="cb24-118"><a href="#cb24-118" aria-hidden="true" tabindex="-1"></a>  <span class="fu">generate_predictor</span>(<span class="at">time_window =</span> <span class="dv">1980</span>, <span class="at">cigsale_1980 =</span> cigsale) <span class="sc">|&gt;</span></span>
+<span id="cb24-119"><a href="#cb24-119" aria-hidden="true" tabindex="-1"></a>  <span class="fu">generate_predictor</span>(<span class="at">time_window =</span> <span class="dv">1988</span>, <span class="at">cigsale_1988 =</span> cigsale) <span class="sc">|&gt;</span></span>
+<span id="cb24-120"><a href="#cb24-120" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 3. Solve the constrained QP for donor weights w*. The three IPOP</span></span>
+<span id="cb24-121"><a href="#cb24-121" aria-hidden="true" tabindex="-1"></a>  <span class="co">#    parameters are tuning knobs for the interior-point optimiser.</span></span>
+<span id="cb24-122"><a href="#cb24-122" aria-hidden="true" tabindex="-1"></a>  <span class="fu">generate_weights</span>(<span class="at">optimization_window =</span> <span class="dv">1970</span><span class="sc">:</span><span class="dv">1988</span>,</span>
+<span id="cb24-123"><a href="#cb24-123" aria-hidden="true" tabindex="-1"></a>                   <span class="at">margin_ipop =</span> .<span class="dv">02</span>,</span>
+<span id="cb24-124"><a href="#cb24-124" aria-hidden="true" tabindex="-1"></a>                   <span class="at">sigf_ipop   =</span> <span class="dv">7</span>,</span>
+<span id="cb24-125"><a href="#cb24-125" aria-hidden="true" tabindex="-1"></a>                   <span class="at">bound_ipop  =</span> <span class="dv">6</span>) <span class="sc">|&gt;</span></span>
+<span id="cb24-126"><a href="#cb24-126" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 4. Compute the synthetic California series from w* and donor outcomes.</span></span>
+<span id="cb24-127"><a href="#cb24-127" aria-hidden="true" tabindex="-1"></a>  <span class="fu">generate_control</span>()</span>
+<span id="cb24-128"><a href="#cb24-128" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb24-129"><a href="#cb24-129" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-130"><a href="#cb24-130" aria-hidden="true" tabindex="-1"></a><span class="fu">## Donor weights and predictor weights</span></span>
+<span id="cb24-130"><a href="#cb24-130" aria-hidden="true" tabindex="-1"></a>**Predictor choices.** Seven predictors are passed in. Three are pre-period covariate averages over the full pre-period (<span class="in">`lnincome`</span>, <span class="in">`retprice`</span>, <span class="in">`age15to24`</span> over 1980–1988). One uses a narrower window where data is densest (<span class="in">`beer`</span> over 1984–1988). Three are *lagged outcomes* — cigarette sales themselves at 1975, 1980, and 1988. The lagged outcomes are the most important trick: anchoring the synthetic control on the treated unit's own pre-period *outcome levels* at multiple time points forces the synthetic series to track California's pre-1988 trajectory closely.</span>
 <span id="cb24-131"><a href="#cb24-131" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-132"><a href="#cb24-132" aria-hidden="true" tabindex="-1"></a>The optimisation produces two weight vectors that drive the entire fit. Both are extractable as tidy tables.</span>
+<span id="cb24-132"><a href="#cb24-132" aria-hidden="true" tabindex="-1"></a><span class="fu">## Donor weights and predictor weights</span></span>
 <span id="cb24-133"><a href="#cb24-133" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-136"><a href="#cb24-136" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb24-137"><a href="#cb24-137" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: tbl-donor-weights</span></span>
-<span id="cb24-138"><a href="#cb24-138" aria-hidden="true" tabindex="-1"></a><span class="co">#| tbl-cap: "Donor unit weights (top 8 states)."</span></span>
-<span id="cb24-139"><a href="#cb24-139" aria-hidden="true" tabindex="-1"></a><span class="fu">grab_unit_weights</span>(prop99_syn) <span class="sc">|&gt;</span></span>
-<span id="cb24-140"><a href="#cb24-140" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(weight)) <span class="sc">|&gt;</span></span>
-<span id="cb24-141"><a href="#cb24-141" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>(<span class="dv">8</span>) <span class="sc">|&gt;</span></span>
-<span id="cb24-142"><a href="#cb24-142" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gt_pretty</span>(<span class="at">decimals =</span> <span class="dv">3</span>) <span class="sc">|&gt;</span></span>
-<span id="cb24-143"><a href="#cb24-143" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cols_label</span>(<span class="at">unit =</span> <span class="st">"Donor state"</span>, <span class="at">weight =</span> <span class="st">"Weight"</span>)</span>
-<span id="cb24-144"><a href="#cb24-144" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb24-145"><a href="#cb24-145" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-148"><a href="#cb24-148" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb24-149"><a href="#cb24-149" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: tbl-predictor-weights</span></span>
-<span id="cb24-150"><a href="#cb24-150" aria-hidden="true" tabindex="-1"></a><span class="co">#| tbl-cap: "Predictor (V-matrix) weights."</span></span>
-<span id="cb24-151"><a href="#cb24-151" aria-hidden="true" tabindex="-1"></a><span class="fu">grab_predictor_weights</span>(prop99_syn) <span class="sc">|&gt;</span></span>
-<span id="cb24-152"><a href="#cb24-152" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(weight)) <span class="sc">|&gt;</span></span>
-<span id="cb24-153"><a href="#cb24-153" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gt_pretty</span>(<span class="at">decimals =</span> <span class="dv">3</span>) <span class="sc">|&gt;</span></span>
-<span id="cb24-154"><a href="#cb24-154" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cols_label</span>(<span class="at">variable =</span> <span class="st">"Predictor"</span>, <span class="at">weight =</span> <span class="st">"V-matrix weight"</span>)</span>
-<span id="cb24-155"><a href="#cb24-155" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb24-156"><a href="#cb24-156" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-157"><a href="#cb24-157" aria-hidden="true" tabindex="-1"></a>Two things to notice.</span>
+<span id="cb24-134"><a href="#cb24-134" aria-hidden="true" tabindex="-1"></a>The optimisation produces two weight vectors that drive the entire fit. Both are extractable as tidy tables.</span>
+<span id="cb24-135"><a href="#cb24-135" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-138"><a href="#cb24-138" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb24-139"><a href="#cb24-139" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: tbl-donor-weights</span></span>
+<span id="cb24-140"><a href="#cb24-140" aria-hidden="true" tabindex="-1"></a><span class="co">#| tbl-cap: "Donor unit weights (top 8 states)."</span></span>
+<span id="cb24-141"><a href="#cb24-141" aria-hidden="true" tabindex="-1"></a><span class="fu">grab_unit_weights</span>(prop99_syn) <span class="sc">|&gt;</span></span>
+<span id="cb24-142"><a href="#cb24-142" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(weight)) <span class="sc">|&gt;</span></span>
+<span id="cb24-143"><a href="#cb24-143" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>(<span class="dv">8</span>) <span class="sc">|&gt;</span></span>
+<span id="cb24-144"><a href="#cb24-144" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gt_pretty</span>(<span class="at">decimals =</span> <span class="dv">3</span>) <span class="sc">|&gt;</span></span>
+<span id="cb24-145"><a href="#cb24-145" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cols_label</span>(<span class="at">unit =</span> <span class="st">"Donor state"</span>, <span class="at">weight =</span> <span class="st">"Weight"</span>)</span>
+<span id="cb24-146"><a href="#cb24-146" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb24-147"><a href="#cb24-147" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-150"><a href="#cb24-150" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb24-151"><a href="#cb24-151" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: tbl-predictor-weights</span></span>
+<span id="cb24-152"><a href="#cb24-152" aria-hidden="true" tabindex="-1"></a><span class="co">#| tbl-cap: "Predictor (V-matrix) weights."</span></span>
+<span id="cb24-153"><a href="#cb24-153" aria-hidden="true" tabindex="-1"></a><span class="fu">grab_predictor_weights</span>(prop99_syn) <span class="sc">|&gt;</span></span>
+<span id="cb24-154"><a href="#cb24-154" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(weight)) <span class="sc">|&gt;</span></span>
+<span id="cb24-155"><a href="#cb24-155" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gt_pretty</span>(<span class="at">decimals =</span> <span class="dv">3</span>) <span class="sc">|&gt;</span></span>
+<span id="cb24-156"><a href="#cb24-156" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cols_label</span>(<span class="at">variable =</span> <span class="st">"Predictor"</span>, <span class="at">weight =</span> <span class="st">"V-matrix weight"</span>)</span>
+<span id="cb24-157"><a href="#cb24-157" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb24-158"><a href="#cb24-158" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-159"><a href="#cb24-159" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>**Five states absorb essentially 100% of the donor weight.** Utah, Nevada, Montana, Colorado, Connecticut. Every other state gets effectively zero. California is matched mostly to other Western/sunbelt states with similar age structure and cigarette price levels, plus Connecticut as a smoking-rate counterweight from the east.</span>
-<span id="cb24-160"><a href="#cb24-160" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>**The two earliest cigsale levels dominate the V matrix.** <span class="in">`cigsale_1975`</span> and <span class="in">`cigsale_1980`</span> together get roughly 88% of the predictor weight. The four behavioural and demographic covariates get less than 9% combined. The optimiser has effectively decided: "the best way to predict California's cigarette sales is using *other states' cigarette sales*."</span>
-<span id="cb24-161"><a href="#cb24-161" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-162"><a href="#cb24-162" aria-hidden="true" tabindex="-1"></a>For a one-line visual of both weight vectors, tidysynth ships a <span class="in">`plot_weights()`</span> helper:</span>
+<span id="cb24-159"><a href="#cb24-159" aria-hidden="true" tabindex="-1"></a>Two things to notice.</span>
+<span id="cb24-160"><a href="#cb24-160" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-161"><a href="#cb24-161" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>**Five states absorb essentially 100% of the donor weight.** Utah, Nevada, Montana, Colorado, Connecticut. Every other state gets effectively zero. California is matched mostly to other Western/sunbelt states with similar age structure and cigarette price levels, plus Connecticut as a smoking-rate counterweight from the east.</span>
+<span id="cb24-162"><a href="#cb24-162" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>**The two earliest cigsale levels dominate the V matrix.** <span class="in">`cigsale_1975`</span> and <span class="in">`cigsale_1980`</span> together get roughly 88% of the predictor weight. The four behavioural and demographic covariates get less than 9% combined. The optimiser has effectively decided: "the best way to predict California's cigarette sales is using *other states' cigarette sales*."</span>
 <span id="cb24-163"><a href="#cb24-163" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-166"><a href="#cb24-166" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb24-167"><a href="#cb24-167" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-sc-weights</span></span>
-<span id="cb24-168"><a href="#cb24-168" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Donor unit weights (left) and predictor V-matrix weights (right) from tidysynth."</span></span>
-<span id="cb24-169"><a href="#cb24-169" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-width: 9</span></span>
-<span id="cb24-170"><a href="#cb24-170" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-height: 5</span></span>
-<span id="cb24-171"><a href="#cb24-171" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_weights</span>(prop99_syn)</span>
-<span id="cb24-172"><a href="#cb24-172" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb24-173"><a href="#cb24-173" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-174"><a href="#cb24-174" aria-hidden="true" tabindex="-1"></a><span class="fu">### A closer look at the V matrix</span></span>
+<span id="cb24-164"><a href="#cb24-164" aria-hidden="true" tabindex="-1"></a>For a one-line visual of both weight vectors, tidysynth ships a <span class="in">`plot_weights()`</span> helper:</span>
+<span id="cb24-165"><a href="#cb24-165" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-168"><a href="#cb24-168" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb24-169"><a href="#cb24-169" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-sc-weights</span></span>
+<span id="cb24-170"><a href="#cb24-170" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Donor unit weights (left) and predictor V-matrix weights (right) from tidysynth."</span></span>
+<span id="cb24-171"><a href="#cb24-171" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-width: 9</span></span>
+<span id="cb24-172"><a href="#cb24-172" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-height: 5</span></span>
+<span id="cb24-173"><a href="#cb24-173" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_weights</span>(prop99_syn)</span>
+<span id="cb24-174"><a href="#cb24-174" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb24-175"><a href="#cb24-175" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-176"><a href="#cb24-176" aria-hidden="true" tabindex="-1"></a>The combined <span class="in">`plot_weights()`</span> view is convenient, but the V matrix deserves a stand-alone chart because it answers a different question than the donor weights. Donor weights say *which states* mimic California; the V matrix says *which variables* the optimiser used to decide what "mimics" means.</span>
+<span id="cb24-176"><a href="#cb24-176" aria-hidden="true" tabindex="-1"></a><span class="fu">### A closer look at the V matrix</span></span>
 <span id="cb24-177"><a href="#cb24-177" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-180"><a href="#cb24-180" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb24-181"><a href="#cb24-181" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-sc-predictor-weights</span></span>
-<span id="cb24-182"><a href="#cb24-182" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "V matrix: cigsale_1975 and cigsale_1980 dominate; behavioural covariates get nearly zero weight."</span></span>
-<span id="cb24-183"><a href="#cb24-183" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-width: 8</span></span>
-<span id="cb24-184"><a href="#cb24-184" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-height: 4</span></span>
-<span id="cb24-185"><a href="#cb24-185" aria-hidden="true" tabindex="-1"></a>predw_df <span class="ot">&lt;-</span> <span class="fu">grab_predictor_weights</span>(prop99_syn) <span class="sc">|&gt;</span></span>
-<span id="cb24-186"><a href="#cb24-186" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">variable =</span> <span class="fu">fct_reorder</span>(variable, weight))</span>
-<span id="cb24-187"><a href="#cb24-187" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-188"><a href="#cb24-188" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(predw_df, <span class="fu">aes</span>(<span class="at">x =</span> weight, <span class="at">y =</span> variable)) <span class="sc">+</span></span>
-<span id="cb24-189"><a href="#cb24-189" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">fill =</span> <span class="st">"#6a9bcc"</span>) <span class="sc">+</span></span>
-<span id="cb24-190"><a href="#cb24-190" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">label =</span> <span class="fu">sprintf</span>(<span class="st">"%.3f"</span>, weight)), <span class="at">hjust =</span> <span class="sc">-</span><span class="fl">0.12</span>) <span class="sc">+</span></span>
-<span id="cb24-191"><a href="#cb24-191" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">expand =</span> <span class="fu">expansion</span>(<span class="at">mult =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="fl">0.15</span>))) <span class="sc">+</span></span>
-<span id="cb24-192"><a href="#cb24-192" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"V-matrix weight (predictor importance)"</span>, <span class="at">y =</span> <span class="cn">NULL</span>) <span class="sc">+</span></span>
-<span id="cb24-193"><a href="#cb24-193" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span>
-<span id="cb24-194"><a href="#cb24-194" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb24-195"><a href="#cb24-195" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-196"><a href="#cb24-196" aria-hidden="true" tabindex="-1"></a>Two readings of the same picture, one practical and one cautionary.</span>
+<span id="cb24-178"><a href="#cb24-178" aria-hidden="true" tabindex="-1"></a>The combined <span class="in">`plot_weights()`</span> view is convenient, but the V matrix deserves a stand-alone chart because it answers a different question than the donor weights. Donor weights say *which states* mimic California; the V matrix says *which variables* the optimiser used to decide what "mimics" means.</span>
+<span id="cb24-179"><a href="#cb24-179" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-182"><a href="#cb24-182" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb24-183"><a href="#cb24-183" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-sc-predictor-weights</span></span>
+<span id="cb24-184"><a href="#cb24-184" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "V matrix: cigsale_1975 and cigsale_1980 dominate; behavioural covariates get nearly zero weight."</span></span>
+<span id="cb24-185"><a href="#cb24-185" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-width: 8</span></span>
+<span id="cb24-186"><a href="#cb24-186" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-height: 4</span></span>
+<span id="cb24-187"><a href="#cb24-187" aria-hidden="true" tabindex="-1"></a>predw_df <span class="ot">&lt;-</span> <span class="fu">grab_predictor_weights</span>(prop99_syn) <span class="sc">|&gt;</span></span>
+<span id="cb24-188"><a href="#cb24-188" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">variable =</span> <span class="fu">fct_reorder</span>(variable, weight))</span>
+<span id="cb24-189"><a href="#cb24-189" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-190"><a href="#cb24-190" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(predw_df, <span class="fu">aes</span>(<span class="at">x =</span> weight, <span class="at">y =</span> variable)) <span class="sc">+</span></span>
+<span id="cb24-191"><a href="#cb24-191" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">fill =</span> <span class="st">"#6a9bcc"</span>) <span class="sc">+</span></span>
+<span id="cb24-192"><a href="#cb24-192" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">label =</span> <span class="fu">sprintf</span>(<span class="st">"%.3f"</span>, weight)), <span class="at">hjust =</span> <span class="sc">-</span><span class="fl">0.12</span>) <span class="sc">+</span></span>
+<span id="cb24-193"><a href="#cb24-193" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">expand =</span> <span class="fu">expansion</span>(<span class="at">mult =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="fl">0.15</span>))) <span class="sc">+</span></span>
+<span id="cb24-194"><a href="#cb24-194" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"V-matrix weight (predictor importance)"</span>, <span class="at">y =</span> <span class="cn">NULL</span>) <span class="sc">+</span></span>
+<span id="cb24-195"><a href="#cb24-195" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span>
+<span id="cb24-196"><a href="#cb24-196" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb24-197"><a href="#cb24-197" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-198"><a href="#cb24-198" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>*Practical reading.* Two lagged outcomes (`cigsale_1975` and `cigsale_1980`) carry the bulk of the matching information. The optimiser has decided that California's pre-period cigarette sales — *at multiple time points* — are the best fingerprint to match.</span>
-<span id="cb24-199"><a href="#cb24-199" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>*Cautionary reading.* The V matrix is **not a causal ranking**. It tells you which variables were *useful for matching the treated unit's pre-period*, not which variables *cause* the outcome.</span>
-<span id="cb24-200"><a href="#cb24-200" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-201"><a href="#cb24-201" aria-hidden="true" tabindex="-1"></a>**Common pitfall.** Treating the V matrix as a list of causal drivers. It is a list of *good pre-period predictors for one specific unit*, not a structural model of smoking.</span>
+<span id="cb24-198"><a href="#cb24-198" aria-hidden="true" tabindex="-1"></a>Two readings of the same picture, one practical and one cautionary.</span>
+<span id="cb24-199"><a href="#cb24-199" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-200"><a href="#cb24-200" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>*Practical reading.* Two lagged outcomes (`cigsale_1975` and `cigsale_1980`) carry the bulk of the matching information. The optimiser has decided that California's pre-period cigarette sales — *at multiple time points* — are the best fingerprint to match.</span>
+<span id="cb24-201"><a href="#cb24-201" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>*Cautionary reading.* The V matrix is **not a causal ranking**. It tells you which variables were *useful for matching the treated unit's pre-period*, not which variables *cause* the outcome.</span>
 <span id="cb24-202"><a href="#cb24-202" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-203"><a href="#cb24-203" aria-hidden="true" tabindex="-1"></a><span class="fu">## The estimate</span></span>
+<span id="cb24-203"><a href="#cb24-203" aria-hidden="true" tabindex="-1"></a>**Common pitfall.** Treating the V matrix as a list of causal drivers. It is a list of *good pre-period predictors for one specific unit*, not a structural model of smoking.</span>
 <span id="cb24-204"><a href="#cb24-204" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-207"><a href="#cb24-207" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb24-208"><a href="#cb24-208" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: sc-att</span></span>
-<span id="cb24-209"><a href="#cb24-209" aria-hidden="true" tabindex="-1"></a><span class="co"># grab_synthetic_control() returns a tidy tibble with observed (real_y)</span></span>
-<span id="cb24-210"><a href="#cb24-210" aria-hidden="true" tabindex="-1"></a><span class="co"># and synthetic (synth_y) cigsale for every year. We restrict to the</span></span>
-<span id="cb24-211"><a href="#cb24-211" aria-hidden="true" tabindex="-1"></a><span class="co"># post-period and compute the per-year gap.</span></span>
-<span id="cb24-212"><a href="#cb24-212" aria-hidden="true" tabindex="-1"></a>sc_post <span class="ot">&lt;-</span> <span class="fu">grab_synthetic_control</span>(prop99_syn) <span class="sc">|&gt;</span></span>
-<span id="cb24-213"><a href="#cb24-213" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(time_unit <span class="sc">&gt;</span> <span class="dv">1988</span>) <span class="sc">|&gt;</span></span>
-<span id="cb24-214"><a href="#cb24-214" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">dif =</span> real_y <span class="sc">-</span> synth_y)</span>
-<span id="cb24-215"><a href="#cb24-215" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-216"><a href="#cb24-216" aria-hidden="true" tabindex="-1"></a><span class="co"># Average the per-year gap to recover the ATT.</span></span>
-<span id="cb24-217"><a href="#cb24-217" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(sc_post<span class="sc">$</span>dif)</span>
-<span id="cb24-218"><a href="#cb24-218" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb24-219"><a href="#cb24-219" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-220"><a href="#cb24-220" aria-hidden="true" tabindex="-1"></a>The Synthetic Control ATT is approximately **$-18.85$ packs/capita** averaged over 1989–2000. This is the book's primary causal estimate and within rounding of the canonical @abadie2010synthetic result.</span>
+<span id="cb24-205"><a href="#cb24-205" aria-hidden="true" tabindex="-1"></a><span class="fu">## The estimate</span></span>
+<span id="cb24-206"><a href="#cb24-206" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-209"><a href="#cb24-209" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb24-210"><a href="#cb24-210" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: sc-att</span></span>
+<span id="cb24-211"><a href="#cb24-211" aria-hidden="true" tabindex="-1"></a><span class="co"># grab_synthetic_control() returns a tidy tibble with observed (real_y)</span></span>
+<span id="cb24-212"><a href="#cb24-212" aria-hidden="true" tabindex="-1"></a><span class="co"># and synthetic (synth_y) cigsale for every year. We restrict to the</span></span>
+<span id="cb24-213"><a href="#cb24-213" aria-hidden="true" tabindex="-1"></a><span class="co"># post-period and compute the per-year gap.</span></span>
+<span id="cb24-214"><a href="#cb24-214" aria-hidden="true" tabindex="-1"></a>sc_post <span class="ot">&lt;-</span> <span class="fu">grab_synthetic_control</span>(prop99_syn) <span class="sc">|&gt;</span></span>
+<span id="cb24-215"><a href="#cb24-215" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(time_unit <span class="sc">&gt;</span> <span class="dv">1988</span>) <span class="sc">|&gt;</span></span>
+<span id="cb24-216"><a href="#cb24-216" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">dif =</span> real_y <span class="sc">-</span> synth_y)</span>
+<span id="cb24-217"><a href="#cb24-217" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-218"><a href="#cb24-218" aria-hidden="true" tabindex="-1"></a><span class="co"># Average the per-year gap to recover the ATT.</span></span>
+<span id="cb24-219"><a href="#cb24-219" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(sc_post<span class="sc">$</span>dif)</span>
+<span id="cb24-220"><a href="#cb24-220" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb24-221"><a href="#cb24-221" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-224"><a href="#cb24-224" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb24-225"><a href="#cb24-225" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-sc-trends</span></span>
-<span id="cb24-226"><a href="#cb24-226" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Synthetic Control: California (observed) vs synthetic California (weighted donor combination)."</span></span>
-<span id="cb24-227"><a href="#cb24-227" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-width: 8</span></span>
-<span id="cb24-228"><a href="#cb24-228" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-height: 5</span></span>
-<span id="cb24-229"><a href="#cb24-229" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_trends</span>(prop99_syn)</span>
-<span id="cb24-230"><a href="#cb24-230" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb24-231"><a href="#cb24-231" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-232"><a href="#cb24-232" aria-hidden="true" tabindex="-1"></a>The pre-period fit is excellent — the synthetic and observed series are nearly indistinguishable through 1988. A substantial gap opens immediately after 1989, widening to roughly 30 packs by 2000.</span>
+<span id="cb24-222"><a href="#cb24-222" aria-hidden="true" tabindex="-1"></a>The Synthetic Control ATT is approximately **$-18.85$ packs/capita** averaged over 1989–2000. This is the book's primary causal estimate and within rounding of the canonical @abadie2010synthetic result.</span>
+<span id="cb24-223"><a href="#cb24-223" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-226"><a href="#cb24-226" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb24-227"><a href="#cb24-227" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-sc-trends</span></span>
+<span id="cb24-228"><a href="#cb24-228" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Synthetic Control: California (observed) vs synthetic California (weighted donor combination)."</span></span>
+<span id="cb24-229"><a href="#cb24-229" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-width: 8</span></span>
+<span id="cb24-230"><a href="#cb24-230" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-height: 5</span></span>
+<span id="cb24-231"><a href="#cb24-231" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_trends</span>(prop99_syn)</span>
+<span id="cb24-232"><a href="#cb24-232" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb24-233"><a href="#cb24-233" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-234"><a href="#cb24-234" aria-hidden="true" tabindex="-1"></a><span class="fu">## Predictor balance: did the matching work?</span></span>
+<span id="cb24-234"><a href="#cb24-234" aria-hidden="true" tabindex="-1"></a>The pre-period fit is excellent — the synthetic and observed series are nearly indistinguishable through 1988. A substantial gap opens immediately after 1989, widening to roughly 30 packs by 2000.</span>
 <span id="cb24-235"><a href="#cb24-235" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-236"><a href="#cb24-236" aria-hidden="true" tabindex="-1"></a><span class="in">`grab_balance_table()`</span> shows California, synthetic California, and the unweighted donor average side-by-side on every predictor.</span>
+<span id="cb24-236"><a href="#cb24-236" aria-hidden="true" tabindex="-1"></a><span class="fu">## Predictor balance: did the matching work?</span></span>
 <span id="cb24-237"><a href="#cb24-237" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-240"><a href="#cb24-240" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb24-241"><a href="#cb24-241" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: tbl-sc-balance</span></span>
-<span id="cb24-242"><a href="#cb24-242" aria-hidden="true" tabindex="-1"></a><span class="co">#| tbl-cap: "Predictor balance: California vs synthetic California vs donor average."</span></span>
-<span id="cb24-243"><a href="#cb24-243" aria-hidden="true" tabindex="-1"></a><span class="fu">grab_balance_table</span>(prop99_syn) <span class="sc">|&gt;</span></span>
-<span id="cb24-244"><a href="#cb24-244" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gt_pretty</span>(<span class="at">decimals =</span> <span class="dv">2</span>)</span>
-<span id="cb24-245"><a href="#cb24-245" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb24-246"><a href="#cb24-246" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-247"><a href="#cb24-247" aria-hidden="true" tabindex="-1"></a>On every variable, *synthetic California* is far closer to California than the unweighted donor average is. The most dramatic improvement is on the lagged outcomes: <span class="in">`cigsale_1988`</span> is roughly 90 for California vs ≈91 for the synthetic — a near-perfect match — while the unweighted donor average is around 114. That gap of ~24 packs is exactly the bias the naive pre-post method silently absorbed.</span>
+<span id="cb24-238"><a href="#cb24-238" aria-hidden="true" tabindex="-1"></a><span class="in">`grab_balance_table()`</span> shows California, synthetic California, and the unweighted donor average side-by-side on every predictor.</span>
+<span id="cb24-239"><a href="#cb24-239" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-242"><a href="#cb24-242" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb24-243"><a href="#cb24-243" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: tbl-sc-balance</span></span>
+<span id="cb24-244"><a href="#cb24-244" aria-hidden="true" tabindex="-1"></a><span class="co">#| tbl-cap: "Predictor balance: California vs synthetic California vs donor average."</span></span>
+<span id="cb24-245"><a href="#cb24-245" aria-hidden="true" tabindex="-1"></a><span class="fu">grab_balance_table</span>(prop99_syn) <span class="sc">|&gt;</span></span>
+<span id="cb24-246"><a href="#cb24-246" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gt_pretty</span>(<span class="at">decimals =</span> <span class="dv">2</span>)</span>
+<span id="cb24-247"><a href="#cb24-247" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb24-248"><a href="#cb24-248" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-249"><a href="#cb24-249" aria-hidden="true" tabindex="-1"></a><span class="fu">## Visualising the post-period gap</span></span>
+<span id="cb24-249"><a href="#cb24-249" aria-hidden="true" tabindex="-1"></a>On every variable, *synthetic California* is far closer to California than the unweighted donor average is. The most dramatic improvement is on the lagged outcomes: <span class="in">`cigsale_1988`</span> is roughly 90 for California vs ≈91 for the synthetic — a near-perfect match — while the unweighted donor average is around 114. That gap of ~24 packs is exactly the bias the naive pre-post method silently absorbed.</span>
 <span id="cb24-250"><a href="#cb24-250" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-251"><a href="#cb24-251" aria-hidden="true" tabindex="-1"></a><span class="in">`plot_trends()`</span> showed *both* observed and synthetic California on one canvas. The companion helper `plot_differences()` plots just the *gap*: $Y_{1t} - \widehat{Y_{1t}(0)}$, year by year. This isolates the treatment-effect curve in its cleanest form.</span>
+<span id="cb24-251"><a href="#cb24-251" aria-hidden="true" tabindex="-1"></a><span class="fu">## Visualising the post-period gap</span></span>
 <span id="cb24-252"><a href="#cb24-252" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-255"><a href="#cb24-255" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb24-256"><a href="#cb24-256" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-sc-differences</span></span>
-<span id="cb24-257"><a href="#cb24-257" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Per-year gap between observed California and synthetic California."</span></span>
-<span id="cb24-258"><a href="#cb24-258" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-width: 8</span></span>
-<span id="cb24-259"><a href="#cb24-259" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-height: 5</span></span>
-<span id="cb24-260"><a href="#cb24-260" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_differences</span>(prop99_syn)</span>
-<span id="cb24-261"><a href="#cb24-261" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb24-262"><a href="#cb24-262" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-263"><a href="#cb24-263" aria-hidden="true" tabindex="-1"></a>Read the line as the *effect of Proposition 99 on California in year $t$*. The pre-period values hover near zero (the matching worked), the line drops sharply after 1989, and it stays negative — steadily widening — throughout the post-period. The 1989–2000 mean of this series is exactly the $-18.85$ packs ATT reported above.</span>
+<span id="cb24-253"><a href="#cb24-253" aria-hidden="true" tabindex="-1"></a><span class="in">`plot_trends()`</span> showed *both* observed and synthetic California on one canvas. The companion helper `plot_differences()` plots just the *gap*: $Y_{1t} - \widehat{Y_{1t}(0)}$, year by year. This isolates the treatment-effect curve in its cleanest form.</span>
+<span id="cb24-254"><a href="#cb24-254" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-257"><a href="#cb24-257" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb24-258"><a href="#cb24-258" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-sc-differences</span></span>
+<span id="cb24-259"><a href="#cb24-259" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Per-year gap between observed California and synthetic California."</span></span>
+<span id="cb24-260"><a href="#cb24-260" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-width: 8</span></span>
+<span id="cb24-261"><a href="#cb24-261" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-height: 5</span></span>
+<span id="cb24-262"><a href="#cb24-262" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_differences</span>(prop99_syn)</span>
+<span id="cb24-263"><a href="#cb24-263" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb24-264"><a href="#cb24-264" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-265"><a href="#cb24-265" aria-hidden="true" tabindex="-1"></a><span class="fu">## Inference via placebo permutation</span></span>
+<span id="cb24-265"><a href="#cb24-265" aria-hidden="true" tabindex="-1"></a>Read the line as the *effect of Proposition 99 on California in year $t$*. The pre-period values hover near zero (the matching worked), the line drops sharply after 1989, and it stays negative — steadily widening — throughout the post-period. The 1989–2000 mean of this series is exactly the $-18.85$ packs ATT reported above.</span>
 <span id="cb24-266"><a href="#cb24-266" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-267"><a href="#cb24-267" aria-hidden="true" tabindex="-1"></a>A "standard error" computed as cross-year SD divided by $\sqrt{N}$ is *not* a real sampling-distribution-based standard error. The proper Synthetic Control uncertainty quantification is a permutation test.</span>
+<span id="cb24-267"><a href="#cb24-267" aria-hidden="true" tabindex="-1"></a><span class="fu">## Inference via placebo permutation</span></span>
 <span id="cb24-268"><a href="#cb24-268" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-269"><a href="#cb24-269" aria-hidden="true" tabindex="-1"></a>**The recipe.** Refit the synthetic-control model treating *each donor state* as if *it* had been the treated unit. Compute the post-period gap for each placebo. Compare California's gap trajectory to those placebo trajectories. If California's gap is extreme relative to the placebos, the policy probably did something.</span>
+<span id="cb24-269"><a href="#cb24-269" aria-hidden="true" tabindex="-1"></a>A "standard error" computed as cross-year SD divided by $\sqrt{N}$ is *not* a real sampling-distribution-based standard error. The proper Synthetic Control uncertainty quantification is a permutation test.</span>
 <span id="cb24-270"><a href="#cb24-270" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-273"><a href="#cb24-273" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb24-274"><a href="#cb24-274" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-sc-placebos</span></span>
-<span id="cb24-275"><a href="#cb24-275" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Placebo permutation: California in orange, donor placebos in grey (badly pre-fit donors pruned by default)."</span></span>
-<span id="cb24-276"><a href="#cb24-276" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-width: 8</span></span>
-<span id="cb24-277"><a href="#cb24-277" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-height: 5</span></span>
-<span id="cb24-278"><a href="#cb24-278" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_placebos</span>(prop99_syn)</span>
-<span id="cb24-279"><a href="#cb24-279" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb24-280"><a href="#cb24-280" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-281"><a href="#cb24-281" aria-hidden="true" tabindex="-1"></a>The orange line is California; the grey lines are the donor placebos. By default, <span class="in">`plot_placebos()`</span> *prunes* placebos whose pre-period mean squared prediction error (MSPE) exceeds twice California's — those donors fit their own pre-period so badly that comparing their post-period gap to California's would be misleading. After pruning, California's post-period gap sits visibly below every retained placebo, which is the visual signature of a "real" treatment effect.</span>
+<span id="cb24-271"><a href="#cb24-271" aria-hidden="true" tabindex="-1"></a>**The recipe.** Refit the synthetic-control model treating *each donor state* as if *it* had been the treated unit. Compute the post-period gap for each placebo. Compare California's gap trajectory to those placebo trajectories. If California's gap is extreme relative to the placebos, the policy probably did something.</span>
+<span id="cb24-272"><a href="#cb24-272" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-275"><a href="#cb24-275" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb24-276"><a href="#cb24-276" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-sc-placebos</span></span>
+<span id="cb24-277"><a href="#cb24-277" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Placebo permutation: California in orange, donor placebos in grey (badly pre-fit donors pruned by default)."</span></span>
+<span id="cb24-278"><a href="#cb24-278" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-width: 8</span></span>
+<span id="cb24-279"><a href="#cb24-279" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-height: 5</span></span>
+<span id="cb24-280"><a href="#cb24-280" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_placebos</span>(prop99_syn)</span>
+<span id="cb24-281"><a href="#cb24-281" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb24-282"><a href="#cb24-282" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-283"><a href="#cb24-283" aria-hidden="true" tabindex="-1"></a>The unpruned variant keeps every donor for full transparency:</span>
+<span id="cb24-283"><a href="#cb24-283" aria-hidden="true" tabindex="-1"></a>The orange line is California; the grey lines are the donor placebos. By default, <span class="in">`plot_placebos()`</span> *prunes* placebos whose pre-period mean squared prediction error (MSPE) exceeds twice California's — those donors fit their own pre-period so badly that comparing their post-period gap to California's would be misleading. After pruning, California's post-period gap sits visibly below every retained placebo, which is the visual signature of a "real" treatment effect.</span>
 <span id="cb24-284"><a href="#cb24-284" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-287"><a href="#cb24-287" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb24-288"><a href="#cb24-288" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-sc-placebos-unpruned</span></span>
-<span id="cb24-289"><a href="#cb24-289" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Same placebo plot with every donor retained — including badly pre-fit ones — to show the full pool of placebo trajectories."</span></span>
-<span id="cb24-290"><a href="#cb24-290" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-width: 8</span></span>
-<span id="cb24-291"><a href="#cb24-291" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-height: 5</span></span>
-<span id="cb24-292"><a href="#cb24-292" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_placebos</span>(prop99_syn, <span class="at">prune =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb24-293"><a href="#cb24-293" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb24-294"><a href="#cb24-294" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-295"><a href="#cb24-295" aria-hidden="true" tabindex="-1"></a>With pruning off, the grey cloud is messier and a few badly-fit donors swing wildly — but California's post-period descent still ends up at the bottom of the bundle. The qualitative conclusion does not depend on the pruning rule.</span>
+<span id="cb24-285"><a href="#cb24-285" aria-hidden="true" tabindex="-1"></a>The unpruned variant keeps every donor for full transparency:</span>
+<span id="cb24-286"><a href="#cb24-286" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-289"><a href="#cb24-289" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb24-290"><a href="#cb24-290" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-sc-placebos-unpruned</span></span>
+<span id="cb24-291"><a href="#cb24-291" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Same placebo plot with every donor retained — including badly pre-fit ones — to show the full pool of placebo trajectories."</span></span>
+<span id="cb24-292"><a href="#cb24-292" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-width: 8</span></span>
+<span id="cb24-293"><a href="#cb24-293" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-height: 5</span></span>
+<span id="cb24-294"><a href="#cb24-294" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_placebos</span>(prop99_syn, <span class="at">prune =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb24-295"><a href="#cb24-295" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb24-296"><a href="#cb24-296" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-297"><a href="#cb24-297" aria-hidden="true" tabindex="-1"></a><span class="fu">## MSPE ratio and Fisher exact p-value</span></span>
+<span id="cb24-297"><a href="#cb24-297" aria-hidden="true" tabindex="-1"></a>With pruning off, the grey cloud is messier and a few badly-fit donors swing wildly — but California's post-period descent still ends up at the bottom of the bundle. The qualitative conclusion does not depend on the pruning rule.</span>
 <span id="cb24-298"><a href="#cb24-298" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-299"><a href="#cb24-299" aria-hidden="true" tabindex="-1"></a>A sharper version of the same test is the **MSPE ratio** — the ratio of post-period to pre-period mean squared prediction error. If a unit has a tight pre-period fit *and* a large post-period gap, the ratio is large.</span>
+<span id="cb24-299"><a href="#cb24-299" aria-hidden="true" tabindex="-1"></a><span class="fu">## MSPE ratio and Fisher exact p-value</span></span>
 <span id="cb24-300"><a href="#cb24-300" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-303"><a href="#cb24-303" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb24-304"><a href="#cb24-304" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: tbl-sc-significance</span></span>
-<span id="cb24-305"><a href="#cb24-305" aria-hidden="true" tabindex="-1"></a><span class="co">#| tbl-cap: "MSPE ratios — top 5 units."</span></span>
-<span id="cb24-306"><a href="#cb24-306" aria-hidden="true" tabindex="-1"></a><span class="co"># grab_significance() returns one row per unit (treated + every placebo)</span></span>
-<span id="cb24-307"><a href="#cb24-307" aria-hidden="true" tabindex="-1"></a><span class="co"># with pre_mspe, post_mspe, the post/pre ratio, the unit's rank in that</span></span>
-<span id="cb24-308"><a href="#cb24-308" aria-hidden="true" tabindex="-1"></a><span class="co"># ratio, and the Fisher-style p-value (rank / n_units).</span></span>
-<span id="cb24-309"><a href="#cb24-309" aria-hidden="true" tabindex="-1"></a><span class="fu">grab_significance</span>(prop99_syn) <span class="sc">|&gt;</span></span>
-<span id="cb24-310"><a href="#cb24-310" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(mspe_ratio)) <span class="sc">|&gt;</span></span>
-<span id="cb24-311"><a href="#cb24-311" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>(<span class="dv">5</span>) <span class="sc">|&gt;</span></span>
-<span id="cb24-312"><a href="#cb24-312" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gt_pretty</span>(<span class="at">decimals =</span> <span class="dv">3</span>)</span>
-<span id="cb24-313"><a href="#cb24-313" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb24-314"><a href="#cb24-314" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-315"><a href="#cb24-315" aria-hidden="true" tabindex="-1"></a>California's MSPE ratio is around **124** — more than two and a half times higher than the next-highest unit. California ranks **1st out of 39 units**. The Fisher exact $p$-value is rank divided by total units, so $1/39 \approx 0.026$. Under the null hypothesis that Proposition 99 had no effect, the probability of seeing a unit this extreme purely by chance is about 2.6%.</span>
+<span id="cb24-301"><a href="#cb24-301" aria-hidden="true" tabindex="-1"></a>A sharper version of the same test is the **MSPE ratio** — the ratio of post-period to pre-period mean squared prediction error. If a unit has a tight pre-period fit *and* a large post-period gap, the ratio is large.</span>
+<span id="cb24-302"><a href="#cb24-302" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-305"><a href="#cb24-305" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb24-306"><a href="#cb24-306" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: tbl-sc-significance</span></span>
+<span id="cb24-307"><a href="#cb24-307" aria-hidden="true" tabindex="-1"></a><span class="co">#| tbl-cap: "MSPE ratios — top 5 units."</span></span>
+<span id="cb24-308"><a href="#cb24-308" aria-hidden="true" tabindex="-1"></a><span class="co"># grab_significance() returns one row per unit (treated + every placebo)</span></span>
+<span id="cb24-309"><a href="#cb24-309" aria-hidden="true" tabindex="-1"></a><span class="co"># with pre_mspe, post_mspe, the post/pre ratio, the unit's rank in that</span></span>
+<span id="cb24-310"><a href="#cb24-310" aria-hidden="true" tabindex="-1"></a><span class="co"># ratio, and the Fisher-style p-value (rank / n_units).</span></span>
+<span id="cb24-311"><a href="#cb24-311" aria-hidden="true" tabindex="-1"></a><span class="fu">grab_significance</span>(prop99_syn) <span class="sc">|&gt;</span></span>
+<span id="cb24-312"><a href="#cb24-312" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(mspe_ratio)) <span class="sc">|&gt;</span></span>
+<span id="cb24-313"><a href="#cb24-313" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>(<span class="dv">5</span>) <span class="sc">|&gt;</span></span>
+<span id="cb24-314"><a href="#cb24-314" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gt_pretty</span>(<span class="at">decimals =</span> <span class="dv">3</span>)</span>
+<span id="cb24-315"><a href="#cb24-315" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb24-316"><a href="#cb24-316" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-319"><a href="#cb24-319" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb24-320"><a href="#cb24-320" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-sc-mspe-ratio</span></span>
-<span id="cb24-321"><a href="#cb24-321" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "MSPE-ratio bar chart with California highlighted at rank 1 out of 39 units."</span></span>
-<span id="cb24-322"><a href="#cb24-322" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-width: 8</span></span>
-<span id="cb24-323"><a href="#cb24-323" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-height: 5</span></span>
-<span id="cb24-324"><a href="#cb24-324" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_mspe_ratio</span>(prop99_syn)</span>
-<span id="cb24-325"><a href="#cb24-325" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb24-326"><a href="#cb24-326" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-327"><a href="#cb24-327" aria-hidden="true" tabindex="-1"></a>The orange bar at the top is California; every blue bar below it is a placebo donor. The gap between California and the second-place state is enormous. That gap is the visual signature of "a real treatment effect that the donor pool does not naturally replicate".</span>
+<span id="cb24-317"><a href="#cb24-317" aria-hidden="true" tabindex="-1"></a>California's MSPE ratio is around **124** — more than two and a half times higher than the next-highest unit. California ranks **1st out of 39 units**. The Fisher exact $p$-value is rank divided by total units, so $1/39 \approx 0.026$. Under the null hypothesis that Proposition 99 had no effect, the probability of seeing a unit this extreme purely by chance is about 2.6%.</span>
+<span id="cb24-318"><a href="#cb24-318" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-321"><a href="#cb24-321" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb24-322"><a href="#cb24-322" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-sc-mspe-ratio</span></span>
+<span id="cb24-323"><a href="#cb24-323" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "MSPE-ratio bar chart with California highlighted at rank 1 out of 39 units."</span></span>
+<span id="cb24-324"><a href="#cb24-324" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-width: 8</span></span>
+<span id="cb24-325"><a href="#cb24-325" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-height: 5</span></span>
+<span id="cb24-326"><a href="#cb24-326" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_mspe_ratio</span>(prop99_syn)</span>
+<span id="cb24-327"><a href="#cb24-327" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb24-328"><a href="#cb24-328" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-329"><a href="#cb24-329" aria-hidden="true" tabindex="-1"></a><span class="fu">## Inspecting the nested tidysynth object</span></span>
+<span id="cb24-329"><a href="#cb24-329" aria-hidden="true" tabindex="-1"></a>The orange bar at the top is California; every blue bar below it is a placebo donor. The gap between California and the second-place state is enormous. That gap is the visual signature of "a real treatment effect that the donor pool does not naturally replicate".</span>
 <span id="cb24-330"><a href="#cb24-330" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-331"><a href="#cb24-331" aria-hidden="true" tabindex="-1"></a><span class="in">`prop99_syn`</span> is not a plain data frame — it is a *nested tibble* with one row per unit (treated unit + every donor refit as a placebo) and list-columns that hold every intermediate output of the optimisation.</span>
+<span id="cb24-331"><a href="#cb24-331" aria-hidden="true" tabindex="-1"></a><span class="fu">## Inspecting the nested tidysynth object</span></span>
 <span id="cb24-332"><a href="#cb24-332" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-333"><a href="#cb24-333" aria-hidden="true" tabindex="-1"></a>*This one chunk prints with R's default nested-tibble formatter on purpose — the `&lt;tibble [N × M]&gt;` glyphs in the list-columns are the pedagogical point that a styled table would hide.*</span>
+<span id="cb24-333"><a href="#cb24-333" aria-hidden="true" tabindex="-1"></a><span class="in">`prop99_syn`</span> is not a plain data frame — it is a *nested tibble* with one row per unit (treated unit + every donor refit as a placebo) and list-columns that hold every intermediate output of the optimisation.</span>
 <span id="cb24-334"><a href="#cb24-334" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-337"><a href="#cb24-337" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb24-338"><a href="#cb24-338" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: sc-nested</span></span>
-<span id="cb24-339"><a href="#cb24-339" aria-hidden="true" tabindex="-1"></a>prop99_syn</span>
-<span id="cb24-340"><a href="#cb24-340" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb24-341"><a href="#cb24-341" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-342"><a href="#cb24-342" aria-hidden="true" tabindex="-1"></a>Each list-column can be flattened with <span class="in">`tidyr::unnest()`</span> for custom downstream work, or pulled out with one of the <span class="in">`grab_*()`</span> helpers used above.</span>
+<span id="cb24-335"><a href="#cb24-335" aria-hidden="true" tabindex="-1"></a>*This one chunk prints with R's default nested-tibble formatter on purpose — the `&lt;tibble [N × M]&gt;` glyphs in the list-columns are the pedagogical point that a styled table would hide.*</span>
+<span id="cb24-336"><a href="#cb24-336" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-339"><a href="#cb24-339" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb24-340"><a href="#cb24-340" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: sc-nested</span></span>
+<span id="cb24-341"><a href="#cb24-341" aria-hidden="true" tabindex="-1"></a>prop99_syn</span>
+<span id="cb24-342"><a href="#cb24-342" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb24-343"><a href="#cb24-343" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-346"><a href="#cb24-346" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb24-347"><a href="#cb24-347" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: tbl-sc-unnest</span></span>
-<span id="cb24-348"><a href="#cb24-348" aria-hidden="true" tabindex="-1"></a><span class="co">#| tbl-cap: "Unnested `.outcome` (first 8 rows)."</span></span>
-<span id="cb24-349"><a href="#cb24-349" aria-hidden="true" tabindex="-1"></a><span class="co"># Flatten .outcome into a wide table: one row per (unit, year).</span></span>
-<span id="cb24-350"><a href="#cb24-350" aria-hidden="true" tabindex="-1"></a><span class="co"># The actual cigarette-sales column is named after each unit, so we</span></span>
-<span id="cb24-351"><a href="#cb24-351" aria-hidden="true" tabindex="-1"></a><span class="co"># select metadata + California's series for a clean preview.</span></span>
-<span id="cb24-352"><a href="#cb24-352" aria-hidden="true" tabindex="-1"></a>prop99_syn <span class="sc">|&gt;</span></span>
-<span id="cb24-353"><a href="#cb24-353" aria-hidden="true" tabindex="-1"></a>  tidyr<span class="sc">::</span><span class="fu">unnest</span>(<span class="at">cols =</span> <span class="fu">c</span>(.outcome)) <span class="sc">|&gt;</span></span>
-<span id="cb24-354"><a href="#cb24-354" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(.id, .placebo, .type, time_unit, California) <span class="sc">|&gt;</span></span>
-<span id="cb24-355"><a href="#cb24-355" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>(<span class="dv">8</span>) <span class="sc">|&gt;</span></span>
-<span id="cb24-356"><a href="#cb24-356" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gt_pretty</span>(<span class="at">decimals =</span> <span class="dv">2</span>)</span>
-<span id="cb24-357"><a href="#cb24-357" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb24-358"><a href="#cb24-358" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-359"><a href="#cb24-359" aria-hidden="true" tabindex="-1"></a>For the tidy *observed-vs-synthetic* table (which is what most analyses want), the dedicated helper is more convenient:</span>
+<span id="cb24-344"><a href="#cb24-344" aria-hidden="true" tabindex="-1"></a>Each list-column can be flattened with <span class="in">`tidyr::unnest()`</span> for custom downstream work, or pulled out with one of the <span class="in">`grab_*()`</span> helpers used above.</span>
+<span id="cb24-345"><a href="#cb24-345" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-348"><a href="#cb24-348" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb24-349"><a href="#cb24-349" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: tbl-sc-unnest</span></span>
+<span id="cb24-350"><a href="#cb24-350" aria-hidden="true" tabindex="-1"></a><span class="co">#| tbl-cap: "Unnested `.outcome` (first 8 rows)."</span></span>
+<span id="cb24-351"><a href="#cb24-351" aria-hidden="true" tabindex="-1"></a><span class="co"># Flatten .outcome into a wide table: one row per (unit, year).</span></span>
+<span id="cb24-352"><a href="#cb24-352" aria-hidden="true" tabindex="-1"></a><span class="co"># The actual cigarette-sales column is named after each unit, so we</span></span>
+<span id="cb24-353"><a href="#cb24-353" aria-hidden="true" tabindex="-1"></a><span class="co"># select metadata + California's series for a clean preview.</span></span>
+<span id="cb24-354"><a href="#cb24-354" aria-hidden="true" tabindex="-1"></a>prop99_syn <span class="sc">|&gt;</span></span>
+<span id="cb24-355"><a href="#cb24-355" aria-hidden="true" tabindex="-1"></a>  tidyr<span class="sc">::</span><span class="fu">unnest</span>(<span class="at">cols =</span> <span class="fu">c</span>(.outcome)) <span class="sc">|&gt;</span></span>
+<span id="cb24-356"><a href="#cb24-356" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(.id, .placebo, .type, time_unit, California) <span class="sc">|&gt;</span></span>
+<span id="cb24-357"><a href="#cb24-357" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>(<span class="dv">8</span>) <span class="sc">|&gt;</span></span>
+<span id="cb24-358"><a href="#cb24-358" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gt_pretty</span>(<span class="at">decimals =</span> <span class="dv">2</span>)</span>
+<span id="cb24-359"><a href="#cb24-359" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb24-360"><a href="#cb24-360" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-363"><a href="#cb24-363" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb24-364"><a href="#cb24-364" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: tbl-sc-unnest-tidy</span></span>
-<span id="cb24-365"><a href="#cb24-365" aria-hidden="true" tabindex="-1"></a><span class="co">#| tbl-cap: "`grab_synthetic_control()` — observed vs synthetic (first 8 rows)."</span></span>
-<span id="cb24-366"><a href="#cb24-366" aria-hidden="true" tabindex="-1"></a><span class="fu">grab_synthetic_control</span>(prop99_syn) <span class="sc">|&gt;</span></span>
-<span id="cb24-367"><a href="#cb24-367" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>(<span class="dv">8</span>) <span class="sc">|&gt;</span></span>
-<span id="cb24-368"><a href="#cb24-368" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gt_pretty</span>(<span class="at">decimals =</span> <span class="dv">2</span>)</span>
-<span id="cb24-369"><a href="#cb24-369" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb24-370"><a href="#cb24-370" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-371"><a href="#cb24-371" aria-hidden="true" tabindex="-1"></a>This is the whole point of the nested-tibble design: every step of the optimisation is *introspectable from R*, with no need to dig into S4 slots or <span class="in">`attr()`</span> blobs.</span>
+<span id="cb24-361"><a href="#cb24-361" aria-hidden="true" tabindex="-1"></a>For the tidy *observed-vs-synthetic* table (which is what most analyses want), the dedicated helper is more convenient:</span>
+<span id="cb24-362"><a href="#cb24-362" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-365"><a href="#cb24-365" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb24-366"><a href="#cb24-366" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: tbl-sc-unnest-tidy</span></span>
+<span id="cb24-367"><a href="#cb24-367" aria-hidden="true" tabindex="-1"></a><span class="co">#| tbl-cap: "`grab_synthetic_control()` — observed vs synthetic (first 8 rows)."</span></span>
+<span id="cb24-368"><a href="#cb24-368" aria-hidden="true" tabindex="-1"></a><span class="fu">grab_synthetic_control</span>(prop99_syn) <span class="sc">|&gt;</span></span>
+<span id="cb24-369"><a href="#cb24-369" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>(<span class="dv">8</span>) <span class="sc">|&gt;</span></span>
+<span id="cb24-370"><a href="#cb24-370" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gt_pretty</span>(<span class="at">decimals =</span> <span class="dv">2</span>)</span>
+<span id="cb24-371"><a href="#cb24-371" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb24-372"><a href="#cb24-372" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-373"><a href="#cb24-373" aria-hidden="true" tabindex="-1"></a><span class="fu">## Recap</span></span>
+<span id="cb24-373"><a href="#cb24-373" aria-hidden="true" tabindex="-1"></a>This is the whole point of the nested-tibble design: every step of the optimisation is *introspectable from R*, with no need to dig into S4 slots or <span class="in">`attr()`</span> blobs.</span>
 <span id="cb24-374"><a href="#cb24-374" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-375"><a href="#cb24-375" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Question <span class="pp">|</span> Answer <span class="pp">|</span></span>
-<span id="cb24-376"><a href="#cb24-376" aria-hidden="true" tabindex="-1"></a><span class="pp">|---|---|</span></span>
-<span id="cb24-377"><a href="#cb24-377" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> What does Synthetic Control estimate? <span class="pp">|</span> The ATT on California, 1989–2000 <span class="pp">|</span></span>
-<span id="cb24-378"><a href="#cb24-378" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> What is the point estimate? <span class="pp">|</span> **$-18.85$ packs/capita per year** <span class="pp">|</span></span>
-<span id="cb24-379"><a href="#cb24-379" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> What is "synthetic California"? <span class="pp">|</span> A convex combination of five Western/sunbelt states (Utah, Nevada, Montana, Colorado, Connecticut) <span class="pp">|</span></span>
-<span id="cb24-380"><a href="#cb24-380" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> What predictors did the matching? <span class="pp">|</span> Mostly two lagged outcomes — <span class="in">`cigsale_1975`</span> and <span class="in">`cigsale_1980`</span> <span class="pp">|</span></span>
-<span id="cb24-381"><a href="#cb24-381" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> How is the matching quality? <span class="pp">|</span> Excellent — synthetic and observed California are near-identical through 1988 <span class="pp">|</span></span>
-<span id="cb24-382"><a href="#cb24-382" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> What is the inference statistic? <span class="pp">|</span> Fisher exact $p \approx 0.026$ (California ranks 1st out of 39 on the MSPE ratio) <span class="pp">|</span></span>
-<span id="cb24-383"><a href="#cb24-383" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> What is the design-time pitfall? <span class="pp">|</span> Don't read the V matrix as a list of causal drivers — it is a list of *good pre-period predictors* <span class="pp">|</span></span>
-<span id="cb24-384"><a href="#cb24-384" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-385"><a href="#cb24-385" aria-hidden="true" tabindex="-1"></a>Synthetic Control is the book's headline causal estimate, and the placebo / MSPE-ratio diagnostics both confirm that California's post-1989 trajectory is unusual relative to what other states experienced in the same window. In chapter 6 we hand the same donor information to a Bayesian model and ask whether a *credible interval* (a direct probability statement about the effect) tells the same story.</span>
+<span id="cb24-375"><a href="#cb24-375" aria-hidden="true" tabindex="-1"></a><span class="fu">## Recap</span></span>
+<span id="cb24-376"><a href="#cb24-376" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-377"><a href="#cb24-377" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Question <span class="pp">|</span> Answer <span class="pp">|</span></span>
+<span id="cb24-378"><a href="#cb24-378" aria-hidden="true" tabindex="-1"></a><span class="pp">|---|---|</span></span>
+<span id="cb24-379"><a href="#cb24-379" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> What does Synthetic Control estimate? <span class="pp">|</span> The ATT on California, 1989–2000 <span class="pp">|</span></span>
+<span id="cb24-380"><a href="#cb24-380" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> What is the point estimate? <span class="pp">|</span> **$-18.85$ packs/capita per year** <span class="pp">|</span></span>
+<span id="cb24-381"><a href="#cb24-381" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> What is "synthetic California"? <span class="pp">|</span> A convex combination of five Western/sunbelt states (Utah, Nevada, Montana, Colorado, Connecticut) <span class="pp">|</span></span>
+<span id="cb24-382"><a href="#cb24-382" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> What predictors did the matching? <span class="pp">|</span> Mostly two lagged outcomes — <span class="in">`cigsale_1975`</span> and <span class="in">`cigsale_1980`</span> <span class="pp">|</span></span>
+<span id="cb24-383"><a href="#cb24-383" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> How is the matching quality? <span class="pp">|</span> Excellent — synthetic and observed California are near-identical through 1988 <span class="pp">|</span></span>
+<span id="cb24-384"><a href="#cb24-384" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> What is the inference statistic? <span class="pp">|</span> Fisher exact $p \approx 0.026$ (California ranks 1st out of 39 on the MSPE ratio) <span class="pp">|</span></span>
+<span id="cb24-385"><a href="#cb24-385" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> What is the design-time pitfall? <span class="pp">|</span> Don't read the V matrix as a list of causal drivers — it is a list of *good pre-period predictors* <span class="pp">|</span></span>
 <span id="cb24-386"><a href="#cb24-386" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-387"><a href="#cb24-387" aria-hidden="true" tabindex="-1"></a><span class="fu">## Further reading</span></span>
+<span id="cb24-387"><a href="#cb24-387" aria-hidden="true" tabindex="-1"></a>Synthetic Control is the book's headline causal estimate, and the placebo / MSPE-ratio diagnostics both confirm that California's post-1989 trajectory is unusual relative to what other states experienced in the same window. In chapter 6 we hand the same donor information to a Bayesian model and ask whether a *credible interval* (a direct probability statement about the effect) tells the same story.</span>
 <span id="cb24-388"><a href="#cb24-388" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-389"><a href="#cb24-389" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>@abadie2010synthetic — the original synthetic-control treatment of Proposition 99.</span>
-<span id="cb24-390"><a href="#cb24-390" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>@abadie2021using — methodological feasibility, data requirements, and assumptions in a JEL review.</span>
-<span id="cb24-391"><a href="#cb24-391" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>@dunford2024tidysynth — documentation for the <span class="in">`tidysynth`</span> package used here.</span>
+<span id="cb24-389"><a href="#cb24-389" aria-hidden="true" tabindex="-1"></a><span class="fu">## Further reading</span></span>
+<span id="cb24-390"><a href="#cb24-390" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-391"><a href="#cb24-391" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>@abadie2010synthetic — the original synthetic-control treatment of Proposition 99.</span>
+<span id="cb24-392"><a href="#cb24-392" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>@abadie2021using — methodological feasibility, data requirements, and assumptions in a JEL review.</span>
+<span id="cb24-393"><a href="#cb24-393" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>@dunford2024tidysynth — documentation for the <span class="in">`tidysynth`</span> package used here.</span>
 </code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
