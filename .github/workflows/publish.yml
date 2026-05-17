@@ -43,7 +43,7 @@ jobs:
         # the rewrite and lets renv fall through to CRAN cloud.
         env:
           RSPM: ""
-          RENV_CONFIG_REPOS_OVERRIDE: "CRAN=https://cloud.r-project.org"
+          RENV_CONFIG_REPOS_OVERRIDE: "https://cloud.r-project.org"
           RENV_CONFIG_PPM_ENABLED: "FALSE"
           RENV_PATHS_LIBRARY: renv/library
         run: |
