@@ -12,17 +12,17 @@ Source for the Quarto book by Carlos Mendez. Built with **R + Quarto**, publishe
 
 ## Project status
 
-**Stage:** scaffolding complete; chapters 1–2 drafted with live R; chapters 3–6 still stubs.
+**Stage:** all six method chapters drafted with live R against the Proposition 99 dataset. Preface and cross-method discussion still to do.
 
 | # | Chapter | File | Status |
 |---|---|---|---|
 | — | Preface | `index.qmd` | stub |
 | 1 | Introduction | `01-introduction.qmd` | first draft (live R; Prop 99 example) |
 | 2 | Interrupted Time Series | `02-interrupted-time-series.qmd` | first draft (live R; growth-curve + ARIMA) |
-| 3 | Regression Discontinuity in Time | `03-rd-in-time.qmd` | stub |
-| 4 | Basic Differences-in-Differences | `04-basic-diff-in-diff.qmd` | stub |
-| 5 | Classical Synthetic Control | `05-classical-synthetic-control.qmd` | stub |
-| 6 | Structural Bayesian Time Series | `06-structural-bayesian-ts.qmd` | stub |
+| 3 | Regression Discontinuity in Time | `03-rd-in-time.qmd` | first draft (live R; segmented regression) |
+| 4 | Basic Differences-in-Differences | `04-basic-diff-in-diff.qmd` | first draft (live R; CA vs Nevada) |
+| 5 | Classical Synthetic Control | `05-classical-synthetic-control.qmd` | first draft (live R; full tidysynth pipeline) |
+| 6 | Structural Bayesian Time Series | `06-structural-bayesian-ts.qmd` | first draft (live R; CausalImpact + BSTS) |
 | — | References | `references.qmd` | 11 entries (Prop 99 sources ported) |
 
 **Infrastructure (complete):**
@@ -34,11 +34,13 @@ Source for the Quarto book by Carlos Mendez. Built with **R + Quarto**, publishe
 - [x] Cover image and favicon
 - [x] Live site on GitHub Pages via `quarto publish gh-pages`
 
-**What the drafted chapters contain:** ch. 1 ports the potential-outcomes framework, the "which method when" decision tree, and a naive pre-post worked example on Proposition 99 from the companion blog post. Ch. 2 fits two ITS variants on the same data (linear growth curve and AICc-selected ARIMA). All R chunks render live; the dataset is cached at `data/proposition99.rds`.
+**What the drafted chapters contain:** every method chapter (1–6) is built from the same cached Proposition 99 dataset (`data/proposition99.rds`) with live R code. Chapter 1 frames the potential-outcomes problem, walks the decision tree, and runs a naive pre-post strawman. Chapters 2–6 each take one method family — ITS (growth-curve + ARIMA), RDD on time, single-control DiD, classical Synthetic Control with placebo permutation, and CausalImpact / BSTS — and report the ATT against the same canonical case study. All chunks render live.
 
-**What the remaining stubs contain:** YAML title, Overview / Identifying assumptions / Estimation in R / Regional case study / Diagnostics / Further reading sections, and a `library()` setup chunk with `eval: false` so the book renders cleanly before any R code is written.
+**Next:**
 
-**Next:** chapters 3–6 in order, adapting the same Proposition 99 case study from the companion blog post (RDD-on-time → DiD → Synthetic Control → Structural Bayesian TS).
+- Preface (`index.qmd`) — flesh out the front matter.
+- Cross-method comparison chapter — bring all six ATT estimates onto one forest plot and discuss the disagreements.
+- Per-chapter exercises.
 
 ---
 

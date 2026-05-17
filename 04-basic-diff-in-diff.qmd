@@ -2,44 +2,110 @@
 title: "Basic Differences-in-Differences"
 ---
 
-## Overview
+## The DiD idea
 
-*Placeholder.* The basic differences-in-differences (DiD) design estimates a
-causal effect by comparing the pre-post change in a treated region against
-the pre-post change in an untreated comparison region (or pool of regions).
+Difference-in-Differences picks one control state — Nevada, for this chapter — and treats its pre-to-post change as the counterfactual change California would have experienced absent the policy. Subtract Nevada's change from California's change. Whatever is left over is "what the policy did".
 
-## Identifying assumptions
+The identifying assumption is **parallel trends**: California and Nevada would have moved on parallel paths without the policy. Differences in *levels* are fine; differences in *trends* are not. The estimand is a proper **Average Treatment effect on the Treated (ATT)** for California.
 
-*Placeholder.* Parallel trends, no anticipation, SUTVA, stable composition.
+## The change-of-changes identity
 
-## Estimation in R
+The formal DiD identity is
+
+$$\hat{\tau}_{\text{DiD}} = \big(\bar{Y}_{\text{CA, post}} - \bar{Y}_{\text{CA, pre}}\big) - \big(\bar{Y}_{\text{NV, post}} - \bar{Y}_{\text{NV, pre}}\big).$$
+
+The four ingredients of the DiD calculation are easier to see as a 2×2 grid. Each cell holds a group mean; the two within-state changes are the row differences; the DiD estimate is the difference *of* those differences.
+
+```{mermaid}
+flowchart TB
+    subgraph "California"
+        CA_pre["Pre (1984–88) mean<br/>= 99.0"] --> CA_d["Δ California =<br/>72.0 − 99.0 = −27.0"]
+        CA_post["Post (1989–93) mean<br/>= 72.0"] --> CA_d
+    end
+    subgraph "Nevada (control)"
+        NV_pre["Pre (1984–88) mean<br/>= 143.1"] --> NV_d["Δ Nevada =<br/>121.8 − 143.1 = −21.3"]
+        NV_post["Post (1989–93) mean<br/>= 121.8"] --> NV_d
+    end
+    CA_d --> DD["DiD ATT =<br/>(−27.0) − (−21.3) = −5.7"]
+    NV_d --> DD
+
+    style CA_pre fill:#d97757,stroke:#141413,color:#fff
+    style CA_post fill:#d97757,stroke:#141413,color:#fff
+    style NV_pre fill:#6a9bcc,stroke:#141413,color:#fff
+    style NV_post fill:#6a9bcc,stroke:#141413,color:#fff
+    style DD fill:#00d4c8,stroke:#141413,color:#141413
+```
+
+The arithmetic is literally what the regression below computes. In `cigsale ~ state * prepost`, the interaction coefficient `stateCalifornia:prepostPost` *is* the DiD estimate.
+
+## Setup and data
 
 ```{r}
 #| label: setup
 #| message: false
 #| warning: false
-#| eval: false
 library(tidyverse)
-library(fixest)
+library(sandwich)
+library(lmtest)
+
+set.seed(42)
 ```
 
 ```{r}
-#| label: did-example
-#| eval: false
-# Placeholder: two-way fixed-effects DiD via fixest::feols(),
-#   y ~ treat * post | region + period
-# with clustered standard errors.
+#| label: data-load
+prop99 <- read_rds("data/proposition99.rds") |> as_tibble()
+
+# Keep only California and Nevada in the 1984-1993 window and add the
+# Pre/Post factor. Make Nevada the reference level so that the
+# stateCalifornia interaction lands on California's extra change.
+prop99_did <- prop99 |>
+  filter(state %in% c("California", "Nevada"),
+         year > 1983, year < 1994) |>
+  mutate(prepost = factor(year > 1988, labels = c("Pre", "Post")),
+         state   = factor(state, levels = c("Nevada", "California")))
 ```
 
-## Regional case study
+## Fit and HAC inference
 
-*Placeholder.*
+```{r}
+#| label: fit-did
+# Two-way interacted regression: state main effect + Pre/Post main effect
+# + (state x Pre/Post) interaction. The interaction is the DiD estimate.
+fit_did <- lm(cigsale ~ state * prepost, data = prop99_did)
 
-## Diagnostics
+# HAC-robust standard errors for the four coefficients.
+coeftest(fit_did, vcov. = vcovHAC)
+```
 
-*Placeholder.* Parallel-trends pre-period checks, event-study plots,
-placebo / falsification tests.
+**Reading the output.** The interaction coefficient `stateCalifornia:prepostPost` is roughly $-5.68$ packs (HAC SE ≈ 5.39, $p \approx 0.31$). That is *dramatically* smaller than the naive $-27.02$ from chapter 1, and statistically indistinguishable from zero. Why? Because the `prepostPost` main effect is also large: $-21.34$ packs. Nevada's own cigarette sales fell by 21.3 packs between 1984–1988 and 1989–1993. When DiD subtracts that Nevada change from California's change, almost all of California's drop is absorbed.
+
+## Visual diagnostic
+
+```{r}
+#| label: fig-did-parallel-trends
+#| fig-cap: "California vs Nevada, 1970–2000. Nevada is also declining post-1988, so the DiD contrast collapses."
+#| fig-width: 8
+#| fig-height: 5
+two_states <- prop99 |>
+  filter(state %in% c("California", "Nevada"))
+
+ggplot(two_states, aes(x = year, y = cigsale, color = state)) +
+  geom_line(linewidth = 1.1) +
+  geom_vline(xintercept = 1988.5, color = "#141413",
+             linetype = "dashed", linewidth = 0.7) +
+  scale_color_manual(values = c("California" = "#d97757",
+                                "Nevada"     = "#6a9bcc")) +
+  labs(x = "Year", y = "Cigarette sales (packs per capita)",
+       color = NULL) +
+  theme_minimal()
+```
+
+This is the textbook DiD pitfall. A single control unit that itself is shifting in the same direction makes the contrast collapse. Nevada is geographically and culturally adjacent to California. It inherits many of the same secular forces: rising health awareness, federal tobacco settlements, retail-price spillovers. So it is a poor "what would California have done?" control.
+
+**Common pitfall.** Picking the *one* "most similar" control by hand. If your single control is subject to the same secular forces as the treated unit — geographic neighbours, policy spillovers, regional macro shocks — the contrast collapses and DiD silently reports zero.
+
+**Recap.** DiD against Nevada says $-5.7$ packs and we cannot reject zero. The lesson is *not* that DiD is broken — it is that DiD with a single similar control unit is fragile. **Synthetic Control (chapter 5) is the principled response**: instead of one control state, blend many states into a weighted "synthetic California".
 
 ## Further reading
 
-*Placeholder.*
+For modern multi-period Difference-in-Differences with staggered adoption, the `did` package (Callaway & Sant'Anna group-time ATTs) and `fixest::feols` (two-way fixed effects with cluster-robust SEs) are the workhorses. See @bernal2017interrupted for parallel-trends diagnostics in policy evaluation.

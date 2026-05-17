@@ -2,45 +2,146 @@
 title: "Structural Bayesian Time Series"
 ---
 
-## Overview
+## The BSTS / CausalImpact idea
 
-*Placeholder.* Structural Bayesian time-series models (e.g., Google's `CausalImpact`) estimate the causal effect of an intervention as the difference between observed post-intervention outcomes and a Bayesian counterfactual forecast built from pre-intervention dynamics and contemporaneous control series.
+Fit a **Bayesian structural time-series (BSTS)** model on the pre-period. Use *other states' cigarette sales* (and optionally covariates) as predictors. Project the fitted model forward as the counterfactual. The posterior over (observed − projected) gives a credible interval for the policy effect.
 
-## The model
+This is the only method in the book that delivers a *credible* interval — a direct probability statement about the parameter — rather than a frequentist confidence band or a Fisher exact $p$-value.
 
-*Placeholder.* A state-space decomposition into local-trend, seasonal, and regression components, fit by `bsts`.
+## The model in two pieces
 
-## Estimation in R
+The BSTS counterfactual is
+
+$$y_{1t} = \mu_t + \beta^\top x_t + \varepsilon_t, \quad t \le t^*$$
+
+where $\mu_t$ is a local-level trend, $x_t$ are the control-series regressors (other states' `cigsale`, plus optional covariates), and $t^*$ is the intervention date. California's outcome is *a slowly-evolving trend* **plus** *a linear combination of donor-state series* **plus** *a random error*.
+
+```{mermaid}
+flowchart TB
+    subgraph "BSTS counterfactual ŷ₁ₜ"
+        TREND["μₜ — local-level trend<br/>(absorbs dynamics no control can explain)"]
+        REG["β·xₜ — regression on donor cigsale + covariates<br/>(borrows from donor pool)"]
+        ERR["εₜ — random error"]
+    end
+    TREND --> Y["ŷ₁ₜ"]
+    REG --> Y
+    ERR --> Y
+    Y --> CMP["Observed y₁ₜ − ŷ₁ₜ<br/>= policy effect (with credible band)"]
+
+    style TREND fill:#6a9bcc,stroke:#141413,color:#fff
+    style REG fill:#00d4c8,stroke:#141413,color:#141413
+    style ERR fill:#7a8395,stroke:#141413,color:#fff
+    style Y fill:#1f2b5e,stroke:#141413,color:#fff
+    style CMP fill:#d97757,stroke:#141413,color:#fff
+```
+
+The trend $\mu_t$ absorbs the dynamics that no control series can explain; the regression term $\beta^\top x_t$ borrows information from the donor pool. After the model is fit on $t \le t^*$, it is projected forward and the posterior over $y_{1t} - \hat{y}_{1t}$ gives the credible interval for the policy effect.
+
+## Setup and data
 
 ```{r}
 #| label: setup
 #| message: false
 #| warning: false
-#| eval: false
 library(tidyverse)
 library(CausalImpact)
-library(bsts)
+library(mice)
+
+set.seed(42)
 ```
 
 ```{r}
-#| label: ci-example
-#| eval: false
-# Placeholder: build a CausalImpact input frame with the treated series
-# and donor controls, call CausalImpact(), summarize and plot.
+#| label: data-load
+prop99 <- read_rds("data/proposition99.rds") |> as_tibble()
 ```
 
-## Interpreting posterior intervals
+## Imputation and wide pivot
 
-*Placeholder.*
+CausalImpact wants a *wide* dataset with the treated outcome in column 1 and every control series in the remaining columns. The covariate columns have missing values (`lnincome` is missing 16% of rows, `age15to24` 32%, `beer` 55%), so we fill them with single random-forest imputation from `mice`.
 
-## Regional case study
+```{r}
+#| label: impute-and-pivot
+#| message: false
+#| warning: false
+# Fill in missing covariate values with one round of random-forest
+# multiple imputation (m = 1, method = "rf"). printFlag suppresses
+# console chatter.
+prop99_imputed <- prop99 |>
+  mice(m = 1, method = "rf", printFlag = FALSE) |>
+  complete() |>
+  as_tibble()
 
-*Placeholder.*
+# Pivot the long panel to wide format: one column per (variable, state)
+# pair. CausalImpact requires the treated outcome in column 1, hence
+# relocate(cigsale_California) and drop the year index.
+prop99_wide <- prop99_imputed |>
+  pivot_wider(names_from  = state,
+              values_from = c(cigsale, lnincome, beer, age15to24, retprice)) |>
+  relocate(cigsale_California) |>
+  select(-year)
 
-## Comparison with synthetic control
+dim(prop99_wide)
+```
 
-*Placeholder.* CausalImpact and classical synthetic control answer related questions with different assumptions; this section compares estimates on the same data.
+## Fit the Bayesian structural TS model
+
+```{r}
+#| label: fit-causalimpact
+#| message: false
+#| warning: false
+# CausalImpact takes integer row indices, not years.
+# Row 1 = 1970, row 19 = 1988 (last pre-period year).
+# Row 20 = 1989, row 31 = 2000 (last observed year).
+pre_idx  <- c(1, 19)
+post_idx <- c(20, 31)
+
+# Reset the seed so the BSTS MCMC draws are reproducible.
+set.seed(42)
+
+impact_full <- CausalImpact(prop99_wide,
+                            pre.period  = pre_idx,
+                            post.period = post_idx)
+summary(impact_full)
+```
+
+**Reading the output.**
+
+- **Average ATT:** approximately $-13$ packs/capita (posterior SD ≈ 11), 95% credible interval roughly $[-32, +5.7]$.
+- **Cumulative effect:** about $-154$ packs over 12 years, or roughly 16% of what would have been expected absent the policy.
+- **Posterior probability of any causal effect:** ≈ 92%.
+
+If we drop the covariates and use only other states' cigarette sales as controls, the point estimate strengthens to around $-21$ packs and the posterior probability rises to ≈ 97%. The covariates absorb some of the variation the simpler model was attributing to Proposition 99 — which can be read as either "added robustness" or "watered-down signal" depending on how much you trust the imputed beer-and-income covariates.
+
+## The two-panel diagnostic
+
+```{r}
+#| label: fig-causalimpact
+#| fig-cap: "CausalImpact two-panel: pointwise observed vs Bayesian counterfactual, and cumulative effect over time."
+#| fig-width: 8
+#| fig-height: 7
+plot(impact_full)
+```
+
+The top panel shows the pointwise picture: observed California opens a steady gap below the Bayesian counterfactual starting in 1989, with a 95% credible band that widens as we forecast further from the training window. The bottom panel cumulates that gap over time. By 2000 the cumulative effect is roughly $-150$ packs/capita with a credible interval that includes zero only at the very upper edge.
+
+## Common pitfall
+
+Imputing missing covariates without thinking about the imputation model. The random-forest fill we use here is a single-imputation shortcut for tutorial speed. With multiple imputation ($m > 1$) or a different model, the estimate can move by 1–3 packs — and worse, an imputation that uses California itself to fill donor covariates would build an artificial post-period correlation that biases the result *toward* zero.
+
+## Recap
+
+CausalImpact lands at $-13$ to $-21$ packs depending on whether covariates are included, with a 92–97% posterior probability of a non-zero effect. It is the only method in the book that delivers a *credible* interval (a direct probability statement about the parameter), not a frequentist confidence band.
+
+| Question | Answer |
+|---|---|
+| What does CausalImpact estimate? | The ATT on California, 1989–2000 |
+| What is the point estimate? | Average ≈ $-13$ packs/capita; cumulative ≈ $-154$ packs over 12 years |
+| What is the uncertainty quantification? | 95% Bayesian credible interval ≈ $[-32, +5.7]$ packs; posterior probability of any effect ≈ 92% |
+| How is the counterfactual built? | Local-level trend + Bayesian regression on donor-state cigarette sales (+ imputed covariates) |
+| What is the design-time pitfall? | Single-imputation shortcuts on covariates with high missingness; never impute donors using the treated unit |
 
 ## Further reading
 
-*Placeholder.*
+- @brodersen2015inferring — the original `CausalImpact` paper.
+- @brodersen-causalimpact-talk — a 50-minute walk-through of the CausalImpact intuition by the package's lead author.
+- @causalimpact-pkg — package documentation and worked examples.

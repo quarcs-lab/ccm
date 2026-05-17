@@ -31,7 +31,9 @@ pkgs <- c(
   "lmtest",
   "broom",
   "fpp3",
-  "glue"
+  "glue",
+  "mice",
+  "ranger"
 )
 
 renv::install(pkgs)

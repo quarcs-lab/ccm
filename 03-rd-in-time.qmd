@@ -2,45 +2,111 @@
 title: "Regression Discontinuity in Time"
 ---
 
-## Overview
+## The RDD-on-time idea
 
-*Placeholder.* Regression discontinuity in time (RDiT) extends classical RD designs to settings where the running variable is time itself, with treatment switching on at a known calendar cutoff.
+Regression Discontinuity in Time treats the **calendar year** itself as the running variable and the policy date as a sharp threshold. We fit a piecewise linear regression to California's full 1970–2000 series that allows two breaks at 1989:
 
-## Identifying assumptions
+- A **level jump** at the threshold — the immediate "policy shock".
+- A **slope change** after the threshold — how the trajectory bends afterwards.
 
-*Placeholder.*
+The level jump is the headline RDD effect. The slope change is the medium-run trajectory.
 
-## Estimation in R
+**A naming heads-up.** The workshop labels this specification "RDD". It is RDD with time as the running variable, not the classical sharp RDD you would use for a means-tested benefit at an income cutoff. With time as the running variable, the math reduces to *segmented regression*.
+
+## The equation
+
+Re-centre time at the threshold by defining $\tilde t = t - t^* - 1$ (so $\tilde t = 0$ for the first post-period year). Then fit the segmented regression
+
+$$Y_{1t} = \beta_0 + \beta_1\, \tilde t + \beta_2\, \mathbf{1}[\tilde t \ge 0] + \beta_3\, \tilde t \cdot \mathbf{1}[\tilde t \ge 0] + \varepsilon_t.$$
+
+Each coefficient has a precise causal reading.
+
+- $\beta_0$ is the pre-period intercept at $\tilde t = 0$ (California's fitted level just before the threshold).
+- $\beta_1$ is the *pre-period* slope.
+- $\beta_2$ is the **level break** at the threshold — the immediate jump in cigarette sales at $\tilde t = 0$. This is the headline RDD effect.
+- $\beta_3$ is the **change in slope** after the threshold (the post-period slope is $\beta_1 + \beta_3$).
+
+The piecewise counterfactual continues the pre-period line ($\beta_0 + \beta_1\, \tilde t$) into the post-period, so the total deviation of observed from counterfactual at time $\tilde t > 0$ is $\beta_2 + \beta_3\, \tilde t$. The policy shifts the series *down* by $\beta_2$ packs immediately, then the gap widens (or narrows) at rate $\beta_3$ per year.
+
+## Setup and data
 
 ```{r}
 #| label: setup
 #| message: false
 #| warning: false
-#| eval: false
 library(tidyverse)
-library(fixest)
-library(rdrobust)
+library(sandwich)
+library(lmtest)
+library(fpp3)   # for tsibble class
+
+set.seed(42)
 ```
 
 ```{r}
-#| label: rdit-example
-#| eval: false
-# Placeholder: bandwidth selection, local linear regression around the
-# cutoff date, robust bias-corrected standard errors.
+#| label: data-load
+prop99 <- read_rds("data/proposition99.rds") |> as_tibble()
+
+prop99_ts <- prop99 |>
+  filter(state == "California") |>
+  select(year, cigsale) |>
+  mutate(prepost = factor(year > 1988, labels = c("Pre", "Post"))) |>
+  as_tsibble(index = year) |>
+  mutate(year0 = year - 1989)
 ```
 
-## Bandwidth selection
+## Fit and HAC inference
 
-*Placeholder.*
+```{r}
+#| label: fit-rdd
+# Piecewise OLS: pre-period slope, level break at threshold, slope change
+# after threshold. year0 = year - 1989 (already constructed above).
+fit_rdd <- lm(cigsale ~ year0 + prepost + year0:prepost,
+              data = as_tibble(prop99_ts))
 
-## Threats to validity
+# HAC-robust standard errors for the four coefficients.
+coeftest(fit_rdd, vcov. = vcovHAC)
+```
 
-*Placeholder.* RDiT designs are vulnerable to time-varying confounders, autocorrelation, and anticipation effects.
+**Reading the output.** Three coefficients matter.
 
-## Regional case study
+1. **Pre-period slope `year0` ≈ $-1.78$ packs/year.** Matches the ITS-growth fit from chapter 2; sanity check passed.
+2. **Level break `prepostPost` ≈ $-20.06$ packs** (HAC SE ≈ 5.59, $p \approx 0.001$). California's sales drop by about 20 packs *immediately* at the 1989 threshold.
+3. **Slope change `year0:prepostPost` ≈ $-1.49$ packs/year** (HAC SE ≈ 0.40, $p < 0.001$). The post-period decline accelerates by an extra 1.5 packs/year *on top of* the pre-period 1.8 packs/year.
 
-*Placeholder.*
+Combining the level break and the slope change, by 2000 (11 years after the threshold) the cumulative deviation from the extrapolated pre-trend is roughly $-20 - 11 \times 1.49 \approx -36$ packs. The piecewise fit is excellent ($R^2 \approx 0.97$).
+
+## Visual diagnostic
+
+```{r}
+#| label: fig-rdd-segmented
+#| fig-cap: "RDD on time: piecewise pre/post linear fit with level and slope breaks at 1989."
+#| fig-width: 8
+#| fig-height: 5
+#| message: false
+plot_df <- as_tibble(prop99_ts)
+
+ggplot(plot_df, aes(x = year, y = cigsale)) +
+  geom_point(color = "#d97757", size = 1.8) +
+  geom_smooth(data = filter(plot_df, prepost == "Pre"),
+              method = "lm", se = FALSE, color = "#6a9bcc", linewidth = 1) +
+  geom_smooth(data = filter(plot_df, prepost == "Post"),
+              method = "lm", se = FALSE, color = "#d97757", linewidth = 1) +
+  geom_vline(xintercept = 1988.5, color = "#141413",
+             linetype = "dashed", linewidth = 0.7) +
+  labs(x = "Year", y = "Cigarette sales (packs per capita)") +
+  theme_minimal()
+```
+
+The blue pre-1988 line and the orange post-1989 line both fit California's points almost perfectly, with a clear discontinuity at the threshold.
+
+## Caveats
+
+RDD on time inherits the same pre-trend mis-specification risk as ITS. If California's *underlying* trajectory was already changing curvature in the late 1980s for non-policy reasons — say, the 1988 Surgeon General's report on nicotine addiction — the level break attributed to Proposition 99 will absorb that change too.
+
+**Common pitfall.** Mistaking a coincident shock at the threshold for the policy effect. With time as the running variable, *any* event that happens to land in the same year as the policy — a related federal regulation, a recession, a media campaign — is absorbed into the level break.
+
+**Recap.** Regression Discontinuity on time reports a $-20.1$ pack level break with a tight standard error. It is the first of three methods in the book to land in the credible $-13$ to $-20$ "consensus" range, alongside Synthetic Control (chapter 5) and the Bayesian structural TS model (chapter 6).
 
 ## Further reading
 
-*Placeholder.*
+- For classical sharp RDD on a continuous running variable (test scores, income, age), use `rdrobust` by Calonico, Cattaneo & Titiunik instead of the segmented-regression approach above.
