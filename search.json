@@ -194,57 +194,67 @@
     "href": "03-rd-in-time.html",
     "title": "3  Regression Discontinuity in Time",
     "section": "",
-    "text": "3.1 Overview\nPlaceholder. Regression discontinuity in time (RDiT) extends classical RD designs to settings where the running variable is time itself, with treatment switching on at a known calendar cutoff.",
+    "text": "3.1 The RDD-on-time idea\nRegression Discontinuity in Time treats the calendar year itself as the running variable and the policy date as a sharp threshold. We fit a piecewise linear regression to California’s full 1970–2000 series that allows two breaks at 1989:\nThe level jump is the headline RDD effect. The slope change is the medium-run trajectory.\nA naming heads-up. The workshop labels this specification “RDD”. It is RDD with time as the running variable, not the classical sharp RDD you would use for a means-tested benefit at an income cutoff. With time as the running variable, the math reduces to segmented regression.",
     "crumbs": [
       "<span class='chapter-number'>3</span>  <span class='chapter-title'>Regression Discontinuity in Time</span>"
     ]
   },
   {
-    "objectID": "03-rd-in-time.html#identifying-assumptions",
-    "href": "03-rd-in-time.html#identifying-assumptions",
+    "objectID": "03-rd-in-time.html#the-rdd-on-time-idea",
+    "href": "03-rd-in-time.html#the-rdd-on-time-idea",
     "title": "3  Regression Discontinuity in Time",
-    "section": "3.2 Identifying assumptions",
-    "text": "3.2 Identifying assumptions\nPlaceholder.",
+    "section": "",
+    "text": "A level jump at the threshold — the immediate “policy shock”.\nA slope change after the threshold — how the trajectory bends afterwards.",
     "crumbs": [
       "<span class='chapter-number'>3</span>  <span class='chapter-title'>Regression Discontinuity in Time</span>"
     ]
   },
   {
-    "objectID": "03-rd-in-time.html#estimation-in-r",
-    "href": "03-rd-in-time.html#estimation-in-r",
+    "objectID": "03-rd-in-time.html#the-equation",
+    "href": "03-rd-in-time.html#the-equation",
     "title": "3  Regression Discontinuity in Time",
-    "section": "3.3 Estimation in R",
-    "text": "3.3 Estimation in R\n\n\nCode\nlibrary(tidyverse)\nlibrary(fixest)\nlibrary(rdrobust)\n\n\n\n\nCode\n# Placeholder: bandwidth selection, local linear regression around the\n# cutoff date, robust bias-corrected standard errors.",
+    "section": "3.2 The equation",
+    "text": "3.2 The equation\nRe-centre time at the threshold by defining \\(\\tilde t = t - t^* - 1\\) (so \\(\\tilde t = 0\\) for the first post-period year). Then fit the segmented regression\n\\[Y_{1t} = \\beta_0 + \\beta_1\\, \\tilde t + \\beta_2\\, \\mathbf{1}[\\tilde t \\ge 0] + \\beta_3\\, \\tilde t \\cdot \\mathbf{1}[\\tilde t \\ge 0] + \\varepsilon_t.\\]\nEach coefficient has a precise causal reading.\n\n\\(\\beta_0\\) is the pre-period intercept at \\(\\tilde t = 0\\) (California’s fitted level just before the threshold).\n\\(\\beta_1\\) is the pre-period slope.\n\\(\\beta_2\\) is the level break at the threshold — the immediate jump in cigarette sales at \\(\\tilde t = 0\\). This is the headline RDD effect.\n\\(\\beta_3\\) is the change in slope after the threshold (the post-period slope is \\(\\beta_1 + \\beta_3\\)).\n\nThe piecewise counterfactual continues the pre-period line (\\(\\beta_0 + \\beta_1\\, \\tilde t\\)) into the post-period, so the total deviation of observed from counterfactual at time \\(\\tilde t &gt; 0\\) is \\(\\beta_2 + \\beta_3\\, \\tilde t\\). The policy shifts the series down by \\(\\beta_2\\) packs immediately, then the gap widens (or narrows) at rate \\(\\beta_3\\) per year.",
     "crumbs": [
       "<span class='chapter-number'>3</span>  <span class='chapter-title'>Regression Discontinuity in Time</span>"
     ]
   },
   {
-    "objectID": "03-rd-in-time.html#bandwidth-selection",
-    "href": "03-rd-in-time.html#bandwidth-selection",
+    "objectID": "03-rd-in-time.html#setup-and-data",
+    "href": "03-rd-in-time.html#setup-and-data",
     "title": "3  Regression Discontinuity in Time",
-    "section": "3.4 Bandwidth selection",
-    "text": "3.4 Bandwidth selection\nPlaceholder.",
+    "section": "3.3 Setup and data",
+    "text": "3.3 Setup and data\n\n\nCode\nlibrary(tidyverse)\nlibrary(sandwich)\nlibrary(lmtest)\nlibrary(fpp3)   # for tsibble class\n\nset.seed(42)\n\n\n\n\nCode\nprop99 &lt;- read_rds(\"data/proposition99.rds\") |&gt; as_tibble()\n\nprop99_ts &lt;- prop99 |&gt;\n  filter(state == \"California\") |&gt;\n  select(year, cigsale) |&gt;\n  mutate(prepost = factor(year &gt; 1988, labels = c(\"Pre\", \"Post\"))) |&gt;\n  as_tsibble(index = year) |&gt;\n  mutate(year0 = year - 1989)",
     "crumbs": [
       "<span class='chapter-number'>3</span>  <span class='chapter-title'>Regression Discontinuity in Time</span>"
     ]
   },
   {
-    "objectID": "03-rd-in-time.html#threats-to-validity",
-    "href": "03-rd-in-time.html#threats-to-validity",
+    "objectID": "03-rd-in-time.html#fit-and-hac-inference",
+    "href": "03-rd-in-time.html#fit-and-hac-inference",
     "title": "3  Regression Discontinuity in Time",
-    "section": "3.5 Threats to validity",
-    "text": "3.5 Threats to validity\nPlaceholder. RDiT designs are vulnerable to time-varying confounders, autocorrelation, and anticipation effects.",
+    "section": "3.4 Fit and HAC inference",
+    "text": "3.4 Fit and HAC inference\n\n\nCode\n# Piecewise OLS: pre-period slope, level break at threshold, slope change\n# after threshold. year0 = year - 1989 (already constructed above).\nfit_rdd &lt;- lm(cigsale ~ year0 + prepost + year0:prepost,\n              data = as_tibble(prop99_ts))\n\n# HAC-robust standard errors for the four coefficients.\ncoeftest(fit_rdd, vcov. = vcovHAC)\n\n\n\nt test of coefficients:\n\n                   Estimate Std. Error t value  Pr(&gt;|t|)    \n(Intercept)        98.41579    4.96750 19.8119 &lt; 2.2e-16 ***\nyear0              -1.77947    0.45909 -3.8761 0.0006137 ***\nprepostPost       -20.05810    5.58538 -3.5912 0.0012911 ** \nyear0:prepostPost  -1.49465    0.40140 -3.7236 0.0009151 ***\n---\nSignif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1\n\n\nReading the output. Three coefficients matter.\n\nPre-period slope year0 ≈ \\(-1.78\\) packs/year. Matches the ITS-growth fit from chapter 2; sanity check passed.\nLevel break prepostPost ≈ \\(-20.06\\) packs (HAC SE ≈ 5.59, \\(p \\approx 0.001\\)). California’s sales drop by about 20 packs immediately at the 1989 threshold.\nSlope change year0:prepostPost ≈ \\(-1.49\\) packs/year (HAC SE ≈ 0.40, \\(p &lt; 0.001\\)). The post-period decline accelerates by an extra 1.5 packs/year on top of the pre-period 1.8 packs/year.\n\nCombining the level break and the slope change, by 2000 (11 years after the threshold) the cumulative deviation from the extrapolated pre-trend is roughly \\(-20 - 11 \\times 1.49 \\approx -36\\) packs. The piecewise fit is excellent (\\(R^2 \\approx 0.97\\)).",
     "crumbs": [
       "<span class='chapter-number'>3</span>  <span class='chapter-title'>Regression Discontinuity in Time</span>"
     ]
   },
   {
-    "objectID": "03-rd-in-time.html#regional-case-study",
-    "href": "03-rd-in-time.html#regional-case-study",
+    "objectID": "03-rd-in-time.html#visual-diagnostic",
+    "href": "03-rd-in-time.html#visual-diagnostic",
     "title": "3  Regression Discontinuity in Time",
-    "section": "3.6 Regional case study",
-    "text": "3.6 Regional case study\nPlaceholder.",
+    "section": "3.5 Visual diagnostic",
+    "text": "3.5 Visual diagnostic\n\n\nCode\nplot_df &lt;- as_tibble(prop99_ts)\n\nggplot(plot_df, aes(x = year, y = cigsale)) +\n  geom_point(color = \"#d97757\", size = 1.8) +\n  geom_smooth(data = filter(plot_df, prepost == \"Pre\"),\n              method = \"lm\", se = FALSE, color = \"#6a9bcc\", linewidth = 1) +\n  geom_smooth(data = filter(plot_df, prepost == \"Post\"),\n              method = \"lm\", se = FALSE, color = \"#d97757\", linewidth = 1) +\n  geom_vline(xintercept = 1988.5, color = \"#141413\",\n             linetype = \"dashed\", linewidth = 0.7) +\n  labs(x = \"Year\", y = \"Cigarette sales (packs per capita)\") +\n  theme_minimal()\n\n\n\n\n\n\n\n\nFigure 3.1: RDD on time: piecewise pre/post linear fit with level and slope breaks at 1989.\n\n\n\n\n\nThe blue pre-1988 line and the orange post-1989 line both fit California’s points almost perfectly, with a clear discontinuity at the threshold.",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Regression Discontinuity in Time</span>"
+    ]
+  },
+  {
+    "objectID": "03-rd-in-time.html#caveats",
+    "href": "03-rd-in-time.html#caveats",
+    "title": "3  Regression Discontinuity in Time",
+    "section": "3.6 Caveats",
+    "text": "3.6 Caveats\nRDD on time inherits the same pre-trend mis-specification risk as ITS. If California’s underlying trajectory was already changing curvature in the late 1980s for non-policy reasons — say, the 1988 Surgeon General’s report on nicotine addiction — the level break attributed to Proposition 99 will absorb that change too.\nCommon pitfall. Mistaking a coincident shock at the threshold for the policy effect. With time as the running variable, any event that happens to land in the same year as the policy — a related federal regulation, a recession, a media campaign — is absorbed into the level break.\nRecap. Regression Discontinuity on time reports a \\(-20.1\\) pack level break with a tight standard error. It is the first of three methods in the book to land in the credible \\(-13\\) to \\(-20\\) “consensus” range, alongside Synthetic Control (chapter 5) and the Bayesian structural TS model (chapter 6).",
     "crumbs": [
       "<span class='chapter-number'>3</span>  <span class='chapter-title'>Regression Discontinuity in Time</span>"
     ]
@@ -254,7 +264,7 @@
     "href": "03-rd-in-time.html#further-reading",
     "title": "3  Regression Discontinuity in Time",
     "section": "3.7 Further reading",
-    "text": "3.7 Further reading\nPlaceholder.",
+    "text": "3.7 Further reading\n\nFor classical sharp RDD on a continuous running variable (test scores, income, age), use rdrobust by Calonico, Cattaneo & Titiunik instead of the segmented-regression approach above.",
     "crumbs": [
       "<span class='chapter-number'>3</span>  <span class='chapter-title'>Regression Discontinuity in Time</span>"
     ]
@@ -264,47 +274,47 @@
     "href": "04-basic-diff-in-diff.html",
     "title": "4  Basic Differences-in-Differences",
     "section": "",
-    "text": "4.1 Overview\nPlaceholder. The basic differences-in-differences (DiD) design estimates a causal effect by comparing the pre-post change in a treated region against the pre-post change in an untreated comparison region (or pool of regions).",
+    "text": "4.1 The DiD idea\nDifference-in-Differences picks one control state — Nevada, for this chapter — and treats its pre-to-post change as the counterfactual change California would have experienced absent the policy. Subtract Nevada’s change from California’s change. Whatever is left over is “what the policy did”.\nThe identifying assumption is parallel trends: California and Nevada would have moved on parallel paths without the policy. Differences in levels are fine; differences in trends are not. The estimand is a proper Average Treatment effect on the Treated (ATT) for California.",
     "crumbs": [
       "<span class='chapter-number'>4</span>  <span class='chapter-title'>Basic Differences-in-Differences</span>"
     ]
   },
   {
-    "objectID": "04-basic-diff-in-diff.html#identifying-assumptions",
-    "href": "04-basic-diff-in-diff.html#identifying-assumptions",
+    "objectID": "04-basic-diff-in-diff.html#the-change-of-changes-identity",
+    "href": "04-basic-diff-in-diff.html#the-change-of-changes-identity",
     "title": "4  Basic Differences-in-Differences",
-    "section": "4.2 Identifying assumptions",
-    "text": "4.2 Identifying assumptions\nPlaceholder. Parallel trends, no anticipation, SUTVA, stable composition.",
+    "section": "4.2 The change-of-changes identity",
+    "text": "4.2 The change-of-changes identity\nThe formal DiD identity is\n\\[\\hat{\\tau}_{\\text{DiD}} = \\big(\\bar{Y}_{\\text{CA, post}} - \\bar{Y}_{\\text{CA, pre}}\\big) - \\big(\\bar{Y}_{\\text{NV, post}} - \\bar{Y}_{\\text{NV, pre}}\\big).\\]\nThe four ingredients of the DiD calculation are easier to see as a 2×2 grid. Each cell holds a group mean; the two within-state changes are the row differences; the DiD estimate is the difference of those differences.\n\n\n\n\n\nflowchart TB\n    subgraph \"California\"\n        CA_pre[\"Pre (1984–88) mean&lt;br/&gt;= 99.0\"] --&gt; CA_d[\"Δ California =&lt;br/&gt;72.0 − 99.0 = −27.0\"]\n        CA_post[\"Post (1989–93) mean&lt;br/&gt;= 72.0\"] --&gt; CA_d\n    end\n    subgraph \"Nevada (control)\"\n        NV_pre[\"Pre (1984–88) mean&lt;br/&gt;= 143.1\"] --&gt; NV_d[\"Δ Nevada =&lt;br/&gt;121.8 − 143.1 = −21.3\"]\n        NV_post[\"Post (1989–93) mean&lt;br/&gt;= 121.8\"] --&gt; NV_d\n    end\n    CA_d --&gt; DD[\"DiD ATT =&lt;br/&gt;(−27.0) − (−21.3) = −5.7\"]\n    NV_d --&gt; DD\n\n    style CA_pre fill:#d97757,stroke:#141413,color:#fff\n    style CA_post fill:#d97757,stroke:#141413,color:#fff\n    style NV_pre fill:#6a9bcc,stroke:#141413,color:#fff\n    style NV_post fill:#6a9bcc,stroke:#141413,color:#fff\n    style DD fill:#00d4c8,stroke:#141413,color:#141413\n\n\n\n\n\n\nThe arithmetic is literally what the regression below computes. In cigsale ~ state * prepost, the interaction coefficient stateCalifornia:prepostPost is the DiD estimate.",
     "crumbs": [
       "<span class='chapter-number'>4</span>  <span class='chapter-title'>Basic Differences-in-Differences</span>"
     ]
   },
   {
-    "objectID": "04-basic-diff-in-diff.html#estimation-in-r",
-    "href": "04-basic-diff-in-diff.html#estimation-in-r",
+    "objectID": "04-basic-diff-in-diff.html#setup-and-data",
+    "href": "04-basic-diff-in-diff.html#setup-and-data",
     "title": "4  Basic Differences-in-Differences",
-    "section": "4.3 Estimation in R",
-    "text": "4.3 Estimation in R\n\n\nCode\nlibrary(tidyverse)\nlibrary(fixest)\n\n\n\n\nCode\n# Placeholder: two-way fixed-effects DiD via fixest::feols(),\n#   y ~ treat * post | region + period\n# with clustered standard errors.",
+    "section": "4.3 Setup and data",
+    "text": "4.3 Setup and data\n\n\nCode\nlibrary(tidyverse)\nlibrary(sandwich)\nlibrary(lmtest)\n\nset.seed(42)\n\n\n\n\nCode\nprop99 &lt;- read_rds(\"data/proposition99.rds\") |&gt; as_tibble()\n\n# Keep only California and Nevada in the 1984-1993 window and add the\n# Pre/Post factor. Make Nevada the reference level so that the\n# stateCalifornia interaction lands on California's extra change.\nprop99_did &lt;- prop99 |&gt;\n  filter(state %in% c(\"California\", \"Nevada\"),\n         year &gt; 1983, year &lt; 1994) |&gt;\n  mutate(prepost = factor(year &gt; 1988, labels = c(\"Pre\", \"Post\")),\n         state   = factor(state, levels = c(\"Nevada\", \"California\")))",
     "crumbs": [
       "<span class='chapter-number'>4</span>  <span class='chapter-title'>Basic Differences-in-Differences</span>"
     ]
   },
   {
-    "objectID": "04-basic-diff-in-diff.html#regional-case-study",
-    "href": "04-basic-diff-in-diff.html#regional-case-study",
+    "objectID": "04-basic-diff-in-diff.html#fit-and-hac-inference",
+    "href": "04-basic-diff-in-diff.html#fit-and-hac-inference",
     "title": "4  Basic Differences-in-Differences",
-    "section": "4.4 Regional case study",
-    "text": "4.4 Regional case study\nPlaceholder.",
+    "section": "4.4 Fit and HAC inference",
+    "text": "4.4 Fit and HAC inference\n\n\nCode\n# Two-way interacted regression: state main effect + Pre/Post main effect\n# + (state x Pre/Post) interaction. The interaction is the DiD estimate.\nfit_did &lt;- lm(cigsale ~ state * prepost, data = prop99_did)\n\n# HAC-robust standard errors for the four coefficients.\ncoeftest(fit_did, vcov. = vcovHAC)\n\n\n\nt test of coefficients:\n\n                            Estimate Std. Error  t value  Pr(&gt;|t|)    \n(Intercept)                 143.1000     1.0918 131.0701 &lt; 2.2e-16 ***\nstateCalifornia             -44.1200     3.8796 -11.3722 4.464e-09 ***\nprepostPost                 -21.3400     7.6870  -2.7761   0.01349 *  \nstateCalifornia:prepostPost  -5.6800     5.3929  -1.0532   0.30788    \n---\nSignif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1\n\n\nReading the output. The interaction coefficient stateCalifornia:prepostPost is roughly \\(-5.68\\) packs (HAC SE ≈ 5.39, \\(p \\approx 0.31\\)). That is dramatically smaller than the naive \\(-27.02\\) from chapter 1, and statistically indistinguishable from zero. Why? Because the prepostPost main effect is also large: \\(-21.34\\) packs. Nevada’s own cigarette sales fell by 21.3 packs between 1984–1988 and 1989–1993. When DiD subtracts that Nevada change from California’s change, almost all of California’s drop is absorbed.",
     "crumbs": [
       "<span class='chapter-number'>4</span>  <span class='chapter-title'>Basic Differences-in-Differences</span>"
     ]
   },
   {
-    "objectID": "04-basic-diff-in-diff.html#diagnostics",
-    "href": "04-basic-diff-in-diff.html#diagnostics",
+    "objectID": "04-basic-diff-in-diff.html#visual-diagnostic",
+    "href": "04-basic-diff-in-diff.html#visual-diagnostic",
     "title": "4  Basic Differences-in-Differences",
-    "section": "4.5 Diagnostics",
-    "text": "4.5 Diagnostics\nPlaceholder. Parallel-trends pre-period checks, event-study plots, placebo / falsification tests.",
+    "section": "4.5 Visual diagnostic",
+    "text": "4.5 Visual diagnostic\n\n\nCode\ntwo_states &lt;- prop99 |&gt;\n  filter(state %in% c(\"California\", \"Nevada\"))\n\nggplot(two_states, aes(x = year, y = cigsale, color = state)) +\n  geom_line(linewidth = 1.1) +\n  geom_vline(xintercept = 1988.5, color = \"#141413\",\n             linetype = \"dashed\", linewidth = 0.7) +\n  scale_color_manual(values = c(\"California\" = \"#d97757\",\n                                \"Nevada\"     = \"#6a9bcc\")) +\n  labs(x = \"Year\", y = \"Cigarette sales (packs per capita)\",\n       color = NULL) +\n  theme_minimal()\n\n\n\n\n\n\n\n\nFigure 4.1: California vs Nevada, 1970–2000. Nevada is also declining post-1988, so the DiD contrast collapses.\n\n\n\n\n\nThis is the textbook DiD pitfall. A single control unit that itself is shifting in the same direction makes the contrast collapse. Nevada is geographically and culturally adjacent to California. It inherits many of the same secular forces: rising health awareness, federal tobacco settlements, retail-price spillovers. So it is a poor “what would California have done?” control.\nCommon pitfall. Picking the one “most similar” control by hand. If your single control is subject to the same secular forces as the treated unit — geographic neighbours, policy spillovers, regional macro shocks — the contrast collapses and DiD silently reports zero.\nRecap. DiD against Nevada says \\(-5.7\\) packs and we cannot reject zero. The lesson is not that DiD is broken — it is that DiD with a single similar control unit is fragile. Synthetic Control (chapter 5) is the principled response: instead of one control state, blend many states into a weighted “synthetic California”.",
     "crumbs": [
       "<span class='chapter-number'>4</span>  <span class='chapter-title'>Basic Differences-in-Differences</span>"
     ]
@@ -314,7 +324,7 @@
     "href": "04-basic-diff-in-diff.html#further-reading",
     "title": "4  Basic Differences-in-Differences",
     "section": "4.6 Further reading",
-    "text": "4.6 Further reading\nPlaceholder.",
+    "text": "4.6 Further reading\nFor modern multi-period Difference-in-Differences with staggered adoption, the did package (Callaway & Sant’Anna group-time ATTs) and fixest::feols (two-way fixed effects with cluster-robust SEs) are the workhorses. See Bernal et al. (2017) for parallel-trends diagnostics in policy evaluation.\n\n\n\n\n\n\nBernal, J. L., Cummins, S., & Gasparrini, A. (2017). Interrupted time series regression for the evaluation of public health interventions: A tutorial. International Journal of Epidemiology, 46(1), 348–355. https://academic.oup.com/ije/article/46/1/348/2622842",
     "crumbs": [
       "<span class='chapter-number'>4</span>  <span class='chapter-title'>Basic Differences-in-Differences</span>"
     ]
@@ -324,57 +334,127 @@
     "href": "05-classical-synthetic-control.html",
     "title": "5  Classical Synthetic Control",
     "section": "",
-    "text": "5.1 Overview\nPlaceholder. The synthetic control method constructs a counterfactual for a single treated region as a convex combination of untreated donor regions, choosing weights to minimize pre-treatment outcome divergence.",
+    "text": "5.1 The SCM idea\nSynthetic Control stops using one control state. Instead, it builds a weighted combination of donor states that matches the treated unit’s pre-period as closely as possible on a chosen set of predictors. The weighted combination is “synthetic California”. The gap between observed California and synthetic California is the estimated effect.\nWhy it works where DiD failed. Difference-in-Differences against Nevada (chapter 4) needed parallel pre-trends with one neighbour. Synthetic Control needs parallel pre-trends with a data-driven blend of many neighbours. The optimisation does the matching, so the analyst no longer has to pick “the right” control state by hand.",
     "crumbs": [
       "<span class='chapter-number'>5</span>  <span class='chapter-title'>Classical Synthetic Control</span>"
     ]
   },
   {
-    "objectID": "05-classical-synthetic-control.html#the-method",
-    "href": "05-classical-synthetic-control.html#the-method",
+    "objectID": "05-classical-synthetic-control.html#the-four-stage-tidysynth-pipeline",
+    "href": "05-classical-synthetic-control.html#the-four-stage-tidysynth-pipeline",
     "title": "5  Classical Synthetic Control",
-    "section": "5.2 The method",
-    "text": "5.2 The method\nPlaceholder.",
+    "section": "5.2 The four-stage tidysynth pipeline",
+    "text": "5.2 The four-stage tidysynth pipeline\n\n\n\n\n\nflowchart LR\n    A[\"1. synthetic_control()&lt;br/&gt;declare treated unit&lt;br/&gt;and intervention time\"] --&gt; B[\"2. generate_predictor()&lt;br/&gt;define matching variables&lt;br/&gt;(one call per time window)\"]\n    B --&gt; C[\"3. generate_weights()&lt;br/&gt;optimise donor weights&lt;br/&gt;(quadratic programming)\"]\n    C --&gt; D[\"4. generate_control()&lt;br/&gt;build synthetic California&lt;br/&gt;and post-period gap series\"]\n    D --&gt; E[\"5. plot_/grab_ helpers&lt;br/&gt;trends, weights,&lt;br/&gt;placebos, MSPE ratio,&lt;br/&gt;Fisher exact p-value\"]\n\n    style A fill:#6a9bcc,stroke:#141413,color:#fff\n    style B fill:#6a9bcc,stroke:#141413,color:#fff\n    style C fill:#6a9bcc,stroke:#141413,color:#fff\n    style D fill:#d97757,stroke:#141413,color:#fff\n    style E fill:#00d4c8,stroke:#141413,color:#141413\n\n\n\n\n\n\nStages 1–4 produce the estimate. Stage 5 is a battery of inspection helpers — plot_trends(), plot_differences(), plot_weights(), plot_placebos(), plot_mspe_ratio(), grab_unit_weights(), grab_predictor_weights(), grab_balance_table(), grab_significance() — that turn the fitted object into figures and tables. We use all of them below.",
     "crumbs": [
       "<span class='chapter-number'>5</span>  <span class='chapter-title'>Classical Synthetic Control</span>"
     ]
   },
   {
-    "objectID": "05-classical-synthetic-control.html#estimation-in-r",
-    "href": "05-classical-synthetic-control.html#estimation-in-r",
+    "objectID": "05-classical-synthetic-control.html#the-equation",
+    "href": "05-classical-synthetic-control.html#the-equation",
     "title": "5  Classical Synthetic Control",
-    "section": "5.3 Estimation in R",
-    "text": "5.3 Estimation in R\n\n\nCode\nlibrary(tidyverse)\nlibrary(tidysynth)\n\n\n\n\nCode\n# Placeholder: assemble a donor pool, fit a synthetic control with\n# tidysynth, plot treated vs. synthetic trajectories.",
+    "section": "5.3 The equation",
+    "text": "5.3 The equation\nLet \\(X_1\\) be the vector of \\(k\\) pre-period predictors for the treated unit (California), and let \\(X_0\\) be the \\(k \\times J\\) matrix holding the same predictors for the \\(J = 38\\) donor states. The Synthetic Control estimator chooses donor weights \\(w\\) to minimise the (V-weighted) discrepancy between treated and synthetic on the predictors:\n\\[w^* \\, = \\, \\arg\\min_{w \\in \\mathcal{W}} \\, \\big(X_1 - X_0 w\\big)^\\top V \\big(X_1 - X_0 w\\big),\\]\nsubject to\n\\[\\mathcal{W} = \\big\\{w \\in \\mathbb{R}^J \\,:\\, w_j \\ge 0 \\,\\, \\forall j, \\,\\, \\textstyle\\sum_{j=1}^J w_j = 1\\big\\}.\\]\nThe diagonal matrix \\(V\\) holds the predictor importance weights — the optimiser can care more about pre-period cigarette sales than about, say, beer consumption (we inspect \\(V\\) below). Once \\(w^*\\) is solved, the synthetic California outcome at any year \\(t\\) is\n\\[\\widehat{Y_{1t}(0)} = \\sum_{j=1}^J w_j^* \\, Y_{jt},\\]\nand the ATT over 1989–2000 is the mean post-period gap between observed California and that synthetic counterfactual.",
     "crumbs": [
       "<span class='chapter-number'>5</span>  <span class='chapter-title'>Classical Synthetic Control</span>"
     ]
   },
   {
-    "objectID": "05-classical-synthetic-control.html#inference-placebo-tests",
-    "href": "05-classical-synthetic-control.html#inference-placebo-tests",
+    "objectID": "05-classical-synthetic-control.html#setup-and-data",
+    "href": "05-classical-synthetic-control.html#setup-and-data",
     "title": "5  Classical Synthetic Control",
-    "section": "5.4 Inference: placebo tests",
-    "text": "5.4 Inference: placebo tests\nPlaceholder.",
+    "section": "5.4 Setup and data",
+    "text": "5.4 Setup and data\n\n\nCode\nlibrary(tidyverse)\nlibrary(tidysynth)\n\nset.seed(42)\n\n\n\n\nCode\nprop99 &lt;- read_rds(\"data/proposition99.rds\") |&gt; as_tibble()",
     "crumbs": [
       "<span class='chapter-number'>5</span>  <span class='chapter-title'>Classical Synthetic Control</span>"
     ]
   },
   {
-    "objectID": "05-classical-synthetic-control.html#regional-case-study",
-    "href": "05-classical-synthetic-control.html#regional-case-study",
+    "objectID": "05-classical-synthetic-control.html#fit-the-synthetic-control-pipeline",
+    "href": "05-classical-synthetic-control.html#fit-the-synthetic-control-pipeline",
     "title": "5  Classical Synthetic Control",
-    "section": "5.5 Regional case study",
-    "text": "5.5 Regional case study\nPlaceholder.",
+    "section": "5.5 Fit the synthetic-control pipeline",
+    "text": "5.5 Fit the synthetic-control pipeline\n\n\nCode\nprop99_syn &lt;- prop99 |&gt;\n  # 1. Declare the panel structure: outcome, unit, time, treated unit\n  #    (\"California\"), and the last full pre-period year (1988).\n  #    generate_placebos = TRUE also fits the model treating each donor\n  #    state as treated, for the permutation test below.\n  synthetic_control(\n    outcome  = cigsale, unit = state, time = year,\n    i_unit   = \"California\", i_time = 1988,\n    generate_placebos = TRUE\n  ) |&gt;\n  # 2. Predictors averaged over the full pre-period (1980-1988).\n  generate_predictor(\n    time_window = 1980:1988,\n    lnincome    = mean(lnincome, na.rm = TRUE),\n    retprice    = mean(retprice, na.rm = TRUE),\n    age15to24   = mean(age15to24, na.rm = TRUE)\n  ) |&gt;\n  # 2b. beer is sparser, so use a narrower window where data is densest.\n  generate_predictor(time_window = 1984:1988,\n                     beer = mean(beer, na.rm = TRUE)) |&gt;\n  # 2c. Three \"lagged outcomes\" - cigsale at three pre-period dates.\n  #     These pin synthetic California's pre-period trajectory.\n  generate_predictor(time_window = 1975, cigsale_1975 = cigsale) |&gt;\n  generate_predictor(time_window = 1980, cigsale_1980 = cigsale) |&gt;\n  generate_predictor(time_window = 1988, cigsale_1988 = cigsale) |&gt;\n  # 3. Solve the constrained QP for donor weights w*. The three IPOP\n  #    parameters are tuning knobs for the interior-point optimiser.\n  generate_weights(optimization_window = 1970:1988,\n                   margin_ipop = .02,\n                   sigf_ipop   = 7,\n                   bound_ipop  = 6) |&gt;\n  # 4. Compute the synthetic California series from w* and donor outcomes.\n  generate_control()\n\n\nPredictor choices. Seven predictors are passed in. Three are pre-period covariate averages over the full pre-period (lnincome, retprice, age15to24 over 1980–1988). One uses a narrower window where data is densest (beer over 1984–1988). Three are lagged outcomes — cigarette sales themselves at 1975, 1980, and 1988. The lagged outcomes are the most important trick: anchoring the synthetic control on the treated unit’s own pre-period outcome levels at multiple time points forces the synthetic series to track California’s pre-1988 trajectory closely.",
     "crumbs": [
       "<span class='chapter-number'>5</span>  <span class='chapter-title'>Classical Synthetic Control</span>"
     ]
   },
   {
-    "objectID": "05-classical-synthetic-control.html#limitations",
-    "href": "05-classical-synthetic-control.html#limitations",
+    "objectID": "05-classical-synthetic-control.html#donor-weights-and-predictor-weights",
+    "href": "05-classical-synthetic-control.html#donor-weights-and-predictor-weights",
     "title": "5  Classical Synthetic Control",
-    "section": "5.6 Limitations",
-    "text": "5.6 Limitations\nPlaceholder. Classical synthetic control is sensitive to donor-pool composition, requires sufficient pre-treatment history, and offers limited frequentist inference.",
+    "section": "5.6 Donor weights and predictor weights",
+    "text": "5.6 Donor weights and predictor weights\nThe optimisation produces two weight vectors that drive the entire fit. Both are extractable as tidy tables.\n\n\nCode\ngrab_unit_weights(prop99_syn) |&gt;\n  arrange(desc(weight)) |&gt;\n  head(8)\n\n\n# A tibble: 8 × 2\n  unit            weight\n  &lt;chr&gt;            &lt;dbl&gt;\n1 Utah        0.342     \n2 Nevada      0.238     \n3 Montana     0.209     \n4 Colorado    0.149     \n5 Connecticut 0.0617    \n6 New Mexico  0.000434  \n7 Idaho       0.00000341\n8 Wisconsin   0.00000254\n\n\n\n\nCode\ngrab_predictor_weights(prop99_syn) |&gt;\n  arrange(desc(weight))\n\n\n# A tibble: 7 × 2\n  variable       weight\n  &lt;chr&gt;           &lt;dbl&gt;\n1 cigsale_1975 0.468   \n2 cigsale_1980 0.412   \n3 retprice     0.0546  \n4 cigsale_1988 0.0366  \n5 beer         0.0204  \n6 age15to24    0.00733 \n7 lnincome     0.000291\n\n\nTwo things to notice.\n\nFive states absorb essentially 100% of the donor weight. Utah, Nevada, Montana, Colorado, Connecticut. Every other state gets effectively zero. California is matched mostly to other Western/sunbelt states with similar age structure and cigarette price levels, plus Connecticut as a smoking-rate counterweight from the east.\nThe two earliest cigsale levels dominate the V matrix. cigsale_1975 and cigsale_1980 together get roughly 88% of the predictor weight. The four behavioural and demographic covariates get less than 9% combined. The optimiser has effectively decided: “the best way to predict California’s cigarette sales is using other states’ cigarette sales.”\n\nFor a one-line visual of both weight vectors, tidysynth ships a plot_weights() helper:\n\n\nCode\nplot_weights(prop99_syn)\n\n\n\n\n\n\n\n\nFigure 5.1: Donor unit weights (left) and predictor V-matrix weights (right) from tidysynth.\n\n\n\n\n\n\n5.6.1 A closer look at the V matrix\nThe combined plot_weights() view is convenient, but the V matrix deserves a stand-alone chart because it answers a different question than the donor weights. Donor weights say which states mimic California; the V matrix says which variables the optimiser used to decide what “mimics” means.\n\n\nCode\npredw_df &lt;- grab_predictor_weights(prop99_syn) |&gt;\n  mutate(variable = fct_reorder(variable, weight))\n\nggplot(predw_df, aes(x = weight, y = variable)) +\n  geom_col(fill = \"#6a9bcc\") +\n  geom_text(aes(label = sprintf(\"%.3f\", weight)), hjust = -0.12) +\n  scale_x_continuous(expand = expansion(mult = c(0, 0.15))) +\n  labs(x = \"V-matrix weight (predictor importance)\", y = NULL) +\n  theme_minimal()\n\n\n\n\n\n\n\n\nFigure 5.2: V matrix: cigsale_1975 and cigsale_1980 dominate; behavioural covariates get nearly zero weight.\n\n\n\n\n\nTwo readings of the same picture, one practical and one cautionary.\n\nPractical reading. Two lagged outcomes (cigsale_1975 and cigsale_1980) carry the bulk of the matching information. The optimiser has decided that California’s pre-period cigarette sales — at multiple time points — are the best fingerprint to match.\nCautionary reading. The V matrix is not a causal ranking. It tells you which variables were useful for matching the treated unit’s pre-period, not which variables cause the outcome.\n\nCommon pitfall. Treating the V matrix as a list of causal drivers. It is a list of good pre-period predictors for one specific unit, not a structural model of smoking.",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Classical Synthetic Control</span>"
+    ]
+  },
+  {
+    "objectID": "05-classical-synthetic-control.html#the-estimate",
+    "href": "05-classical-synthetic-control.html#the-estimate",
+    "title": "5  Classical Synthetic Control",
+    "section": "5.7 The estimate",
+    "text": "5.7 The estimate\n\n\nCode\n# grab_synthetic_control() returns a tidy tibble with observed (real_y)\n# and synthetic (synth_y) cigsale for every year. We restrict to the\n# post-period and compute the per-year gap.\nsc_post &lt;- grab_synthetic_control(prop99_syn) |&gt;\n  filter(time_unit &gt; 1988) |&gt;\n  mutate(dif = real_y - synth_y)\n\n# Average the per-year gap to recover the ATT.\nmean(sc_post$dif)\n\n\n[1] -18.84561\n\n\nThe Synthetic Control ATT is approximately \\(-18.85\\) packs/capita averaged over 1989–2000. This is the book’s primary causal estimate and within rounding of the canonical Abadie et al. (2010) result.\n\n\nCode\nplot_trends(prop99_syn)\n\n\nWarning: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.\nℹ Please use `linewidth` instead.\nℹ The deprecated feature was likely used in the tidysynth package.\n  Please report the issue to the authors.\n\n\n\n\n\n\n\n\nFigure 5.3: Synthetic Control: California (observed) vs synthetic California (weighted donor combination).\n\n\n\n\n\nThe pre-period fit is excellent — the synthetic and observed series are nearly indistinguishable through 1988. A substantial gap opens immediately after 1989, widening to roughly 30 packs by 2000.",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Classical Synthetic Control</span>"
+    ]
+  },
+  {
+    "objectID": "05-classical-synthetic-control.html#predictor-balance-did-the-matching-work",
+    "href": "05-classical-synthetic-control.html#predictor-balance-did-the-matching-work",
+    "title": "5  Classical Synthetic Control",
+    "section": "5.8 Predictor balance: did the matching work?",
+    "text": "5.8 Predictor balance: did the matching work?\ngrab_balance_table() shows California, synthetic California, and the unweighted donor average side-by-side on every predictor.\n\n\nCode\ngrab_balance_table(prop99_syn)\n\n\n# A tibble: 7 × 4\n  variable     California synthetic_California donor_sample\n  &lt;chr&gt;             &lt;dbl&gt;                &lt;dbl&gt;        &lt;dbl&gt;\n1 age15to24         0.174                0.174        0.173\n2 lnincome         10.1                  9.85         9.83 \n3 retprice         89.4                 89.4         87.3  \n4 beer             24.3                 24.2         23.7  \n5 cigsale_1975    127.                 127.         137.   \n6 cigsale_1980    120.                 120.         138.   \n7 cigsale_1988     90.1                 91.4        114.   \n\n\nOn every variable, synthetic California is far closer to California than the unweighted donor average is. The most dramatic improvement is on the lagged outcomes: cigsale_1988 is roughly 90 for California vs ≈91 for the synthetic — a near-perfect match — while the unweighted donor average is around 114. That gap of ~24 packs is exactly the bias the naive pre-post method silently absorbed.",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Classical Synthetic Control</span>"
+    ]
+  },
+  {
+    "objectID": "05-classical-synthetic-control.html#visualising-the-post-period-gap",
+    "href": "05-classical-synthetic-control.html#visualising-the-post-period-gap",
+    "title": "5  Classical Synthetic Control",
+    "section": "5.9 Visualising the post-period gap",
+    "text": "5.9 Visualising the post-period gap\nplot_trends() showed both observed and synthetic California on one canvas. The companion helper plot_differences() plots just the gap: \\(Y_{1t} - \\widehat{Y_{1t}(0)}\\), year by year. This isolates the treatment-effect curve in its cleanest form.\n\n\nCode\nplot_differences(prop99_syn)\n\n\nIgnoring unknown labels:\n• colour : \"\"\n• linetype : \"\"\n\n\n\n\n\n\n\n\nFigure 5.4: Per-year gap between observed California and synthetic California.\n\n\n\n\n\nRead the line as the effect of Proposition 99 on California in year \\(t\\). The pre-period values hover near zero (the matching worked), the line drops sharply after 1989, and it stays negative — steadily widening — throughout the post-period. The 1989–2000 mean of this series is exactly the \\(-18.85\\) packs ATT reported above.",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Classical Synthetic Control</span>"
+    ]
+  },
+  {
+    "objectID": "05-classical-synthetic-control.html#inference-via-placebo-permutation",
+    "href": "05-classical-synthetic-control.html#inference-via-placebo-permutation",
+    "title": "5  Classical Synthetic Control",
+    "section": "5.10 Inference via placebo permutation",
+    "text": "5.10 Inference via placebo permutation\nA “standard error” computed as cross-year SD divided by \\(\\sqrt{N}\\) is not a real sampling-distribution-based standard error. The proper Synthetic Control uncertainty quantification is a permutation test.\nThe recipe. Refit the synthetic-control model treating each donor state as if it had been the treated unit. Compute the post-period gap for each placebo. Compare California’s gap trajectory to those placebo trajectories. If California’s gap is extreme relative to the placebos, the policy probably did something.\n\n\nCode\nplot_placebos(prop99_syn)\n\n\n\n\n\n\n\n\nFigure 5.5: Placebo permutation: California in orange, donor placebos in grey (badly pre-fit donors pruned by default).\n\n\n\n\n\nThe orange line is California; the grey lines are the donor placebos. By default, plot_placebos() prunes placebos whose pre-period mean squared prediction error (MSPE) exceeds twice California’s — those donors fit their own pre-period so badly that comparing their post-period gap to California’s would be misleading. After pruning, California’s post-period gap sits visibly below every retained placebo, which is the visual signature of a “real” treatment effect.\nThe unpruned variant keeps every donor for full transparency:\n\n\nCode\nplot_placebos(prop99_syn, prune = FALSE)\n\n\n\n\n\n\n\n\nFigure 5.6: Same placebo plot with every donor retained — including badly pre-fit ones — to show the full pool of placebo trajectories.\n\n\n\n\n\nWith pruning off, the grey cloud is messier and a few badly-fit donors swing wildly — but California’s post-period descent still ends up at the bottom of the bundle. The qualitative conclusion does not depend on the pruning rule.",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Classical Synthetic Control</span>"
+    ]
+  },
+  {
+    "objectID": "05-classical-synthetic-control.html#mspe-ratio-and-fisher-exact-p-value",
+    "href": "05-classical-synthetic-control.html#mspe-ratio-and-fisher-exact-p-value",
+    "title": "5  Classical Synthetic Control",
+    "section": "5.11 MSPE ratio and Fisher exact p-value",
+    "text": "5.11 MSPE ratio and Fisher exact p-value\nA sharper version of the same test is the MSPE ratio — the ratio of post-period to pre-period mean squared prediction error. If a unit has a tight pre-period fit and a large post-period gap, the ratio is large.\n\n\nCode\n# grab_significance() returns one row per unit (treated + every placebo)\n# with pre_mspe, post_mspe, the post/pre ratio, the unit's rank in that\n# ratio, and the Fisher-style p-value (rank / n_units).\ngrab_significance(prop99_syn) |&gt;\n  arrange(desc(mspe_ratio)) |&gt;\n  head(5)\n\n\n# A tibble: 5 × 8\n  unit_name     type    pre_mspe post_mspe mspe_ratio  rank fishers_exact_pvalue\n  &lt;fct&gt;         &lt;chr&gt;      &lt;dbl&gt;     &lt;dbl&gt;      &lt;dbl&gt; &lt;int&gt;                &lt;dbl&gt;\n1 California    Treated     3.17      392.      124.      1               0.0256\n2 Georgia       Donor       3.79      179.       47.2     2               0.0513\n3 Indiana       Donor      25.2       770.       30.6     3               0.0769\n4 West Virginia Donor       9.52      284.       29.8     4               0.103 \n5 Wisconsin     Donor      11.1       268.       24.1     5               0.128 \n# ℹ 1 more variable: z_score &lt;dbl&gt;\n\n\nCalifornia’s MSPE ratio is around 124 — more than two and a half times higher than the next-highest unit. California ranks 1st out of 39 units. The Fisher exact \\(p\\)-value is rank divided by total units, so \\(1/39 \\approx 0.026\\). Under the null hypothesis that Proposition 99 had no effect, the probability of seeing a unit this extreme purely by chance is about 2.6%.\n\n\nCode\nplot_mspe_ratio(prop99_syn)\n\n\nIgnoring unknown labels:\n• colour : \"\"\n\n\n\n\n\n\n\n\nFigure 5.7: MSPE-ratio bar chart with California highlighted at rank 1 out of 39 units.\n\n\n\n\n\nThe orange bar at the top is California; every blue bar below it is a placebo donor. The gap between California and the second-place state is enormous. That gap is the visual signature of “a real treatment effect that the donor pool does not naturally replicate”.",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Classical Synthetic Control</span>"
+    ]
+  },
+  {
+    "objectID": "05-classical-synthetic-control.html#inspecting-the-nested-tidysynth-object",
+    "href": "05-classical-synthetic-control.html#inspecting-the-nested-tidysynth-object",
+    "title": "5  Classical Synthetic Control",
+    "section": "5.12 Inspecting the nested tidysynth object",
+    "text": "5.12 Inspecting the nested tidysynth object\nprop99_syn is not a plain data frame — it is a nested tibble with one row per unit (treated unit + every donor refit as a placebo) and list-columns that hold every intermediate output of the optimisation.\n\n\nCode\nprop99_syn\n\n\n# A tibble: 78 × 11\n   .id      .placebo .type .outcome .predictors .synthetic_control .unit_weights\n   &lt;fct&gt;       &lt;dbl&gt; &lt;chr&gt; &lt;list&gt;   &lt;list&gt;      &lt;list&gt;             &lt;list&gt;       \n 1 Califor…        0 trea… &lt;tibble&gt; &lt;tibble&gt;    &lt;tibble [31 × 3]&gt;  &lt;tibble&gt;     \n 2 Califor…        0 cont… &lt;tibble&gt; &lt;tibble&gt;    &lt;tibble [31 × 3]&gt;  &lt;tibble&gt;     \n 3 Alabama         1 trea… &lt;tibble&gt; &lt;tibble&gt;    &lt;tibble [31 × 3]&gt;  &lt;tibble&gt;     \n 4 Alabama         1 cont… &lt;tibble&gt; &lt;tibble&gt;    &lt;tibble [31 × 3]&gt;  &lt;tibble&gt;     \n 5 Arkansas        1 trea… &lt;tibble&gt; &lt;tibble&gt;    &lt;tibble [31 × 3]&gt;  &lt;tibble&gt;     \n 6 Arkansas        1 cont… &lt;tibble&gt; &lt;tibble&gt;    &lt;tibble [31 × 3]&gt;  &lt;tibble&gt;     \n 7 Colorado        1 trea… &lt;tibble&gt; &lt;tibble&gt;    &lt;tibble [31 × 3]&gt;  &lt;tibble&gt;     \n 8 Colorado        1 cont… &lt;tibble&gt; &lt;tibble&gt;    &lt;tibble [31 × 3]&gt;  &lt;tibble&gt;     \n 9 Connect…        1 trea… &lt;tibble&gt; &lt;tibble&gt;    &lt;tibble [31 × 3]&gt;  &lt;tibble&gt;     \n10 Connect…        1 cont… &lt;tibble&gt; &lt;tibble&gt;    &lt;tibble [31 × 3]&gt;  &lt;tibble&gt;     \n# ℹ 68 more rows\n# ℹ 4 more variables: .predictor_weights &lt;list&gt;, .original_data &lt;list&gt;,\n#   .meta &lt;list&gt;, .loss &lt;list&gt;\n\n\nEach list-column can be flattened with tidyr::unnest() for custom downstream work, or pulled out with one of the grab_*() helpers used above.\n\n\nCode\n# Flatten .outcome into a wide table: one row per (unit, year).\n# The actual cigarette-sales column is named after each unit, so we\n# select metadata + California's series for a clean preview.\nprop99_syn |&gt;\n  tidyr::unnest(cols = c(.outcome)) |&gt;\n  select(.id, .placebo, .type, time_unit, California) |&gt;\n  head(8)\n\n\n# A tibble: 8 × 5\n  .id        .placebo .type   time_unit California\n  &lt;fct&gt;         &lt;dbl&gt; &lt;chr&gt;       &lt;int&gt;      &lt;dbl&gt;\n1 California        0 treated      1970       123 \n2 California        0 treated      1971       121 \n3 California        0 treated      1972       124.\n4 California        0 treated      1973       124.\n5 California        0 treated      1974       127.\n6 California        0 treated      1975       127.\n7 California        0 treated      1976       128 \n8 California        0 treated      1977       126.\n\n\nFor the tidy observed-vs-synthetic table (which is what most analyses want), the dedicated helper is more convenient:\n\n\nCode\ngrab_synthetic_control(prop99_syn) |&gt; head(8)\n\n\n# A tibble: 8 × 3\n  time_unit real_y synth_y\n      &lt;int&gt;  &lt;dbl&gt;   &lt;dbl&gt;\n1      1970   123     117.\n2      1971   121     119.\n3      1972   124.    124.\n4      1973   124.    125.\n5      1974   127.    127.\n6      1975   127.    127.\n7      1976   128     128.\n8      1977   126.    126.\n\n\nThis is the whole point of the nested-tibble design: every step of the optimisation is introspectable from R, with no need to dig into S4 slots or attr() blobs.",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Classical Synthetic Control</span>"
+    ]
+  },
+  {
+    "objectID": "05-classical-synthetic-control.html#recap",
+    "href": "05-classical-synthetic-control.html#recap",
+    "title": "5  Classical Synthetic Control",
+    "section": "5.13 Recap",
+    "text": "5.13 Recap\n\n\n\n\n\n\n\nQuestion\nAnswer\n\n\n\n\nWhat does Synthetic Control estimate?\nThe ATT on California, 1989–2000\n\n\nWhat is the point estimate?\n\\(-18.85\\) packs/capita per year\n\n\nWhat is “synthetic California”?\nA convex combination of five Western/sunbelt states (Utah, Nevada, Montana, Colorado, Connecticut)\n\n\nWhat predictors did the matching?\nMostly two lagged outcomes — cigsale_1975 and cigsale_1980\n\n\nHow is the matching quality?\nExcellent — synthetic and observed California are near-identical through 1988\n\n\nWhat is the inference statistic?\nFisher exact \\(p \\approx 0.026\\) (California ranks 1st out of 39 on the MSPE ratio)\n\n\nWhat is the design-time pitfall?\nDon’t read the V matrix as a list of causal drivers — it is a list of good pre-period predictors\n\n\n\nSynthetic Control is the book’s headline causal estimate, and the placebo / MSPE-ratio diagnostics both confirm that California’s post-1989 trajectory is unusual relative to what other states experienced in the same window. In chapter 6 we hand the same donor information to a Bayesian model and ask whether a credible interval (a direct probability statement about the effect) tells the same story.",
     "crumbs": [
       "<span class='chapter-number'>5</span>  <span class='chapter-title'>Classical Synthetic Control</span>"
     ]
@@ -383,8 +463,8 @@
     "objectID": "05-classical-synthetic-control.html#further-reading",
     "href": "05-classical-synthetic-control.html#further-reading",
     "title": "5  Classical Synthetic Control",
-    "section": "5.7 Further reading",
-    "text": "5.7 Further reading\nPlaceholder.",
+    "section": "5.14 Further reading",
+    "text": "5.14 Further reading\n\nAbadie et al. (2010) — the original synthetic-control treatment of Proposition 99.\nAbadie (2021) — methodological feasibility, data requirements, and assumptions in a JEL review.\nDunford (2024) — documentation for the tidysynth package used here.\n\n\n\n\n\n\n\nAbadie, A. (2021). Using synthetic controls: Feasibility, data requirements, and methodological aspects. Journal of Economic Literature, 59(2), 391–425. https://www.aeaweb.org/articles?id=10.1257/jel.20191450\n\n\nAbadie, A., Diamond, A., & Hainmueller, J. (2010). Synthetic control methods for comparative case studies: Estimating the effect of California’s tobacco control program. Journal of the American Statistical Association, 105(490), 493–505. https://www.aeaweb.org/articles?id=10.1257/jasa.2010.ap08746\n\n\nDunford, E. (2024). Tidysynth — a tidy implementation of the synthetic control method in R. GitHub repository. https://github.com/edunford/tidysynth",
     "crumbs": [
       "<span class='chapter-number'>5</span>  <span class='chapter-title'>Classical Synthetic Control</span>"
     ]
@@ -394,57 +474,77 @@
     "href": "06-structural-bayesian-ts.html",
     "title": "6  Structural Bayesian Time Series",
     "section": "",
-    "text": "6.1 Overview\nPlaceholder. Structural Bayesian time-series models (e.g., Google’s CausalImpact) estimate the causal effect of an intervention as the difference between observed post-intervention outcomes and a Bayesian counterfactual forecast built from pre-intervention dynamics and contemporaneous control series.",
+    "text": "6.1 The BSTS / CausalImpact idea\nFit a Bayesian structural time-series (BSTS) model on the pre-period. Use other states’ cigarette sales (and optionally covariates) as predictors. Project the fitted model forward as the counterfactual. The posterior over (observed − projected) gives a credible interval for the policy effect.\nThis is the only method in the book that delivers a credible interval — a direct probability statement about the parameter — rather than a frequentist confidence band or a Fisher exact \\(p\\)-value.",
     "crumbs": [
       "<span class='chapter-number'>6</span>  <span class='chapter-title'>Structural Bayesian Time Series</span>"
     ]
   },
   {
-    "objectID": "06-structural-bayesian-ts.html#the-model",
-    "href": "06-structural-bayesian-ts.html#the-model",
+    "objectID": "06-structural-bayesian-ts.html#the-model-in-two-pieces",
+    "href": "06-structural-bayesian-ts.html#the-model-in-two-pieces",
     "title": "6  Structural Bayesian Time Series",
-    "section": "6.2 The model",
-    "text": "6.2 The model\nPlaceholder. A state-space decomposition into local-trend, seasonal, and regression components, fit by bsts.",
+    "section": "6.2 The model in two pieces",
+    "text": "6.2 The model in two pieces\nThe BSTS counterfactual is\n\\[y_{1t} = \\mu_t + \\beta^\\top x_t + \\varepsilon_t, \\quad t \\le t^*\\]\nwhere \\(\\mu_t\\) is a local-level trend, \\(x_t\\) are the control-series regressors (other states’ cigsale, plus optional covariates), and \\(t^*\\) is the intervention date. California’s outcome is a slowly-evolving trend plus a linear combination of donor-state series plus a random error.\n\n\n\n\n\nflowchart TB\n    subgraph \"BSTS counterfactual ŷ₁ₜ\"\n        TREND[\"μₜ — local-level trend&lt;br/&gt;(absorbs dynamics no control can explain)\"]\n        REG[\"β·xₜ — regression on donor cigsale + covariates&lt;br/&gt;(borrows from donor pool)\"]\n        ERR[\"εₜ — random error\"]\n    end\n    TREND --&gt; Y[\"ŷ₁ₜ\"]\n    REG --&gt; Y\n    ERR --&gt; Y\n    Y --&gt; CMP[\"Observed y₁ₜ − ŷ₁ₜ&lt;br/&gt;= policy effect (with credible band)\"]\n\n    style TREND fill:#6a9bcc,stroke:#141413,color:#fff\n    style REG fill:#00d4c8,stroke:#141413,color:#141413\n    style ERR fill:#7a8395,stroke:#141413,color:#fff\n    style Y fill:#1f2b5e,stroke:#141413,color:#fff\n    style CMP fill:#d97757,stroke:#141413,color:#fff\n\n\n\n\n\n\nThe trend \\(\\mu_t\\) absorbs the dynamics that no control series can explain; the regression term \\(\\beta^\\top x_t\\) borrows information from the donor pool. After the model is fit on \\(t \\le t^*\\), it is projected forward and the posterior over \\(y_{1t} - \\hat{y}_{1t}\\) gives the credible interval for the policy effect.",
     "crumbs": [
       "<span class='chapter-number'>6</span>  <span class='chapter-title'>Structural Bayesian Time Series</span>"
     ]
   },
   {
-    "objectID": "06-structural-bayesian-ts.html#estimation-in-r",
-    "href": "06-structural-bayesian-ts.html#estimation-in-r",
+    "objectID": "06-structural-bayesian-ts.html#setup-and-data",
+    "href": "06-structural-bayesian-ts.html#setup-and-data",
     "title": "6  Structural Bayesian Time Series",
-    "section": "6.3 Estimation in R",
-    "text": "6.3 Estimation in R\n\n\nCode\nlibrary(tidyverse)\nlibrary(CausalImpact)\nlibrary(bsts)\n\n\n\n\nCode\n# Placeholder: build a CausalImpact input frame with the treated series\n# and donor controls, call CausalImpact(), summarize and plot.",
+    "section": "6.3 Setup and data",
+    "text": "6.3 Setup and data\n\n\nCode\nlibrary(tidyverse)\nlibrary(CausalImpact)\nlibrary(mice)\n\nset.seed(42)\n\n\n\n\nCode\nprop99 &lt;- read_rds(\"data/proposition99.rds\") |&gt; as_tibble()",
     "crumbs": [
       "<span class='chapter-number'>6</span>  <span class='chapter-title'>Structural Bayesian Time Series</span>"
     ]
   },
   {
-    "objectID": "06-structural-bayesian-ts.html#interpreting-posterior-intervals",
-    "href": "06-structural-bayesian-ts.html#interpreting-posterior-intervals",
+    "objectID": "06-structural-bayesian-ts.html#imputation-and-wide-pivot",
+    "href": "06-structural-bayesian-ts.html#imputation-and-wide-pivot",
     "title": "6  Structural Bayesian Time Series",
-    "section": "6.4 Interpreting posterior intervals",
-    "text": "6.4 Interpreting posterior intervals\nPlaceholder.",
+    "section": "6.4 Imputation and wide pivot",
+    "text": "6.4 Imputation and wide pivot\nCausalImpact wants a wide dataset with the treated outcome in column 1 and every control series in the remaining columns. The covariate columns have missing values (lnincome is missing 16% of rows, age15to24 32%, beer 55%), so we fill them with single random-forest imputation from mice.\n\n\nCode\n# Fill in missing covariate values with one round of random-forest\n# multiple imputation (m = 1, method = \"rf\"). printFlag suppresses\n# console chatter.\nprop99_imputed &lt;- prop99 |&gt;\n  mice(m = 1, method = \"rf\", printFlag = FALSE) |&gt;\n  complete() |&gt;\n  as_tibble()\n\n# Pivot the long panel to wide format: one column per (variable, state)\n# pair. CausalImpact requires the treated outcome in column 1, hence\n# relocate(cigsale_California) and drop the year index.\nprop99_wide &lt;- prop99_imputed |&gt;\n  pivot_wider(names_from  = state,\n              values_from = c(cigsale, lnincome, beer, age15to24, retprice)) |&gt;\n  relocate(cigsale_California) |&gt;\n  select(-year)\n\ndim(prop99_wide)\n\n\n[1]  31 195",
     "crumbs": [
       "<span class='chapter-number'>6</span>  <span class='chapter-title'>Structural Bayesian Time Series</span>"
     ]
   },
   {
-    "objectID": "06-structural-bayesian-ts.html#regional-case-study",
-    "href": "06-structural-bayesian-ts.html#regional-case-study",
+    "objectID": "06-structural-bayesian-ts.html#fit-the-bayesian-structural-ts-model",
+    "href": "06-structural-bayesian-ts.html#fit-the-bayesian-structural-ts-model",
     "title": "6  Structural Bayesian Time Series",
-    "section": "6.5 Regional case study",
-    "text": "6.5 Regional case study\nPlaceholder.",
+    "section": "6.5 Fit the Bayesian structural TS model",
+    "text": "6.5 Fit the Bayesian structural TS model\n\n\nCode\n# CausalImpact takes integer row indices, not years.\n# Row 1 = 1970, row 19 = 1988 (last pre-period year).\n# Row 20 = 1989, row 31 = 2000 (last observed year).\npre_idx  &lt;- c(1, 19)\npost_idx &lt;- c(20, 31)\n\n# Reset the seed so the BSTS MCMC draws are reproducible.\nset.seed(42)\n\nimpact_full &lt;- CausalImpact(prop99_wide,\n                            pre.period  = pre_idx,\n                            post.period = post_idx)\nsummary(impact_full)\n\n\nPosterior inference {CausalImpact}\n\n                         Average       Cumulative  \nActual                   60            724         \nPrediction (s.d.)        73 (11)       878 (129)   \n95% CI                   [55, 92]      [656, 1108] \n                                                   \nAbsolute effect (s.d.)   -13 (11)      -154 (129)  \n95% CI                   [-32, 5.7]    [-383, 68.1]\n                                                   \nRelative effect (s.d.)   -16% (12%)    -16% (12%)  \n95% CI                   [-35%, 10%]   [-35%, 10%] \n\nPosterior tail-area probability p:   0.08233\nPosterior probability of an effect:  92%\n\nFor more details, type: summary(impact, \"report\")\n\n\nReading the output.\n\nAverage ATT: approximately \\(-13\\) packs/capita (posterior SD ≈ 11), 95% credible interval roughly \\([-32, +5.7]\\).\nCumulative effect: about \\(-154\\) packs over 12 years, or roughly 16% of what would have been expected absent the policy.\nPosterior probability of any causal effect: ≈ 92%.\n\nIf we drop the covariates and use only other states’ cigarette sales as controls, the point estimate strengthens to around \\(-21\\) packs and the posterior probability rises to ≈ 97%. The covariates absorb some of the variation the simpler model was attributing to Proposition 99 — which can be read as either “added robustness” or “watered-down signal” depending on how much you trust the imputed beer-and-income covariates.",
     "crumbs": [
       "<span class='chapter-number'>6</span>  <span class='chapter-title'>Structural Bayesian Time Series</span>"
     ]
   },
   {
-    "objectID": "06-structural-bayesian-ts.html#comparison-with-synthetic-control",
-    "href": "06-structural-bayesian-ts.html#comparison-with-synthetic-control",
+    "objectID": "06-structural-bayesian-ts.html#the-two-panel-diagnostic",
+    "href": "06-structural-bayesian-ts.html#the-two-panel-diagnostic",
     "title": "6  Structural Bayesian Time Series",
-    "section": "6.6 Comparison with synthetic control",
-    "text": "6.6 Comparison with synthetic control\nPlaceholder. CausalImpact and classical synthetic control answer related questions with different assumptions; this section compares estimates on the same data.",
+    "section": "6.6 The two-panel diagnostic",
+    "text": "6.6 The two-panel diagnostic\n\n\nCode\nplot(impact_full)\n\n\n\n\n\n\n\n\nFigure 6.1: CausalImpact two-panel: pointwise observed vs Bayesian counterfactual, and cumulative effect over time.\n\n\n\n\n\nThe top panel shows the pointwise picture: observed California opens a steady gap below the Bayesian counterfactual starting in 1989, with a 95% credible band that widens as we forecast further from the training window. The bottom panel cumulates that gap over time. By 2000 the cumulative effect is roughly \\(-150\\) packs/capita with a credible interval that includes zero only at the very upper edge.",
+    "crumbs": [
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Structural Bayesian Time Series</span>"
+    ]
+  },
+  {
+    "objectID": "06-structural-bayesian-ts.html#common-pitfall",
+    "href": "06-structural-bayesian-ts.html#common-pitfall",
+    "title": "6  Structural Bayesian Time Series",
+    "section": "6.7 Common pitfall",
+    "text": "6.7 Common pitfall\nImputing missing covariates without thinking about the imputation model. The random-forest fill we use here is a single-imputation shortcut for tutorial speed. With multiple imputation (\\(m &gt; 1\\)) or a different model, the estimate can move by 1–3 packs — and worse, an imputation that uses California itself to fill donor covariates would build an artificial post-period correlation that biases the result toward zero.",
+    "crumbs": [
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Structural Bayesian Time Series</span>"
+    ]
+  },
+  {
+    "objectID": "06-structural-bayesian-ts.html#recap",
+    "href": "06-structural-bayesian-ts.html#recap",
+    "title": "6  Structural Bayesian Time Series",
+    "section": "6.8 Recap",
+    "text": "6.8 Recap\nCausalImpact lands at \\(-13\\) to \\(-21\\) packs depending on whether covariates are included, with a 92–97% posterior probability of a non-zero effect. It is the only method in the book that delivers a credible interval (a direct probability statement about the parameter), not a frequentist confidence band.\n\n\n\n\n\n\n\nQuestion\nAnswer\n\n\n\n\nWhat does CausalImpact estimate?\nThe ATT on California, 1989–2000\n\n\nWhat is the point estimate?\nAverage ≈ \\(-13\\) packs/capita; cumulative ≈ \\(-154\\) packs over 12 years\n\n\nWhat is the uncertainty quantification?\n95% Bayesian credible interval ≈ \\([-32, +5.7]\\) packs; posterior probability of any effect ≈ 92%\n\n\nHow is the counterfactual built?\nLocal-level trend + Bayesian regression on donor-state cigarette sales (+ imputed covariates)\n\n\nWhat is the design-time pitfall?\nSingle-imputation shortcuts on covariates with high missingness; never impute donors using the treated unit",
     "crumbs": [
       "<span class='chapter-number'>6</span>  <span class='chapter-title'>Structural Bayesian Time Series</span>"
     ]
@@ -453,8 +553,8 @@
     "objectID": "06-structural-bayesian-ts.html#further-reading",
     "href": "06-structural-bayesian-ts.html#further-reading",
     "title": "6  Structural Bayesian Time Series",
-    "section": "6.7 Further reading",
-    "text": "6.7 Further reading\nPlaceholder.",
+    "section": "6.9 Further reading",
+    "text": "6.9 Further reading\n\nBrodersen et al. (2015) — the original CausalImpact paper.\nBrodersen (n.d.) — a 50-minute walk-through of the CausalImpact intuition by the package’s lead author.\nBrodersen & Hauser (n.d.) — package documentation and worked examples.\n\n\n\n\n\n\n\nBrodersen, K. H. (n.d.). Inferring the effect of an event using CausalImpact. YouTube talk. Retrieved https://youtu.be/GTgZfCltMm8\n\n\nBrodersen, K. H., Gallusser, F., Koehler, J., Remy, N., & Scott, S. L. (2015). Inferring causal impact using Bayesian structural time-series models. Annals of Applied Statistics, 9, 247–274. https://research.google.com/pubs/pub41854.html\n\n\nBrodersen, K. H., & Hauser, A. (n.d.). CausalImpact — an R package for causal inference using Bayesian structural time-series models. https://google.github.io/CausalImpact/.",
     "crumbs": [
       "<span class='chapter-number'>6</span>  <span class='chapter-title'>Structural Bayesian Time Series</span>"
     ]
@@ -464,7 +564,7 @@
     "href": "references.html",
     "title": "References",
     "section": "",
-    "text": "Abadie, A., Diamond, A., & Hainmueller, J. (2010). Synthetic control\nmethods for comparative case studies: Estimating the effect of\nCalifornia’s tobacco control program. Journal of the\nAmerican Statistical Association, 105(490), 493–505. https://www.aeaweb.org/articles?id=10.1257/jasa.2010.ap08746\n\n\nBernal, J. L., Cummins, S., & Gasparrini, A. (2017). Interrupted\ntime series regression for the evaluation of public health\ninterventions: A tutorial. International Journal of\nEpidemiology, 46(1), 348–355. https://academic.oup.com/ije/article/46/1/348/2622842\n\n\nHyndman, R. J., & Athanasopoulos, G. (2021). Forecasting:\nPrinciples and practice (3rd ed.). OTexts. https://otexts.com/fpp3/\n\n\nODISSEI Social Data Science team. (2024). Workshop on causal effects\nof policy interventions. https://causalpolicy.nl/.",
+    "text": "Abadie, A. (2021). Using synthetic controls: Feasibility, data\nrequirements, and methodological aspects. Journal of Economic\nLiterature, 59(2), 391–425. https://www.aeaweb.org/articles?id=10.1257/jel.20191450\n\n\nAbadie, A., Diamond, A., & Hainmueller, J. (2010). Synthetic control\nmethods for comparative case studies: Estimating the effect of\nCalifornia’s tobacco control program. Journal of the\nAmerican Statistical Association, 105(490), 493–505. https://www.aeaweb.org/articles?id=10.1257/jasa.2010.ap08746\n\n\nBernal, J. L., Cummins, S., & Gasparrini, A. (2017). Interrupted\ntime series regression for the evaluation of public health\ninterventions: A tutorial. International Journal of\nEpidemiology, 46(1), 348–355. https://academic.oup.com/ije/article/46/1/348/2622842\n\n\nBrodersen, K. H. (n.d.). Inferring the effect of an event using\nCausalImpact. YouTube talk. Retrieved https://youtu.be/GTgZfCltMm8\n\n\nBrodersen, K. H., Gallusser, F., Koehler, J., Remy, N., & Scott, S.\nL. (2015). Inferring causal impact using Bayesian\nstructural time-series models. Annals of Applied Statistics,\n9, 247–274. https://research.google.com/pubs/pub41854.html\n\n\nBrodersen, K. H., & Hauser, A. (n.d.). CausalImpact\n— an R package for causal inference using\nBayesian structural time-series models. https://google.github.io/CausalImpact/.\n\n\nDunford, E. (2024). Tidysynth — a tidy implementation of the\nsynthetic control method in R. GitHub repository. https://github.com/edunford/tidysynth\n\n\nHyndman, R. J., & Athanasopoulos, G. (2021). Forecasting:\nPrinciples and practice (3rd ed.). OTexts. https://otexts.com/fpp3/\n\n\nODISSEI Social Data Science team. (2024). Workshop on causal effects\nof policy interventions. https://causalpolicy.nl/.",
     "crumbs": [
       "References"
     ]
