@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>4&nbsp; Regression Discontinuity in Time – Comparative Causal Metrics</title>
+<title>3&nbsp; Regression Discontinuity in Time – Comparative Causal Metrics</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -65,7 +65,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./04-classical-synthetic-control.html" rel="next">
+<link href="./04-basic-diff-in-diff.html" rel="next">
 <link href="./02-interrupted-time-series.html" rel="prev">
 <link href="./images/favicon.svg" rel="icon" type="image/svg+xml">
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
@@ -287,7 +287,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./03-rd-in-time.html"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Regression Discontinuity in Time</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./03-rd-in-time.html"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Regression Discontinuity in Time</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -353,43 +353,49 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./index.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Preface {.unnumbered}</span></span></a>
+ <span class="menu-text">Preface</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./01-introduction.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Introduction</span></span></a>
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introduction</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./02-interrupted-time-series.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Interrupted Time Series</span></span></a>
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Interrupted Time Series</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./03-rd-in-time.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Regression Discontinuity in Time</span></span></a>
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Regression Discontinuity in Time</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./04-classical-synthetic-control.html" class="sidebar-item-text sidebar-link">
+  <a href="./04-basic-diff-in-diff.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Basic Differences-in-Differences</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./05-classical-synthetic-control.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Classical Synthetic Control</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./05-structural-bayesian-ts.html" class="sidebar-item-text sidebar-link">
+  <a href="./06-structural-bayesian-ts.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Structural Bayesian Time Series</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./references.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">References {.unnumbered}</span></span></a>
+ <span class="menu-text">References</span></a>
   </div>
 </li>
     </ul>
@@ -402,13 +408,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#overview" id="toc-overview" class="nav-link active" data-scroll-target="#overview"><span class="header-section-number">4.1</span> Overview</a></li>
-  <li><a href="#identifying-assumptions" id="toc-identifying-assumptions" class="nav-link" data-scroll-target="#identifying-assumptions"><span class="header-section-number">4.2</span> Identifying assumptions</a></li>
-  <li><a href="#estimation-in-r" id="toc-estimation-in-r" class="nav-link" data-scroll-target="#estimation-in-r"><span class="header-section-number">4.3</span> Estimation in R</a></li>
-  <li><a href="#bandwidth-selection" id="toc-bandwidth-selection" class="nav-link" data-scroll-target="#bandwidth-selection"><span class="header-section-number">4.4</span> Bandwidth selection</a></li>
-  <li><a href="#threats-to-validity" id="toc-threats-to-validity" class="nav-link" data-scroll-target="#threats-to-validity"><span class="header-section-number">4.5</span> Threats to validity</a></li>
-  <li><a href="#regional-case-study" id="toc-regional-case-study" class="nav-link" data-scroll-target="#regional-case-study"><span class="header-section-number">4.6</span> Regional case study</a></li>
-  <li><a href="#further-reading" id="toc-further-reading" class="nav-link" data-scroll-target="#further-reading"><span class="header-section-number">4.7</span> Further reading</a></li>
+  <li><a href="#overview" id="toc-overview" class="nav-link active" data-scroll-target="#overview"><span class="header-section-number">3.1</span> Overview</a></li>
+  <li><a href="#identifying-assumptions" id="toc-identifying-assumptions" class="nav-link" data-scroll-target="#identifying-assumptions"><span class="header-section-number">3.2</span> Identifying assumptions</a></li>
+  <li><a href="#estimation-in-r" id="toc-estimation-in-r" class="nav-link" data-scroll-target="#estimation-in-r"><span class="header-section-number">3.3</span> Estimation in R</a></li>
+  <li><a href="#bandwidth-selection" id="toc-bandwidth-selection" class="nav-link" data-scroll-target="#bandwidth-selection"><span class="header-section-number">3.4</span> Bandwidth selection</a></li>
+  <li><a href="#threats-to-validity" id="toc-threats-to-validity" class="nav-link" data-scroll-target="#threats-to-validity"><span class="header-section-number">3.5</span> Threats to validity</a></li>
+  <li><a href="#regional-case-study" id="toc-regional-case-study" class="nav-link" data-scroll-target="#regional-case-study"><span class="header-section-number">3.6</span> Regional case study</a></li>
+  <li><a href="#further-reading" id="toc-further-reading" class="nav-link" data-scroll-target="#further-reading"><span class="header-section-number">3.7</span> Further reading</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/quarcs-lab/ccm/edit/main/03-rd-in-time.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/quarcs-lab/ccm/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
@@ -418,7 +424,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Regression Discontinuity in Time</span></h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li><li><hr class="dropdown-divider"></li><li><a id="quarto-view-source" class="dropdown-item" href="javascript:void(0)" role="button">View Source</a></li></ul></div></div>
+<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Regression Discontinuity in Time</span></h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li><li><hr class="dropdown-divider"></li><li><a id="quarto-view-source" class="dropdown-item" href="javascript:void(0)" role="button">View Source</a></li></ul></div></div>
 </div>
 
 
@@ -435,16 +441,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<section id="overview" class="level2" data-number="4.1">
-<h2 data-number="4.1" class="anchored" data-anchor-id="overview"><span class="header-section-number">4.1</span> Overview</h2>
+<section id="overview" class="level2" data-number="3.1">
+<h2 data-number="3.1" class="anchored" data-anchor-id="overview"><span class="header-section-number">3.1</span> Overview</h2>
 <p><em>Placeholder.</em> Regression discontinuity in time (RDiT) extends classical RD designs to settings where the running variable is time itself, with treatment switching on at a known calendar cutoff.</p>
 </section>
-<section id="identifying-assumptions" class="level2" data-number="4.2">
-<h2 data-number="4.2" class="anchored" data-anchor-id="identifying-assumptions"><span class="header-section-number">4.2</span> Identifying assumptions</h2>
+<section id="identifying-assumptions" class="level2" data-number="3.2">
+<h2 data-number="3.2" class="anchored" data-anchor-id="identifying-assumptions"><span class="header-section-number">3.2</span> Identifying assumptions</h2>
 <p><em>Placeholder.</em></p>
 </section>
-<section id="estimation-in-r" class="level2" data-number="4.3">
-<h2 data-number="4.3" class="anchored" data-anchor-id="estimation-in-r"><span class="header-section-number">4.3</span> Estimation in R</h2>
+<section id="estimation-in-r" class="level2" data-number="3.3">
+<h2 data-number="3.3" class="anchored" data-anchor-id="estimation-in-r"><span class="header-section-number">3.3</span> Estimation in R</h2>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
@@ -461,20 +467,20 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </details>
 </div>
 </section>
-<section id="bandwidth-selection" class="level2" data-number="4.4">
-<h2 data-number="4.4" class="anchored" data-anchor-id="bandwidth-selection"><span class="header-section-number">4.4</span> Bandwidth selection</h2>
+<section id="bandwidth-selection" class="level2" data-number="3.4">
+<h2 data-number="3.4" class="anchored" data-anchor-id="bandwidth-selection"><span class="header-section-number">3.4</span> Bandwidth selection</h2>
 <p><em>Placeholder.</em></p>
 </section>
-<section id="threats-to-validity" class="level2" data-number="4.5">
-<h2 data-number="4.5" class="anchored" data-anchor-id="threats-to-validity"><span class="header-section-number">4.5</span> Threats to validity</h2>
+<section id="threats-to-validity" class="level2" data-number="3.5">
+<h2 data-number="3.5" class="anchored" data-anchor-id="threats-to-validity"><span class="header-section-number">3.5</span> Threats to validity</h2>
 <p><em>Placeholder.</em> RDiT designs are vulnerable to time-varying confounders, autocorrelation, and anticipation effects.</p>
 </section>
-<section id="regional-case-study" class="level2" data-number="4.6">
-<h2 data-number="4.6" class="anchored" data-anchor-id="regional-case-study"><span class="header-section-number">4.6</span> Regional case study</h2>
+<section id="regional-case-study" class="level2" data-number="3.6">
+<h2 data-number="3.6" class="anchored" data-anchor-id="regional-case-study"><span class="header-section-number">3.6</span> Regional case study</h2>
 <p><em>Placeholder.</em></p>
 </section>
-<section id="further-reading" class="level2" data-number="4.7">
-<h2 data-number="4.7" class="anchored" data-anchor-id="further-reading"><span class="header-section-number">4.7</span> Further reading</h2>
+<section id="further-reading" class="level2" data-number="3.7">
+<h2 data-number="3.7" class="anchored" data-anchor-id="further-reading"><span class="header-section-number">3.7</span> Further reading</h2>
 <p><em>Placeholder.</em></p>
 
 
@@ -957,12 +963,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
       <a href="./02-interrupted-time-series.html" class="pagination-link" aria-label="Interrupted Time Series">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Interrupted Time Series</span></span>
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Interrupted Time Series</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./04-classical-synthetic-control.html" class="pagination-link" aria-label="Classical Synthetic Control">
-        <span class="nav-page-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Classical Synthetic Control</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="./04-basic-diff-in-diff.html" class="pagination-link" aria-label="Basic Differences-in-Differences">
+        <span class="nav-page-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Basic Differences-in-Differences</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">

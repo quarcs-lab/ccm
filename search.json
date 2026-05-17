@@ -2,246 +2,326 @@
   {
     "objectID": "index.html",
     "href": "index.html",
-    "title": "Preface {.unnumbered}",
+    "title": "Comparative Causal Metrics",
     "section": "",
-    "text": "0.1 About this book\nComparative Causal Metrics is an introduction to regional impact evaluation using modern causal-inference methods implemented entirely in R and rendered with Quarto. The book is organized around a small set of quasi-experimental techniques that have become workhorses for evaluating the effects of policies, shocks, and interventions on regional outcomes:\nEach chapter pairs the conceptual logic of the method with a worked R example using publicly available data, so readers can reproduce every estimate end-to-end.",
+    "text": "Preface",
     "crumbs": [
-      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Preface {.unnumbered}</span>"
+      "Preface"
     ]
   },
   {
     "objectID": "index.html#about-this-book",
     "href": "index.html#about-this-book",
-    "title": "Preface {.unnumbered}",
-    "section": "",
-    "text": "Interrupted time series — modeling a single region’s outcome before and after a discrete event.\nRegression discontinuity in time — exploiting sharp temporal cutoffs as natural experiments.\nClassical synthetic control — constructing a weighted comparison region from a donor pool.\nStructural Bayesian time series — uncertainty-aware counterfactual estimation via state-space models.",
+    "title": "Comparative Causal Metrics",
+    "section": "About this book",
+    "text": "About this book\nComparative Causal Metrics is an introduction to regional impact evaluation using modern causal-inference methods implemented entirely in R and rendered with Quarto. The book is organized around a small set of quasi-experimental techniques that have become workhorses for evaluating the effects of policies, shocks, and interventions on regional outcomes:\n\nInterrupted time series — modeling a single region’s outcome before and after a discrete event.\nRegression discontinuity in time — exploiting sharp temporal cutoffs as natural experiments.\nClassical synthetic control — constructing a weighted comparison region from a donor pool.\nStructural Bayesian time series — uncertainty-aware counterfactual estimation via state-space models.\n\nEach chapter pairs the conceptual logic of the method with a worked R example using publicly available data, so readers can reproduce every estimate end-to-end.",
     "crumbs": [
-      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Preface {.unnumbered}</span>"
+      "Preface"
     ]
   },
   {
     "objectID": "index.html#how-to-read-this-book",
     "href": "index.html#how-to-read-this-book",
-    "title": "Preface {.unnumbered}",
-    "section": "0.2 How to read this book",
-    "text": "0.2 How to read this book\nThe chapters are designed to be read sequentially but each is self-contained. Code is folded by default — click &lt;/&gt; Code in any chapter to reveal the underlying R. The full source is available on GitHub, and PDF / EPUB downloads are linked in the navbar.",
+    "title": "Comparative Causal Metrics",
+    "section": "How to read this book",
+    "text": "How to read this book\nThe chapters are designed to be read sequentially but each is self-contained. Code is folded by default — click &lt;/&gt; Code in any chapter to reveal the underlying R. The full source is available on GitHub, and PDF / EPUB downloads are linked in the navbar.",
     "crumbs": [
-      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Preface {.unnumbered}</span>"
+      "Preface"
     ]
   },
   {
     "objectID": "index.html#acknowledgments",
     "href": "index.html#acknowledgments",
-    "title": "Preface {.unnumbered}",
-    "section": "0.3 Acknowledgments",
-    "text": "0.3 Acknowledgments\nThis book builds on the infrastructure of the companion project Mastering Causal Metrics and on a long tradition of applied econometric scholarship.",
+    "title": "Comparative Causal Metrics",
+    "section": "Acknowledgments",
+    "text": "Acknowledgments\nThis book builds on the infrastructure of the companion project Mastering Causal Metrics and on a long tradition of applied econometric scholarship.",
     "crumbs": [
-      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Preface {.unnumbered}</span>"
+      "Preface"
     ]
   },
   {
     "objectID": "01-introduction.html",
     "href": "01-introduction.html",
-    "title": "2  Introduction",
+    "title": "1  Introduction",
     "section": "",
-    "text": "2.1 Overview\nPlaceholder. This chapter introduces the comparative-causal framework for regional impact evaluation and motivates the four method families covered in the rest of the book.",
+    "text": "1.1 Why regional impact evaluation?\nHow do you measure the causal effect of a policy when you cannot randomise who gets treated? Most policy reforms hit a region — a state, province, or country — as a single block. There is no randomisation, no control arm, and often a single treated unit. The job of regional impact evaluation is to recover the missing counterfactual: what would the region have looked like without the policy?\nThis book is a guided tour of the small set of quasi-experimental methods that have become the workhorses of that job. Each one builds the counterfactual from a different data source — the region’s own past, a single neighbour, a weighted blend of donor regions, or a Bayesian time-series model — and each one therefore pays a different price in identifying assumptions. The disagreements between methods are the lesson.\nWe anchor the entire book around one canonical case study: California’s 1989 Proposition 99 cigarette tax. Per-capita cigarette sales in California fell from 116 packs in 1988 to 60 packs in 2000 — almost a 50% drop. But the country as a whole was also smoking less. The question is deceptively simple:\nThe case study is famous: the original synthetic-control paper by Abadie et al. (2010) used exactly this dataset. We replicate their estimate and then watch what happens when five other estimators are swapped in.",
     "crumbs": [
-      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Introduction</span>"
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Introduction</span>"
     ]
   },
   {
-    "objectID": "01-introduction.html#what-is-regional-impact-evaluation",
-    "href": "01-introduction.html#what-is-regional-impact-evaluation",
-    "title": "2  Introduction",
-    "section": "2.2 What is regional impact evaluation?",
-    "text": "2.2 What is regional impact evaluation?\nThe native approach and the need for a comparative-causal framework.",
+    "objectID": "01-introduction.html#why-regional-impact-evaluation",
+    "href": "01-introduction.html#why-regional-impact-evaluation",
+    "title": "1  Introduction",
+    "section": "",
+    "text": "How much of California’s drop was caused by Proposition 99, and how much would have happened anyway?",
     "crumbs": [
-      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Introduction</span>"
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Introduction</span>"
     ]
   },
   {
-    "objectID": "01-introduction.html#the-potential-outcomes-framework",
-    "href": "01-introduction.html#the-potential-outcomes-framework",
-    "title": "2  Introduction",
-    "section": "2.3 The potential outcomes framework",
-    "text": "2.3 The potential outcomes framework\nPlaceholder.",
+    "objectID": "01-introduction.html#causal-inference-as-a-missing-data-problem",
+    "href": "01-introduction.html#causal-inference-as-a-missing-data-problem",
+    "title": "1  Introduction",
+    "section": "1.2 Causal inference as a missing-data problem",
+    "text": "1.2 Causal inference as a missing-data problem\nBefore fitting any model, we need a vocabulary for what we are estimating. The cleanest one is the potential outcomes framework, due to Neyman (1923) and Rubin (1974). Its central insight is that causal inference is a missing-data problem.\n\n1.2.1 Two outcomes per unit, one observed\nFor each unit \\(i\\) at time \\(t\\), imagine two potential outcomes:\n\n\\(Y_{it}(1)\\) — cigarette sales in state \\(i\\) at year \\(t\\) with Proposition 99 in force.\n\\(Y_{it}(0)\\) — cigarette sales in state \\(i\\) at year \\(t\\) without Proposition 99 in force.\n\nLet \\(D_{it} \\in \\{0, 1\\}\\) be the treatment indicator. Here \\(D_{it} = 1\\) for California from 1989 onward, and \\(D_{it} = 0\\) everywhere else (every other state, plus California up to and including 1988). The outcome we observe is one of the two potential outcomes, never both:\n\\[Y_{it} \\,=\\, D_{it}\\, Y_{it}(1) \\,+\\, (1 - D_{it})\\, Y_{it}(0).\\]\nIn words: if California in 1995 was treated, we observe \\(Y_{1995}(1)\\) — not the counterfactual \\(Y_{1995}(0)\\), which is what California’s smoking would have been in 1995 had Proposition 99 never passed. That counterfactual is the missing data.\n\n\n1.2.2 The fundamental problem of causal inference\nMake the missing data concrete. The table below shows what is observed (✓), what is undefined because the state was never treated (—), and what is missing-and-must-be-imputed (?) for a handful of rows.\n\n\n\nState\nYear\n\\(D_{it}\\)\n\\(Y_{it}(0)\\)\n\\(Y_{it}(1)\\)\nObserved\n\n\n\n\nCalifornia\n1988\n0\n90.1 ✓\n?\n90.1\n\n\nCalifornia\n1989\n1\n?\n82.4 ✓\n82.4\n\n\nCalifornia\n1995\n1\n?\n64.4 ✓\n64.4\n\n\nCalifornia\n2000\n1\n?\n41.6 ✓\n41.6\n\n\nNevada\n1988\n0\n134.4 ✓\n—\n134.4\n\n\nNevada\n1995\n0\n113.0 ✓\n—\n113.0\n\n\nUtah\n1988\n0\n64.7 ✓\n—\n64.7\n\n\nUtah\n1995\n0\n55.0 ✓\n—\n55.0\n\n\n\nThis is what Holland (1986) called the fundamental problem of causal inference: for any treated unit at any time, we observe at most one of the two potential outcomes, and the other one is missing. For California after 1989 the missing column is \\(Y_{it}(0)\\) — every “?” in the third column. Every method in this book is a way to fill in those question marks.\n\n\n1.2.3 Three estimands: ITE, ATE, ATT\nWith both potential outcomes defined, the natural causal contrasts follow.\nIndividual treatment effect (ITE) for unit \\(i\\) at time \\(t\\):\n\\[\\tau_{it} = Y_{it}(1) - Y_{it}(0).\\]\nThe ITE is the gold standard, but it is never directly observable for any single \\((i, t)\\).\nAverage treatment effect (ATE) over a population:\n\\[\\text{ATE} = \\mathbb{E}\\big[Y_{it}(1) - Y_{it}(0)\\big].\\]\nHow smoking would have changed in the average state-year if all states had been treated. The ATE is identified by a randomised experiment — but Proposition 99 was not randomised. The ATE is not what we are after here.\nAverage treatment effect on the treated (ATT), restricted to units that actually received the treatment:\n\\[\\text{ATT} = \\mathbb{E}\\big[Y_{it}(1) - Y_{it}(0) \\,\\big|\\, D_{it} = 1\\big].\\]\nHow much smoking changed in California, in the post-1989 years because of Proposition 99. This is what every causal method in this book targets. For Proposition 99 the ATT averaged over 1989–2000 expands to\n\\[\\text{ATT}_{\\text{CA, post}} = \\frac{1}{T_{\\text{post}}} \\sum_{t &gt; t^*} \\Big[Y_{1t}(1) - Y_{1t}(0)\\Big],\\]\nwhere unit \\(i = 1\\) denotes California, \\(t^* = 1988\\) is the last pre-period year, and \\(T_{\\text{post}} = 12\\) is the number of post-period years (1989–2000). The first term — \\(Y_{1t}(1)\\) — is observed. The second term — \\(Y_{1t}(0)\\) — is missing.\n\n\n1.2.4 Each method is a way to impute the missing \\(Y(0)\\)\nThe table below makes this concrete: one row per method covered in this book.\n\n\n\n\n\n\n\nMethod (chapter)\nEstimator of the missing \\(Y_{1t}(0)\\)\n\n\n\n\nNaive pre-post (this chapter)\n\\(\\widehat{Y_{1t}(0)} = \\overline{Y}_{1, \\text{pre}}\\) — California’s own pre-period mean.\n\n\nInterrupted Time Series — growth curve (ch. 2)\n\\(\\widehat{Y_{1t}(0)} = \\hat\\alpha + \\hat\\beta\\, t\\) — extrapolate California’s pre-period linear fit.\n\n\nInterrupted Time Series — ARIMA (ch. 2)\n$ = $ forecast from an ARIMA model fitted on 1970–1988.\n\n\nRegression Discontinuity on time (ch. 3)\n\\(\\widehat{Y_{1t}(0)} = \\hat\\alpha + \\hat\\beta\\, (t - t^*)\\) — extrapolate California’s pre-period piecewise fit.\n\n\nBasic Difference-in-Differences (ch. 4)\n\\(\\widehat{Y_{1t}(0)} = \\overline{Y}_{1, \\text{pre}} + \\big(\\overline{Y}_{0, \\text{post}} - \\overline{Y}_{0, \\text{pre}}\\big)\\) — add a control state’s change.\n\n\nClassical Synthetic Control (ch. 5)\n\\(\\widehat{Y_{1t}(0)} = \\sum_{i \\in \\text{donors}} w_i^* Y_{it}\\) — weighted blend of donor states.\n\n\nStructural Bayesian Time Series (ch. 6)\n\\(\\widehat{Y_{1t}(0)} = \\mu_t + \\beta^\\top x_t\\) — Bayesian structural time-series fit on donor data.\n\n\n\nEach subsequent chapter takes one row and shows the R code that builds the corresponding \\(\\widehat{Y_{1t}(0)}\\), then subtracts it from the observed California series to recover the ATT.",
     "crumbs": [
-      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Introduction</span>"
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Introduction</span>"
     ]
   },
   {
-    "objectID": "01-introduction.html#a-roadmap-for-the-book",
-    "href": "01-introduction.html#a-roadmap-for-the-book",
-    "title": "2  Introduction",
-    "section": "2.4 A roadmap for the book",
-    "text": "2.4 A roadmap for the book\nPlaceholder.",
+    "objectID": "01-introduction.html#which-method-when",
+    "href": "01-introduction.html#which-method-when",
+    "title": "1  Introduction",
+    "section": "1.3 Which method when?",
+    "text": "1.3 Which method when?\nThe methods are not interchangeable. Each is appropriate for a different data situation. The decision tree below walks through three diagnostic questions and steers you to the matching family. Apply it whenever you face a new regional policy-evaluation problem.\n\n\n\n\n\nflowchart TB\n    Q1{\"Do you have a credible&lt;br/&gt;donor pool of untreated units?&lt;br/&gt;(roughly 10+ similar units&lt;br/&gt;followed over the same window)\"}\n    Q1 --&gt;|Yes| Q2{\"Do you want frequentist&lt;br/&gt;placebo inference,&lt;br/&gt;or Bayesian credible&lt;br/&gt;intervals?\"}\n    Q1 --&gt;|No, only one good control| DiD[\"Difference-in-Differences&lt;br/&gt;(ch. 4)&lt;br/&gt;&lt;br/&gt;Cost: parallel-trends assumption&lt;br/&gt;on a single comparison unit\"]\n    Q1 --&gt;|No, only the treated unit| Q3{\"Is the policy date the&lt;br/&gt;only structural break&lt;br/&gt;in the series?\"}\n\n    Q2 --&gt;|Frequentist + tidy code| SCM[\"Synthetic Control&lt;br/&gt;(ch. 5)&lt;br/&gt;&lt;br/&gt;Cost: convex-combination&lt;br/&gt;of donors must match the&lt;br/&gt;treated pre-period\"]\n    Q2 --&gt;|Bayesian + uncertainty bands| CI[\"Structural Bayesian TS&lt;br/&gt;(ch. 6)&lt;br/&gt;&lt;br/&gt;Cost: state-space prior;&lt;br/&gt;covariate-set choice&lt;br/&gt;affects the estimate\"]\n\n    Q3 --&gt;|Yes, sharp jump at threshold| RDD[\"Regression Discontinuity on time&lt;br/&gt;(ch. 3)&lt;br/&gt;&lt;br/&gt;Cost: assumes no other shock&lt;br/&gt;coincides with the threshold\"]\n    Q3 --&gt;|No, model the smooth pre-trend| ITS[\"Interrupted Time Series&lt;br/&gt;(ch. 2)&lt;br/&gt;&lt;br/&gt;Cost: pre-trend extrapolation&lt;br/&gt;must be specified correctly\"]\n\n    NAIVE[\"Naive pre-post&lt;br/&gt;(this chapter)&lt;br/&gt;&lt;br/&gt;Use only as a baseline.&lt;br/&gt;Never as a causal estimate.\"] -.-&gt;|\"baseline for everyone\"| Q1\n\n\n\n\n\n\nThe Synthetic Control and Bayesian structural TS branches are the most defensible families when a donor pool exists. DiD, RDD-on-time, and ITS are valid in their respective data situations but carry stronger identifying assumptions. The naive pre-post node — the rest of this chapter — is the universal baseline that everyone should compute first, never as the final answer, always as the bias yardstick.",
     "crumbs": [
-      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Introduction</span>"
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Introduction</span>"
     ]
   },
   {
-    "objectID": "01-introduction.html#setup",
-    "href": "01-introduction.html#setup",
-    "title": "2  Introduction",
-    "section": "2.5 Setup",
-    "text": "2.5 Setup\n\n\nCode\nlibrary(tidyverse)\nlibrary(fixest)\nlibrary(modelsummary)",
+    "objectID": "01-introduction.html#setup-and-data",
+    "href": "01-introduction.html#setup-and-data",
+    "title": "1  Introduction",
+    "section": "1.4 Setup and data",
+    "text": "1.4 Setup and data\nWe load the packages we need with library() calls. Every package below is pinned in renv.lock, so renv::restore() is enough to reproduce the environment on a fresh machine.\n\n\nCode\nlibrary(tidyverse)\nlibrary(sandwich)\nlibrary(lmtest)\n\nset.seed(42)\n\n\nThe dataset is cached in the repository at data/proposition99.rds. It is a panel of 39 U.S. states observed 1970–2000, with per-capita cigarette pack sales (cigsale) as the outcome and four covariates.\n\n\nCode\nprop99 &lt;- read_rds(\"data/proposition99.rds\") |&gt; as_tibble()\n\n# Subset to California and add a Pre/Post factor based on the policy date.\nprop99_cali &lt;- prop99 |&gt;\n  filter(state == \"California\") |&gt;\n  mutate(prepost = factor(year &gt; 1988, labels = c(\"Pre\", \"Post\")))\n\nprop99_cali |&gt;\n  group_by(prepost) |&gt;\n  summarize(n            = n(),\n            mean_cigsale = mean(cigsale),\n            sd_cigsale   = sd(cigsale),\n            .groups = \"drop\")\n\n\n# A tibble: 2 × 4\n  prepost     n mean_cigsale sd_cigsale\n  &lt;fct&gt;   &lt;int&gt;        &lt;dbl&gt;      &lt;dbl&gt;\n1 Pre        19        116.        11.7\n2 Post       12         60.4       12.1\n\n\nCalifornia’s average per-capita cigarette sales fell from about 116 packs (1970–1988) to about 60 packs (1989–2000) — a within-state drop of roughly 56 packs, or 48% of the pre-period mean. That is the raw before/after change. The rest of the book is about how much of that drop we can credibly attribute to Proposition 99 rather than to the broader American secular decline in smoking.\nBefore any modelling, it helps to see all 39 series at once.\n\n\nCode\neda_data &lt;- prop99 |&gt;\n  mutate(unit_type = if_else(state == \"California\",\n                             \"California (treated)\", \"Donor state\"))\n\nggplot(eda_data, aes(x = year, y = cigsale, group = state,\n                     color = unit_type,\n                     linewidth = unit_type, alpha = unit_type)) +\n  geom_line() +\n  geom_vline(xintercept = 1988.5, color = \"#d97757\",\n             linetype = \"dashed\", linewidth = 0.7) +\n  scale_color_manual(values = c(\"California (treated)\" = \"#d97757\",\n                                \"Donor state\" = \"#6a9bcc\")) +\n  scale_linewidth_manual(values = c(\"California (treated)\" = 1.2,\n                                    \"Donor state\" = 0.4)) +\n  scale_alpha_manual(values = c(\"California (treated)\" = 1,\n                                \"Donor state\" = 0.5)) +\n  labs(x = \"Year\", y = \"Cigarette sales (packs per capita)\",\n       color = NULL, linewidth = NULL, alpha = NULL) +\n  theme_minimal()\n\n\n\n\n\n\n\n\nFigure 1.1: Per-capita cigarette sales for all 39 states 1970–2000, with California highlighted.\n\n\n\n\n\nCalifornia sits inside the donor cloud throughout the 1970s and 1980s, then visibly separates downward after the dashed Proposition 99 line. The pre-1988 trajectory is already slightly below the donor median, but it is not anomalous; the sharp post-1988 separation is. Visually, this is the signal every causal estimator in the book tries to quantify.",
     "crumbs": [
-      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Introduction</span>"
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Introduction</span>"
     ]
   },
   {
-    "objectID": "01-introduction.html#worked-example-simple-synthetic-control",
-    "href": "01-introduction.html#worked-example-simple-synthetic-control",
-    "title": "2  Introduction",
-    "section": "2.6 Worked example: Simple synthetic control",
-    "text": "2.6 Worked example: Simple synthetic control\nPlaceholder. Each subsequent chapter follows this structure: motivation, identifying assumptions, estimation in R, and a regional case study.",
+    "objectID": "01-introduction.html#a-first-attempt-naive-pre-post",
+    "href": "01-introduction.html#a-first-attempt-naive-pre-post",
+    "title": "1  Introduction",
+    "section": "1.5 A first attempt: naive pre-post",
+    "text": "1.5 A first attempt: naive pre-post\nThe idea. Compare California’s mean cigarette sales before 1989 with its mean after 1989. Call the difference the “effect”.\nThe equation.\n\\[\\hat\\tau_{\\text{naive}} = \\overline{Y}_{1, \\text{post}} - \\overline{Y}_{1, \\text{pre}}.\\]\nIn words: the naive estimate is the difference between California’s observed post-period mean and California’s observed pre-period mean. This corresponds to imputing \\(\\widehat{Y_{1t}(0)} = \\overline{Y}_{1, \\text{pre}}\\) — i.e., assuming California’s counterfactual smoking would have been frozen at the pre-period average.\nWhy this is wrong but still useful. The implicit counterfactual “California’s pre-period level continues unchanged” is almost certainly wrong, because smoking was declining nationwide. But the estimate is so cheap to compute that it makes a useful baseline. Every later chapter tries to fix what is broken here.\nWe follow the convention of the ODISSEI workshop (ODISSEI Social Data Science team, 2024) and restrict to the 1984–1993 window for the naive estimate. Using the full 1970–2000 window would change the numbers but not the qualitative point.\n\n\nCode\n# OLS of California's cigsale on a Pre/Post dummy, restricted to the\n# workshop's 1984-1993 window.\nfit_prepost &lt;- lm(cigsale ~ prepost,\n                  data = prop99_cali |&gt; filter(year &gt; 1983, year &lt; 1994))\n\n# Replace the default OLS standard errors with HAC (heteroskedasticity-\n# and-autocorrelation-consistent) errors, which short time series need.\ncoeftest(fit_prepost, vcov. = vcovHAC)\n\n\n\nt test of coefficients:\n\n            Estimate Std. Error t value  Pr(&gt;|t|)    \n(Intercept)  98.9800     2.4999 39.5941 1.821e-10 ***\nprepostPost -27.0200     5.2951 -5.1029 0.0009266 ***\n---\nSignif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1\n\n\nReading the output. California’s mean over 1984–1988 was about 99 packs/capita. The prepostPost coefficient says the 1989–1993 mean is roughly 27 packs lower. The HAC robust standard error is small (\\(p &lt; 0.001\\)). The HAC correction comes from sandwich::vcovHAC and accounts for the heteroskedasticity and autocorrelation that short time series typically exhibit; a classical OLS standard error would be wildly overconfident here.\nThe estimand is purely descriptive. This is a within-state difference of means, not a causal estimate. Any nationwide secular decline in smoking gets silently bundled into the \\(-27\\). That bundling is exactly what the later chapters try to undo.\nCommon pitfall. Confusing the within-state pre-post difference with a causal effect. Anything that shifted the entire country between the two windows — federal anti-smoking campaigns, tobacco settlements, rising health awareness — gets attributed entirely to Proposition 99.",
     "crumbs": [
-      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Introduction</span>"
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Introduction</span>"
+    ]
+  },
+  {
+    "objectID": "01-introduction.html#roadmap-of-the-book",
+    "href": "01-introduction.html#roadmap-of-the-book",
+    "title": "1  Introduction",
+    "section": "1.6 Roadmap of the book",
+    "text": "1.6 Roadmap of the book\nThe remaining chapters take the same Proposition 99 dataset and the same estimand (the ATT on California, 1989–2000), and replace the naive baseline with progressively richer counterfactual constructions:\n\nChapter 2 — Interrupted Time Series. Extrapolate California’s own pre-trend forward. Two variants: a linear growth curve and an auto-selected ARIMA forecast.\nChapter 3 — Regression Discontinuity in Time. Fit a piecewise line with a level and slope break at the policy date.\nChapter 4 — Basic Difference-in-Differences. Subtract a control state’s pre/post change from California’s.\nChapter 5 — Classical Synthetic Control. Build a weighted blend of donor states that mimics California’s pre-period.\nChapter 6 — Structural Bayesian Time Series. Fit a Bayesian state-space model that uses donor states as predictors.\n\nA final cross-method comparison places all the estimates on a single forest plot. Five of the six methods agree on a 13–20 pack reduction per capita. One collapses to noise. One flips sign entirely. The disagreement is the lesson.",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Introduction</span>"
     ]
   },
   {
     "objectID": "01-introduction.html#further-reading",
     "href": "01-introduction.html#further-reading",
-    "title": "2  Introduction",
-    "section": "2.7 Further reading",
-    "text": "2.7 Further reading\nPlaceholder.",
+    "title": "1  Introduction",
+    "section": "1.7 Further reading",
+    "text": "1.7 Further reading\n\nAbadie et al. (2010) — the original synthetic-control treatment of Proposition 99.\nBernal et al. (2017) — a practitioner’s tutorial on ITS for public-health interventions.\nODISSEI Social Data Science team (2024) — the ODISSEI workshop this book’s running example follows.\n\n\n\n\n\n\n\nAbadie, A., Diamond, A., & Hainmueller, J. (2010). Synthetic control methods for comparative case studies: Estimating the effect of California’s tobacco control program. Journal of the American Statistical Association, 105(490), 493–505. https://www.aeaweb.org/articles?id=10.1257/jasa.2010.ap08746\n\n\nBernal, J. L., Cummins, S., & Gasparrini, A. (2017). Interrupted time series regression for the evaluation of public health interventions: A tutorial. International Journal of Epidemiology, 46(1), 348–355. https://academic.oup.com/ije/article/46/1/348/2622842\n\n\nODISSEI Social Data Science team. (2024). Workshop on causal effects of policy interventions. https://causalpolicy.nl/.",
     "crumbs": [
-      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Introduction</span>"
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Introduction</span>"
     ]
   },
   {
     "objectID": "02-interrupted-time-series.html",
     "href": "02-interrupted-time-series.html",
-    "title": "3  Interrupted Time Series",
+    "title": "2  Interrupted Time Series",
     "section": "",
-    "text": "3.1 Overview\nPlaceholder. Interrupted time series (ITS) designs estimate the effect of a discrete intervention on a single region’s outcome trajectory by modeling pre- and post-intervention trends.",
+    "text": "2.1 The ITS idea\nInterrupted time series (ITS) drops the comparison unit entirely. The counterfactual is built from the treated unit’s own pre-period dynamics: fit a model on 1970–1988 California, extrapolate it into 1989–2000, and call the gap between the extrapolation and the observed data the effect. Where the naive pre-post estimate of chapter 1 assumes “no change”, ITS allows a non-zero pre-trend. If California was already declining, the ITS counterfactual continues that decline; only the extra drop after 1989 gets attributed to the policy.\nThis chapter fits two ITS variants on the same Proposition 99 data:\nThe two estimates disagree dramatically, and the disagreement is the lesson.",
     "crumbs": [
-      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Interrupted Time Series</span>"
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Interrupted Time Series</span>"
     ]
   },
   {
-    "objectID": "02-interrupted-time-series.html#identifying-assumptions",
-    "href": "02-interrupted-time-series.html#identifying-assumptions",
-    "title": "3  Interrupted Time Series",
-    "section": "3.2 Identifying assumptions",
-    "text": "3.2 Identifying assumptions\nPlaceholder.",
+    "objectID": "02-interrupted-time-series.html#the-its-idea",
+    "href": "02-interrupted-time-series.html#the-its-idea",
+    "title": "2  Interrupted Time Series",
+    "section": "",
+    "text": "A linear growth-curve model — the simplest pre-trend extrapolation possible.\nAn AICc-selected ARIMA model — a more flexible time-series alternative.",
     "crumbs": [
-      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Interrupted Time Series</span>"
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Interrupted Time Series</span>"
     ]
   },
   {
-    "objectID": "02-interrupted-time-series.html#estimation-in-r",
-    "href": "02-interrupted-time-series.html#estimation-in-r",
-    "title": "3  Interrupted Time Series",
-    "section": "3.3 Estimation in R",
-    "text": "3.3 Estimation in R\n\n\nCode\nlibrary(tidyverse)\nlibrary(fixest)\nlibrary(segmented)\nlibrary(nlme)\n\n\n\n\nCode\n# Placeholder: load a regional time series, fit a segmented regression\n# with an intervention dummy and post-trend interaction.",
+    "objectID": "02-interrupted-time-series.html#setup-and-data",
+    "href": "02-interrupted-time-series.html#setup-and-data",
+    "title": "2  Interrupted Time Series",
+    "section": "2.2 Setup and data",
+    "text": "2.2 Setup and data\n\n\nCode\nlibrary(tidyverse)\nlibrary(fpp3)   # loads tsibble, fable, feasts\n\nset.seed(42)\n\n\nWe reuse the cached Proposition 99 dataset and build a California-only tsibble indexed by year. A centred year index (year0 = year - 1989) is convenient for the post-period extrapolation.\n\n\nCode\nprop99 &lt;- read_rds(\"data/proposition99.rds\") |&gt; as_tibble()\n\n# California-only time series with a Pre/Post factor and a centred year\n# index (year0 = 0 at the first post-period year). The tsibble class is\n# required by the fpp3 forecasting tools used later.\nprop99_ts &lt;- prop99 |&gt;\n  filter(state == \"California\") |&gt;\n  select(year, cigsale) |&gt;\n  mutate(prepost = factor(year &gt; 1988, labels = c(\"Pre\", \"Post\"))) |&gt;\n  as_tsibble(index = year) |&gt;\n  mutate(year0 = year - 1989)",
     "crumbs": [
-      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Interrupted Time Series</span>"
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Interrupted Time Series</span>"
     ]
   },
   {
-    "objectID": "02-interrupted-time-series.html#regional-case-study",
-    "href": "02-interrupted-time-series.html#regional-case-study",
-    "title": "3  Interrupted Time Series",
-    "section": "3.4 Regional case study",
-    "text": "3.4 Regional case study\nPlaceholder.",
+    "objectID": "02-interrupted-time-series.html#linear-growth-curve-its",
+    "href": "02-interrupted-time-series.html#linear-growth-curve-its",
+    "title": "2  Interrupted Time Series",
+    "section": "2.3 Linear growth-curve ITS",
+    "text": "2.3 Linear growth-curve ITS\nThe idea. Fit a single straight line on California’s pre-period cigarette sales, then extrapolate it forward as the counterfactual.\nThe equation. Fit a linear trend on the pre-period only,\n\\[Y_{1t} = \\alpha + \\beta\\, t + \\varepsilon_t, \\qquad t \\le t^* = 1988,\\]\nthen extrapolate the fitted line into the post-period as the counterfactual,\n\\[\\widehat{Y_{1t}(0)} = \\hat\\alpha + \\hat\\beta\\, t, \\qquad t &gt; t^*,\\]\nand finally average the per-year gap between observed and counterfactual,\n\\[\\widehat{\\text{ATT}}_{\\text{ITS-growth}} = \\frac{1}{T_{\\text{post}}} \\sum_{t &gt; t^*} \\Big[Y_{1t} - (\\hat\\alpha + \\hat\\beta\\, t)\\Big].\\]\nIn words: a single straight line, fit on 1970–1988 cigarette sales in California, becomes the counterfactual for 1989–2000. The policy effect is the average of the per-year residuals between what was actually observed and what the extrapolated line predicted. The slope \\(\\hat\\beta\\) captures whatever secular trend California was already on; only deviations from that trend after 1989 are attributed to Proposition 99.\n\n\nCode\n# Fit a linear pre-period trend (cigsale on year, 1970-1988 only).\nfit_growth &lt;- lm(cigsale ~ year, data = prop99_ts |&gt; filter(prepost == \"Pre\"))\n\nsummary(fit_growth)$coefficients\n\n\n               Estimate  Std. Error  t value     Pr(&gt;|t|)\n(Intercept) 3637.788878 513.3283896  7.08667 1.824820e-06\nyear          -1.779474   0.2593868 -6.86031 2.766734e-06\n\n\nThe pre-period linear trend is about \\(-1.78\\) packs per capita per year (\\(p &lt; 10^{-5}\\), \\(R^2 \\approx 0.73\\)) — so California was already declining about 1.8 packs per year before Proposition 99. To estimate the policy effect we extrapolate that line forward to 2000 and average the gap.\n\n\nCode\n# Subset to the 1989-2000 rows and extrapolate the fitted line forward.\npost_df &lt;- prop99_ts |&gt; filter(prepost == \"Post\")\npred_growth &lt;- predict(fit_growth, newdata = as_tibble(post_df))\n\n# ATT estimate = average per-year gap between observed and extrapolation.\nits_growth_estimate &lt;- mean(post_df$cigsale - pred_growth)\nits_growth_estimate\n\n\n[1] -28.27868\n\n\n\n\nCode\nits_growth_plot &lt;- prop99_ts |&gt;\n  as_tibble() |&gt;\n  mutate(counterfactual = predict(fit_growth, newdata = prop99_ts))\n\nggplot(its_growth_plot, aes(x = year)) +\n  geom_line(aes(y = cigsale, color = \"Observed\"), linewidth = 1.1) +\n  geom_line(aes(y = counterfactual, color = \"Counterfactual\"),\n            linetype = \"dashed\", linewidth = 1) +\n  geom_vline(xintercept = 1988.5, color = \"#d97757\",\n             linetype = \"dotted\", linewidth = 0.7) +\n  scale_color_manual(values = c(\"Observed\" = \"#d97757\",\n                                \"Counterfactual\" = \"#6a9bcc\")) +\n  labs(x = \"Year\", y = \"Cigarette sales (packs per capita)\",\n       color = NULL) +\n  theme_minimal()\n\n\n\n\n\n\n\n\nFigure 2.1: ITS counterfactual from a linear pre-period growth curve (1970–1988), extrapolated to 2000.\n\n\n\n\n\nReading the output. The ITS-growth-curve estimate is about \\(-28.3\\) packs per capita per year. That is essentially identical to the naive pre-post \\(-27.0\\) from chapter 1. Why? Because both methods only use within-California information. Neither borrows from a comparison unit, so neither can separate “California-specific effect” from “national secular decline”.\nThe coincidence is suggestive but not reassuring. Both methods can be biased the same way if California’s pre-trend was understating the speed of the secular decline.\nCommon pitfall. Assuming the linear pre-trend is the right shape. If the true secular decline is accelerating or saturating, a linear extrapolation either understates or overstates what would have happened — and the policy effect inherits the bias.",
     "crumbs": [
-      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Interrupted Time Series</span>"
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Interrupted Time Series</span>"
     ]
   },
   {
-    "objectID": "02-interrupted-time-series.html#diagnostics",
-    "href": "02-interrupted-time-series.html#diagnostics",
-    "title": "3  Interrupted Time Series",
-    "section": "3.5 Diagnostics",
-    "text": "3.5 Diagnostics\nPlaceholder.",
+    "objectID": "02-interrupted-time-series.html#arima-based-its",
+    "href": "02-interrupted-time-series.html#arima-based-its",
+    "title": "2  Interrupted Time Series",
+    "section": "2.4 ARIMA-based ITS",
+    "text": "2.4 ARIMA-based ITS\nThe idea. Replace the straight line with a flexible time-series model. Let the data decide the model’s complexity through an information criterion (AICc). Forecast forward as the counterfactual.\nThe equation. A general ARIMA\\((p, d, q)\\) model writes the \\(d\\)-th differenced series as an autoregressive-moving-average process. Using the lag operator \\(L\\) (so \\(L\\, Y_t = Y_{t-1}\\)):\n\\[\\Phi(L)\\, (1 - L)^d\\, Y_{1t} \\, = \\, \\Theta(L)\\, \\varepsilon_t, \\qquad \\varepsilon_t \\sim \\mathcal{N}(0, \\sigma^2),\\]\nwhere \\(\\Phi(L) = 1 - \\phi_1 L - \\cdots - \\phi_p L^p\\) collects the \\(p\\) autoregressive coefficients and \\(\\Theta(L) = 1 + \\theta_1 L + \\cdots + \\theta_q L^q\\) collects the \\(q\\) moving-average coefficients. The fable::ARIMA(..., ic = \"aicc\") call searches over \\((p, d, q)\\) and picks the combination that minimises the corrected Akaike Information Criterion on the pre-period.\nOnce the model is fit, the post-period counterfactual is the model’s \\(h\\)-step forecast and the ATT is the average gap, just as in the growth-curve version:\n\\[\\widehat{Y_{1t}(0)} = \\hat Y_{1t \\mid t^*}, \\qquad \\widehat{\\text{ATT}}_{\\text{ITS-ARIMA}} = \\frac{1}{T_{\\text{post}}} \\sum_{t &gt; t^*} \\Big[Y_{1t} - \\hat Y_{1t \\mid t^*}\\Big].\\]\nIn words: same recipe as the growth-curve version — fit on pre-period, project forward, average the gap — but the “fit on pre-period” step now uses an autoregressive-integrated-moving-average model instead of a straight line.\nWhat ARIMA\\((p, d, q)\\) means in plain English. \\(p\\) is the number of past values the model uses (autoregression). \\(d\\) is the number of times the series is differenced before fitting (to handle trends). \\(q\\) is the number of past forecast errors used (moving average). Lower AICc = “better fit traded off against complexity”.\n\n\nCode\n# Fit an ARIMA model on the 1970-1988 California series. ic = \"aicc\"\n# tells fable to search over (p, d, q) and pick the AICc minimiser.\nfit_arima &lt;- prop99_ts |&gt;\n  filter(prepost == \"Pre\") |&gt;\n  model(timeseries = ARIMA(cigsale, ic = \"aicc\"))\n\nreport(fit_arima)\n\n\nSeries: cigsale \nModel: NULL model \nNULL model\n\n\nFor this series AICc typically selects ARIMA(1, 2, 0): one autoregressive lag and two rounds of differencing. The double-differencing means the model is tracking the acceleration of California’s late-1980s drop, not just its level or slope. We then forecast 12 years out and average the gap.\n\n\nCode\n# Project the fitted ARIMA 12 years forward as the post-period counterfactual.\nfcasts &lt;- forecast(fit_arima, h = \"12 years\")\n\n# ATT estimate = average per-year gap between observed and ARIMA forecast.\nce_arima &lt;- post_df$cigsale - fcasts$.mean\nmean(ce_arima)\n\n\n[1] NA\n\n\n\n\nCode\narima_cf &lt;- tibble(year = post_df$year, counterfactual = fcasts$.mean)\nplot_df  &lt;- prop99_ts |&gt;\n  as_tibble() |&gt;\n  select(year, cigsale) |&gt;\n  left_join(arima_cf, by = \"year\")\n\nggplot(plot_df, aes(x = year)) +\n  geom_line(aes(y = cigsale, color = \"Observed\"), linewidth = 1.1) +\n  geom_line(aes(y = counterfactual, color = \"ARIMA counterfactual\"),\n            linetype = \"dashed\", linewidth = 1, na.rm = TRUE) +\n  geom_vline(xintercept = 1988.5, color = \"#d97757\",\n             linetype = \"dotted\", linewidth = 0.7) +\n  scale_color_manual(values = c(\"Observed\" = \"#d97757\",\n                                \"ARIMA counterfactual\" = \"#6a9bcc\")) +\n  labs(x = \"Year\", y = \"Cigarette sales (packs per capita)\",\n       color = NULL) +\n  theme_minimal()\n\n\n\n\n\n\n\n\nFigure 2.2: ITS counterfactual from an AICc-selected ARIMA model fit on 1970–1988, forecast to 2000.\n\n\n\n\n\nReading the output. The ARIMA-based ITS estimate comes out around \\(+4.5\\) packs. That is positive — it would imply Proposition 99 increased California’s smoking. That is plainly the wrong answer.\nThe visual diagnostic shows why. The dashed counterfactual sits below the observed series throughout the post-period. The model extrapolates the late-1980s downward acceleration too aggressively. It predicts California should have hit roughly 50 packs by 2000 if the pre-period momentum had continued. Since California actually only hit 60 packs, the model concludes Proposition 99 “raised” smoking by about 5 packs relative to that doomsday counterfactual.\nThe pitfall in one sentence. AICc minimises in-sample fit, but in-sample fit can come from features — here, second-order momentum — that do not persist out-of-sample.\nCommon pitfall. Trusting an information-criterion-selected model on a short pre-period. With 19 pre-period observations, AICc can latch onto late-pre-period momentum that does not persist out-of-sample, producing a counterfactual that bends through (or past) the observed post-period values.",
     "crumbs": [
-      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Interrupted Time Series</span>"
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Interrupted Time Series</span>"
+    ]
+  },
+  {
+    "objectID": "02-interrupted-time-series.html#what-the-two-its-estimates-tell-us",
+    "href": "02-interrupted-time-series.html#what-the-two-its-estimates-tell-us",
+    "title": "2  Interrupted Time Series",
+    "section": "2.5 What the two ITS estimates tell us",
+    "text": "2.5 What the two ITS estimates tell us\nThe growth-curve and ARIMA variants share every step of the recipe — fit on pre-period, project forward, average the gap — but disagree by more than 30 packs because they extrapolate different features of the same data. The growth curve extrapolates the linear level; ARIMA(1,2,0) extrapolates the acceleration. There is no purely-within-California way to decide which is right, because the choice is identified by an assumption about the missing \\(Y_{1t}(0)\\) that the data itself cannot verify.\nThe lesson is not “ARIMA is bad”. The lesson is that single-model ITS is fragile. Always pair an ITS estimate against a comparison-unit method (the DiD of chapter 4, the synthetic control of chapter 5, or the Bayesian structural TS of chapter 6) before drawing conclusions.",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Interrupted Time Series</span>"
     ]
   },
   {
     "objectID": "02-interrupted-time-series.html#further-reading",
     "href": "02-interrupted-time-series.html#further-reading",
-    "title": "3  Interrupted Time Series",
-    "section": "3.6 Further reading",
-    "text": "3.6 Further reading\nPlaceholder.",
+    "title": "2  Interrupted Time Series",
+    "section": "2.6 Further reading",
+    "text": "2.6 Further reading\n\nBernal et al. (2017) — practitioner’s tutorial on ITS regression for public-health interventions.\nHyndman & Athanasopoulos (2021) — the canonical reference for the fpp3 ecosystem and AICc-selected ARIMA modelling.\n\n\n\n\n\n\n\nBernal, J. L., Cummins, S., & Gasparrini, A. (2017). Interrupted time series regression for the evaluation of public health interventions: A tutorial. International Journal of Epidemiology, 46(1), 348–355. https://academic.oup.com/ije/article/46/1/348/2622842\n\n\nHyndman, R. J., & Athanasopoulos, G. (2021). Forecasting: Principles and practice (3rd ed.). OTexts. https://otexts.com/fpp3/",
     "crumbs": [
-      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Interrupted Time Series</span>"
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Interrupted Time Series</span>"
     ]
   },
   {
     "objectID": "03-rd-in-time.html",
     "href": "03-rd-in-time.html",
-    "title": "4  Regression Discontinuity in Time",
+    "title": "3  Regression Discontinuity in Time",
     "section": "",
-    "text": "4.1 Overview\nPlaceholder. Regression discontinuity in time (RDiT) extends classical RD designs to settings where the running variable is time itself, with treatment switching on at a known calendar cutoff.",
+    "text": "3.1 Overview\nPlaceholder. Regression discontinuity in time (RDiT) extends classical RD designs to settings where the running variable is time itself, with treatment switching on at a known calendar cutoff.",
     "crumbs": [
-      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Regression Discontinuity in Time</span>"
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Regression Discontinuity in Time</span>"
     ]
   },
   {
     "objectID": "03-rd-in-time.html#identifying-assumptions",
     "href": "03-rd-in-time.html#identifying-assumptions",
-    "title": "4  Regression Discontinuity in Time",
-    "section": "4.2 Identifying assumptions",
-    "text": "4.2 Identifying assumptions\nPlaceholder.",
+    "title": "3  Regression Discontinuity in Time",
+    "section": "3.2 Identifying assumptions",
+    "text": "3.2 Identifying assumptions\nPlaceholder.",
     "crumbs": [
-      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Regression Discontinuity in Time</span>"
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Regression Discontinuity in Time</span>"
     ]
   },
   {
     "objectID": "03-rd-in-time.html#estimation-in-r",
     "href": "03-rd-in-time.html#estimation-in-r",
-    "title": "4  Regression Discontinuity in Time",
-    "section": "4.3 Estimation in R",
-    "text": "4.3 Estimation in R\n\n\nCode\nlibrary(tidyverse)\nlibrary(fixest)\nlibrary(rdrobust)\n\n\n\n\nCode\n# Placeholder: bandwidth selection, local linear regression around the\n# cutoff date, robust bias-corrected standard errors.",
+    "title": "3  Regression Discontinuity in Time",
+    "section": "3.3 Estimation in R",
+    "text": "3.3 Estimation in R\n\n\nCode\nlibrary(tidyverse)\nlibrary(fixest)\nlibrary(rdrobust)\n\n\n\n\nCode\n# Placeholder: bandwidth selection, local linear regression around the\n# cutoff date, robust bias-corrected standard errors.",
     "crumbs": [
-      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Regression Discontinuity in Time</span>"
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Regression Discontinuity in Time</span>"
     ]
   },
   {
     "objectID": "03-rd-in-time.html#bandwidth-selection",
     "href": "03-rd-in-time.html#bandwidth-selection",
-    "title": "4  Regression Discontinuity in Time",
-    "section": "4.4 Bandwidth selection",
-    "text": "4.4 Bandwidth selection\nPlaceholder.",
+    "title": "3  Regression Discontinuity in Time",
+    "section": "3.4 Bandwidth selection",
+    "text": "3.4 Bandwidth selection\nPlaceholder.",
     "crumbs": [
-      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Regression Discontinuity in Time</span>"
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Regression Discontinuity in Time</span>"
     ]
   },
   {
     "objectID": "03-rd-in-time.html#threats-to-validity",
     "href": "03-rd-in-time.html#threats-to-validity",
-    "title": "4  Regression Discontinuity in Time",
-    "section": "4.5 Threats to validity",
-    "text": "4.5 Threats to validity\nPlaceholder. RDiT designs are vulnerable to time-varying confounders, autocorrelation, and anticipation effects.",
+    "title": "3  Regression Discontinuity in Time",
+    "section": "3.5 Threats to validity",
+    "text": "3.5 Threats to validity\nPlaceholder. RDiT designs are vulnerable to time-varying confounders, autocorrelation, and anticipation effects.",
     "crumbs": [
-      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Regression Discontinuity in Time</span>"
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Regression Discontinuity in Time</span>"
     ]
   },
   {
     "objectID": "03-rd-in-time.html#regional-case-study",
     "href": "03-rd-in-time.html#regional-case-study",
-    "title": "4  Regression Discontinuity in Time",
-    "section": "4.6 Regional case study",
-    "text": "4.6 Regional case study\nPlaceholder.",
+    "title": "3  Regression Discontinuity in Time",
+    "section": "3.6 Regional case study",
+    "text": "3.6 Regional case study\nPlaceholder.",
     "crumbs": [
-      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Regression Discontinuity in Time</span>"
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Regression Discontinuity in Time</span>"
     ]
   },
   {
     "objectID": "03-rd-in-time.html#further-reading",
     "href": "03-rd-in-time.html#further-reading",
-    "title": "4  Regression Discontinuity in Time",
-    "section": "4.7 Further reading",
-    "text": "4.7 Further reading\nPlaceholder.",
+    "title": "3  Regression Discontinuity in Time",
+    "section": "3.7 Further reading",
+    "text": "3.7 Further reading\nPlaceholder.",
     "crumbs": [
-      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Regression Discontinuity in Time</span>"
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Regression Discontinuity in Time</span>"
     ]
   },
   {
-    "objectID": "04-classical-synthetic-control.html",
-    "href": "04-classical-synthetic-control.html",
+    "objectID": "04-basic-diff-in-diff.html",
+    "href": "04-basic-diff-in-diff.html",
+    "title": "4  Basic Differences-in-Differences",
+    "section": "",
+    "text": "4.1 Overview\nPlaceholder. The basic differences-in-differences (DiD) design estimates a causal effect by comparing the pre-post change in a treated region against the pre-post change in an untreated comparison region (or pool of regions).",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Basic Differences-in-Differences</span>"
+    ]
+  },
+  {
+    "objectID": "04-basic-diff-in-diff.html#identifying-assumptions",
+    "href": "04-basic-diff-in-diff.html#identifying-assumptions",
+    "title": "4  Basic Differences-in-Differences",
+    "section": "4.2 Identifying assumptions",
+    "text": "4.2 Identifying assumptions\nPlaceholder. Parallel trends, no anticipation, SUTVA, stable composition.",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Basic Differences-in-Differences</span>"
+    ]
+  },
+  {
+    "objectID": "04-basic-diff-in-diff.html#estimation-in-r",
+    "href": "04-basic-diff-in-diff.html#estimation-in-r",
+    "title": "4  Basic Differences-in-Differences",
+    "section": "4.3 Estimation in R",
+    "text": "4.3 Estimation in R\n\n\nCode\nlibrary(tidyverse)\nlibrary(fixest)\n\n\n\n\nCode\n# Placeholder: two-way fixed-effects DiD via fixest::feols(),\n#   y ~ treat * post | region + period\n# with clustered standard errors.",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Basic Differences-in-Differences</span>"
+    ]
+  },
+  {
+    "objectID": "04-basic-diff-in-diff.html#regional-case-study",
+    "href": "04-basic-diff-in-diff.html#regional-case-study",
+    "title": "4  Basic Differences-in-Differences",
+    "section": "4.4 Regional case study",
+    "text": "4.4 Regional case study\nPlaceholder.",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Basic Differences-in-Differences</span>"
+    ]
+  },
+  {
+    "objectID": "04-basic-diff-in-diff.html#diagnostics",
+    "href": "04-basic-diff-in-diff.html#diagnostics",
+    "title": "4  Basic Differences-in-Differences",
+    "section": "4.5 Diagnostics",
+    "text": "4.5 Diagnostics\nPlaceholder. Parallel-trends pre-period checks, event-study plots, placebo / falsification tests.",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Basic Differences-in-Differences</span>"
+    ]
+  },
+  {
+    "objectID": "04-basic-diff-in-diff.html#further-reading",
+    "href": "04-basic-diff-in-diff.html#further-reading",
+    "title": "4  Basic Differences-in-Differences",
+    "section": "4.6 Further reading",
+    "text": "4.6 Further reading\nPlaceholder.",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Basic Differences-in-Differences</span>"
+    ]
+  },
+  {
+    "objectID": "05-classical-synthetic-control.html",
+    "href": "05-classical-synthetic-control.html",
     "title": "5  Classical Synthetic Control",
     "section": "",
     "text": "5.1 Overview\nPlaceholder. The synthetic control method constructs a counterfactual for a single treated region as a convex combination of untreated donor regions, choosing weights to minimize pre-treatment outcome divergence.",
@@ -250,8 +330,8 @@
     ]
   },
   {
-    "objectID": "04-classical-synthetic-control.html#the-method",
-    "href": "04-classical-synthetic-control.html#the-method",
+    "objectID": "05-classical-synthetic-control.html#the-method",
+    "href": "05-classical-synthetic-control.html#the-method",
     "title": "5  Classical Synthetic Control",
     "section": "5.2 The method",
     "text": "5.2 The method\nPlaceholder.",
@@ -260,8 +340,8 @@
     ]
   },
   {
-    "objectID": "04-classical-synthetic-control.html#estimation-in-r",
-    "href": "04-classical-synthetic-control.html#estimation-in-r",
+    "objectID": "05-classical-synthetic-control.html#estimation-in-r",
+    "href": "05-classical-synthetic-control.html#estimation-in-r",
     "title": "5  Classical Synthetic Control",
     "section": "5.3 Estimation in R",
     "text": "5.3 Estimation in R\n\n\nCode\nlibrary(tidyverse)\nlibrary(tidysynth)\n\n\n\n\nCode\n# Placeholder: assemble a donor pool, fit a synthetic control with\n# tidysynth, plot treated vs. synthetic trajectories.",
@@ -270,8 +350,8 @@
     ]
   },
   {
-    "objectID": "04-classical-synthetic-control.html#inference-placebo-tests",
-    "href": "04-classical-synthetic-control.html#inference-placebo-tests",
+    "objectID": "05-classical-synthetic-control.html#inference-placebo-tests",
+    "href": "05-classical-synthetic-control.html#inference-placebo-tests",
     "title": "5  Classical Synthetic Control",
     "section": "5.4 Inference: placebo tests",
     "text": "5.4 Inference: placebo tests\nPlaceholder.",
@@ -280,8 +360,8 @@
     ]
   },
   {
-    "objectID": "04-classical-synthetic-control.html#regional-case-study",
-    "href": "04-classical-synthetic-control.html#regional-case-study",
+    "objectID": "05-classical-synthetic-control.html#regional-case-study",
+    "href": "05-classical-synthetic-control.html#regional-case-study",
     "title": "5  Classical Synthetic Control",
     "section": "5.5 Regional case study",
     "text": "5.5 Regional case study\nPlaceholder.",
@@ -290,8 +370,8 @@
     ]
   },
   {
-    "objectID": "04-classical-synthetic-control.html#limitations",
-    "href": "04-classical-synthetic-control.html#limitations",
+    "objectID": "05-classical-synthetic-control.html#limitations",
+    "href": "05-classical-synthetic-control.html#limitations",
     "title": "5  Classical Synthetic Control",
     "section": "5.6 Limitations",
     "text": "5.6 Limitations\nPlaceholder. Classical synthetic control is sensitive to donor-pool composition, requires sufficient pre-treatment history, and offers limited frequentist inference.",
@@ -300,8 +380,8 @@
     ]
   },
   {
-    "objectID": "04-classical-synthetic-control.html#further-reading",
-    "href": "04-classical-synthetic-control.html#further-reading",
+    "objectID": "05-classical-synthetic-control.html#further-reading",
+    "href": "05-classical-synthetic-control.html#further-reading",
     "title": "5  Classical Synthetic Control",
     "section": "5.7 Further reading",
     "text": "5.7 Further reading\nPlaceholder.",
@@ -310,8 +390,8 @@
     ]
   },
   {
-    "objectID": "05-structural-bayesian-ts.html",
-    "href": "05-structural-bayesian-ts.html",
+    "objectID": "06-structural-bayesian-ts.html",
+    "href": "06-structural-bayesian-ts.html",
     "title": "6  Structural Bayesian Time Series",
     "section": "",
     "text": "6.1 Overview\nPlaceholder. Structural Bayesian time-series models (e.g., Google’s CausalImpact) estimate the causal effect of an intervention as the difference between observed post-intervention outcomes and a Bayesian counterfactual forecast built from pre-intervention dynamics and contemporaneous control series.",
@@ -320,8 +400,8 @@
     ]
   },
   {
-    "objectID": "05-structural-bayesian-ts.html#the-model",
-    "href": "05-structural-bayesian-ts.html#the-model",
+    "objectID": "06-structural-bayesian-ts.html#the-model",
+    "href": "06-structural-bayesian-ts.html#the-model",
     "title": "6  Structural Bayesian Time Series",
     "section": "6.2 The model",
     "text": "6.2 The model\nPlaceholder. A state-space decomposition into local-trend, seasonal, and regression components, fit by bsts.",
@@ -330,8 +410,8 @@
     ]
   },
   {
-    "objectID": "05-structural-bayesian-ts.html#estimation-in-r",
-    "href": "05-structural-bayesian-ts.html#estimation-in-r",
+    "objectID": "06-structural-bayesian-ts.html#estimation-in-r",
+    "href": "06-structural-bayesian-ts.html#estimation-in-r",
     "title": "6  Structural Bayesian Time Series",
     "section": "6.3 Estimation in R",
     "text": "6.3 Estimation in R\n\n\nCode\nlibrary(tidyverse)\nlibrary(CausalImpact)\nlibrary(bsts)\n\n\n\n\nCode\n# Placeholder: build a CausalImpact input frame with the treated series\n# and donor controls, call CausalImpact(), summarize and plot.",
@@ -340,8 +420,8 @@
     ]
   },
   {
-    "objectID": "05-structural-bayesian-ts.html#interpreting-posterior-intervals",
-    "href": "05-structural-bayesian-ts.html#interpreting-posterior-intervals",
+    "objectID": "06-structural-bayesian-ts.html#interpreting-posterior-intervals",
+    "href": "06-structural-bayesian-ts.html#interpreting-posterior-intervals",
     "title": "6  Structural Bayesian Time Series",
     "section": "6.4 Interpreting posterior intervals",
     "text": "6.4 Interpreting posterior intervals\nPlaceholder.",
@@ -350,8 +430,8 @@
     ]
   },
   {
-    "objectID": "05-structural-bayesian-ts.html#regional-case-study",
-    "href": "05-structural-bayesian-ts.html#regional-case-study",
+    "objectID": "06-structural-bayesian-ts.html#regional-case-study",
+    "href": "06-structural-bayesian-ts.html#regional-case-study",
     "title": "6  Structural Bayesian Time Series",
     "section": "6.5 Regional case study",
     "text": "6.5 Regional case study\nPlaceholder.",
@@ -360,8 +440,8 @@
     ]
   },
   {
-    "objectID": "05-structural-bayesian-ts.html#comparison-with-synthetic-control",
-    "href": "05-structural-bayesian-ts.html#comparison-with-synthetic-control",
+    "objectID": "06-structural-bayesian-ts.html#comparison-with-synthetic-control",
+    "href": "06-structural-bayesian-ts.html#comparison-with-synthetic-control",
     "title": "6  Structural Bayesian Time Series",
     "section": "6.6 Comparison with synthetic control",
     "text": "6.6 Comparison with synthetic control\nPlaceholder. CausalImpact and classical synthetic control answer related questions with different assumptions; this section compares estimates on the same data.",
@@ -370,13 +450,23 @@
     ]
   },
   {
-    "objectID": "05-structural-bayesian-ts.html#further-reading",
-    "href": "05-structural-bayesian-ts.html#further-reading",
+    "objectID": "06-structural-bayesian-ts.html#further-reading",
+    "href": "06-structural-bayesian-ts.html#further-reading",
     "title": "6  Structural Bayesian Time Series",
     "section": "6.7 Further reading",
     "text": "6.7 Further reading\nPlaceholder.",
     "crumbs": [
       "<span class='chapter-number'>6</span>  <span class='chapter-title'>Structural Bayesian Time Series</span>"
+    ]
+  },
+  {
+    "objectID": "references.html",
+    "href": "references.html",
+    "title": "References",
+    "section": "",
+    "text": "Abadie, A., Diamond, A., & Hainmueller, J. (2010). Synthetic control\nmethods for comparative case studies: Estimating the effect of\nCalifornia’s tobacco control program. Journal of the\nAmerican Statistical Association, 105(490), 493–505. https://www.aeaweb.org/articles?id=10.1257/jasa.2010.ap08746\n\n\nBernal, J. L., Cummins, S., & Gasparrini, A. (2017). Interrupted\ntime series regression for the evaluation of public health\ninterventions: A tutorial. International Journal of\nEpidemiology, 46(1), 348–355. https://academic.oup.com/ije/article/46/1/348/2622842\n\n\nHyndman, R. J., & Athanasopoulos, G. (2021). Forecasting:\nPrinciples and practice (3rd ed.). OTexts. https://otexts.com/fpp3/\n\n\nODISSEI Social Data Science team. (2024). Workshop on causal effects\nof policy interventions. https://causalpolicy.nl/.",
+    "crumbs": [
+      "References"
     ]
   }
 ]
