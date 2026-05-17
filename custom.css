@@ -222,6 +222,52 @@ table.gt_table,
   color: inherit !important;
 }
 
+/* ---- Concept-pair cards (chapter 7) ------------------------- */
+
+.concept-pair {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+  margin: 0.5rem 0 1rem 0;
+}
+
+@media (max-width: 768px) {
+  .concept-pair { grid-template-columns: 1fr; }
+}
+
+.concept-card {
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  padding: 0.5rem 0.75rem;
+  background-color: var(--ccm-code-bg);
+}
+
+.quarto-dark .concept-card {
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.concept-card summary {
+  cursor: pointer;
+  font-weight: 600;
+  padding: 0.15rem 0;
+}
+
+.concept-example {
+  border-left: 3px solid var(--ccm-cyan);
+}
+
+.concept-example > summary {
+  color: var(--ccm-cyan);
+}
+
+.concept-analogy {
+  border-left: 3px solid var(--ccm-purple);
+}
+
+.concept-analogy > summary {
+  color: var(--ccm-purple);
+}
+
 /* ---- Print / PDF fallback ----------------------------------- */
 
 @media print {

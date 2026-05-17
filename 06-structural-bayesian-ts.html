@@ -85,7 +85,7 @@ div.csl-indent {
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./references.html" rel="next">
+<link href="./07-bayesian-spatial-sc.html" rel="next">
 <link href="./05-classical-synthetic-control.html" rel="prev">
 <link href="./images/favicon.svg" rel="icon" type="image/svg+xml">
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
@@ -427,6 +427,12 @@ window.Quarto = {
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="./07-bayesian-spatial-sc.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Bayesian Spatial Synthetic Control</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="./references.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">References</span></a>
   </div>
@@ -522,6 +528,7 @@ Figure&nbsp;6.1: Decomposition of the BSTS counterfactual: a local-level trend, 
 </section>
 <section id="setup-and-data" class="level2" data-number="6.3">
 <h2 data-number="6.3" class="anchored" data-anchor-id="setup-and-data"><span class="header-section-number">6.3</span> Setup and data</h2>
+<p><strong>Packages.</strong> <code>tidyverse</code> covers wrangling and plotting. <code>CausalImpact</code> is Google’s wrapper around the <code>bsts</code> (Bayesian Structural Time Series) package: it takes a wide matrix with the treated outcome in column 1 and donor series in the remaining columns, fits a Bayesian state-space model on the pre-period, projects forward as the counterfactual, and returns posterior means + 95% credible intervals on the pointwise and cumulative effects. <code>mice</code> provides multiple imputation by chained equations — we use its random-forest mode to fill the missing covariate values before pivoting to wide form. The <code>R/table_helpers.R</code> helper provides <code>gt_pretty()</code> for the summary table.</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
@@ -547,12 +554,14 @@ Figure&nbsp;6.1: Decomposition of the BSTS counterfactual: a local-level trend, 
 <span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
+<p><strong>Dataset.</strong> Like Synthetic Control, this method uses the <strong>full 39-state × 31-year panel</strong>: every state other than California is potentially a regressor in the Bayesian counterfactual model, and the four covariates (<code>lnincome</code>, <code>retprice</code>, <code>age15to24</code>, <code>beer</code>) are candidate predictors too. We do not pre-filter or restrict the window. The dataset is loaded as-is and then reshaped from long to wide in the next section, which is the form <code>CausalImpact</code> requires.</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>prop99 <span class="ot">&lt;-</span> <span class="fu">read_rds</span>(<span class="st">"data/proposition99.rds"</span>) <span class="sc">|&gt;</span> <span class="fu">as_tibble</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
+<p>The loaded <code>prop99</code> is the same 1,209-row × 7-column tibble used in chapter 5 (39 states × 31 years × the <code>cigsale</code> outcome and four covariates). The next section deals with the missing covariate values and the long-to-wide reshape that CausalImpact requires.</p>
 </section>
 <section id="imputation-and-wide-pivot" class="level2" data-number="6.4">
 <h2 data-number="6.4" class="anchored" data-anchor-id="imputation-and-wide-pivot"><span class="header-section-number">6.4</span> Imputation and wide pivot</h2>
@@ -583,9 +592,11 @@ Figure&nbsp;6.1: Decomposition of the BSTS counterfactual: a local-level trend, 
 <pre><code>[1]  31 195</code></pre>
 </div>
 </div>
+<p>The reported <code>dim()</code> confirms the reshape: <code>prop99_wide</code> is <strong>31 rows × 195 columns</strong> — one row per year 1970–2000, and 39 states × 5 variables in the columns (<code>cigsale_*</code>, <code>lnincome_*</code>, <code>beer_*</code>, <code>age15to24_*</code>, <code>retprice_*</code> for each of the 39 states), with <code>year</code> dropped and <code>cigsale_California</code> relocated to column 1 because that’s what <code>CausalImpact()</code> expects as the treated outcome.</p>
 </section>
 <section id="fit-the-bayesian-structural-ts-model" class="level2" data-number="6.5">
 <h2 data-number="6.5" class="anchored" data-anchor-id="fit-the-bayesian-structural-ts-model"><span class="header-section-number">6.5</span> Fit the Bayesian structural TS model</h2>
+<p><strong>The fit.</strong> The chunk below calls <code>CausalImpact(prop99_wide, pre.period, post.period)</code> with the pre and post windows expressed as <em>integer row indices</em> (not years): row 1 is 1970, row 19 is 1988 (the last pre-period year), row 20 is 1989, row 31 is 2000. The seed is reset just before the call because <code>bsts</code> uses an MCMC sampler under the hood; a fixed seed makes the posterior draws reproducible from one render to the next. The returned <code>impact_full$summary</code> is a two-row data frame — one row for the <em>average</em> effect over 1989–2000 and one row for the <em>cumulative</em> effect — with posterior means and 95% credible bounds for each. The helper code below the <code>CausalImpact()</code> call just formats those columns into the table.</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
@@ -1123,6 +1134,7 @@ Table&nbsp;6.1: CausalImpact posterior summary; brackets are 95% credible interv
 </section>
 <section id="the-two-panel-diagnostic" class="level2" data-number="6.6">
 <h2 data-number="6.6" class="anchored" data-anchor-id="the-two-panel-diagnostic"><span class="header-section-number">6.6</span> The two-panel diagnostic</h2>
+<p><strong>What to look for.</strong> Calling <code>plot()</code> on a <code>CausalImpact</code> object returns its default two-panel figure: the <strong>top panel</strong> shows observed California (solid line) against the Bayesian counterfactual (dashed) with its 95% credible band; the <strong>bottom panel</strong> shows the <em>cumulative</em> gap — the running sum of <code>observed − counterfactual</code> from the intervention date onwards, with its own credible band. Read the top panel for whether and when the policy effect opens up, and the bottom panel for whether the cumulative effect’s credible band excludes zero by the end of the series.</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
@@ -1145,7 +1157,9 @@ Figure&nbsp;6.2: CausalImpact two-panel: pointwise observed vs Bayesian counterf
 </section>
 <section id="common-pitfall" class="level2" data-number="6.7">
 <h2 data-number="6.7" class="anchored" data-anchor-id="common-pitfall"><span class="header-section-number">6.7</span> Common pitfall</h2>
-<p>Imputing missing covariates without thinking about the imputation model. The random-forest fill we use here is a single-imputation shortcut for tutorial speed. With multiple imputation (<span class="math inline">\(m &gt; 1\)</span>) or a different model, the estimate can move by 1–3 packs — and worse, an imputation that uses California itself to fill donor covariates would build an artificial post-period correlation that biases the result <em>toward</em> zero.</p>
+<p>Imputing missing covariates without thinking about the imputation model. The random-forest fill we use here is a single-imputation shortcut for tutorial speed. With multiple imputation (<span class="math inline">\(m &gt; 1\)</span>) or a different model, the estimate can move by 1–3 packs. Two concrete failure modes are worth spelling out, because they affect the credibility of the headline number rather than just its width.</p>
+<p><strong>Example 1 — Imputing donor covariates with a model that “sees” California.</strong> Our <code>mice(prop99, ...)</code> call passes the entire panel — California rows included — into the imputation model. For this dataset, with only four covariates and most missingness clustered in <code>beer</code> (≈55%) and <code>age15to24</code> (≈32%) on donor states, the consequence is usually mild. But if you were to feed the <em>full panel with the post-period California outcome attached</em> into an imputer that also uses <code>cigsale</code> as a predictor, the imputer could learn from California’s post-1989 trajectory and propagate that information back into donor states’ missing covariate cells. CausalImpact would then build a counterfactual that mechanically tracks California’s post-period — biasing the estimated effect <em>toward zero</em> by construction. The safe pattern is to impute donor covariates <em>before</em> the treated outcome is in scope, or to drop the treated unit from the imputer entirely and impute donors only.</p>
+<p><strong>Example 2 — Single (<code>m = 1</code>) vs multiple (<code>m = 5</code>) imputation.</strong> Single imputation treats the imputed values as if they were observed, then propagates that pretend-observed dataset through <code>CausalImpact</code>. The posterior credible band you get back is the model’s uncertainty <em>given</em> the imputed cells — it knows nothing about the uncertainty <em>introduced by the imputation itself</em>. With proper multiple imputation (<code>mice(..., m = 5)</code> and Rubin’s-rules pooling across the five resulting fits), the credible band widens by roughly 1–3 packs on this dataset because the across-imputation variance is added to the within-imputation variance. The point estimate barely moves; the interval does. For a tutorial we keep <code>m = 1</code> for speed and clarity, but a published number should use <code>m ≥ 5</code> and report a pooled estimate.</p>
 </section>
 <section id="recap" class="level2" data-number="6.8">
 <h2 data-number="6.8" class="anchored" data-anchor-id="recap"><span class="header-section-number">6.8</span> Recap</h2>
@@ -1688,8 +1702,8 @@ Brodersen, K. H., &amp; Hauser, A. (n.d.). <em><span>CausalImpact</span> — an 
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./references.html" class="pagination-link" aria-label="References">
-        <span class="nav-page-text">References</span> <i class="bi bi-arrow-right-short"></i>
+      <a href="./07-bayesian-spatial-sc.html" class="pagination-link" aria-label="Bayesian Spatial Synthetic Control">
+        <span class="nav-page-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Bayesian Spatial Synthetic Control</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
@@ -1736,144 +1750,160 @@ Brodersen, K. H., &amp; Hauser, A. (n.d.). <em><span>CausalImpact</span> — an 
 <span id="cb7-43"><a href="#cb7-43" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-44"><a href="#cb7-44" aria-hidden="true" tabindex="-1"></a><span class="fu">## Setup and data</span></span>
 <span id="cb7-45"><a href="#cb7-45" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-48"><a href="#cb7-48" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb7-49"><a href="#cb7-49" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: setup</span></span>
-<span id="cb7-50"><a href="#cb7-50" aria-hidden="true" tabindex="-1"></a><span class="co">#| message: false</span></span>
-<span id="cb7-51"><a href="#cb7-51" aria-hidden="true" tabindex="-1"></a><span class="co">#| warning: false</span></span>
-<span id="cb7-52"><a href="#cb7-52" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
-<span id="cb7-53"><a href="#cb7-53" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(CausalImpact)</span>
-<span id="cb7-54"><a href="#cb7-54" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(mice)</span>
-<span id="cb7-55"><a href="#cb7-55" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"R/table_helpers.R"</span>)</span>
-<span id="cb7-56"><a href="#cb7-56" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-57"><a href="#cb7-57" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
+<span id="cb7-46"><a href="#cb7-46" aria-hidden="true" tabindex="-1"></a>**Packages.** <span class="in">`tidyverse`</span> covers wrangling and plotting. <span class="in">`CausalImpact`</span> is Google's wrapper around the <span class="in">`bsts`</span> (Bayesian Structural Time Series) package: it takes a wide matrix with the treated outcome in column 1 and donor series in the remaining columns, fits a Bayesian state-space model on the pre-period, projects forward as the counterfactual, and returns posterior means + 95% credible intervals on the pointwise and cumulative effects. <span class="in">`mice`</span> provides multiple imputation by chained equations — we use its random-forest mode to fill the missing covariate values before pivoting to wide form. The <span class="in">`R/table_helpers.R`</span> helper provides <span class="in">`gt_pretty()`</span> for the summary table.</span>
+<span id="cb7-47"><a href="#cb7-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-50"><a href="#cb7-50" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb7-51"><a href="#cb7-51" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: setup</span></span>
+<span id="cb7-52"><a href="#cb7-52" aria-hidden="true" tabindex="-1"></a><span class="co">#| message: false</span></span>
+<span id="cb7-53"><a href="#cb7-53" aria-hidden="true" tabindex="-1"></a><span class="co">#| warning: false</span></span>
+<span id="cb7-54"><a href="#cb7-54" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb7-55"><a href="#cb7-55" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(CausalImpact)</span>
+<span id="cb7-56"><a href="#cb7-56" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(mice)</span>
+<span id="cb7-57"><a href="#cb7-57" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"R/table_helpers.R"</span>)</span>
 <span id="cb7-58"><a href="#cb7-58" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-59"><a href="#cb7-59" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span>opts_chunk<span class="sc">$</span><span class="fu">set</span>(<span class="at">dev.args =</span> <span class="fu">list</span>(<span class="at">bg =</span> <span class="st">"transparent"</span>))</span>
+<span id="cb7-59"><a href="#cb7-59" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
 <span id="cb7-60"><a href="#cb7-60" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-61"><a href="#cb7-61" aria-hidden="true" tabindex="-1"></a><span class="fu">theme_set</span>(</span>
-<span id="cb7-62"><a href="#cb7-62" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">12</span>) <span class="sc">+</span></span>
-<span id="cb7-63"><a href="#cb7-63" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(</span>
-<span id="cb7-64"><a href="#cb7-64" aria-hidden="true" tabindex="-1"></a>      <span class="at">plot.background  =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">"transparent"</span>, <span class="at">color =</span> <span class="cn">NA</span>),</span>
-<span id="cb7-65"><a href="#cb7-65" aria-hidden="true" tabindex="-1"></a>      <span class="at">panel.background =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">"transparent"</span>, <span class="at">color =</span> <span class="cn">NA</span>),</span>
-<span id="cb7-66"><a href="#cb7-66" aria-hidden="true" tabindex="-1"></a>      <span class="at">panel.grid.major =</span> <span class="fu">element_line</span>(<span class="at">color =</span> <span class="st">"#94a3b8"</span>, <span class="at">linewidth =</span> <span class="fl">0.25</span>),</span>
-<span id="cb7-67"><a href="#cb7-67" aria-hidden="true" tabindex="-1"></a>      <span class="at">panel.grid.minor =</span> <span class="fu">element_line</span>(<span class="at">color =</span> <span class="st">"#94a3b8"</span>, <span class="at">linewidth =</span> <span class="fl">0.15</span>),</span>
-<span id="cb7-68"><a href="#cb7-68" aria-hidden="true" tabindex="-1"></a>      <span class="at">text             =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"#94a3b8"</span>),</span>
-<span id="cb7-69"><a href="#cb7-69" aria-hidden="true" tabindex="-1"></a>      <span class="at">axis.text        =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"#94a3b8"</span>)</span>
-<span id="cb7-70"><a href="#cb7-70" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb7-71"><a href="#cb7-71" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb7-72"><a href="#cb7-72" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb7-73"><a href="#cb7-73" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-76"><a href="#cb7-76" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb7-77"><a href="#cb7-77" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: data-load</span></span>
-<span id="cb7-78"><a href="#cb7-78" aria-hidden="true" tabindex="-1"></a>prop99 <span class="ot">&lt;-</span> <span class="fu">read_rds</span>(<span class="st">"data/proposition99.rds"</span>) <span class="sc">|&gt;</span> <span class="fu">as_tibble</span>()</span>
-<span id="cb7-79"><a href="#cb7-79" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb7-80"><a href="#cb7-80" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-81"><a href="#cb7-81" aria-hidden="true" tabindex="-1"></a><span class="fu">## Imputation and wide pivot</span></span>
-<span id="cb7-82"><a href="#cb7-82" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-83"><a href="#cb7-83" aria-hidden="true" tabindex="-1"></a>CausalImpact wants a *wide* dataset with the treated outcome in column 1 and every control series in the remaining columns. The covariate columns have missing values (<span class="in">`lnincome`</span> is missing 16% of rows, <span class="in">`age15to24`</span> 32%, <span class="in">`beer`</span> 55%), so we fill them with single random-forest imputation from <span class="in">`mice`</span>.</span>
+<span id="cb7-61"><a href="#cb7-61" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span>opts_chunk<span class="sc">$</span><span class="fu">set</span>(<span class="at">dev.args =</span> <span class="fu">list</span>(<span class="at">bg =</span> <span class="st">"transparent"</span>))</span>
+<span id="cb7-62"><a href="#cb7-62" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-63"><a href="#cb7-63" aria-hidden="true" tabindex="-1"></a><span class="fu">theme_set</span>(</span>
+<span id="cb7-64"><a href="#cb7-64" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">12</span>) <span class="sc">+</span></span>
+<span id="cb7-65"><a href="#cb7-65" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(</span>
+<span id="cb7-66"><a href="#cb7-66" aria-hidden="true" tabindex="-1"></a>      <span class="at">plot.background  =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">"transparent"</span>, <span class="at">color =</span> <span class="cn">NA</span>),</span>
+<span id="cb7-67"><a href="#cb7-67" aria-hidden="true" tabindex="-1"></a>      <span class="at">panel.background =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">"transparent"</span>, <span class="at">color =</span> <span class="cn">NA</span>),</span>
+<span id="cb7-68"><a href="#cb7-68" aria-hidden="true" tabindex="-1"></a>      <span class="at">panel.grid.major =</span> <span class="fu">element_line</span>(<span class="at">color =</span> <span class="st">"#94a3b8"</span>, <span class="at">linewidth =</span> <span class="fl">0.25</span>),</span>
+<span id="cb7-69"><a href="#cb7-69" aria-hidden="true" tabindex="-1"></a>      <span class="at">panel.grid.minor =</span> <span class="fu">element_line</span>(<span class="at">color =</span> <span class="st">"#94a3b8"</span>, <span class="at">linewidth =</span> <span class="fl">0.15</span>),</span>
+<span id="cb7-70"><a href="#cb7-70" aria-hidden="true" tabindex="-1"></a>      <span class="at">text             =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"#94a3b8"</span>),</span>
+<span id="cb7-71"><a href="#cb7-71" aria-hidden="true" tabindex="-1"></a>      <span class="at">axis.text        =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"#94a3b8"</span>)</span>
+<span id="cb7-72"><a href="#cb7-72" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb7-73"><a href="#cb7-73" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb7-74"><a href="#cb7-74" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb7-75"><a href="#cb7-75" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-76"><a href="#cb7-76" aria-hidden="true" tabindex="-1"></a>**Dataset.** Like Synthetic Control, this method uses the **full 39-state × 31-year panel**: every state other than California is potentially a regressor in the Bayesian counterfactual model, and the four covariates (<span class="in">`lnincome`</span>, <span class="in">`retprice`</span>, <span class="in">`age15to24`</span>, <span class="in">`beer`</span>) are candidate predictors too. We do not pre-filter or restrict the window. The dataset is loaded as-is and then reshaped from long to wide in the next section, which is the form <span class="in">`CausalImpact`</span> requires.</span>
+<span id="cb7-77"><a href="#cb7-77" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-80"><a href="#cb7-80" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb7-81"><a href="#cb7-81" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: data-load</span></span>
+<span id="cb7-82"><a href="#cb7-82" aria-hidden="true" tabindex="-1"></a>prop99 <span class="ot">&lt;-</span> <span class="fu">read_rds</span>(<span class="st">"data/proposition99.rds"</span>) <span class="sc">|&gt;</span> <span class="fu">as_tibble</span>()</span>
+<span id="cb7-83"><a href="#cb7-83" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb7-84"><a href="#cb7-84" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-87"><a href="#cb7-87" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb7-88"><a href="#cb7-88" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: impute-and-pivot</span></span>
-<span id="cb7-89"><a href="#cb7-89" aria-hidden="true" tabindex="-1"></a><span class="co">#| message: false</span></span>
-<span id="cb7-90"><a href="#cb7-90" aria-hidden="true" tabindex="-1"></a><span class="co">#| warning: false</span></span>
-<span id="cb7-91"><a href="#cb7-91" aria-hidden="true" tabindex="-1"></a><span class="co"># Fill in missing covariate values with one round of random-forest</span></span>
-<span id="cb7-92"><a href="#cb7-92" aria-hidden="true" tabindex="-1"></a><span class="co"># multiple imputation (m = 1, method = "rf"). printFlag suppresses</span></span>
-<span id="cb7-93"><a href="#cb7-93" aria-hidden="true" tabindex="-1"></a><span class="co"># console chatter.</span></span>
-<span id="cb7-94"><a href="#cb7-94" aria-hidden="true" tabindex="-1"></a>prop99_imputed <span class="ot">&lt;-</span> prop99 <span class="sc">|&gt;</span></span>
-<span id="cb7-95"><a href="#cb7-95" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mice</span>(<span class="at">m =</span> <span class="dv">1</span>, <span class="at">method =</span> <span class="st">"rf"</span>, <span class="at">printFlag =</span> <span class="cn">FALSE</span>) <span class="sc">|&gt;</span></span>
-<span id="cb7-96"><a href="#cb7-96" aria-hidden="true" tabindex="-1"></a>  <span class="fu">complete</span>() <span class="sc">|&gt;</span></span>
-<span id="cb7-97"><a href="#cb7-97" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_tibble</span>()</span>
-<span id="cb7-98"><a href="#cb7-98" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-99"><a href="#cb7-99" aria-hidden="true" tabindex="-1"></a><span class="co"># Pivot the long panel to wide format: one column per (variable, state)</span></span>
-<span id="cb7-100"><a href="#cb7-100" aria-hidden="true" tabindex="-1"></a><span class="co"># pair. CausalImpact requires the treated outcome in column 1, hence</span></span>
-<span id="cb7-101"><a href="#cb7-101" aria-hidden="true" tabindex="-1"></a><span class="co"># relocate(cigsale_California) and drop the year index.</span></span>
-<span id="cb7-102"><a href="#cb7-102" aria-hidden="true" tabindex="-1"></a>prop99_wide <span class="ot">&lt;-</span> prop99_imputed <span class="sc">|&gt;</span></span>
-<span id="cb7-103"><a href="#cb7-103" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from  =</span> state,</span>
-<span id="cb7-104"><a href="#cb7-104" aria-hidden="true" tabindex="-1"></a>              <span class="at">values_from =</span> <span class="fu">c</span>(cigsale, lnincome, beer, age15to24, retprice)) <span class="sc">|&gt;</span></span>
-<span id="cb7-105"><a href="#cb7-105" aria-hidden="true" tabindex="-1"></a>  <span class="fu">relocate</span>(cigsale_California) <span class="sc">|&gt;</span></span>
-<span id="cb7-106"><a href="#cb7-106" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>year)</span>
-<span id="cb7-107"><a href="#cb7-107" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-108"><a href="#cb7-108" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(prop99_wide)</span>
-<span id="cb7-109"><a href="#cb7-109" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb7-110"><a href="#cb7-110" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-111"><a href="#cb7-111" aria-hidden="true" tabindex="-1"></a><span class="fu">## Fit the Bayesian structural TS model</span></span>
-<span id="cb7-112"><a href="#cb7-112" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-115"><a href="#cb7-115" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb7-116"><a href="#cb7-116" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: tbl-causalimpact</span></span>
-<span id="cb7-117"><a href="#cb7-117" aria-hidden="true" tabindex="-1"></a><span class="co">#| tbl-cap: "CausalImpact posterior summary; brackets are 95% credible intervals."</span></span>
-<span id="cb7-118"><a href="#cb7-118" aria-hidden="true" tabindex="-1"></a><span class="co">#| message: false</span></span>
-<span id="cb7-119"><a href="#cb7-119" aria-hidden="true" tabindex="-1"></a><span class="co">#| warning: false</span></span>
-<span id="cb7-120"><a href="#cb7-120" aria-hidden="true" tabindex="-1"></a><span class="co"># CausalImpact takes integer row indices, not years.</span></span>
-<span id="cb7-121"><a href="#cb7-121" aria-hidden="true" tabindex="-1"></a><span class="co"># Row 1 = 1970, row 19 = 1988 (last pre-period year).</span></span>
-<span id="cb7-122"><a href="#cb7-122" aria-hidden="true" tabindex="-1"></a><span class="co"># Row 20 = 1989, row 31 = 2000 (last observed year).</span></span>
-<span id="cb7-123"><a href="#cb7-123" aria-hidden="true" tabindex="-1"></a>pre_idx  <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">19</span>)</span>
-<span id="cb7-124"><a href="#cb7-124" aria-hidden="true" tabindex="-1"></a>post_idx <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">20</span>, <span class="dv">31</span>)</span>
-<span id="cb7-125"><a href="#cb7-125" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-126"><a href="#cb7-126" aria-hidden="true" tabindex="-1"></a><span class="co"># Reset the seed so the BSTS MCMC draws are reproducible.</span></span>
-<span id="cb7-127"><a href="#cb7-127" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
-<span id="cb7-128"><a href="#cb7-128" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-129"><a href="#cb7-129" aria-hidden="true" tabindex="-1"></a>impact_full <span class="ot">&lt;-</span> <span class="fu">CausalImpact</span>(prop99_wide,</span>
-<span id="cb7-130"><a href="#cb7-130" aria-hidden="true" tabindex="-1"></a>                            <span class="at">pre.period  =</span> pre_idx,</span>
-<span id="cb7-131"><a href="#cb7-131" aria-hidden="true" tabindex="-1"></a>                            <span class="at">post.period =</span> post_idx)</span>
-<span id="cb7-132"><a href="#cb7-132" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-133"><a href="#cb7-133" aria-hidden="true" tabindex="-1"></a>ci_summary <span class="ot">&lt;-</span> impact_full<span class="sc">$</span>summary <span class="sc">|&gt;</span></span>
-<span id="cb7-134"><a href="#cb7-134" aria-hidden="true" tabindex="-1"></a>  tibble<span class="sc">::</span><span class="fu">rownames_to_column</span>(<span class="st">"Horizon"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb7-135"><a href="#cb7-135" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">transmute</span>(</span>
-<span id="cb7-136"><a href="#cb7-136" aria-hidden="true" tabindex="-1"></a>    Horizon,</span>
-<span id="cb7-137"><a href="#cb7-137" aria-hidden="true" tabindex="-1"></a>    <span class="at">Actual            =</span> <span class="fu">sprintf</span>(<span class="st">"%.1f"</span>, Actual),</span>
-<span id="cb7-138"><a href="#cb7-138" aria-hidden="true" tabindex="-1"></a>    <span class="at">Prediction        =</span> <span class="fu">sprintf</span>(<span class="st">"%.1f [%.1f, %.1f]"</span>,</span>
-<span id="cb7-139"><a href="#cb7-139" aria-hidden="true" tabindex="-1"></a>                                Pred, Pred.lower, Pred.upper),</span>
-<span id="cb7-140"><a href="#cb7-140" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">Absolute effect</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">sprintf</span>(<span class="st">"%.1f [%.1f, %.1f]"</span>,</span>
-<span id="cb7-141"><a href="#cb7-141" aria-hidden="true" tabindex="-1"></a>                                AbsEffect, AbsEffect.lower, AbsEffect.upper),</span>
-<span id="cb7-142"><a href="#cb7-142" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">Relative effect</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">sprintf</span>(<span class="st">"%.1f%% [%.1f%%, %.1f%%]"</span>,</span>
-<span id="cb7-143"><a href="#cb7-143" aria-hidden="true" tabindex="-1"></a>                                RelEffect <span class="sc">*</span> <span class="dv">100</span>, RelEffect.lower <span class="sc">*</span> <span class="dv">100</span>,</span>
-<span id="cb7-144"><a href="#cb7-144" aria-hidden="true" tabindex="-1"></a>                                RelEffect.upper <span class="sc">*</span> <span class="dv">100</span>),</span>
-<span id="cb7-145"><a href="#cb7-145" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">Posterior p</span><span class="st">`</span>     <span class="ot">=</span> <span class="fu">sprintf</span>(<span class="st">"%.3f"</span>, p)</span>
-<span id="cb7-146"><a href="#cb7-146" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb7-147"><a href="#cb7-147" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-148"><a href="#cb7-148" aria-hidden="true" tabindex="-1"></a><span class="fu">gt_pretty</span>(ci_summary)</span>
-<span id="cb7-149"><a href="#cb7-149" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb7-150"><a href="#cb7-150" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-151"><a href="#cb7-151" aria-hidden="true" tabindex="-1"></a>**Reading the output.**</span>
-<span id="cb7-152"><a href="#cb7-152" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-153"><a href="#cb7-153" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Average ATT:** approximately $-13$ packs/capita (posterior SD ≈ 11), 95% credible interval roughly $<span class="co">[</span><span class="ot">-32, +5.7</span><span class="co">]</span>$.</span>
-<span id="cb7-154"><a href="#cb7-154" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Cumulative effect:** about $-154$ packs over 12 years, or roughly 16% of what would have been expected absent the policy.</span>
-<span id="cb7-155"><a href="#cb7-155" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Posterior probability of any causal effect:** ≈ 92%.</span>
-<span id="cb7-156"><a href="#cb7-156" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-157"><a href="#cb7-157" aria-hidden="true" tabindex="-1"></a>If we drop the covariates and use only other states' cigarette sales as controls, the point estimate strengthens to around $-21$ packs and the posterior probability rises to ≈ 97%. The covariates absorb some of the variation the simpler model was attributing to Proposition 99 — which can be read as either "added robustness" or "watered-down signal" depending on how much you trust the imputed beer-and-income covariates.</span>
-<span id="cb7-158"><a href="#cb7-158" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-159"><a href="#cb7-159" aria-hidden="true" tabindex="-1"></a><span class="fu">## The two-panel diagnostic</span></span>
+<span id="cb7-85"><a href="#cb7-85" aria-hidden="true" tabindex="-1"></a>The loaded <span class="in">`prop99`</span> is the same 1,209-row × 7-column tibble used in chapter 5 (39 states × 31 years × the <span class="in">`cigsale`</span> outcome and four covariates). The next section deals with the missing covariate values and the long-to-wide reshape that CausalImpact requires.</span>
+<span id="cb7-86"><a href="#cb7-86" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-87"><a href="#cb7-87" aria-hidden="true" tabindex="-1"></a><span class="fu">## Imputation and wide pivot</span></span>
+<span id="cb7-88"><a href="#cb7-88" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-89"><a href="#cb7-89" aria-hidden="true" tabindex="-1"></a>CausalImpact wants a *wide* dataset with the treated outcome in column 1 and every control series in the remaining columns. The covariate columns have missing values (<span class="in">`lnincome`</span> is missing 16% of rows, <span class="in">`age15to24`</span> 32%, <span class="in">`beer`</span> 55%), so we fill them with single random-forest imputation from <span class="in">`mice`</span>.</span>
+<span id="cb7-90"><a href="#cb7-90" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-93"><a href="#cb7-93" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb7-94"><a href="#cb7-94" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: impute-and-pivot</span></span>
+<span id="cb7-95"><a href="#cb7-95" aria-hidden="true" tabindex="-1"></a><span class="co">#| message: false</span></span>
+<span id="cb7-96"><a href="#cb7-96" aria-hidden="true" tabindex="-1"></a><span class="co">#| warning: false</span></span>
+<span id="cb7-97"><a href="#cb7-97" aria-hidden="true" tabindex="-1"></a><span class="co"># Fill in missing covariate values with one round of random-forest</span></span>
+<span id="cb7-98"><a href="#cb7-98" aria-hidden="true" tabindex="-1"></a><span class="co"># multiple imputation (m = 1, method = "rf"). printFlag suppresses</span></span>
+<span id="cb7-99"><a href="#cb7-99" aria-hidden="true" tabindex="-1"></a><span class="co"># console chatter.</span></span>
+<span id="cb7-100"><a href="#cb7-100" aria-hidden="true" tabindex="-1"></a>prop99_imputed <span class="ot">&lt;-</span> prop99 <span class="sc">|&gt;</span></span>
+<span id="cb7-101"><a href="#cb7-101" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mice</span>(<span class="at">m =</span> <span class="dv">1</span>, <span class="at">method =</span> <span class="st">"rf"</span>, <span class="at">printFlag =</span> <span class="cn">FALSE</span>) <span class="sc">|&gt;</span></span>
+<span id="cb7-102"><a href="#cb7-102" aria-hidden="true" tabindex="-1"></a>  <span class="fu">complete</span>() <span class="sc">|&gt;</span></span>
+<span id="cb7-103"><a href="#cb7-103" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_tibble</span>()</span>
+<span id="cb7-104"><a href="#cb7-104" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-105"><a href="#cb7-105" aria-hidden="true" tabindex="-1"></a><span class="co"># Pivot the long panel to wide format: one column per (variable, state)</span></span>
+<span id="cb7-106"><a href="#cb7-106" aria-hidden="true" tabindex="-1"></a><span class="co"># pair. CausalImpact requires the treated outcome in column 1, hence</span></span>
+<span id="cb7-107"><a href="#cb7-107" aria-hidden="true" tabindex="-1"></a><span class="co"># relocate(cigsale_California) and drop the year index.</span></span>
+<span id="cb7-108"><a href="#cb7-108" aria-hidden="true" tabindex="-1"></a>prop99_wide <span class="ot">&lt;-</span> prop99_imputed <span class="sc">|&gt;</span></span>
+<span id="cb7-109"><a href="#cb7-109" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from  =</span> state,</span>
+<span id="cb7-110"><a href="#cb7-110" aria-hidden="true" tabindex="-1"></a>              <span class="at">values_from =</span> <span class="fu">c</span>(cigsale, lnincome, beer, age15to24, retprice)) <span class="sc">|&gt;</span></span>
+<span id="cb7-111"><a href="#cb7-111" aria-hidden="true" tabindex="-1"></a>  <span class="fu">relocate</span>(cigsale_California) <span class="sc">|&gt;</span></span>
+<span id="cb7-112"><a href="#cb7-112" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>year)</span>
+<span id="cb7-113"><a href="#cb7-113" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-114"><a href="#cb7-114" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(prop99_wide)</span>
+<span id="cb7-115"><a href="#cb7-115" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb7-116"><a href="#cb7-116" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-117"><a href="#cb7-117" aria-hidden="true" tabindex="-1"></a>The reported <span class="in">`dim()`</span> confirms the reshape: <span class="in">`prop99_wide`</span> is **31 rows × 195 columns** — one row per year 1970–2000, and 39 states × 5 variables in the columns (<span class="in">`cigsale_*`</span>, <span class="in">`lnincome_*`</span>, <span class="in">`beer_*`</span>, <span class="in">`age15to24_*`</span>, <span class="in">`retprice_*`</span> for each of the 39 states), with <span class="in">`year`</span> dropped and <span class="in">`cigsale_California`</span> relocated to column 1 because that's what <span class="in">`CausalImpact()`</span> expects as the treated outcome.</span>
+<span id="cb7-118"><a href="#cb7-118" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-119"><a href="#cb7-119" aria-hidden="true" tabindex="-1"></a><span class="fu">## Fit the Bayesian structural TS model</span></span>
+<span id="cb7-120"><a href="#cb7-120" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-121"><a href="#cb7-121" aria-hidden="true" tabindex="-1"></a>**The fit.** The chunk below calls <span class="in">`CausalImpact(prop99_wide, pre.period, post.period)`</span> with the pre and post windows expressed as *integer row indices* (not years): row 1 is 1970, row 19 is 1988 (the last pre-period year), row 20 is 1989, row 31 is 2000. The seed is reset just before the call because `bsts` uses an MCMC sampler under the hood; a fixed seed makes the posterior draws reproducible from one render to the next. The returned `impact_full$summary` is a two-row data frame — one row for the *average* effect over 1989–2000 and one row for the *cumulative* effect — with posterior means and 95% credible bounds for each. The helper code below the <span class="in">`CausalImpact()`</span> call just formats those columns into the table.</span>
+<span id="cb7-122"><a href="#cb7-122" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-125"><a href="#cb7-125" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb7-126"><a href="#cb7-126" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: tbl-causalimpact</span></span>
+<span id="cb7-127"><a href="#cb7-127" aria-hidden="true" tabindex="-1"></a><span class="co">#| tbl-cap: "CausalImpact posterior summary; brackets are 95% credible intervals."</span></span>
+<span id="cb7-128"><a href="#cb7-128" aria-hidden="true" tabindex="-1"></a><span class="co">#| message: false</span></span>
+<span id="cb7-129"><a href="#cb7-129" aria-hidden="true" tabindex="-1"></a><span class="co">#| warning: false</span></span>
+<span id="cb7-130"><a href="#cb7-130" aria-hidden="true" tabindex="-1"></a><span class="co"># CausalImpact takes integer row indices, not years.</span></span>
+<span id="cb7-131"><a href="#cb7-131" aria-hidden="true" tabindex="-1"></a><span class="co"># Row 1 = 1970, row 19 = 1988 (last pre-period year).</span></span>
+<span id="cb7-132"><a href="#cb7-132" aria-hidden="true" tabindex="-1"></a><span class="co"># Row 20 = 1989, row 31 = 2000 (last observed year).</span></span>
+<span id="cb7-133"><a href="#cb7-133" aria-hidden="true" tabindex="-1"></a>pre_idx  <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">19</span>)</span>
+<span id="cb7-134"><a href="#cb7-134" aria-hidden="true" tabindex="-1"></a>post_idx <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">20</span>, <span class="dv">31</span>)</span>
+<span id="cb7-135"><a href="#cb7-135" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-136"><a href="#cb7-136" aria-hidden="true" tabindex="-1"></a><span class="co"># Reset the seed so the BSTS MCMC draws are reproducible.</span></span>
+<span id="cb7-137"><a href="#cb7-137" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
+<span id="cb7-138"><a href="#cb7-138" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-139"><a href="#cb7-139" aria-hidden="true" tabindex="-1"></a>impact_full <span class="ot">&lt;-</span> <span class="fu">CausalImpact</span>(prop99_wide,</span>
+<span id="cb7-140"><a href="#cb7-140" aria-hidden="true" tabindex="-1"></a>                            <span class="at">pre.period  =</span> pre_idx,</span>
+<span id="cb7-141"><a href="#cb7-141" aria-hidden="true" tabindex="-1"></a>                            <span class="at">post.period =</span> post_idx)</span>
+<span id="cb7-142"><a href="#cb7-142" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-143"><a href="#cb7-143" aria-hidden="true" tabindex="-1"></a>ci_summary <span class="ot">&lt;-</span> impact_full<span class="sc">$</span>summary <span class="sc">|&gt;</span></span>
+<span id="cb7-144"><a href="#cb7-144" aria-hidden="true" tabindex="-1"></a>  tibble<span class="sc">::</span><span class="fu">rownames_to_column</span>(<span class="st">"Horizon"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb7-145"><a href="#cb7-145" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">transmute</span>(</span>
+<span id="cb7-146"><a href="#cb7-146" aria-hidden="true" tabindex="-1"></a>    Horizon,</span>
+<span id="cb7-147"><a href="#cb7-147" aria-hidden="true" tabindex="-1"></a>    <span class="at">Actual            =</span> <span class="fu">sprintf</span>(<span class="st">"%.1f"</span>, Actual),</span>
+<span id="cb7-148"><a href="#cb7-148" aria-hidden="true" tabindex="-1"></a>    <span class="at">Prediction        =</span> <span class="fu">sprintf</span>(<span class="st">"%.1f [%.1f, %.1f]"</span>,</span>
+<span id="cb7-149"><a href="#cb7-149" aria-hidden="true" tabindex="-1"></a>                                Pred, Pred.lower, Pred.upper),</span>
+<span id="cb7-150"><a href="#cb7-150" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">Absolute effect</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">sprintf</span>(<span class="st">"%.1f [%.1f, %.1f]"</span>,</span>
+<span id="cb7-151"><a href="#cb7-151" aria-hidden="true" tabindex="-1"></a>                                AbsEffect, AbsEffect.lower, AbsEffect.upper),</span>
+<span id="cb7-152"><a href="#cb7-152" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">Relative effect</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">sprintf</span>(<span class="st">"%.1f%% [%.1f%%, %.1f%%]"</span>,</span>
+<span id="cb7-153"><a href="#cb7-153" aria-hidden="true" tabindex="-1"></a>                                RelEffect <span class="sc">*</span> <span class="dv">100</span>, RelEffect.lower <span class="sc">*</span> <span class="dv">100</span>,</span>
+<span id="cb7-154"><a href="#cb7-154" aria-hidden="true" tabindex="-1"></a>                                RelEffect.upper <span class="sc">*</span> <span class="dv">100</span>),</span>
+<span id="cb7-155"><a href="#cb7-155" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">Posterior p</span><span class="st">`</span>     <span class="ot">=</span> <span class="fu">sprintf</span>(<span class="st">"%.3f"</span>, p)</span>
+<span id="cb7-156"><a href="#cb7-156" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb7-157"><a href="#cb7-157" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-158"><a href="#cb7-158" aria-hidden="true" tabindex="-1"></a><span class="fu">gt_pretty</span>(ci_summary)</span>
+<span id="cb7-159"><a href="#cb7-159" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb7-160"><a href="#cb7-160" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-163"><a href="#cb7-163" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb7-164"><a href="#cb7-164" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-causalimpact</span></span>
-<span id="cb7-165"><a href="#cb7-165" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "CausalImpact two-panel: pointwise observed vs Bayesian counterfactual, and cumulative effect over time."</span></span>
-<span id="cb7-166"><a href="#cb7-166" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-width: 8</span></span>
-<span id="cb7-167"><a href="#cb7-167" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-height: 7</span></span>
-<span id="cb7-168"><a href="#cb7-168" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(impact_full)</span>
-<span id="cb7-169"><a href="#cb7-169" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb7-161"><a href="#cb7-161" aria-hidden="true" tabindex="-1"></a>**Reading the output.**</span>
+<span id="cb7-162"><a href="#cb7-162" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-163"><a href="#cb7-163" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Average ATT:** approximately $-13$ packs/capita (posterior SD ≈ 11), 95% credible interval roughly $<span class="co">[</span><span class="ot">-32, +5.7</span><span class="co">]</span>$.</span>
+<span id="cb7-164"><a href="#cb7-164" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Cumulative effect:** about $-154$ packs over 12 years, or roughly 16% of what would have been expected absent the policy.</span>
+<span id="cb7-165"><a href="#cb7-165" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Posterior probability of any causal effect:** ≈ 92%.</span>
+<span id="cb7-166"><a href="#cb7-166" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-167"><a href="#cb7-167" aria-hidden="true" tabindex="-1"></a>If we drop the covariates and use only other states' cigarette sales as controls, the point estimate strengthens to around $-21$ packs and the posterior probability rises to ≈ 97%. The covariates absorb some of the variation the simpler model was attributing to Proposition 99 — which can be read as either "added robustness" or "watered-down signal" depending on how much you trust the imputed beer-and-income covariates.</span>
+<span id="cb7-168"><a href="#cb7-168" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-169"><a href="#cb7-169" aria-hidden="true" tabindex="-1"></a><span class="fu">## The two-panel diagnostic</span></span>
 <span id="cb7-170"><a href="#cb7-170" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-171"><a href="#cb7-171" aria-hidden="true" tabindex="-1"></a>The top panel shows the pointwise picture: observed California opens a steady gap below the Bayesian counterfactual starting in 1989, with a 95% credible band that widens as we forecast further from the training window. The bottom panel cumulates that gap over time. By 2000 the cumulative effect is roughly $-150$ packs/capita with a credible interval that includes zero only at the very upper edge.</span>
+<span id="cb7-171"><a href="#cb7-171" aria-hidden="true" tabindex="-1"></a>**What to look for.** Calling `plot()` on a `CausalImpact` object returns its default two-panel figure: the **top panel** shows observed California (solid line) against the Bayesian counterfactual (dashed) with its 95% credible band; the **bottom panel** shows the *cumulative* gap — the running sum of <span class="in">`observed − counterfactual`</span> from the intervention date onwards, with its own credible band. Read the top panel for whether and when the policy effect opens up, and the bottom panel for whether the cumulative effect's credible band excludes zero by the end of the series.</span>
 <span id="cb7-172"><a href="#cb7-172" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-173"><a href="#cb7-173" aria-hidden="true" tabindex="-1"></a><span class="fu">## Common pitfall</span></span>
-<span id="cb7-174"><a href="#cb7-174" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-175"><a href="#cb7-175" aria-hidden="true" tabindex="-1"></a>Imputing missing covariates without thinking about the imputation model. The random-forest fill we use here is a single-imputation shortcut for tutorial speed. With multiple imputation ($m &gt; 1$) or a different model, the estimate can move by 1–3 packs — and worse, an imputation that uses California itself to fill donor covariates would build an artificial post-period correlation that biases the result *toward* zero.</span>
-<span id="cb7-176"><a href="#cb7-176" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-177"><a href="#cb7-177" aria-hidden="true" tabindex="-1"></a><span class="fu">## Recap</span></span>
-<span id="cb7-178"><a href="#cb7-178" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-179"><a href="#cb7-179" aria-hidden="true" tabindex="-1"></a>CausalImpact lands at $-13$ to $-21$ packs depending on whether covariates are included, with a 92–97% posterior probability of a non-zero effect. It is the only method in the book that delivers a *credible* interval (a direct probability statement about the parameter), not a frequentist confidence band.</span>
-<span id="cb7-180"><a href="#cb7-180" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-181"><a href="#cb7-181" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Question <span class="pp">|</span> Answer <span class="pp">|</span></span>
-<span id="cb7-182"><a href="#cb7-182" aria-hidden="true" tabindex="-1"></a><span class="pp">|---|---|</span></span>
-<span id="cb7-183"><a href="#cb7-183" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> What does CausalImpact estimate? <span class="pp">|</span> The ATT on California, 1989–2000 <span class="pp">|</span></span>
-<span id="cb7-184"><a href="#cb7-184" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> What is the point estimate? <span class="pp">|</span> Average ≈ $-13$ packs/capita; cumulative ≈ $-154$ packs over 12 years <span class="pp">|</span></span>
-<span id="cb7-185"><a href="#cb7-185" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> What is the uncertainty quantification? <span class="pp">|</span> 95% Bayesian credible interval ≈ $<span class="co">[</span><span class="ot">-32, +5.7</span><span class="co">]</span>$ packs; posterior probability of any effect ≈ 92% <span class="pp">|</span></span>
-<span id="cb7-186"><a href="#cb7-186" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> How is the counterfactual built? <span class="pp">|</span> Local-level trend + Bayesian regression on donor-state cigarette sales (+ imputed covariates) <span class="pp">|</span></span>
-<span id="cb7-187"><a href="#cb7-187" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> What is the design-time pitfall? <span class="pp">|</span> Single-imputation shortcuts on covariates with high missingness; never impute donors using the treated unit <span class="pp">|</span></span>
+<span id="cb7-175"><a href="#cb7-175" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb7-176"><a href="#cb7-176" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-causalimpact</span></span>
+<span id="cb7-177"><a href="#cb7-177" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "CausalImpact two-panel: pointwise observed vs Bayesian counterfactual, and cumulative effect over time."</span></span>
+<span id="cb7-178"><a href="#cb7-178" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-width: 8</span></span>
+<span id="cb7-179"><a href="#cb7-179" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-height: 7</span></span>
+<span id="cb7-180"><a href="#cb7-180" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(impact_full)</span>
+<span id="cb7-181"><a href="#cb7-181" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb7-182"><a href="#cb7-182" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-183"><a href="#cb7-183" aria-hidden="true" tabindex="-1"></a>The top panel shows the pointwise picture: observed California opens a steady gap below the Bayesian counterfactual starting in 1989, with a 95% credible band that widens as we forecast further from the training window. The bottom panel cumulates that gap over time. By 2000 the cumulative effect is roughly $-150$ packs/capita with a credible interval that includes zero only at the very upper edge.</span>
+<span id="cb7-184"><a href="#cb7-184" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-185"><a href="#cb7-185" aria-hidden="true" tabindex="-1"></a><span class="fu">## Common pitfall</span></span>
+<span id="cb7-186"><a href="#cb7-186" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-187"><a href="#cb7-187" aria-hidden="true" tabindex="-1"></a>Imputing missing covariates without thinking about the imputation model. The random-forest fill we use here is a single-imputation shortcut for tutorial speed. With multiple imputation ($m &gt; 1$) or a different model, the estimate can move by 1–3 packs. Two concrete failure modes are worth spelling out, because they affect the credibility of the headline number rather than just its width.</span>
 <span id="cb7-188"><a href="#cb7-188" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-189"><a href="#cb7-189" aria-hidden="true" tabindex="-1"></a><span class="fu">## Further reading</span></span>
+<span id="cb7-189"><a href="#cb7-189" aria-hidden="true" tabindex="-1"></a>**Example 1 — Imputing donor covariates with a model that "sees" California.** Our <span class="in">`mice(prop99, ...)`</span> call passes the entire panel — California rows included — into the imputation model. For this dataset, with only four covariates and most missingness clustered in <span class="in">`beer`</span> (≈55%) and <span class="in">`age15to24`</span> (≈32%) on donor states, the consequence is usually mild. But if you were to feed the *full panel with the post-period California outcome attached* into an imputer that also uses `cigsale` as a predictor, the imputer could learn from California's post-1989 trajectory and propagate that information back into donor states' missing covariate cells. CausalImpact would then build a counterfactual that mechanically tracks California's post-period — biasing the estimated effect *toward zero* by construction. The safe pattern is to impute donor covariates *before* the treated outcome is in scope, or to drop the treated unit from the imputer entirely and impute donors only.</span>
 <span id="cb7-190"><a href="#cb7-190" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-191"><a href="#cb7-191" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>@brodersen2015inferring — the original <span class="in">`CausalImpact`</span> paper.</span>
-<span id="cb7-192"><a href="#cb7-192" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>@brodersen-causalimpact-talk — a 50-minute walk-through of the CausalImpact intuition by the package's lead author.</span>
-<span id="cb7-193"><a href="#cb7-193" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>@causalimpact-pkg — package documentation and worked examples.</span>
+<span id="cb7-191"><a href="#cb7-191" aria-hidden="true" tabindex="-1"></a>**Example 2 — Single (`m = 1`) vs multiple (`m = 5`) imputation.** Single imputation treats the imputed values as if they were observed, then propagates that pretend-observed dataset through <span class="in">`CausalImpact`</span>. The posterior credible band you get back is the model's uncertainty *given* the imputed cells — it knows nothing about the uncertainty *introduced by the imputation itself*. With proper multiple imputation (<span class="in">`mice(..., m = 5)`</span> and Rubin's-rules pooling across the five resulting fits), the credible band widens by roughly 1–3 packs on this dataset because the across-imputation variance is added to the within-imputation variance. The point estimate barely moves; the interval does. For a tutorial we keep <span class="in">`m = 1`</span> for speed and clarity, but a published number should use <span class="in">`m ≥ 5`</span> and report a pooled estimate.</span>
+<span id="cb7-192"><a href="#cb7-192" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-193"><a href="#cb7-193" aria-hidden="true" tabindex="-1"></a><span class="fu">## Recap</span></span>
+<span id="cb7-194"><a href="#cb7-194" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-195"><a href="#cb7-195" aria-hidden="true" tabindex="-1"></a>CausalImpact lands at $-13$ to $-21$ packs depending on whether covariates are included, with a 92–97% posterior probability of a non-zero effect. It is the only method in the book that delivers a *credible* interval (a direct probability statement about the parameter), not a frequentist confidence band.</span>
+<span id="cb7-196"><a href="#cb7-196" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-197"><a href="#cb7-197" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Question <span class="pp">|</span> Answer <span class="pp">|</span></span>
+<span id="cb7-198"><a href="#cb7-198" aria-hidden="true" tabindex="-1"></a><span class="pp">|---|---|</span></span>
+<span id="cb7-199"><a href="#cb7-199" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> What does CausalImpact estimate? <span class="pp">|</span> The ATT on California, 1989–2000 <span class="pp">|</span></span>
+<span id="cb7-200"><a href="#cb7-200" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> What is the point estimate? <span class="pp">|</span> Average ≈ $-13$ packs/capita; cumulative ≈ $-154$ packs over 12 years <span class="pp">|</span></span>
+<span id="cb7-201"><a href="#cb7-201" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> What is the uncertainty quantification? <span class="pp">|</span> 95% Bayesian credible interval ≈ $<span class="co">[</span><span class="ot">-32, +5.7</span><span class="co">]</span>$ packs; posterior probability of any effect ≈ 92% <span class="pp">|</span></span>
+<span id="cb7-202"><a href="#cb7-202" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> How is the counterfactual built? <span class="pp">|</span> Local-level trend + Bayesian regression on donor-state cigarette sales (+ imputed covariates) <span class="pp">|</span></span>
+<span id="cb7-203"><a href="#cb7-203" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> What is the design-time pitfall? <span class="pp">|</span> Single-imputation shortcuts on covariates with high missingness; never impute donors using the treated unit <span class="pp">|</span></span>
+<span id="cb7-204"><a href="#cb7-204" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-205"><a href="#cb7-205" aria-hidden="true" tabindex="-1"></a><span class="fu">## Further reading</span></span>
+<span id="cb7-206"><a href="#cb7-206" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-207"><a href="#cb7-207" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>@brodersen2015inferring — the original <span class="in">`CausalImpact`</span> paper.</span>
+<span id="cb7-208"><a href="#cb7-208" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>@brodersen-causalimpact-talk — a 50-minute walk-through of the CausalImpact intuition by the package's lead author.</span>
+<span id="cb7-209"><a href="#cb7-209" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>@causalimpact-pkg — package documentation and worked examples.</span>
 </code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
