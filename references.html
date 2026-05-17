@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Generalized Synthetic Control – Comparative Causal Metrics</title>
+<title>References – Comparative Causal Metrics</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -59,7 +59,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 div.csl-bib-body { }
 div.csl-entry {
   clear: both;
-  margin-bottom: 0em;
 }
 .hanging-indent div.csl-entry {
   margin-left:2em;
@@ -129,35 +128,6 @@ div.csl-indent {
 }</script>
 <style>html{ scroll-behavior: smooth; }</style>
 
-  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
-
-<script type="text/javascript">
-const typesetMath = (el) => {
-  if (window.MathJax) {
-    // MathJax Typeset
-    window.MathJax.typeset([el]);
-  } else if (window.katex) {
-    // KaTeX Render
-    var mathElements = el.getElementsByClassName("math");
-    var macros = [];
-    for (var i = 0; i < mathElements.length; i++) {
-      var texText = mathElements[i].firstChild;
-      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
-        window.katex.render(texText.data, mathElements[i], {
-          displayMode: mathElements[i].classList.contains('display'),
-          throwOnError: false,
-          macros: macros,
-          fleqn: false
-        });
-      }
-    }
-  }
-}
-window.Quarto = {
-  typesetMath
-};
-</script>
 
 <link rel="stylesheet" href="custom.css">
 </head>
@@ -461,32 +431,8 @@ window.Quarto = {
 </nav>
 <div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        <nav id="TOC" role="doc-toc" class="toc-active">
-    <h2 id="toc-title">Table of contents</h2>
-   
-  <ul>
-  <li><a href="#where-gsynth-fits" id="toc-where-gsynth-fits" class="nav-link active" data-scroll-target="#where-gsynth-fits">Where gsynth fits</a></li>
-  <li><a href="#setup-and-data" id="toc-setup-and-data" class="nav-link" data-scroll-target="#setup-and-data">Setup and data</a></li>
-  <li><a href="#treatment-timing" id="toc-treatment-timing" class="nav-link" data-scroll-target="#treatment-timing">Treatment timing</a></li>
-  <li><a href="#baseline-gsynth-without-factors" id="toc-baseline-gsynth-without-factors" class="nav-link" data-scroll-target="#baseline-gsynth-without-factors">Baseline: gsynth without factors</a></li>
-  <li><a href="#information-criterion-across-factor-counts" id="toc-information-criterion-across-factor-counts" class="nav-link" data-scroll-target="#information-criterion-across-factor-counts">Information criterion across factor counts</a></li>
-  <li><a href="#standard-gsynth-plots" id="toc-standard-gsynth-plots" class="nav-link" data-scroll-target="#standard-gsynth-plots">Standard gsynth plots</a>
-  <ul class="collapse">
-  <li><a href="#gap-plot-period-by-period-att" id="toc-gap-plot-period-by-period-att" class="nav-link" data-scroll-target="#gap-plot-period-by-period-att">Gap plot (period-by-period ATT)</a></li>
-  <li><a href="#counterfactual-plot" id="toc-counterfactual-plot" class="nav-link" data-scroll-target="#counterfactual-plot">Counterfactual plot</a></li>
-  <li><a href="#estimated-factors" id="toc-estimated-factors" class="nav-link" data-scroll-target="#estimated-factors">Estimated factors</a></li>
-  <li><a href="#factor-loadings" id="toc-factor-loadings" class="nav-link" data-scroll-target="#factor-loadings">Factor loadings</a></li>
-  </ul></li>
-  <li><a href="#implied-donor-weights" id="toc-implied-donor-weights" class="nav-link" data-scroll-target="#implied-donor-weights">Implied donor weights</a></li>
-  <li><a href="#cumulative-effects" id="toc-cumulative-effects" class="nav-link" data-scroll-target="#cumulative-effects">Cumulative effects</a></li>
-  <li><a href="#inference-bootstrap-variants-compared" id="toc-inference-bootstrap-variants-compared" class="nav-link" data-scroll-target="#inference-bootstrap-variants-compared">Inference: bootstrap variants compared</a></li>
-  <li><a href="#recap" id="toc-recap" class="nav-link" data-scroll-target="#recap">Recap</a></li>
-  <li><a href="#common-pitfall" id="toc-common-pitfall" class="nav-link" data-scroll-target="#common-pitfall">Common pitfall</a></li>
-  <li><a href="#further-reading" id="toc-further-reading" class="nav-link" data-scroll-target="#further-reading">Further reading</a></li>
-  <li><a href="#exercises" id="toc-exercises" class="nav-link" data-scroll-target="#exercises">Exercises</a></li>
-  </ul>
-<div class="toc-actions"><ul><li><a href="https://github.com/quarcs-lab/ccm/edit/main/references.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/quarcs-lab/ccm/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+        
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
@@ -494,7 +440,7 @@ window.Quarto = {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<div class="quarto-title-block"><div><h1 class="title">Generalized Synthetic Control</h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
+<div class="quarto-title-block"><div><h1 class="title">References</h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
 </div>
 
 
@@ -640,374 +586,6 @@ with interactive fixed effects models. <em>Political Analysis</em>,
 
 <!-- -->
 
-<section id="where-gsynth-fits" class="level2">
-<h2 class="anchored" data-anchor-id="where-gsynth-fits">Where gsynth fits</h2>
-<p>Earlier chapters have asked the same counterfactual question in different ways. Chapter 5 (classical SCM) hand-built a weighted donor average for a single treated unit. Chapter 7 layered a spatial prior on top. Chapter 9 abandoned the single-treated-unit framing entirely and aggregated group-time ATTs under a parallel-trends assumption. Chapter 10 (when read in sequence) introduces the interactive-fixed-effects family through <code>fect</code>; this chapter does the focused walkthrough of one specific estimator in that family — <strong>generalized synthetic control (gsynth)</strong> <span class="citation" data-cites="xu2017generalized">(<a href="references.html#ref-xu2017generalized" role="doc-biblioref">Xu, 2017</a>)</span> — using the standalone <code>gsynth</code> package on the same Callaway-Sant’Anna minimum-wage panel as chapter 9.</p>
-<p>gsynth sits at the intersection of SCM and panel DiD. Like SCM, it imputes a counterfactual outcome path for each treated unit using only never-treated controls. Like staggered DiD, it accommodates many treated units adopting at different times. The way it threads that needle is by fitting an <strong>interactive fixed effects</strong> (IFE) model on the never-treated panel,</p>
-<p><span class="math display">\[Y_{it}(0) = \alpha_i + \xi_t + \lambda_i' f_t + X_{it}'\beta +
-\varepsilon_{it},\]</span></p>
-<p>then projecting each treated unit onto the estimated factor space to impute its <span class="math inline">\(Y_{it}(0)\)</span> in the post-treatment period. The headline ATT is the average gap between observed treated outcomes and these imputed counterfactuals.</p>
-<p>The identifying assumption is <strong>parallel factors</strong>, not parallel trends: unobserved shocks affecting treated and never-treated units must load on the same low-rank factor structure <span class="math inline">\(f_t\)</span>. When that holds, gsynth recovers a valid ATT even if the trends themselves are not parallel. When it does not, the model is misspecified and the headline ATT is biased — diagnostics matter.</p>
-<p>One difference from chapter 9: that chapter truncated the window to <code>year &gt;= 2003</code>, which left cohort 2004 with only one pre-treatment year. gsynth needs more pre-period to identify factors, so we keep the full 2001-2007 window. Cohort 2006 then has five pre-treatment years (2001-2005); cohort 2004 has three (2001-2003). We set <code>min.T0 = 3</code> to admit both cohorts.</p>
-</section>
-<section id="setup-and-data" class="level2">
-<h2 class="anchored" data-anchor-id="setup-and-data">Setup and data</h2>
-<pre class="{r}"><code>#| label: setup
-#| message: false
-#| warning: false
-library(tidyverse)
-library(gsynth)
-library(panelView)
-source("R/table_helpers.R")
-
-set.seed(42)
-
-knitr::opts_chunk$set(dev.args = list(bg = "transparent"))
-
-theme_set(
-  theme_minimal(base_size = 12) +
-    theme(
-      plot.background  = element_rect(fill = "transparent", color = NA),
-      panel.background = element_rect(fill = "transparent", color = NA),
-      panel.grid.major = element_line(color = "#94a3b8", linewidth = 0.25),
-      panel.grid.minor = element_line(color = "#94a3b8", linewidth = 0.15),
-      text             = element_text(color = "#94a3b8"),
-      axis.text        = element_text(color = "#94a3b8"),
-      strip.text       = element_text(color = "#94a3b8"),
-      legend.text      = element_text(color = "#94a3b8")
-    )
-)</code></pre>
-<p>The dataset ships as <code>data/cs_minwage.rds</code> in the chapter bundle. We restrict to cohorts <span class="math inline">\(G \in \{0, 2004, 2006\}\)</span> and drop the Northeast region (<code>region == "1"</code>) for comparability with chapter 9. <code>gsynth()</code> expects a base <code>data.frame</code> — passing a tibble silently breaks its internal indexing — so we cast with <code>as.data.frame()</code>.</p>
-<pre class="{r}"><code>#| label: data-load
-mw_raw &lt;- readRDS("data/cs_minwage.rds") |&gt; as_tibble()
-
-mw &lt;- mw_raw |&gt;
-  filter(G %in% c(0, 2004, 2006), region != "1") |&gt;
-  mutate(treat = as.integer(year &gt;= G &amp; G != 0))
-
-mw_df &lt;- as.data.frame(mw)
-dim(mw_df)</code></pre>
-<p>The panel has <code>r nrow(mw_df)</code> rows on <code>r length(unique(mw_df$id))</code> counties, balanced across 2001-2007. The 0/1 indicator <code>treat</code> is the only variable gsynth needs to know about treatment status — its name is deliberately different from chapter 9’s <code>post</code> to remind us that gsynth’s identification is not the same as chapter 9’s.</p>
-<pre class="{r}"><code>#| label: tbl-cohort-counts
-#| tbl-cap: "Cohort sizes after restriction. G = 0 is the never-treated control pool; cohorts 2004 and 2006 are the staggered treated groups, with 3 and 5 pre-treatment years respectively."
-mw_df |&gt;
-  filter(year == 2001) |&gt;
-  count(G, name = "counties") |&gt;
-  mutate(`Pre-treatment years` = ifelse(G == 0, NA_integer_, G - 2001L)) |&gt;
-  rename(`Treatment cohort (G)` = G) |&gt;
-  gt_pretty()</code></pre>
-</section>
-<section id="treatment-timing" class="level2">
-<h2 class="anchored" data-anchor-id="treatment-timing">Treatment timing</h2>
-<p>The first thing to do with any panel-treatment design is <em>look at it</em>. <code>panelView</code> is the package companion to <code>gsynth</code>; it produces a treatment-status heatmap and an outcome-trajectory facet that together expose anything weird in the data before estimation.</p>
-<pre class="{r}"><code>#| label: fig-panelview-status
-#| fig-cap: "Treatment status heatmap. Rows are counties (grouped by treatment cohort); columns are years. Pink cells are treated; blue cells are control. Within each treated cohort, the pink block starts in the cohort's adoption year. Never-treated counties (G = 0) stay blue throughout."
-#| fig-width: 8
-#| fig-height: 5
-#| message: false
-#| warning: false
-panelview(lemp ~ treat, data = mw_df,
-          index = c("id", "year"),
-          pre.post = TRUE,
-          by.timing = TRUE,
-          display.all = TRUE,
-          axis.lab = "time",
-          axis.adjust = TRUE)</code></pre>
-<pre class="{r}"><code>#| label: fig-panelview-outcome
-#| fig-cap: "Outcome trajectories by cohort. Each thin grey line is one county's log teen employment over time; thick colored lines are cohort means. The pre-treatment trajectories look broadly parallel across cohorts, but with enough texture that a low-rank factor model has something to estimate."
-#| fig-width: 8
-#| fig-height: 4.5
-#| message: false
-#| warning: false
-panelview(lemp ~ treat, data = mw_df,
-          index = c("id", "year"),
-          type = "outcome",
-          by.cohort = TRUE,
-          theme.bw = TRUE)</code></pre>
-</section>
-<section id="baseline-gsynth-without-factors" class="level2">
-<h2 class="anchored" data-anchor-id="baseline-gsynth-without-factors">Baseline: gsynth without factors</h2>
-<p>The first fit forces <span class="math inline">\(r = 0\)</span> — no latent factors. With two-way fixed effects (<code>force = "two-way"</code>) and no factors, this is the closest gsynth analogue to the TWFE regression in chapter 9. We set <code>min.T0 = 3</code> so cohort 2004 (which has only 3 pre-treatment years) isn’t dropped, and disable cross-validation (<code>CV = FALSE</code>): gsynth’s default rolling-window CV needs <code>min.T0 + cv.nobs = 8</code> pre-treatment periods per treated cohort, which cohort 2004 does not have. We pick <span class="math inline">\(r\)</span> manually by IC in the next section.</p>
-<pre class="{r}"><code>#| label: fit-no-factors
-#| message: false
-#| warning: false
-#| cache: true
-out_r0 &lt;- gsynth(lemp ~ treat + lpop + lavg_pay,
-                 data = mw_df,
-                 index = c("id", "year"),
-                 force = "two-way",
-                 CV = FALSE, r = 0,
-                 se = TRUE,
-                 inference = "nonparametric",
-                 nboots = 500,
-                 min.T0 = 3,
-                 parallel = TRUE,
-                 seed = 42)</code></pre>
-<pre class="{r}"><code>#| label: tbl-baseline
-#| tbl-cap: "Overall ATT under gsynth with no factors (r = 0). The point estimate is in the same neighborhood as chapter 9's TWFE coefficient (−0.038), as expected: with no factors, gsynth reduces to a within-transformation panel estimator."
-tibble(
-  Specification = "gsynth, r = 0 (no factors)",
-  Estimate      = out_r0$att.avg,
-  `S.E.`        = out_r0$est.avg[1, "S.E."],
-  `CI lower`    = out_r0$est.avg[1, "CI.lower"],
-  `CI upper`    = out_r0$est.avg[1, "CI.upper"],
-  `p-value`     = out_r0$est.avg[1, "p.value"]
-) |&gt; gt_pretty(decimals = 4)</code></pre>
-<p>This baseline is a sanity check: gsynth with no factors should recover something close to TWFE, and it does. The next step is to let the model use the never-treated panel to estimate latent factors and see whether the estimate moves.</p>
-</section>
-<section id="information-criterion-across-factor-counts" class="level2">
-<h2 class="anchored" data-anchor-id="information-criterion-across-factor-counts">Information criterion across factor counts</h2>
-<p>The principled way to pick the number of factors <span class="math inline">\(r\)</span> is to fit the model at several candidate values and select the <span class="math inline">\(r^*\)</span> that minimises an information criterion. <code>gsynth</code> reports both a <span class="citation" data-cites="bai2003inferential">(<a href="references.html#ref-bai2003inferential" role="doc-biblioref">Bai, 2003</a>)</span>-style IC and a PC criterion; either is a valid target. We fit <span class="math inline">\(r \in \{0, 1, 2\}\)</span> explicitly — beyond 2 the panel does not have enough pre-treatment depth to estimate additional factors.</p>
-<pre class="{r}"><code>#| label: fit-factor-grid
-#| message: false
-#| warning: false
-#| cache: true
-fit_grid &lt;- map(0:2, function(r_val) {
-  gsynth(lemp ~ treat + lpop + lavg_pay,
-         data = mw_df,
-         index = c("id", "year"),
-         force = "two-way",
-         CV = FALSE, r = r_val,
-         se = TRUE,
-         inference = "nonparametric",
-         nboots = 500,
-         min.T0 = 3,
-         parallel = TRUE,
-         seed = 42)
-})
-names(fit_grid) &lt;- paste0("r=", 0:2)</code></pre>
-<pre class="{r}"><code>#| label: tbl-ic-grid
-#| tbl-cap: "Information criterion and ATT across candidate factor counts. As $r$ grows, in-sample $\\sigma^2$ falls but the model's information cost rises, and IC pushes back. The standard error column tells the rest of the story: at $r = 2$ the SE explodes by two orders of magnitude — a clear sign that fitting two factors leaves too few degrees of freedom in a panel this short."
-ic_tbl &lt;- map_dfr(seq_along(fit_grid), function(i) {
-  o &lt;- fit_grid[[i]]
-  tibble(
-    r       = i - 1L,
-    ATT     = o$att.avg,
-    `S.E.`  = o$est.avg[1, "S.E."],
-    IC      = o$IC,
-    sigma2  = o$sigma2
-  )
-})
-
-gt_pretty(ic_tbl, decimals = 4)</code></pre>
-<pre class="{r}"><code>#| label: select-best
-candidate &lt;- ic_tbl |&gt; filter(r &gt;= 1)
-r_star    &lt;- candidate$r[ which.min(candidate$IC) ]
-out       &lt;- fit_grid[[ paste0("r=", r_star) ]]</code></pre>
-<p>Read literally, the IC table’s global minimum is at <span class="math inline">\(r = 0\)</span> — but that fit <em>is</em> the baseline we just produced; calling it the “factor-model fit” would mean reporting a zero-factor model. We want to put the factor structure on stage, so we restrict the selection to <span class="math inline">\(r \ge 1\)</span> and pick the IC-minimising rank from that subset. That gives <span class="math inline">\(r^* = `r r_star`\)</span>, with an ATT roughly twice the size of the no-factor baseline and a standard error still in a usable range.</p>
-<p>For the rest of the chapter we work with the <span class="math inline">\(r = r^*\)</span> fit.</p>
-</section>
-<section id="standard-gsynth-plots" class="level2">
-<h2 class="anchored" data-anchor-id="standard-gsynth-plots">Standard gsynth plots</h2>
-<p><code>gsynth::plot()</code> is the workhorse visualization. Four <code>type=</code> options cover the diagnostic menu the source tutorial demonstrates.</p>
-<section id="gap-plot-period-by-period-att" class="level3">
-<h3 class="anchored" data-anchor-id="gap-plot-period-by-period-att">Gap plot (period-by-period ATT)</h3>
-<pre class="{r}"><code>#| label: fig-gsynth-gap
-#| fig-cap: "Period-by-period ATT with 95% nonparametric-bootstrap confidence bands. Pre-treatment periods should hover near zero if the factor model is doing its job; post-treatment effects are the ATT trajectory the chapter is after."
-#| fig-width: 8
-#| fig-height: 4.5
-#| message: false
-#| warning: false
-plot(out, type = "gap",
-     xlab = "Year", ylab = "ATT (log teen employment)",
-     main = NULL)</code></pre>
-</section>
-<section id="counterfactual-plot" class="level3">
-<h3 class="anchored" data-anchor-id="counterfactual-plot">Counterfactual plot</h3>
-<pre class="{r}"><code>#| label: fig-gsynth-counterfactual
-#| fig-cap: "Observed treated-unit outcomes against gsynth's imputed counterfactual. Close tracking before treatment is the visual analogue of the small pre-treatment ATTs in the gap plot."
-#| fig-width: 8
-#| fig-height: 4.5
-#| message: false
-#| warning: false
-plot(out, type = "counterfactual", raw = "none",
-     main = NULL,
-     xlab = "Year", ylab = "Log teen employment")</code></pre>
-</section>
-<section id="estimated-factors" class="level3">
-<h3 class="anchored" data-anchor-id="estimated-factors">Estimated factors</h3>
-<pre class="{r}"><code>#| label: fig-gsynth-factors
-#| fig-cap: "Estimated latent factor(s) $f_t$ over time. With $r^* = 1$ a single curve is shown; its shape captures the unobserved time-varying shock the factor model is using to explain co-movement in the never-treated panel."
-#| fig-width: 7.5
-#| fig-height: 4.5
-#| message: false
-#| warning: false
-if (r_star &gt;= 1) {
-  plot(out, type = "factors", main = NULL, xlab = "Year")
-} else {
-  message("No factors to plot (r* = 0).")
-}</code></pre>
-</section>
-<section id="factor-loadings" class="level3">
-<h3 class="anchored" data-anchor-id="factor-loadings">Factor loadings</h3>
-<pre class="{r}"><code>#| label: fig-gsynth-loadings
-#| fig-cap: "Factor loadings $\\lambda_i$ for treated and control counties. Concentration of treated loadings inside the cloud of control loadings is what the gsynth identification needs — it means each treated unit's counterfactual can be expressed as a combination of observed controls rather than an extrapolation."
-#| fig-width: 7
-#| fig-height: 5.5
-#| message: false
-#| warning: false
-if (r_star &gt;= 1) {
-  plot(out, type = "loadings", main = NULL)
-} else {
-  message("No loadings to plot (r* = 0).")
-}</code></pre>
-</section>
-</section>
-<section id="implied-donor-weights" class="level2">
-<h2 class="anchored" data-anchor-id="implied-donor-weights">Implied donor weights</h2>
-<p>A nice property of gsynth — inherited from its synthetic-control roots — is that the counterfactual for each treated unit can be written as a weighted average of control units. The package returns these implicit weights in <code>out$wgt.implied</code>. Looking at <em>which</em> controls a treated unit leans on grounds the abstract factor model in something concrete.</p>
-<pre class="{r}"><code>#| label: tbl-implied-weights
-#| tbl-cap: "Top-5 implicit donor counties for the five most-positively-weighted treated counties. Each cell is the share of weight gsynth assigns to that control county when constructing the treated unit's counterfactual."
-W &lt;- out$wgt.implied
-treated_ids &lt;- colnames(W)
-control_ids &lt;- rownames(W)
-
-top_treated &lt;- treated_ids[order(-apply(W, 2, max))[1:5]]
-
-map_dfr(top_treated, function(tid) {
-  w_col &lt;- W[, tid]
-  top5  &lt;- sort(w_col, decreasing = TRUE)[1:5]
-  tibble(
-    `Treated county`  = tid,
-    `Control county`  = names(top5),
-    `Implicit weight` = unname(top5)
-  )
-}) |&gt;
-  gt_pretty(decimals = 3)</code></pre>
-<p>Two things to notice. First, no single donor dominates — each treated county’s counterfactual is genuinely a mixture, not a near-replica of one control. Second, the top weights are small (typically well under 0.10), which is the expected shape when the donor pool is large (<code>r length(control_ids)</code> never-treated counties).</p>
-</section>
-<section id="cumulative-effects" class="level2">
-<h2 class="anchored" data-anchor-id="cumulative-effects">Cumulative effects</h2>
-<p>The gap plot shows the per-period ATT. Cumulating it over post-treatment periods gives the <strong>cumulative effect</strong> — the total deviation from the counterfactual since treatment onset. The standalone <code>gsynth</code> package does not ship a <code>cumuEff()</code> helper (that lives in <code>fect</code>), so we build it from <code>out$est.att</code> directly. The CI here is a normal approximation built from the per-period bootstrap SEs treated as independent, which slightly understates true uncertainty but is what most published applications report.</p>
-<pre class="{r}"><code>#| label: tbl-cumulative
-#| tbl-cap: "Period-by-period and cumulative ATT in calendar-year terms. Pre-treatment years are excluded from the cumulation because they are reference periods, not treatment periods."
-est_att &lt;- as.data.frame(out$est.att)
-est_att$year &lt;- as.integer(rownames(est_att))
-
-cumu_df &lt;- est_att |&gt;
-  arrange(year) |&gt;
-  filter(year &gt;= 2004) |&gt;
-  mutate(
-    cum_att    = cumsum(ATT),
-    cum_se     = sqrt(cumsum(`S.E.`^2)),
-    `CI.lower` = cum_att - 1.96 * cum_se,
-    `CI.upper` = cum_att + 1.96 * cum_se
-  ) |&gt;
-  transmute(Year             = year,
-            `ATT(period)`    = ATT,
-            `Cumulative ATT` = cum_att,
-            `Cum. S.E.`      = cum_se,
-            `CI lower`       = `CI.lower`,
-            `CI upper`       = `CI.upper`)
-
-gt_pretty(cumu_df, decimals = 4)</code></pre>
-<pre class="{r}"><code>#| label: fig-cumulative
-#| fig-cap: "Cumulative ATT trajectory. The slope of the line at any year is the per-period effect; the line itself is the running total of treatment effect since the earliest treatment onset (year 2004). A roughly linear shape is consistent with chapter 9's event-study finding that effects accumulate over time."
-#| fig-width: 7.5
-#| fig-height: 4.5
-ggplot(cumu_df, aes(x = Year, y = `Cumulative ATT`)) +
-  geom_hline(yintercept = 0, color = "#94a3b8", linetype = "dashed") +
-  geom_ribbon(aes(ymin = `CI lower`, ymax = `CI upper`),
-              fill = "#22d3ee", alpha = 0.2) +
-  geom_line(color = "#22d3ee", linewidth = 0.9) +
-  geom_point(color = "#22d3ee", size = 2.5) +
-  labs(x = "Year", y = "Cumulative ATT (log teen employment)")</code></pre>
-</section>
-<section id="inference-bootstrap-variants-compared" class="level2">
-<h2 class="anchored" data-anchor-id="inference-bootstrap-variants-compared">Inference: bootstrap variants compared</h2>
-<p><code>gsynth</code> supports three inference modes: <strong>parametric bootstrap</strong> (simulates residuals from the estimated error distribution), <strong>nonparametric bootstrap</strong> (resamples units with replacement), and <strong>jackknife</strong> (leave-one-unit-out). Each targets a slightly different variance, and on short panels with few treated units the three can diverge meaningfully.</p>
-<pre class="{r}"><code>#| label: fit-inference-modes
-#| message: false
-#| warning: false
-#| cache: true
-out_np &lt;- out   # already nonparametric from earlier fit
-
-out_param &lt;- gsynth(lemp ~ treat + lpop + lavg_pay,
-                    data = mw_df,
-                    index = c("id", "year"),
-                    force = "two-way",
-                    CV = FALSE, r = r_star,
-                    se = TRUE,
-                    inference = "parametric",
-                    nboots = 500,
-                    min.T0 = 3,
-                    parallel = TRUE,
-                    seed = 42)
-
-out_jk &lt;- gsynth(lemp ~ treat + lpop + lavg_pay,
-                 data = mw_df,
-                 index = c("id", "year"),
-                 force = "two-way",
-                 CV = FALSE, r = r_star,
-                 se = TRUE,
-                 inference = "jackknife",
-                 min.T0 = 3,
-                 parallel = TRUE,
-                 seed = 42)</code></pre>
-<pre class="{r}"><code>#| label: tbl-inference-compare
-#| tbl-cap: "Overall ATT under three uncertainty-quantification methods, holding $r = r^*$ constant. The point estimate is identical — inference choice only affects the standard error and CI. Nonparametric is the default in modern gsynth/fect practice; parametric assumes the residual distribution is right; jackknife is the most conservative."
-extract_est &lt;- function(o, label) {
-  tibble(
-    Method     = label,
-    Estimate   = o$att.avg,
-    `S.E.`     = o$est.avg[1, "S.E."],
-    `CI lower` = o$est.avg[1, "CI.lower"],
-    `CI upper` = o$est.avg[1, "CI.upper"],
-    `p-value`  = o$est.avg[1, "p.value"]
-  )
-}
-
-bind_rows(
-  extract_est(out_np,    "Nonparametric bootstrap"),
-  extract_est(out_param, "Parametric bootstrap"),
-  extract_est(out_jk,    "Jackknife")
-) |&gt; gt_pretty(decimals = 4)</code></pre>
-<p>The three CIs usually agree in sign and significance when the factor model fits well. When they disagree — typically with the jackknife CI being noticeably wider than the nonparametric one — that is a flag that the headline result hinges on one or two influential treated units. Inspecting the leave-one-out trajectory (or the factor-loading plot) usually identifies the culprit.</p>
-</section>
-<section id="recap" class="level2">
-<h2 class="anchored" data-anchor-id="recap">Recap</h2>
-<div class="callout callout-style-simple callout-note">
-<div class="callout-body d-flex">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-body-container">
-<p><strong>The estimators reconciled.</strong> On this Callaway-Sant’Anna minimum-wage panel:</p>
-<ul>
-<li>gsynth with no factors (<span class="math inline">\(r = 0\)</span>): <span class="math inline">\(\hat\tau \approx `r sprintf("%.3f", ic_tbl\)</span>ATT[ic_tbl<span class="math inline">\(r == 0])`\)</span> (close to chapter 9’s TWFE coefficient of <span class="math inline">\(-0.038\)</span>).</li>
-<li>gsynth with IC-selected factors (<span class="math inline">\(r^* = `r r_star`\)</span>): <span class="math inline">\(\hat\tau \approx `r sprintf("%.3f", out\)</span>att.avg)`$.</li>
-<li>Chapter 9’s Callaway-Sant’Anna overall ATT: <span class="math inline">\(-0.057\)</span>.</li>
-<li>Chapter 9’s doubly-robust conditional ATT: <span class="math inline">\(-0.065\)</span>.</li>
-</ul>
-<p>The factor-augmented gsynth estimate is in the same direction and within sampling error of the chapter-9 staggered-DiD estimates. Two estimators with very different identifying assumptions — parallel trends in chapter 9, parallel factors here — pointing to the same conclusion is the strongest possible evidence the design generates.</p>
-<p><strong>What gsynth buys.</strong> Identification under a factor model that is plausibly weaker than parallel trends when cohort-specific shocks are at work. The counterfactual for each treated unit is a real imputed series, not the residual of a regression — which makes the substantive interpretation closer to SCM than to DiD.</p>
-<p><strong>What it costs.</strong> It needs enough pre-treatment depth to identify factors. Our cohort 2004 only just clears the threshold; cohort 2006 is comfortable. The standard errors widen sharply with more factors when the panel is short, as the IC table shows. And when a treated unit’s factor-loading vector falls outside the convex hull of control loadings, the imputation extrapolates rather than interpolates — a real-world failure mode that the <code>fect</code> package’s simplex-loading projection addresses (see Further reading).</p>
-</div>
-</div>
-</div>
-</section>
-<section id="common-pitfall" class="level2">
-<h2 class="anchored" data-anchor-id="common-pitfall">Common pitfall</h2>
-<p>Treating a gsynth fit as automatically valid because it “uses factors”. Three diagnostics together are what justify the headline:</p>
-<ol type="1">
-<li><strong>Pre-treatment fit in the gap plot.</strong> If the pre-period gap wanders away from zero, the factor model is missing something — not absorbing the relevant comovement.</li>
-<li><strong>IC across <span class="math inline">\(r\)</span>.</strong> If multiple <span class="math inline">\(r\)</span> values give nearly identical IC but very different ATTs, the headline is fragile to the factor count and you should report sensitivity.</li>
-<li><strong>Convex-hull check in the loadings plot.</strong> Treated units far outside the cloud of control loadings are being extrapolated to, not interpolated to, and their imputed counterfactuals are correspondingly less trustworthy.</li>
-</ol>
-<p>If any of those three look bad, the headline ATT should be presented with conspicuous caveats — or paired with a method whose failure modes differ, such as the chapter-9 doubly-robust DiD.</p>
-</section>
-<section id="further-reading" class="level2">
-<h2 class="anchored" data-anchor-id="further-reading">Further reading</h2>
-<p><span class="citation" data-cites="xu2017generalized">Xu (<a href="references.html#ref-xu2017generalized" role="doc-biblioref">2017</a>)</span> is the canonical reference and remains the clearest exposition of the method. The companion <em>fect</em> tutorial at <a href="https://yiqingxu.org/packages/fect/06-gsynth.html" class="uri">https://yiqingxu.org/packages/fect/06-gsynth.html</a> shows the same estimator with a richer API: a simplex projection that bounds treated loadings to the convex hull of control loadings (addressing the extrapolation problem above), equivalence tests for pre-treatment fit, and matrix-completion variants <span class="citation" data-cites="athey2021matrix">(<a href="references.html#ref-athey2021matrix" role="doc-biblioref">Athey et al., 2021</a>)</span>. Chapter 10 of this book takes that broader view; this chapter is the focused walkthrough of the gsynth estimator alone.</p>
-</section>
-<section id="exercises" class="level2">
-<h2 class="anchored" data-anchor-id="exercises">Exercises</h2>
-<ol type="1">
-<li>Re-run the IC grid with <span class="math inline">\(r = 3\)</span> and <span class="math inline">\(r = 4\)</span>. Does the IC keep falling, level off, or rise? At what point does the standard error become uninformative, and what does that tell you about the effective rank of the never-treated panel?</li>
-<li>Drop the <code>lpop + lavg_pay</code> covariates from the formula. Does the ATT move? What does that say about whether the factors are already absorbing variation in population and pay trajectories?</li>
-<li>Compare gsynth’s overall ATT to the doubly-robust Callaway-Sant’Anna estimate from chapter 9 (<span class="math inline">\(-0.065\)</span>). Which one would you report as the headline, and what design feature of the data drives your choice?</li>
-</ol>
-</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
@@ -1496,7 +1074,7 @@ bind_rows(
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>:::</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
-<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/quarcs-lab/ccm/edit/main/references.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/quarcs-lab/ccm/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer><script>
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions"><ul><li><a href="https://github.com/quarcs-lab/ccm/edit/main/references.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/quarcs-lab/ccm/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer><script>
 document.addEventListener('DOMContentLoaded', function() {
   var tocNav = document.getElementById('TOC');
   if (tocNav) {
