@@ -31,21 +31,26 @@ jobs:
           restore-keys: |
             renv-${{ runner.os }}-
 
-      - name: Restore renv from CRAN (bypass setup-renv + PPM rewrite)
-        # Background: setup-renv@v2 lets renv rewrite the active repo to PPM
-        # (packagemanager.posit.co) on Linux runners. RSPM-noble lags CRAN
-        # (e.g. has bslib 0.10.0 while our lockfile pins 0.11.0), causing
-        # 404s. ppm.enabled in settings.json was insufficient. The hardest
-        # override is RENV_CONFIG_REPOS_OVERRIDE — renv reads it before any
-        # other repo resolution and uses ONLY the URL(s) given.
+      - name: Restore renv from CRAN (unset RSPM env var)
+        # ROOT CAUSE (after 6 prior failures): r-lib/actions/setup-r@v2 sets
+        # RSPM=https://packagemanager.posit.co/cran/__linux__/noble/latest as
+        # an OS environment variable, regardless of the use-public-rspm flag.
+        # renv reads $RSPM directly when resolving package URLs and uses it
+        # in preference to options(repos), RENV_CONFIG_REPOS_OVERRIDE, and
+        # the ppm.enabled setting. RSPM-noble lags CRAN on bleeding-edge
+        # versions (e.g. bslib 0.11.0 vs noble's 0.10.0), so the lookups
+        # 404. Setting RSPM to empty + Sys.unsetenv("RSPM") in R disables
+        # the rewrite and lets renv fall through to CRAN cloud.
         env:
+          RSPM: ""
           RENV_CONFIG_REPOS_OVERRIDE: "CRAN=https://cloud.r-project.org"
           RENV_CONFIG_PPM_ENABLED: "FALSE"
           RENV_PATHS_LIBRARY: renv/library
         run: |
-          cat("--- renv environment ---\n")
+          Sys.unsetenv("RSPM")
+          cat("--- renv environment (post-unset) ---\n")
+          cat("RSPM:", Sys.getenv("RSPM", unset = "(unset)"), "\n")
           cat("RENV_CONFIG_REPOS_OVERRIDE:", Sys.getenv("RENV_CONFIG_REPOS_OVERRIDE"), "\n")
-          cat("RENV_CONFIG_PPM_ENABLED:", Sys.getenv("RENV_CONFIG_PPM_ENABLED"), "\n")
           cat("options(repos):\n"); print(getOption("repos"))
           cat("--- bootstrapping renv ---\n")
           install.packages("renv", repos = "https://cloud.r-project.org")
