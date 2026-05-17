@@ -436,7 +436,7 @@ window.Quarto = {
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./09-matrix-completion-and-ife.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Matrix Completion and Interactive Fixed Effects</span></span></a>
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Interactive Fixed Effects and Matrix Completion</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -499,55 +499,54 @@ window.Quarto = {
 <p>This chapter fits two ITS variants on the same Proposition 99 data:</p>
 <ol type="1">
 <li>A linear <strong>growth-curve</strong> model — the simplest pre-trend extrapolation possible.</li>
-<li>An <strong>AICc-selected ARIMA</strong> model — a more flexible time-series alternative.</li>
+<li>An <strong>ARIMA(1, 2, 0)</strong> model — a more flexible time-series alternative whose order is the AICc-minimising non-seasonal <span class="math inline">\((p, d, q)\)</span> on this 19-observation pre-period (we verified the search range below before fitting that order explicitly).</li>
 </ol>
 <p>The two estimates disagree dramatically, and the disagreement is the lesson.</p>
+<p><strong>Identification.</strong> ITS recovers the ATT only under the assumption that the <em>same</em> stochastic process that generated 1970–1988 California cigarette sales would have continued to generate 1989–2000 California cigarette sales absent Proposition 99. Everything that follows in this chapter is conditional on that assumption. We will return to it in §6 because the two variants below fail in opposite directions precisely because they encode <em>different</em> versions of “the same process”.</p>
 </section>
 <section id="setup-and-data" class="level2" data-number="2.2">
 <h2 data-number="2.2" class="anchored" data-anchor-id="setup-and-data"><span class="header-section-number">2.2</span> Setup and data</h2>
-<p><strong>Packages.</strong> Three pieces of the R ecosystem do all the heavy lifting in this chapter. <code>tidyverse</code> covers data wrangling and <code>ggplot2</code> plotting. <code>fpp3</code> is the meta-package that loads the modern Hyndman &amp; Athanasopoulos time-series toolchain: <code>tsibble</code> for time-indexed data frames, <code>fable</code> for forecasting (we use its <code>ARIMA()</code> model), and <code>feasts</code> for time-series diagnostics. We also <code>source()</code> the small in-repo helper <code>R/table_helpers.R</code> — it provides <code>ms_pretty()</code>, the <code>modelsummary</code> wrapper that renders the pre-period regression table later in this chapter with the book’s house style.</p>
+<p><strong>Packages.</strong> Four pieces of the R ecosystem do all the heavy lifting in this chapter. <code>tidyverse</code> covers data wrangling and <code>ggplot2</code> plotting. <code>fpp3</code> is the meta-package that loads the modern Hyndman &amp; Athanasopoulos time-series toolchain: <code>tsibble</code> for time-indexed data frames, <code>fable</code> for forecasting (we use its <code>ARIMA()</code> model), and <code>feasts</code> for time-series diagnostics (<code>gg_tsresiduals()</code> and the Ljung-Box test, both used below). <code>sandwich</code> provides HAC-robust standard errors for the linear pre-trend regression — short autocorrelated time series need them for the same reason chapter 3 will need them on the DiD regression. We also <code>source()</code> the small in-repo helper <code>R/table_helpers.R</code> — it provides <code>ms_pretty()</code>, the <code>modelsummary</code> wrapper that renders the pre-period regression table later in this chapter with the book’s house style.</p>
+<p>ITS in this chapter is a <code>fable</code> workflow: fit on a <code>tsibble</code>-filtered pre-period, forecast <span class="math inline">\(h\)</span> years out, average the gap.</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(fpp3)   <span class="co"># loads tsibble, fable, feasts</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"R/table_helpers.R"</span>)</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span>opts_chunk<span class="sc">$</span><span class="fu">set</span>(<span class="at">dev.args =</span> <span class="fu">list</span>(<span class="at">bg =</span> <span class="st">"transparent"</span>))</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="fu">theme_set</span>(</span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">12</span>) <span class="sc">+</span></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(</span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>      <span class="at">plot.background  =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">"transparent"</span>, <span class="at">color =</span> <span class="cn">NA</span>),</span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>      <span class="at">panel.background =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">"transparent"</span>, <span class="at">color =</span> <span class="cn">NA</span>),</span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>      <span class="at">panel.grid.major =</span> <span class="fu">element_line</span>(<span class="at">color =</span> <span class="st">"#94a3b8"</span>, <span class="at">linewidth =</span> <span class="fl">0.25</span>),</span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>      <span class="at">panel.grid.minor =</span> <span class="fu">element_line</span>(<span class="at">color =</span> <span class="st">"#94a3b8"</span>, <span class="at">linewidth =</span> <span class="fl">0.15</span>),</span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>      <span class="at">text             =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"#94a3b8"</span>),</span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>      <span class="at">axis.text        =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"#94a3b8"</span>)</span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(fpp3)       <span class="co"># loads tsibble, fable, feasts</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(sandwich)   <span class="co"># vcovHAC for the pre-trend regression</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"R/table_helpers.R"</span>)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span>opts_chunk<span class="sc">$</span><span class="fu">set</span>(<span class="at">dev.args =</span> <span class="fu">list</span>(<span class="at">bg =</span> <span class="st">"transparent"</span>))</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">theme_set</span>(</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">12</span>) <span class="sc">+</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>      <span class="at">plot.background  =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">"transparent"</span>, <span class="at">color =</span> <span class="cn">NA</span>),</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>      <span class="at">panel.background =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">"transparent"</span>, <span class="at">color =</span> <span class="cn">NA</span>),</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>      <span class="at">panel.grid.major =</span> <span class="fu">element_line</span>(<span class="at">color =</span> <span class="st">"#94a3b8"</span>, <span class="at">linewidth =</span> <span class="fl">0.25</span>),</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>      <span class="at">panel.grid.minor =</span> <span class="fu">element_line</span>(<span class="at">color =</span> <span class="st">"#94a3b8"</span>, <span class="at">linewidth =</span> <span class="fl">0.15</span>),</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>      <span class="at">text             =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"#94a3b8"</span>),</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>      <span class="at">axis.text        =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"#94a3b8"</span>)</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
-<p><strong>Dataset.</strong> Proposition 99 ships as a balanced 39-state × 31-year panel covering 1970–2000 — the same dataset used throughout the book. California is the treated unit: the law passed by ballot initiative in November 1988 and took effect on January 1, 1989, so 1989 is the first post-period year. The outcome is per-capita cigarette sales in packs. For ITS we ignore the other 38 states entirely and collapse the panel to a California-only <code>tsibble</code>, then add a centred index <code>year0 = year − 1989</code> — zero on the first post-period year, negative before, positive after — so that any model fit on the pre-period extrapolates naturally across <code>year0 &gt; 0</code>.</p>
+<p><strong>Dataset.</strong> Proposition 99 ships as a balanced 39-state × 31-year panel covering 1970–2000 — the same dataset used throughout the book. California is the treated unit: the law passed by ballot initiative in November 1988 and took effect on January 1, 1989, so 1989 is the first post-period year. The outcome is per-capita cigarette sales in packs. For ITS we ignore the other 38 states entirely and collapse the panel to a California-only <code>tsibble</code>, attaching a <code>Pre</code>/<code>Post</code> factor with the cutoff at 1988 so we can fit on the pre-period and project onto the post-period.</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>prop99 <span class="ot">&lt;-</span> <span class="fu">read_rds</span>(<span class="st">"data/proposition99.rds"</span>) <span class="sc">|&gt;</span> <span class="fu">as_tibble</span>()</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co"># California-only time series with a Pre/Post factor and a centred year</span></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co"># index (year0 = 0 at the first post-period year). The tsibble class is</span></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co"># required by the fpp3 forecasting tools used later.</span></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>prop99_ts <span class="ot">&lt;-</span> prop99 <span class="sc">|&gt;</span></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(state <span class="sc">==</span> <span class="st">"California"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(year, cigsale) <span class="sc">|&gt;</span></span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">prepost =</span> <span class="fu">factor</span>(year <span class="sc">&gt;</span> <span class="dv">1988</span>, <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Pre"</span>, <span class="st">"Post"</span>))) <span class="sc">|&gt;</span></span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_tsibble</span>(<span class="at">index =</span> year) <span class="sc">|&gt;</span></span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">year0 =</span> year <span class="sc">-</span> <span class="dv">1989</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co"># California-only time series with a Pre/Post factor. The tsibble class</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co"># is required by the fpp3 forecasting tools used later.</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>prop99_ts <span class="ot">&lt;-</span> prop99 <span class="sc">|&gt;</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(state <span class="sc">==</span> <span class="st">"California"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(year, cigsale) <span class="sc">|&gt;</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">prepost =</span> <span class="fu">factor</span>(year <span class="sc">&gt;</span> <span class="dv">1988</span>, <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Pre"</span>, <span class="st">"Post"</span>))) <span class="sc">|&gt;</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_tsibble</span>(<span class="at">index =</span> year)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
-<p>The resulting <code>prop99_ts</code> is a 31-row <code>tsibble</code> (one row per year, 1970–2000) with three columns: <code>cigsale</code> (the outcome), <code>prepost</code> (a Pre/Post factor with the cutoff at 1988), and <code>year0</code> (the centred index). Everything in this chapter is fit on <code>prop99_ts |&gt; filter(prepost == "Pre")</code> and projected onto <code>prop99_ts |&gt; filter(prepost == "Post")</code>.</p>
+<p>The resulting <code>prop99_ts</code> is a 31-row <code>tsibble</code> (one row per year, 1970–2000) with two columns beside the index: <code>cigsale</code> (the outcome) and <code>prepost</code> (the Pre/Post factor). Everything in this chapter is fit on <code>prop99_ts |&gt; filter(prepost == "Pre")</code> and projected onto <code>prop99_ts |&gt; filter(prepost == "Post")</code>.</p>
 </section>
 <section id="linear-growth-curve-its" class="level2" data-number="2.3">
 <h2 data-number="2.3" class="anchored" data-anchor-id="linear-growth-curve-its"><span class="header-section-number">2.3</span> Linear growth-curve ITS</h2>
@@ -562,37 +561,41 @@ window.Quarto = {
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit a linear pre-period trend (cigsale on year, 1970-1988 only).</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>fit_growth <span class="ot">&lt;-</span> <span class="fu">lm</span>(cigsale <span class="sc">~</span> year, <span class="at">data =</span> prop99_ts <span class="sc">|&gt;</span> <span class="fu">filter</span>(prepost <span class="sc">==</span> <span class="st">"Pre"</span>))</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="fu">ms_pretty</span>(<span class="fu">list</span>(<span class="st">"Pre-period linear trend"</span> <span class="ot">=</span> fit_growth),</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>          <span class="at">coef_map =</span> <span class="fu">c</span>(<span class="st">"(Intercept)"</span> <span class="ot">=</span> <span class="st">"Intercept"</span>,</span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>                       <span class="st">"year"</span>        <span class="ot">=</span> <span class="st">"Year"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit a linear pre-period trend (cigsale on year, 1970-1988 only). HAC</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co"># standard errors are computed via sandwich::vcovHAC for parity with</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co"># chapter 3 — a 19-year time series has substantial autocorrelation</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co"># that classical OLS SEs ignore.</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>fit_growth <span class="ot">&lt;-</span> <span class="fu">lm</span>(cigsale <span class="sc">~</span> year, <span class="at">data =</span> prop99_ts <span class="sc">|&gt;</span> <span class="fu">filter</span>(prepost <span class="sc">==</span> <span class="st">"Pre"</span>))</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="fu">ms_pretty</span>(<span class="fu">list</span>(<span class="st">"Pre-period linear trend"</span> <span class="ot">=</span> fit_growth),</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>          <span class="at">coef_map =</span> <span class="fu">c</span>(<span class="st">"(Intercept)"</span> <span class="ot">=</span> <span class="st">"Intercept"</span>,</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>                       <span class="st">"year"</span>        <span class="ot">=</span> <span class="st">"Year"</span>),</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>          <span class="at">vcov     =</span> sandwich<span class="sc">::</span>vcovHAC)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div id="tbl-fit-growth" class="cell quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-fit-growth-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Table&nbsp;2.1: Linear growth-curve ITS — pre-period fit.
+Table&nbsp;2.1: Linear growth-curve ITS — pre-period fit (HAC-robust SEs).
 </figcaption>
 <div aria-describedby="tbl-fit-growth-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output-display">
-<div id="qeayjdrzqo" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#qeayjdrzqo table {
+<div id="haxecqnuto" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#haxecqnuto table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#qeayjdrzqo thead, #qeayjdrzqo tbody, #qeayjdrzqo tfoot, #qeayjdrzqo tr, #qeayjdrzqo td, #qeayjdrzqo th {
+#haxecqnuto thead, #haxecqnuto tbody, #haxecqnuto tfoot, #haxecqnuto tr, #haxecqnuto td, #haxecqnuto th {
   border-style: none;
 }
 
-#qeayjdrzqo p {
+#haxecqnuto p {
   margin: 0;
   padding: 0;
 }
 
-#qeayjdrzqo .gt_table {
+#haxecqnuto .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -618,12 +621,12 @@ Table&nbsp;2.1: Linear growth-curve ITS — pre-period fit.
   border-left-color: #D3D3D3;
 }
 
-#qeayjdrzqo .gt_caption {
+#haxecqnuto .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#qeayjdrzqo .gt_title {
+#haxecqnuto .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -635,7 +638,7 @@ Table&nbsp;2.1: Linear growth-curve ITS — pre-period fit.
   border-bottom-width: 0;
 }
 
-#qeayjdrzqo .gt_subtitle {
+#haxecqnuto .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -647,7 +650,7 @@ Table&nbsp;2.1: Linear growth-curve ITS — pre-period fit.
   border-top-width: 0;
 }
 
-#qeayjdrzqo .gt_heading {
+#haxecqnuto .gt_heading {
   background-color: rgba(255, 255, 255, 0);
   text-align: center;
   border-bottom-color: rgba(255, 255, 255, 0);
@@ -659,13 +662,13 @@ Table&nbsp;2.1: Linear growth-curve ITS — pre-period fit.
   border-right-color: #D3D3D3;
 }
 
-#qeayjdrzqo .gt_bottom_border {
+#haxecqnuto .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#qeayjdrzqo .gt_col_headings {
+#haxecqnuto .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -680,7 +683,7 @@ Table&nbsp;2.1: Linear growth-curve ITS — pre-period fit.
   border-right-color: #D3D3D3;
 }
 
-#qeayjdrzqo .gt_col_heading {
+#haxecqnuto .gt_col_heading {
   color: #333333;
   background-color: rgba(255, 255, 255, 0);
   font-size: 100%;
@@ -700,7 +703,7 @@ Table&nbsp;2.1: Linear growth-curve ITS — pre-period fit.
   overflow-x: hidden;
 }
 
-#qeayjdrzqo .gt_column_spanner_outer {
+#haxecqnuto .gt_column_spanner_outer {
   color: #333333;
   background-color: rgba(255, 255, 255, 0);
   font-size: 100%;
@@ -712,15 +715,15 @@ Table&nbsp;2.1: Linear growth-curve ITS — pre-period fit.
   padding-right: 4px;
 }
 
-#qeayjdrzqo .gt_column_spanner_outer:first-child {
+#haxecqnuto .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#qeayjdrzqo .gt_column_spanner_outer:last-child {
+#haxecqnuto .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#qeayjdrzqo .gt_column_spanner {
+#haxecqnuto .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -732,11 +735,11 @@ Table&nbsp;2.1: Linear growth-curve ITS — pre-period fit.
   width: 100%;
 }
 
-#qeayjdrzqo .gt_spanner_row {
+#haxecqnuto .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#qeayjdrzqo .gt_group_heading {
+#haxecqnuto .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -762,7 +765,7 @@ Table&nbsp;2.1: Linear growth-curve ITS — pre-period fit.
   text-align: left;
 }
 
-#qeayjdrzqo .gt_empty_group_heading {
+#haxecqnuto .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: rgba(255, 255, 255, 0);
@@ -777,15 +780,15 @@ Table&nbsp;2.1: Linear growth-curve ITS — pre-period fit.
   vertical-align: middle;
 }
 
-#qeayjdrzqo .gt_from_md > :first-child {
+#haxecqnuto .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#qeayjdrzqo .gt_from_md > :last-child {
+#haxecqnuto .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#qeayjdrzqo .gt_row {
+#haxecqnuto .gt_row {
   padding-top: 4px;
   padding-bottom: 4px;
   padding-left: 5px;
@@ -804,7 +807,7 @@ Table&nbsp;2.1: Linear growth-curve ITS — pre-period fit.
   overflow-x: hidden;
 }
 
-#qeayjdrzqo .gt_stub {
+#haxecqnuto .gt_stub {
   color: #333333;
   background-color: rgba(255, 255, 255, 0);
   font-size: 100%;
@@ -817,7 +820,7 @@ Table&nbsp;2.1: Linear growth-curve ITS — pre-period fit.
   padding-right: 5px;
 }
 
-#qeayjdrzqo .gt_stub_row_group {
+#haxecqnuto .gt_stub_row_group {
   color: #333333;
   background-color: rgba(255, 255, 255, 0);
   font-size: 100%;
@@ -831,15 +834,15 @@ Table&nbsp;2.1: Linear growth-curve ITS — pre-period fit.
   vertical-align: top;
 }
 
-#qeayjdrzqo .gt_row_group_first td {
+#haxecqnuto .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#qeayjdrzqo .gt_row_group_first th {
+#haxecqnuto .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#qeayjdrzqo .gt_summary_row {
+#haxecqnuto .gt_summary_row {
   color: #333333;
   background-color: rgba(255, 255, 255, 0);
   text-transform: inherit;
@@ -849,16 +852,16 @@ Table&nbsp;2.1: Linear growth-curve ITS — pre-period fit.
   padding-right: 5px;
 }
 
-#qeayjdrzqo .gt_first_summary_row {
+#haxecqnuto .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#qeayjdrzqo .gt_first_summary_row.thick {
+#haxecqnuto .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#qeayjdrzqo .gt_last_summary_row {
+#haxecqnuto .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -868,7 +871,7 @@ Table&nbsp;2.1: Linear growth-curve ITS — pre-period fit.
   border-bottom-color: #D3D3D3;
 }
 
-#qeayjdrzqo .gt_grand_summary_row {
+#haxecqnuto .gt_grand_summary_row {
   color: #333333;
   background-color: rgba(255, 255, 255, 0);
   text-transform: inherit;
@@ -878,7 +881,7 @@ Table&nbsp;2.1: Linear growth-curve ITS — pre-period fit.
   padding-right: 5px;
 }
 
-#qeayjdrzqo .gt_first_grand_summary_row {
+#haxecqnuto .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -888,7 +891,7 @@ Table&nbsp;2.1: Linear growth-curve ITS — pre-period fit.
   border-top-color: #D3D3D3;
 }
 
-#qeayjdrzqo .gt_last_grand_summary_row_top {
+#haxecqnuto .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -898,11 +901,11 @@ Table&nbsp;2.1: Linear growth-curve ITS — pre-period fit.
   border-bottom-color: #D3D3D3;
 }
 
-#qeayjdrzqo .gt_striped {
+#haxecqnuto .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#qeayjdrzqo .gt_table_body {
+#haxecqnuto .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -911,7 +914,7 @@ Table&nbsp;2.1: Linear growth-curve ITS — pre-period fit.
   border-bottom-color: #D3D3D3;
 }
 
-#qeayjdrzqo .gt_footnotes {
+#haxecqnuto .gt_footnotes {
   color: #333333;
   background-color: rgba(255, 255, 255, 0);
   border-bottom-style: none;
@@ -925,7 +928,7 @@ Table&nbsp;2.1: Linear growth-curve ITS — pre-period fit.
   border-right-color: #D3D3D3;
 }
 
-#qeayjdrzqo .gt_footnote {
+#haxecqnuto .gt_footnote {
   margin: 0px;
   font-size: 0.85em;
   padding-top: 6px;
@@ -934,7 +937,7 @@ Table&nbsp;2.1: Linear growth-curve ITS — pre-period fit.
   padding-right: 5px;
 }
 
-#qeayjdrzqo .gt_sourcenotes {
+#haxecqnuto .gt_sourcenotes {
   color: #333333;
   background-color: rgba(255, 255, 255, 0);
   border-bottom-style: none;
@@ -948,7 +951,7 @@ Table&nbsp;2.1: Linear growth-curve ITS — pre-period fit.
   border-right-color: #D3D3D3;
 }
 
-#qeayjdrzqo .gt_sourcenote {
+#haxecqnuto .gt_sourcenote {
   font-size: 0.85em;
   padding-top: 6px;
   padding-bottom: 6px;
@@ -956,72 +959,72 @@ Table&nbsp;2.1: Linear growth-curve ITS — pre-period fit.
   padding-right: 5px;
 }
 
-#qeayjdrzqo .gt_left {
+#haxecqnuto .gt_left {
   text-align: left;
 }
 
-#qeayjdrzqo .gt_center {
+#haxecqnuto .gt_center {
   text-align: center;
 }
 
-#qeayjdrzqo .gt_right {
+#haxecqnuto .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#qeayjdrzqo .gt_font_normal {
+#haxecqnuto .gt_font_normal {
   font-weight: normal;
 }
 
-#qeayjdrzqo .gt_font_bold {
+#haxecqnuto .gt_font_bold {
   font-weight: bold;
 }
 
-#qeayjdrzqo .gt_font_italic {
+#haxecqnuto .gt_font_italic {
   font-style: italic;
 }
 
-#qeayjdrzqo .gt_super {
+#haxecqnuto .gt_super {
   font-size: 65%;
 }
 
-#qeayjdrzqo .gt_footnote_marks {
+#haxecqnuto .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#qeayjdrzqo .gt_asterisk {
+#haxecqnuto .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#qeayjdrzqo .gt_indent_1 {
+#haxecqnuto .gt_indent_1 {
   text-indent: 5px;
 }
 
-#qeayjdrzqo .gt_indent_2 {
+#haxecqnuto .gt_indent_2 {
   text-indent: 10px;
 }
 
-#qeayjdrzqo .gt_indent_3 {
+#haxecqnuto .gt_indent_3 {
   text-indent: 15px;
 }
 
-#qeayjdrzqo .gt_indent_4 {
+#haxecqnuto .gt_indent_4 {
   text-indent: 20px;
 }
 
-#qeayjdrzqo .gt_indent_5 {
+#haxecqnuto .gt_indent_5 {
   text-indent: 25px;
 }
 
-#qeayjdrzqo .katex-display {
+#haxecqnuto .katex-display {
   display: inline-flex !important;
   margin-bottom: 0.75em !important;
 }
 
-#qeayjdrzqo div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+#haxecqnuto div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
   height: 0px !important;
 }
 </style>
@@ -1040,7 +1043,7 @@ Table&nbsp;2.1: Linear growth-curve ITS — pre-period fit.
 </tr>
 <tr class="even">
 <td class="gt_row gt_left" headers=" "></td>
-<td class="gt_row gt_center" headers="Pre-period linear trend">(513.328)</td>
+<td class="gt_row gt_center" headers="Pre-period linear trend">(745.058)</td>
 </tr>
 <tr class="odd">
 <td class="gt_row gt_left" headers=" ">Year</td>
@@ -1048,7 +1051,7 @@ Table&nbsp;2.1: Linear growth-curve ITS — pre-period fit.
 </tr>
 <tr class="even">
 <td class="gt_row gt_left" headers=" " style="border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: #000000"></td>
-<td class="gt_row gt_center" headers="Pre-period linear trend" style="border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: #000000">(0.259)</td>
+<td class="gt_row gt_center" headers="Pre-period linear trend" style="border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: #000000">(0.376)</td>
 </tr>
 <tr class="odd">
 <td class="gt_row gt_left" headers=" ">Num.Obs.</td>
@@ -1057,6 +1060,10 @@ Table&nbsp;2.1: Linear growth-curve ITS — pre-period fit.
 <tr class="even">
 <td class="gt_row gt_left" headers=" ">R2</td>
 <td class="gt_row gt_center" headers="Pre-period linear trend">0.735</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers=" ">Std.Errors</td>
+<td class="gt_row gt_center" headers="Pre-period linear trend">Custom</td>
 </tr>
 </tbody><tfoot>
 <tr class="gt_sourcenotes odd">
@@ -1072,7 +1079,7 @@ Table&nbsp;2.1: Linear growth-curve ITS — pre-period fit.
 </figure>
 </div>
 </div>
-<p>The pre-period linear trend is about <span class="math inline">\(-1.78\)</span> packs per capita per year (<span class="math inline">\(p &lt; 10^{-5}\)</span>, <span class="math inline">\(R^2 \approx 0.73\)</span>) — so California was already declining about 1.8 packs per year before Proposition 99. To estimate the policy effect we extrapolate that line forward to 2000 and average the gap.</p>
+<p>The pre-period linear trend is about <span class="math inline">\(-1.78\)</span> packs per capita per year (statistically distinguishable from zero even after the HAC correction), with <span class="math inline">\(R^2 \approx 0.73\)</span> — so California was already declining about 1.8 packs per year before Proposition 99. The bigger uncertainty story in ITS is <em>not</em> the in-sample slope SE, though; it is the out-of-sample forecast variance, which we will visualise explicitly when we get to the ARIMA variant below. To estimate the policy effect we extrapolate the fitted line forward to 2000 and average the gap.</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
@@ -1094,19 +1101,22 @@ Table&nbsp;2.1: Linear growth-curve ITS — pre-period fit.
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>its_growth_plot <span class="ot">&lt;-</span> prop99_ts <span class="sc">|&gt;</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_tibble</span>() <span class="sc">|&gt;</span></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">counterfactual =</span> <span class="fu">predict</span>(fit_growth, <span class="at">newdata =</span> prop99_ts))</span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(its_growth_plot, <span class="fu">aes</span>(<span class="at">x =</span> year)) <span class="sc">+</span></span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> cigsale, <span class="at">color =</span> <span class="st">"Observed"</span>), <span class="at">linewidth =</span> <span class="fl">1.1</span>) <span class="sc">+</span></span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> counterfactual, <span class="at">color =</span> <span class="st">"Counterfactual"</span>),</span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>            <span class="at">linetype =</span> <span class="st">"dashed"</span>, <span class="at">linewidth =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="fl">1988.5</span>, <span class="at">color =</span> <span class="st">"#d97757"</span>,</span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>             <span class="at">linetype =</span> <span class="st">"dotted"</span>, <span class="at">linewidth =</span> <span class="fl">0.7</span>) <span class="sc">+</span></span>
-<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"Observed"</span> <span class="ot">=</span> <span class="st">"#d97757"</span>,</span>
-<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>                                <span class="st">"Counterfactual"</span> <span class="ot">=</span> <span class="st">"#6a9bcc"</span>)) <span class="sc">+</span></span>
-<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Year"</span>, <span class="at">y =</span> <span class="st">"Cigarette sales (packs per capita)"</span>,</span>
-<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>       <span class="at">color =</span> <span class="cn">NULL</span>) <span class="sc">+</span></span>
-<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">fitted_line =</span> <span class="fu">predict</span>(fit_growth, <span class="at">newdata =</span> <span class="fu">as_tibble</span>(prop99_ts))) <span class="sc">|&gt;</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">in_sample     =</span> <span class="fu">if_else</span>(year <span class="sc">&lt;=</span> <span class="dv">1988</span>, fitted_line, <span class="cn">NA_real_</span>),</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>         <span class="at">extrapolation =</span> <span class="fu">if_else</span>(year <span class="sc">&gt;=</span> <span class="dv">1989</span>, fitted_line, <span class="cn">NA_real_</span>))</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(its_growth_plot, <span class="fu">aes</span>(<span class="at">x =</span> year)) <span class="sc">+</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> cigsale, <span class="at">color =</span> <span class="st">"Observed"</span>), <span class="at">linewidth =</span> <span class="fl">1.1</span>) <span class="sc">+</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> in_sample, <span class="at">color =</span> <span class="st">"Pre-period fit"</span>),</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>            <span class="at">linewidth =</span> <span class="dv">1</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> extrapolation, <span class="at">color =</span> <span class="st">"Pre-period fit"</span>),</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>            <span class="at">linetype =</span> <span class="st">"dashed"</span>, <span class="at">linewidth =</span> <span class="dv">1</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="fl">1988.5</span>, <span class="at">color =</span> <span class="st">"#d97757"</span>,</span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>             <span class="at">linetype =</span> <span class="st">"dotted"</span>, <span class="at">linewidth =</span> <span class="fl">0.7</span>) <span class="sc">+</span></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"Observed"</span> <span class="ot">=</span> <span class="st">"#d97757"</span>,</span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>                                <span class="st">"Pre-period fit"</span> <span class="ot">=</span> <span class="st">"#6a9bcc"</span>)) <span class="sc">+</span></span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Year"</span>, <span class="at">y =</span> <span class="st">"Cigarette sales (packs per capita)"</span>,</span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>       <span class="at">color =</span> <span class="cn">NULL</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output-display">
 <div id="fig-its-growth" class="quarto-float quarto-figure quarto-figure-center anchored">
@@ -1115,13 +1125,13 @@ Table&nbsp;2.1: Linear growth-curve ITS — pre-period fit.
 <img src="02-interrupted-time-series_files/figure-html/fig-its-growth-1.png" class="img-fluid figure-img" width="768">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-its-growth-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;2.1: ITS counterfactual from a linear pre-period growth curve (1970–1988), extrapolated to 2000.
+Figure&nbsp;2.1: ITS counterfactual from a linear pre-period growth curve. Solid blue: in-sample fit (1970–1988). Dashed blue: extrapolation into the post-period (1989–2000).
 </figcaption>
 </figure>
 </div>
 </div>
 </div>
-<p><strong>Reading the output.</strong> The ITS-growth-curve estimate is about <span class="math inline">\(-28.3\)</span> packs per capita per year. That is essentially identical to the naive pre-post <span class="math inline">\(-27.0\)</span> from chapter 1. Why? Because both methods only use within-California information. Neither borrows from a comparison unit, so neither can separate “California-specific effect” from “national secular decline”.</p>
+<p><strong>Reading the output.</strong> The ITS-growth-curve estimate is about <span class="math inline">\(-28.3\)</span> packs per capita per year — averaged over the full 1989–2000 post-period and fit on the full 1970–1988 pre-period. Chapter 1’s naive pre-post estimate of <span class="math inline">\(-27.0\)</span> comes from a tighter 1984–1988 vs 1989–1993 window, so the two numbers are not directly comparable in scope; they are close because both methods only use within-California information. Neither borrows from a comparison unit, so neither can separate “California-specific effect” from “national secular decline”.</p>
 <p>The coincidence is suggestive but not reassuring. Both methods can be biased the same way if California’s pre-trend was <em>understating</em> the speed of the secular decline.</p>
 <p><strong>Common pitfall.</strong> Assuming the linear pre-trend is the right <em>shape</em>. If the true secular decline is accelerating or saturating, a linear extrapolation either understates or overstates what would have happened — and the policy effect inherits the bias.</p>
 </section>
@@ -1130,7 +1140,7 @@ Figure&nbsp;2.1: ITS counterfactual from a linear pre-period growth curve (1970�
 <p><strong>The idea.</strong> Replace the straight line with a flexible time-series model. Let the data decide the model’s complexity through an information criterion (AICc). Forecast forward as the counterfactual.</p>
 <p><strong>The equation.</strong> A general ARIMA<span class="math inline">\((p, d, q)\)</span> model writes the <span class="math inline">\(d\)</span>-th differenced series as an autoregressive-moving-average process. Using the lag operator <span class="math inline">\(L\)</span> (so <span class="math inline">\(L\, Y_t = Y_{t-1}\)</span>):</p>
 <p><span class="math display">\[\Phi(L)\, (1 - L)^d\, Y_{1t} \, = \, \Theta(L)\, \varepsilon_t, \qquad \varepsilon_t \sim \mathcal{N}(0, \sigma^2),\]</span></p>
-<p>where <span class="math inline">\(\Phi(L) = 1 - \phi_1 L - \cdots - \phi_p L^p\)</span> collects the <span class="math inline">\(p\)</span> autoregressive coefficients and <span class="math inline">\(\Theta(L) = 1 + \theta_1 L + \cdots + \theta_q L^q\)</span> collects the <span class="math inline">\(q\)</span> moving-average coefficients. The <code>fable::ARIMA(..., ic = "aicc")</code> call searches over <span class="math inline">\((p, d, q)\)</span> and picks the combination that minimises the corrected Akaike Information Criterion on the pre-period.</p>
+<p>where <span class="math inline">\(\Phi(L) = 1 - \phi_1 L - \cdots - \phi_p L^p\)</span> collects the <span class="math inline">\(p\)</span> autoregressive coefficients and <span class="math inline">\(\Theta(L) = 1 + \theta_1 L + \cdots + \theta_q L^q\)</span> collects the <span class="math inline">\(q\)</span> moving-average coefficients. In principle <code>fable::ARIMA()</code> searches over <span class="math inline">\((p, d, q)\)</span> and picks the AICc-minimising combination, but with only 19 pre-period observations the default stepwise + seasonal search is unreliable on this series (it can silently return <code>&lt;NULL model&gt;</code>). We therefore fit the AICc-minimising non-seasonal order <span class="math inline">\((p, d, q) = (1, 2, 0)\)</span> <em>explicitly</em>, having verified the choice by a small grid search.</p>
 <p>Once the model is fit, the post-period counterfactual is the model’s <span class="math inline">\(h\)</span>-step forecast and the ATT is the average gap, just as in the growth-curve version:</p>
 <p><span class="math display">\[\widehat{Y_{1t}(0)} = \hat Y_{1t \mid t^*}, \qquad \widehat{\text{ATT}}_{\text{ITS-ARIMA}} = \frac{1}{T_{\text{post}}} \sum_{t &gt; t^*} \Big[Y_{1t} - \hat Y_{1t \mid t^*}\Big].\]</span></p>
 <p>In words: same recipe as the growth-curve version — fit on pre-period, project forward, average the gap — but the “fit on pre-period” step now uses an autoregressive-integrated-moving-average model instead of a straight line.</p>
@@ -1138,56 +1148,114 @@ Figure&nbsp;2.1: ITS counterfactual from a linear pre-period growth curve (1970�
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit an ARIMA model on the 1970-1988 California series. ic = "aicc"</span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="co"># tells fable to search over (p, d, q) and pick the AICc minimiser.</span></span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>fit_arima <span class="ot">&lt;-</span> prop99_ts <span class="sc">|&gt;</span></span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(prepost <span class="sc">==</span> <span class="st">"Pre"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">model</span>(<span class="at">timeseries =</span> <span class="fu">ARIMA</span>(cigsale, <span class="at">ic =</span> <span class="st">"aicc"</span>))</span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="fu">report</span>(fit_arima)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit an ARIMA(1, 2, 0) explicitly on the 1970-1988 California series.</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="co"># This is the AICc-minimising non-seasonal order on this pre-period;</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="co"># we set PDQ(0, 0, 0) to disable the seasonal search (annual data has</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="co"># no within-year seasonality to find). We deliberately do NOT suppress</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="co"># warnings here — if the fit ever fails again on a future fable</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="co"># release, the warning needs to be visible to the reader.</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>fit_arima <span class="ot">&lt;-</span> prop99_ts <span class="sc">|&gt;</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(prepost <span class="sc">==</span> <span class="st">"Pre"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">model</span>(<span class="at">timeseries =</span> <span class="fu">ARIMA</span>(cigsale <span class="sc">~</span> <span class="fu">pdq</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">0</span>) <span class="sc">+</span> <span class="fu">PDQ</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>)))</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a><span class="fu">report</span>(fit_arima)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>Series: cigsale 
-Model: NULL model 
-NULL model</code></pre>
+Model: ARIMA(1,2,0) 
+
+Coefficients:
+          ar1
+      -0.6255
+s.e.   0.2427
+
+sigma^2 estimated as 4.953:  log likelihood=-37.45
+AIC=78.9   AICc=79.76   BIC=80.57</code></pre>
 </div>
 </div>
-<p>For this series AICc typically selects <code>ARIMA(1, 2, 0)</code>: one autoregressive lag and <em>two</em> rounds of differencing. The double-differencing means the model is tracking the <em>acceleration</em> of California’s late-1980s drop, not just its level or slope. We then forecast 12 years out and average the gap.</p>
+<p>The fitted model is <code>ARIMA(1, 2, 0)</code>: one autoregressive lag and <em>two</em> rounds of differencing. The double-differencing means the model is tracking the <em>acceleration</em> of California’s late-1980s drop, not just its level or slope.</p>
+<p><strong>Residual diagnostics.</strong> Before extrapolating 12 years out it is worth checking that the in-sample residuals look like white noise. <code>feasts::gg_tsresiduals()</code> produces the standard three-panel diagnostic (residual series, ACF, histogram), and the Ljung-Box test gives a formal portmanteau check.</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Project the fitted ARIMA 12 years forward as the post-period counterfactual.</span></span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>fcasts <span class="ot">&lt;-</span> <span class="fu">forecast</span>(fit_arima, <span class="at">h =</span> <span class="st">"12 years"</span>)</span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="co"># ATT estimate = average per-year gap between observed and ARIMA forecast.</span></span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>ce_arima <span class="ot">&lt;-</span> post_df<span class="sc">$</span>cigsale <span class="sc">-</span> fcasts<span class="sc">$</span>.mean</span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(ce_arima)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">gg_tsresiduals</span>(fit_arima)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div id="fig-arima-resid" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-arima-resid-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="02-interrupted-time-series_files/figure-html/fig-arima-resid-1.png" class="img-fluid figure-img" width="768">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-arima-resid-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;2.2: Residual diagnostics for the pre-period ARIMA(1, 2, 0) fit. Residual series (top), ACF (bottom-left), histogram (bottom-right).
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Ljung-Box test on the model innovations. dof = 1 because the model</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="co"># has 1 estimated coefficient (the AR(1) term); lag = 5 is a small-</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="co"># sample-friendly choice with 19 pre-period observations.</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="fu">augment</span>(fit_arima) <span class="sc">|&gt;</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">features</span>(.innov, ljung_box, <span class="at">lag =</span> <span class="dv">5</span>, <span class="at">dof =</span> <span class="dv">1</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] NA</code></pre>
+<pre><code># A tibble: 1 × 3
+  .model     lb_stat lb_pvalue
+  &lt;chr&gt;        &lt;dbl&gt;     &lt;dbl&gt;
+1 timeseries    5.61     0.230</code></pre>
 </div>
 </div>
-<p>Plotting the forecast against the observed post-period series shows where the model goes wrong — the dashed ARIMA counterfactual dives below the observed series almost immediately, so the per-year residuals are mostly positive.</p>
+<p>The Ljung-Box <span class="math inline">\(p\)</span>-value sits well above the conventional 0.05 threshold, so we cannot reject white-noise residuals on the pre-period. But — and this is the punch line for the rest of the chapter — <em>in-sample</em> whiteness is necessary, not sufficient: it tells us the model is not mis-specified on 1970–1988, not that the model will extrapolate sensibly into 1989–2000. We then forecast 12 years out and average the gap.</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>arima_cf <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">year =</span> post_df<span class="sc">$</span>year, <span class="at">counterfactual =</span> fcasts<span class="sc">$</span>.mean)</span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>plot_df  <span class="ot">&lt;-</span> prop99_ts <span class="sc">|&gt;</span></span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_tibble</span>() <span class="sc">|&gt;</span></span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(year, cigsale) <span class="sc">|&gt;</span></span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(arima_cf, <span class="at">by =</span> <span class="st">"year"</span>)</span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(plot_df, <span class="fu">aes</span>(<span class="at">x =</span> year)) <span class="sc">+</span></span>
-<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> cigsale, <span class="at">color =</span> <span class="st">"Observed"</span>), <span class="at">linewidth =</span> <span class="fl">1.1</span>) <span class="sc">+</span></span>
-<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> counterfactual, <span class="at">color =</span> <span class="st">"ARIMA counterfactual"</span>),</span>
-<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>            <span class="at">linetype =</span> <span class="st">"dashed"</span>, <span class="at">linewidth =</span> <span class="dv">1</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
-<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="fl">1988.5</span>, <span class="at">color =</span> <span class="st">"#d97757"</span>,</span>
-<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>             <span class="at">linetype =</span> <span class="st">"dotted"</span>, <span class="at">linewidth =</span> <span class="fl">0.7</span>) <span class="sc">+</span></span>
-<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"Observed"</span> <span class="ot">=</span> <span class="st">"#d97757"</span>,</span>
-<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>                                <span class="st">"ARIMA counterfactual"</span> <span class="ot">=</span> <span class="st">"#6a9bcc"</span>)) <span class="sc">+</span></span>
-<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Year"</span>, <span class="at">y =</span> <span class="st">"Cigarette sales (packs per capita)"</span>,</span>
-<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>       <span class="at">color =</span> <span class="cn">NULL</span>) <span class="sc">+</span></span>
-<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Project the fitted ARIMA 12 years forward as the post-period counterfactual.</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="co"># fcasts has a distributional column `cigsale` (the forecast distribution</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="co"># at each horizon) and a point-forecast column `.mean`.</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>fcasts <span class="ot">&lt;-</span> <span class="fu">forecast</span>(fit_arima, <span class="at">h =</span> <span class="st">"12 years"</span>)</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a><span class="co"># ATT estimate = average per-year gap between observed and ARIMA forecast.</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>ce_arima <span class="ot">&lt;-</span> post_df<span class="sc">$</span>cigsale <span class="sc">-</span> fcasts<span class="sc">$</span>.mean</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(ce_arima)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 4.548927</code></pre>
+</div>
+</div>
+<p>Plotting the forecast against the observed post-period series shows where the model goes wrong — the dashed ARIMA counterfactual dives below the observed series almost immediately, so the per-year residuals are mostly positive. Crucially, the ARIMA forecast comes with a <em>distribution</em>, not just a point. The 80 % and 95 % prediction bands below show how much uncertainty the model itself attaches to its own counterfactual.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Unpack the 80% and 95% prediction intervals from the distribution.</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>fcast_bands <span class="ot">&lt;-</span> fcasts <span class="sc">|&gt;</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">hilo</span>(<span class="at">level =</span> <span class="fu">c</span>(<span class="dv">80</span>, <span class="dv">95</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unpack_hilo</span>(<span class="fu">c</span>(<span class="st">"80%"</span>, <span class="st">"95%"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_tibble</span>() <span class="sc">|&gt;</span></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(year, .mean, <span class="st">`</span><span class="at">80%_lower</span><span class="st">`</span>, <span class="st">`</span><span class="at">80%_upper</span><span class="st">`</span>, <span class="st">`</span><span class="at">95%_lower</span><span class="st">`</span>, <span class="st">`</span><span class="at">95%_upper</span><span class="st">`</span>)</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>plot_df <span class="ot">&lt;-</span> prop99_ts <span class="sc">|&gt;</span></span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_tibble</span>() <span class="sc">|&gt;</span></span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(year, cigsale) <span class="sc">|&gt;</span></span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(fcast_bands, <span class="at">by =</span> <span class="st">"year"</span>)</span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(plot_df, <span class="fu">aes</span>(<span class="at">x =</span> year)) <span class="sc">+</span></span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_ribbon</span>(<span class="fu">aes</span>(<span class="at">ymin =</span> <span class="st">`</span><span class="at">95%_lower</span><span class="st">`</span>, <span class="at">ymax =</span> <span class="st">`</span><span class="at">95%_upper</span><span class="st">`</span>),</span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a>              <span class="at">fill =</span> <span class="st">"#6a9bcc"</span>, <span class="at">alpha =</span> <span class="fl">0.15</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
+<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_ribbon</span>(<span class="fu">aes</span>(<span class="at">ymin =</span> <span class="st">`</span><span class="at">80%_lower</span><span class="st">`</span>, <span class="at">ymax =</span> <span class="st">`</span><span class="at">80%_upper</span><span class="st">`</span>),</span>
+<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a>              <span class="at">fill =</span> <span class="st">"#6a9bcc"</span>, <span class="at">alpha =</span> <span class="fl">0.25</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
+<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> cigsale, <span class="at">color =</span> <span class="st">"Observed"</span>), <span class="at">linewidth =</span> <span class="fl">1.1</span>) <span class="sc">+</span></span>
+<span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> .mean, <span class="at">color =</span> <span class="st">"ARIMA counterfactual"</span>),</span>
+<span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a>            <span class="at">linetype =</span> <span class="st">"dashed"</span>, <span class="at">linewidth =</span> <span class="dv">1</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
+<span id="cb14-21"><a href="#cb14-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="fl">1988.5</span>, <span class="at">color =</span> <span class="st">"#d97757"</span>,</span>
+<span id="cb14-22"><a href="#cb14-22" aria-hidden="true" tabindex="-1"></a>             <span class="at">linetype =</span> <span class="st">"dotted"</span>, <span class="at">linewidth =</span> <span class="fl">0.7</span>) <span class="sc">+</span></span>
+<span id="cb14-23"><a href="#cb14-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"Observed"</span> <span class="ot">=</span> <span class="st">"#d97757"</span>,</span>
+<span id="cb14-24"><a href="#cb14-24" aria-hidden="true" tabindex="-1"></a>                                <span class="st">"ARIMA counterfactual"</span> <span class="ot">=</span> <span class="st">"#6a9bcc"</span>)) <span class="sc">+</span></span>
+<span id="cb14-25"><a href="#cb14-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Year"</span>, <span class="at">y =</span> <span class="st">"Cigarette sales (packs per capita)"</span>,</span>
+<span id="cb14-26"><a href="#cb14-26" aria-hidden="true" tabindex="-1"></a>       <span class="at">color =</span> <span class="cn">NULL</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output-display">
 <div id="fig-its-arima" class="quarto-float quarto-figure quarto-figure-center anchored">
@@ -1196,27 +1264,31 @@ NULL model</code></pre>
 <img src="02-interrupted-time-series_files/figure-html/fig-its-arima-1.png" class="img-fluid figure-img" width="768">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-its-arima-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;2.2: ITS counterfactual from an AICc-selected ARIMA model fit on 1970–1988, forecast to 2000.
+Figure&nbsp;2.3: ITS counterfactual from the pre-period ARIMA(1, 2, 0), forecast to 2000. The point forecast (dashed) is surrounded by 80 % and 95 % prediction bands derived from the model’s own forecast distribution.
 </figcaption>
 </figure>
 </div>
 </div>
 </div>
+<p>The width of the 95 % band by 2000 is far wider than the point estimate itself. Whatever the ARIMA counterfactual is saying about the <em>level</em> of California’s smoking in 2000, the model is saying it with very low confidence — a property the <em>in-sample</em> fit table at the top of this section gave no hint of.</p>
 <p><strong>Reading the output.</strong> The ARIMA-based ITS estimate comes out around <span class="math inline">\(+4.5\)</span> packs. That is <em>positive</em> — it would imply Proposition 99 <em>increased</em> California’s smoking. That is plainly the wrong answer.</p>
 <p>The visual diagnostic shows why. The dashed counterfactual sits <em>below</em> the observed series throughout the post-period. The model extrapolates the late-1980s downward acceleration too aggressively. It predicts California should have hit roughly 50 packs by 2000 if the pre-period momentum had continued. Since California actually only hit 60 packs, the model concludes Proposition 99 “raised” smoking by about 5 packs relative to that doomsday counterfactual.</p>
 <p><strong>The pitfall in one sentence.</strong> AICc minimises <em>in-sample</em> fit, but in-sample fit can come from features — here, second-order momentum — that do not persist <em>out-of-sample</em>.</p>
+<p>More technically: with <span class="math inline">\(d = 2\)</span> the model has no mean reversion, so the <em>slope</em> implied by the last few pre-period observations becomes the permanent slope of the forecast. The last three pre-period years (1986 = 99.7, 1987 = 97.5, 1988 = 90.1) imply an accelerating downward slope; with only three observations defining that slope, the forecast is extremely sensitive to the pre-period endpoint, and the prediction band above shows it.</p>
 <p><strong>Common pitfall.</strong> Trusting an information-criterion-selected model on a short pre-period. With 19 pre-period observations, AICc can latch onto late-pre-period momentum that does not persist out-of-sample, producing a counterfactual that bends through (or past) the observed post-period values.</p>
 </section>
 <section id="what-the-two-its-estimates-tell-us" class="level2" data-number="2.5">
 <h2 data-number="2.5" class="anchored" data-anchor-id="what-the-two-its-estimates-tell-us"><span class="header-section-number">2.5</span> What the two ITS estimates tell us</h2>
-<p><strong>The disagreement.</strong> Same data, same recipe, two answers more than 30 packs apart: the linear growth-curve variant gives an ATT of about <span class="math inline">\(-28.3\)</span> packs per capita per year — Proposition 99 “worked” — while the AICc-selected ARIMA(1,2,0) gives about <span class="math inline">\(+4.5\)</span> — Proposition 99 “backfired”. Both numbers come from the same 19 pre-period observations on the same treated unit; nothing about the data discriminates between them.</p>
-<p>The growth-curve and ARIMA variants share every step of the recipe — fit on pre-period, project forward, average the gap — but disagree because they extrapolate different features of that pre-period. The growth curve extrapolates the linear <em>level</em>; ARIMA(1,2,0) extrapolates the <em>acceleration</em>. There is no purely-within-California way to decide which is right, because the choice is identified by an assumption about the missing <span class="math inline">\(Y_{1t}(0)\)</span> that the data itself cannot verify.</p>
-<p><strong>Where this leaves us.</strong> The lesson is not “ARIMA is bad”. The lesson is that <strong>single-model ITS is fragile</strong>: any within-unit method inherits the same problem of being identified by an assumption about the missing counterfactual that the data alone cannot verify. The remaining methods in the book each handle this fragility by borrowing strength from outside California: chapter 3 (Differences-in-Differences) uses the other 38 states as a common-trend control; chapter 4 (Synthetic Control) builds a weighted donor pool tailored to California’s pre-period; chapter 5 (Bayesian Structural Time Series) combines both ideas inside a forecasting model with explicit uncertainty bands. Always pair an ITS estimate against at least one of these before drawing conclusions.</p>
+<p><strong>The disagreement.</strong> Same data, same recipe, two answers more than 30 packs apart: the linear growth-curve variant gives <span class="math inline">\(\tau_{\text{ITS-growth}} \approx -28.3\)</span> packs per capita per year — Proposition 99 “worked” — while the explicitly-fit ARIMA(1, 2, 0) gives <span class="math inline">\(\tau_{\text{ITS-ARIMA}} \approx +4.5\)</span> — Proposition 99 “backfired”. Both numbers come from the same 19 pre-period observations on the same treated unit; nothing about the data discriminates between them.</p>
+<p>The growth-curve and ARIMA variants share every step of the recipe — fit on pre-period, project forward, average the gap — but disagree because they extrapolate different features of that pre-period. The growth curve extrapolates the linear <em>level</em>; ARIMA(1, 2, 0) extrapolates the <em>acceleration</em>. There is no purely-within-California way to decide which is right, because — as the identification assumption stated in §1 makes explicit — the choice is identified by an assumption about the missing <span class="math inline">\(Y_{1t}(0)\)</span> that the data itself cannot verify.</p>
+<p><strong>Where this leaves us.</strong> The lesson is not “ARIMA is bad”. The lesson is that <strong>single-model ITS is fragile</strong>: any within-unit method inherits the same problem of being identified by an assumption about the missing counterfactual that the data alone cannot verify. The remaining methods in the book each handle this fragility by borrowing strength from outside California: chapter 3 (Differences-in-Differences) pairs California with a single comparison state (Nevada) and treats their pre-to-post change as the counterfactual; chapter 4 (Synthetic Control) builds a weighted donor pool of all available control states tailored to California’s pre-period; chapter 5 (Bayesian Structural Time Series) combines those ideas inside a forecasting model with explicit posterior credible intervals; chapter 6 (synthetic control with prediction intervals) attaches frequentist prediction intervals to the SCM point estimate — the natural counterpart to the ARIMA forecast band above; and chapter 7 (Bayesian spatial SCM) further allows treatment to spill over onto neighbouring donor states. Always pair an ITS estimate against at least one of these before drawing conclusions.</p>
+<p><strong>Recap.</strong> Two ITS variants on the same 19 pre-period observations gave <span class="math inline">\(\tau_{\text{ITS-growth}} \approx -28.3\)</span> and <span class="math inline">\(\tau_{\text{ITS-ARIMA}} \approx +4.5\)</span>; the disagreement is the lesson, and the rest of Part I exists to resolve it by borrowing information from outside California.</p>
 </section>
 <section id="further-reading" class="level2" data-number="2.6">
 <h2 data-number="2.6" class="anchored" data-anchor-id="further-reading"><span class="header-section-number">2.6</span> Further reading</h2>
 <ul>
 <li><span class="citation" data-cites="bernal2017interrupted">Bernal et al. (<a href="references.html#ref-bernal2017interrupted" role="doc-biblioref">2017</a>)</span> — practitioner’s tutorial on ITS regression for public-health interventions.</li>
+<li><span class="citation" data-cites="wagner2002segmented">Wagner et al. (<a href="references.html#ref-wagner2002segmented" role="doc-biblioref">2002</a>)</span> — the canonical segmented-regression complement to Bernal et al., aimed at medication-use research but methodologically general.</li>
 <li><span class="citation" data-cites="hyndman2021forecasting">Hyndman &amp; Athanasopoulos (<a href="references.html#ref-hyndman2021forecasting" role="doc-biblioref">2021</a>)</span> — the canonical reference for the <code>fpp3</code> ecosystem and AICc-selected ARIMA modelling.</li>
 </ul>
 
@@ -1229,6 +1301,9 @@ Bernal, J. L., Cummins, S., &amp; Gasparrini, A. (2017). Interrupted time series
 </div>
 <div id="ref-hyndman2021forecasting" class="csl-entry" role="listitem">
 Hyndman, R. J., &amp; Athanasopoulos, G. (2021). <em>Forecasting: Principles and practice</em> (3rd ed.). OTexts. <a href="https://otexts.com/fpp3/">https://otexts.com/fpp3/</a>
+</div>
+<div id="ref-wagner2002segmented" class="csl-entry" role="listitem">
+Wagner, A. K., Soumerai, S. B., Zhang, F., &amp; Ross-Degnan, D. (2002). Segmented regression analysis of interrupted time series studies in medication use research. <em>Journal of Clinical Pharmacy and Therapeutics</em>, <em>27</em>(4), 299–309. <a href="https://doi.org/10.1046/j.1365-2710.2002.00430.x">https://doi.org/10.1046/j.1365-2710.2002.00430.x</a>
 </div>
 </div>
 </section>
@@ -1717,230 +1792,280 @@ Hyndman, R. J., &amp; Athanasopoulos, G. (2021). <em>Forecasting: Principles and
       </a>
   </div>
 </nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Interrupted Time Series"</span></span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="fu">## The ITS idea</span></span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>Interrupted time series (ITS) drops the comparison unit entirely. The counterfactual is built from the **treated unit's own pre-period dynamics**: fit a model on 1970–1988 California, extrapolate it into 1989–2000, and call the gap between the extrapolation and the observed data the effect. Where the naive pre-post estimate of chapter 1 assumes "no change", ITS allows a non-zero pre-trend. If California was already declining, the ITS counterfactual continues that decline; only the *extra* drop after 1989 gets attributed to the policy.</span>
-<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>This chapter fits two ITS variants on the same Proposition 99 data:</span>
-<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>A linear **growth-curve** model — the simplest pre-trend extrapolation possible.</span>
-<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>An **AICc-selected ARIMA** model — a more flexible time-series alternative.</span>
-<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>The two estimates disagree dramatically, and the disagreement is the lesson.</span>
-<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a><span class="fu">## Setup and data</span></span>
-<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a>**Packages.** Three pieces of the R ecosystem do all the heavy lifting in this chapter. <span class="in">`tidyverse`</span> covers data wrangling and <span class="in">`ggplot2`</span> plotting. <span class="in">`fpp3`</span> is the meta-package that loads the modern Hyndman &amp; Athanasopoulos time-series toolchain: <span class="in">`tsibble`</span> for time-indexed data frames, <span class="in">`fable`</span> for forecasting (we use its <span class="in">`ARIMA()`</span> model), and <span class="in">`feasts`</span> for time-series diagnostics. We also <span class="in">`source()`</span> the small in-repo helper <span class="in">`R/table_helpers.R`</span> — it provides <span class="in">`ms_pretty()`</span>, the <span class="in">`modelsummary`</span> wrapper that renders the pre-period regression table later in this chapter with the book's house style.</span>
-<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-22"><a href="#cb12-22" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb12-23"><a href="#cb12-23" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: setup</span></span>
-<span id="cb12-24"><a href="#cb12-24" aria-hidden="true" tabindex="-1"></a><span class="co">#| message: false</span></span>
-<span id="cb12-25"><a href="#cb12-25" aria-hidden="true" tabindex="-1"></a><span class="co">#| warning: false</span></span>
-<span id="cb12-26"><a href="#cb12-26" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
-<span id="cb12-27"><a href="#cb12-27" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(fpp3)   <span class="co"># loads tsibble, fable, feasts</span></span>
-<span id="cb12-28"><a href="#cb12-28" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"R/table_helpers.R"</span>)</span>
-<span id="cb12-29"><a href="#cb12-29" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-30"><a href="#cb12-30" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
-<span id="cb12-31"><a href="#cb12-31" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-32"><a href="#cb12-32" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span>opts_chunk<span class="sc">$</span><span class="fu">set</span>(<span class="at">dev.args =</span> <span class="fu">list</span>(<span class="at">bg =</span> <span class="st">"transparent"</span>))</span>
-<span id="cb12-33"><a href="#cb12-33" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-34"><a href="#cb12-34" aria-hidden="true" tabindex="-1"></a><span class="fu">theme_set</span>(</span>
-<span id="cb12-35"><a href="#cb12-35" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">12</span>) <span class="sc">+</span></span>
-<span id="cb12-36"><a href="#cb12-36" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(</span>
-<span id="cb12-37"><a href="#cb12-37" aria-hidden="true" tabindex="-1"></a>      <span class="at">plot.background  =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">"transparent"</span>, <span class="at">color =</span> <span class="cn">NA</span>),</span>
-<span id="cb12-38"><a href="#cb12-38" aria-hidden="true" tabindex="-1"></a>      <span class="at">panel.background =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">"transparent"</span>, <span class="at">color =</span> <span class="cn">NA</span>),</span>
-<span id="cb12-39"><a href="#cb12-39" aria-hidden="true" tabindex="-1"></a>      <span class="at">panel.grid.major =</span> <span class="fu">element_line</span>(<span class="at">color =</span> <span class="st">"#94a3b8"</span>, <span class="at">linewidth =</span> <span class="fl">0.25</span>),</span>
-<span id="cb12-40"><a href="#cb12-40" aria-hidden="true" tabindex="-1"></a>      <span class="at">panel.grid.minor =</span> <span class="fu">element_line</span>(<span class="at">color =</span> <span class="st">"#94a3b8"</span>, <span class="at">linewidth =</span> <span class="fl">0.15</span>),</span>
-<span id="cb12-41"><a href="#cb12-41" aria-hidden="true" tabindex="-1"></a>      <span class="at">text             =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"#94a3b8"</span>),</span>
-<span id="cb12-42"><a href="#cb12-42" aria-hidden="true" tabindex="-1"></a>      <span class="at">axis.text        =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"#94a3b8"</span>)</span>
-<span id="cb12-43"><a href="#cb12-43" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb12-44"><a href="#cb12-44" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb12-45"><a href="#cb12-45" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb12-46"><a href="#cb12-46" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-47"><a href="#cb12-47" aria-hidden="true" tabindex="-1"></a>**Dataset.** Proposition 99 ships as a balanced 39-state × 31-year panel covering 1970–2000 — the same dataset used throughout the book. California is the treated unit: the law passed by ballot initiative in November 1988 and took effect on January 1, 1989, so 1989 is the first post-period year. The outcome is per-capita cigarette sales in packs. For ITS we ignore the other 38 states entirely and collapse the panel to a California-only <span class="in">`tsibble`</span>, then add a centred index <span class="in">`year0 = year − 1989`</span> — zero on the first post-period year, negative before, positive after — so that any model fit on the pre-period extrapolates naturally across <span class="in">`year0 &gt; 0`</span>.</span>
-<span id="cb12-48"><a href="#cb12-48" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-51"><a href="#cb12-51" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb12-52"><a href="#cb12-52" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: data-load</span></span>
-<span id="cb12-53"><a href="#cb12-53" aria-hidden="true" tabindex="-1"></a>prop99 <span class="ot">&lt;-</span> <span class="fu">read_rds</span>(<span class="st">"data/proposition99.rds"</span>) <span class="sc">|&gt;</span> <span class="fu">as_tibble</span>()</span>
-<span id="cb12-54"><a href="#cb12-54" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-55"><a href="#cb12-55" aria-hidden="true" tabindex="-1"></a><span class="co"># California-only time series with a Pre/Post factor and a centred year</span></span>
-<span id="cb12-56"><a href="#cb12-56" aria-hidden="true" tabindex="-1"></a><span class="co"># index (year0 = 0 at the first post-period year). The tsibble class is</span></span>
-<span id="cb12-57"><a href="#cb12-57" aria-hidden="true" tabindex="-1"></a><span class="co"># required by the fpp3 forecasting tools used later.</span></span>
-<span id="cb12-58"><a href="#cb12-58" aria-hidden="true" tabindex="-1"></a>prop99_ts <span class="ot">&lt;-</span> prop99 <span class="sc">|&gt;</span></span>
-<span id="cb12-59"><a href="#cb12-59" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(state <span class="sc">==</span> <span class="st">"California"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb12-60"><a href="#cb12-60" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(year, cigsale) <span class="sc">|&gt;</span></span>
-<span id="cb12-61"><a href="#cb12-61" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">prepost =</span> <span class="fu">factor</span>(year <span class="sc">&gt;</span> <span class="dv">1988</span>, <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Pre"</span>, <span class="st">"Post"</span>))) <span class="sc">|&gt;</span></span>
-<span id="cb12-62"><a href="#cb12-62" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_tsibble</span>(<span class="at">index =</span> year) <span class="sc">|&gt;</span></span>
-<span id="cb12-63"><a href="#cb12-63" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">year0 =</span> year <span class="sc">-</span> <span class="dv">1989</span>)</span>
-<span id="cb12-64"><a href="#cb12-64" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb12-65"><a href="#cb12-65" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-66"><a href="#cb12-66" aria-hidden="true" tabindex="-1"></a>The resulting <span class="in">`prop99_ts`</span> is a 31-row <span class="in">`tsibble`</span> (one row per year, 1970–2000) with three columns: <span class="in">`cigsale`</span> (the outcome), <span class="in">`prepost`</span> (a Pre/Post factor with the cutoff at 1988), and <span class="in">`year0`</span> (the centred index). Everything in this chapter is fit on <span class="in">`prop99_ts |&gt; filter(prepost == "Pre")`</span> and projected onto <span class="in">`prop99_ts |&gt; filter(prepost == "Post")`</span>.</span>
-<span id="cb12-67"><a href="#cb12-67" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-68"><a href="#cb12-68" aria-hidden="true" tabindex="-1"></a><span class="fu">## Linear growth-curve ITS</span></span>
-<span id="cb12-69"><a href="#cb12-69" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-70"><a href="#cb12-70" aria-hidden="true" tabindex="-1"></a>**The idea.** Fit a single straight line on California's pre-period cigarette sales, then extrapolate it forward as the counterfactual.</span>
-<span id="cb12-71"><a href="#cb12-71" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-72"><a href="#cb12-72" aria-hidden="true" tabindex="-1"></a>**The equation.** Fit a linear trend on the pre-period only,</span>
-<span id="cb12-73"><a href="#cb12-73" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-74"><a href="#cb12-74" aria-hidden="true" tabindex="-1"></a>$$Y_{1t} = \alpha + \beta\, t + \varepsilon_t, \qquad t \le t^* = 1988,$$</span>
-<span id="cb12-75"><a href="#cb12-75" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-76"><a href="#cb12-76" aria-hidden="true" tabindex="-1"></a>then extrapolate the fitted line into the post-period as the counterfactual,</span>
-<span id="cb12-77"><a href="#cb12-77" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-78"><a href="#cb12-78" aria-hidden="true" tabindex="-1"></a>$$\widehat{Y_{1t}(0)} = \hat\alpha + \hat\beta\, t, \qquad t &gt; t^*,$$</span>
-<span id="cb12-79"><a href="#cb12-79" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-80"><a href="#cb12-80" aria-hidden="true" tabindex="-1"></a>and finally average the per-year gap between observed and counterfactual,</span>
-<span id="cb12-81"><a href="#cb12-81" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-82"><a href="#cb12-82" aria-hidden="true" tabindex="-1"></a>$$\widehat{\text{ATT}}_{\text{ITS-growth}} = \frac{1}{T_{\text{post}}} \sum_{t &gt; t^*} \Big[Y_{1t} - (\hat\alpha + \hat\beta\, t)\Big].$$</span>
-<span id="cb12-83"><a href="#cb12-83" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-84"><a href="#cb12-84" aria-hidden="true" tabindex="-1"></a>In words: a single straight line, fit on 1970–1988 cigarette sales in California, becomes the counterfactual for 1989–2000. The policy effect is the *average* of the per-year residuals between what was actually observed and what the extrapolated line predicted. The slope $\hat\beta$ captures whatever secular trend California was already on; only deviations *from* that trend after 1989 are attributed to Proposition 99.</span>
-<span id="cb12-85"><a href="#cb12-85" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-88"><a href="#cb12-88" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb12-89"><a href="#cb12-89" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: tbl-fit-growth</span></span>
-<span id="cb12-90"><a href="#cb12-90" aria-hidden="true" tabindex="-1"></a><span class="co">#| tbl-cap: "Linear growth-curve ITS — pre-period fit."</span></span>
-<span id="cb12-91"><a href="#cb12-91" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit a linear pre-period trend (cigsale on year, 1970-1988 only).</span></span>
-<span id="cb12-92"><a href="#cb12-92" aria-hidden="true" tabindex="-1"></a>fit_growth <span class="ot">&lt;-</span> <span class="fu">lm</span>(cigsale <span class="sc">~</span> year, <span class="at">data =</span> prop99_ts <span class="sc">|&gt;</span> <span class="fu">filter</span>(prepost <span class="sc">==</span> <span class="st">"Pre"</span>))</span>
-<span id="cb12-93"><a href="#cb12-93" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-94"><a href="#cb12-94" aria-hidden="true" tabindex="-1"></a><span class="fu">ms_pretty</span>(<span class="fu">list</span>(<span class="st">"Pre-period linear trend"</span> <span class="ot">=</span> fit_growth),</span>
-<span id="cb12-95"><a href="#cb12-95" aria-hidden="true" tabindex="-1"></a>          <span class="at">coef_map =</span> <span class="fu">c</span>(<span class="st">"(Intercept)"</span> <span class="ot">=</span> <span class="st">"Intercept"</span>,</span>
-<span id="cb12-96"><a href="#cb12-96" aria-hidden="true" tabindex="-1"></a>                       <span class="st">"year"</span>        <span class="ot">=</span> <span class="st">"Year"</span>))</span>
-<span id="cb12-97"><a href="#cb12-97" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb12-98"><a href="#cb12-98" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-99"><a href="#cb12-99" aria-hidden="true" tabindex="-1"></a>The pre-period linear trend is about $-1.78$ packs per capita per year ($p &lt; 10^{-5}$, $R^2 \approx 0.73$) — so California was already declining about 1.8 packs per year before Proposition 99. To estimate the policy effect we extrapolate that line forward to 2000 and average the gap.</span>
-<span id="cb12-100"><a href="#cb12-100" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-103"><a href="#cb12-103" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb12-104"><a href="#cb12-104" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: its-growth-estimate</span></span>
-<span id="cb12-105"><a href="#cb12-105" aria-hidden="true" tabindex="-1"></a><span class="co"># Subset to the 1989-2000 rows and extrapolate the fitted line forward.</span></span>
-<span id="cb12-106"><a href="#cb12-106" aria-hidden="true" tabindex="-1"></a>post_df <span class="ot">&lt;-</span> prop99_ts <span class="sc">|&gt;</span> <span class="fu">filter</span>(prepost <span class="sc">==</span> <span class="st">"Post"</span>)</span>
-<span id="cb12-107"><a href="#cb12-107" aria-hidden="true" tabindex="-1"></a>pred_growth <span class="ot">&lt;-</span> <span class="fu">predict</span>(fit_growth, <span class="at">newdata =</span> <span class="fu">as_tibble</span>(post_df))</span>
-<span id="cb12-108"><a href="#cb12-108" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-109"><a href="#cb12-109" aria-hidden="true" tabindex="-1"></a><span class="co"># ATT estimate = average per-year gap between observed and extrapolation.</span></span>
-<span id="cb12-110"><a href="#cb12-110" aria-hidden="true" tabindex="-1"></a>its_growth_estimate <span class="ot">&lt;-</span> <span class="fu">mean</span>(post_df<span class="sc">$</span>cigsale <span class="sc">-</span> pred_growth)</span>
-<span id="cb12-111"><a href="#cb12-111" aria-hidden="true" tabindex="-1"></a>its_growth_estimate</span>
-<span id="cb12-112"><a href="#cb12-112" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb12-113"><a href="#cb12-113" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-114"><a href="#cb12-114" aria-hidden="true" tabindex="-1"></a>Plotting the observed series against the extrapolated line makes the size of the implied effect explicit: the dashed counterfactual continues the gentle pre-period decline, while the observed series breaks downward sharply after 1988.</span>
-<span id="cb12-115"><a href="#cb12-115" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-118"><a href="#cb12-118" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb12-119"><a href="#cb12-119" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-its-growth</span></span>
-<span id="cb12-120"><a href="#cb12-120" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "ITS counterfactual from a linear pre-period growth curve (1970–1988), extrapolated to 2000."</span></span>
-<span id="cb12-121"><a href="#cb12-121" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-width: 8</span></span>
-<span id="cb12-122"><a href="#cb12-122" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-height: 5</span></span>
-<span id="cb12-123"><a href="#cb12-123" aria-hidden="true" tabindex="-1"></a>its_growth_plot <span class="ot">&lt;-</span> prop99_ts <span class="sc">|&gt;</span></span>
-<span id="cb12-124"><a href="#cb12-124" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_tibble</span>() <span class="sc">|&gt;</span></span>
-<span id="cb12-125"><a href="#cb12-125" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">counterfactual =</span> <span class="fu">predict</span>(fit_growth, <span class="at">newdata =</span> prop99_ts))</span>
-<span id="cb12-126"><a href="#cb12-126" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-127"><a href="#cb12-127" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(its_growth_plot, <span class="fu">aes</span>(<span class="at">x =</span> year)) <span class="sc">+</span></span>
-<span id="cb12-128"><a href="#cb12-128" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> cigsale, <span class="at">color =</span> <span class="st">"Observed"</span>), <span class="at">linewidth =</span> <span class="fl">1.1</span>) <span class="sc">+</span></span>
-<span id="cb12-129"><a href="#cb12-129" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> counterfactual, <span class="at">color =</span> <span class="st">"Counterfactual"</span>),</span>
-<span id="cb12-130"><a href="#cb12-130" aria-hidden="true" tabindex="-1"></a>            <span class="at">linetype =</span> <span class="st">"dashed"</span>, <span class="at">linewidth =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
-<span id="cb12-131"><a href="#cb12-131" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="fl">1988.5</span>, <span class="at">color =</span> <span class="st">"#d97757"</span>,</span>
-<span id="cb12-132"><a href="#cb12-132" aria-hidden="true" tabindex="-1"></a>             <span class="at">linetype =</span> <span class="st">"dotted"</span>, <span class="at">linewidth =</span> <span class="fl">0.7</span>) <span class="sc">+</span></span>
-<span id="cb12-133"><a href="#cb12-133" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"Observed"</span> <span class="ot">=</span> <span class="st">"#d97757"</span>,</span>
-<span id="cb12-134"><a href="#cb12-134" aria-hidden="true" tabindex="-1"></a>                                <span class="st">"Counterfactual"</span> <span class="ot">=</span> <span class="st">"#6a9bcc"</span>)) <span class="sc">+</span></span>
-<span id="cb12-135"><a href="#cb12-135" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Year"</span>, <span class="at">y =</span> <span class="st">"Cigarette sales (packs per capita)"</span>,</span>
-<span id="cb12-136"><a href="#cb12-136" aria-hidden="true" tabindex="-1"></a>       <span class="at">color =</span> <span class="cn">NULL</span>) <span class="sc">+</span></span>
-<span id="cb12-137"><a href="#cb12-137" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span>
-<span id="cb12-138"><a href="#cb12-138" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb12-139"><a href="#cb12-139" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-140"><a href="#cb12-140" aria-hidden="true" tabindex="-1"></a>**Reading the output.** The ITS-growth-curve estimate is about $-28.3$ packs per capita per year. That is essentially identical to the naive pre-post $-27.0$ from chapter 1. Why? Because both methods only use within-California information. Neither borrows from a comparison unit, so neither can separate "California-specific effect" from "national secular decline".</span>
-<span id="cb12-141"><a href="#cb12-141" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-142"><a href="#cb12-142" aria-hidden="true" tabindex="-1"></a>The coincidence is suggestive but not reassuring. Both methods can be biased the same way if California's pre-trend was *understating* the speed of the secular decline.</span>
-<span id="cb12-143"><a href="#cb12-143" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-144"><a href="#cb12-144" aria-hidden="true" tabindex="-1"></a>**Common pitfall.** Assuming the linear pre-trend is the right *shape*. If the true secular decline is accelerating or saturating, a linear extrapolation either understates or overstates what would have happened — and the policy effect inherits the bias.</span>
-<span id="cb12-145"><a href="#cb12-145" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-146"><a href="#cb12-146" aria-hidden="true" tabindex="-1"></a><span class="fu">## ARIMA-based ITS</span></span>
-<span id="cb12-147"><a href="#cb12-147" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-148"><a href="#cb12-148" aria-hidden="true" tabindex="-1"></a>**The idea.** Replace the straight line with a flexible time-series model. Let the data decide the model's complexity through an information criterion (AICc). Forecast forward as the counterfactual.</span>
-<span id="cb12-149"><a href="#cb12-149" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-150"><a href="#cb12-150" aria-hidden="true" tabindex="-1"></a>**The equation.** A general ARIMA$(p, d, q)$ model writes the $d$-th differenced series as an autoregressive-moving-average process. Using the lag operator $L$ (so $L\, Y_t = Y_{t-1}$):</span>
-<span id="cb12-151"><a href="#cb12-151" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-152"><a href="#cb12-152" aria-hidden="true" tabindex="-1"></a>$$\Phi(L)\, (1 - L)^d\, Y_{1t} \, = \, \Theta(L)\, \varepsilon_t, \qquad \varepsilon_t \sim \mathcal{N}(0, \sigma^2),$$</span>
-<span id="cb12-153"><a href="#cb12-153" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-154"><a href="#cb12-154" aria-hidden="true" tabindex="-1"></a>where $\Phi(L) = 1 - \phi_1 L - \cdots - \phi_p L^p$ collects the $p$ autoregressive coefficients and $\Theta(L) = 1 + \theta_1 L + \cdots + \theta_q L^q$ collects the $q$ moving-average coefficients. The <span class="in">`fable::ARIMA(..., ic = "aicc")`</span> call searches over $(p, d, q)$ and picks the combination that minimises the corrected Akaike Information Criterion on the pre-period.</span>
-<span id="cb12-155"><a href="#cb12-155" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-156"><a href="#cb12-156" aria-hidden="true" tabindex="-1"></a>Once the model is fit, the post-period counterfactual is the model's $h$-step forecast and the ATT is the average gap, just as in the growth-curve version:</span>
-<span id="cb12-157"><a href="#cb12-157" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-158"><a href="#cb12-158" aria-hidden="true" tabindex="-1"></a>$$\widehat{Y_{1t}(0)} = \hat Y_{1t \mid t^*}, \qquad \widehat{\text{ATT}}_{\text{ITS-ARIMA}} = \frac{1}{T_{\text{post}}} \sum_{t &gt; t^*} \Big[Y_{1t} - \hat Y_{1t \mid t^*}\Big].$$</span>
-<span id="cb12-159"><a href="#cb12-159" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-160"><a href="#cb12-160" aria-hidden="true" tabindex="-1"></a>In words: same recipe as the growth-curve version — fit on pre-period, project forward, average the gap — but the "fit on pre-period" step now uses an autoregressive-integrated-moving-average model instead of a straight line.</span>
-<span id="cb12-161"><a href="#cb12-161" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-162"><a href="#cb12-162" aria-hidden="true" tabindex="-1"></a>**What ARIMA$(p, d, q)$ means in plain English.** $p$ is the number of past values the model uses (autoregression). $d$ is the number of times the series is differenced before fitting (to handle trends). $q$ is the number of past forecast errors used (moving average). Lower AICc = "better fit traded off against complexity".</span>
-<span id="cb12-163"><a href="#cb12-163" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-166"><a href="#cb12-166" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb12-167"><a href="#cb12-167" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fit-arima</span></span>
-<span id="cb12-168"><a href="#cb12-168" aria-hidden="true" tabindex="-1"></a><span class="co">#| message: false</span></span>
-<span id="cb12-169"><a href="#cb12-169" aria-hidden="true" tabindex="-1"></a><span class="co">#| warning: false</span></span>
-<span id="cb12-170"><a href="#cb12-170" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit an ARIMA model on the 1970-1988 California series. ic = "aicc"</span></span>
-<span id="cb12-171"><a href="#cb12-171" aria-hidden="true" tabindex="-1"></a><span class="co"># tells fable to search over (p, d, q) and pick the AICc minimiser.</span></span>
-<span id="cb12-172"><a href="#cb12-172" aria-hidden="true" tabindex="-1"></a>fit_arima <span class="ot">&lt;-</span> prop99_ts <span class="sc">|&gt;</span></span>
-<span id="cb12-173"><a href="#cb12-173" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(prepost <span class="sc">==</span> <span class="st">"Pre"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb12-174"><a href="#cb12-174" aria-hidden="true" tabindex="-1"></a>  <span class="fu">model</span>(<span class="at">timeseries =</span> <span class="fu">ARIMA</span>(cigsale, <span class="at">ic =</span> <span class="st">"aicc"</span>))</span>
-<span id="cb12-175"><a href="#cb12-175" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-176"><a href="#cb12-176" aria-hidden="true" tabindex="-1"></a><span class="fu">report</span>(fit_arima)</span>
-<span id="cb12-177"><a href="#cb12-177" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb12-178"><a href="#cb12-178" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-179"><a href="#cb12-179" aria-hidden="true" tabindex="-1"></a>For this series AICc typically selects <span class="in">`ARIMA(1, 2, 0)`</span>: one autoregressive lag and *two* rounds of differencing. The double-differencing means the model is tracking the *acceleration* of California's late-1980s drop, not just its level or slope. We then forecast 12 years out and average the gap.</span>
-<span id="cb12-180"><a href="#cb12-180" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-183"><a href="#cb12-183" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb12-184"><a href="#cb12-184" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: its-arima-estimate</span></span>
-<span id="cb12-185"><a href="#cb12-185" aria-hidden="true" tabindex="-1"></a><span class="co"># Project the fitted ARIMA 12 years forward as the post-period counterfactual.</span></span>
-<span id="cb12-186"><a href="#cb12-186" aria-hidden="true" tabindex="-1"></a>fcasts <span class="ot">&lt;-</span> <span class="fu">forecast</span>(fit_arima, <span class="at">h =</span> <span class="st">"12 years"</span>)</span>
-<span id="cb12-187"><a href="#cb12-187" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-188"><a href="#cb12-188" aria-hidden="true" tabindex="-1"></a><span class="co"># ATT estimate = average per-year gap between observed and ARIMA forecast.</span></span>
-<span id="cb12-189"><a href="#cb12-189" aria-hidden="true" tabindex="-1"></a>ce_arima <span class="ot">&lt;-</span> post_df<span class="sc">$</span>cigsale <span class="sc">-</span> fcasts<span class="sc">$</span>.mean</span>
-<span id="cb12-190"><a href="#cb12-190" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(ce_arima)</span>
-<span id="cb12-191"><a href="#cb12-191" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb12-192"><a href="#cb12-192" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-193"><a href="#cb12-193" aria-hidden="true" tabindex="-1"></a>Plotting the forecast against the observed post-period series shows where the model goes wrong — the dashed ARIMA counterfactual dives below the observed series almost immediately, so the per-year residuals are mostly positive.</span>
-<span id="cb12-194"><a href="#cb12-194" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-197"><a href="#cb12-197" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb12-198"><a href="#cb12-198" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-its-arima</span></span>
-<span id="cb12-199"><a href="#cb12-199" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "ITS counterfactual from an AICc-selected ARIMA model fit on 1970–1988, forecast to 2000."</span></span>
-<span id="cb12-200"><a href="#cb12-200" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-width: 8</span></span>
-<span id="cb12-201"><a href="#cb12-201" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-height: 5</span></span>
-<span id="cb12-202"><a href="#cb12-202" aria-hidden="true" tabindex="-1"></a>arima_cf <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">year =</span> post_df<span class="sc">$</span>year, <span class="at">counterfactual =</span> fcasts<span class="sc">$</span>.mean)</span>
-<span id="cb12-203"><a href="#cb12-203" aria-hidden="true" tabindex="-1"></a>plot_df  <span class="ot">&lt;-</span> prop99_ts <span class="sc">|&gt;</span></span>
-<span id="cb12-204"><a href="#cb12-204" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_tibble</span>() <span class="sc">|&gt;</span></span>
-<span id="cb12-205"><a href="#cb12-205" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(year, cigsale) <span class="sc">|&gt;</span></span>
-<span id="cb12-206"><a href="#cb12-206" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(arima_cf, <span class="at">by =</span> <span class="st">"year"</span>)</span>
-<span id="cb12-207"><a href="#cb12-207" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-208"><a href="#cb12-208" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(plot_df, <span class="fu">aes</span>(<span class="at">x =</span> year)) <span class="sc">+</span></span>
-<span id="cb12-209"><a href="#cb12-209" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> cigsale, <span class="at">color =</span> <span class="st">"Observed"</span>), <span class="at">linewidth =</span> <span class="fl">1.1</span>) <span class="sc">+</span></span>
-<span id="cb12-210"><a href="#cb12-210" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> counterfactual, <span class="at">color =</span> <span class="st">"ARIMA counterfactual"</span>),</span>
-<span id="cb12-211"><a href="#cb12-211" aria-hidden="true" tabindex="-1"></a>            <span class="at">linetype =</span> <span class="st">"dashed"</span>, <span class="at">linewidth =</span> <span class="dv">1</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
-<span id="cb12-212"><a href="#cb12-212" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="fl">1988.5</span>, <span class="at">color =</span> <span class="st">"#d97757"</span>,</span>
-<span id="cb12-213"><a href="#cb12-213" aria-hidden="true" tabindex="-1"></a>             <span class="at">linetype =</span> <span class="st">"dotted"</span>, <span class="at">linewidth =</span> <span class="fl">0.7</span>) <span class="sc">+</span></span>
-<span id="cb12-214"><a href="#cb12-214" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"Observed"</span> <span class="ot">=</span> <span class="st">"#d97757"</span>,</span>
-<span id="cb12-215"><a href="#cb12-215" aria-hidden="true" tabindex="-1"></a>                                <span class="st">"ARIMA counterfactual"</span> <span class="ot">=</span> <span class="st">"#6a9bcc"</span>)) <span class="sc">+</span></span>
-<span id="cb12-216"><a href="#cb12-216" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Year"</span>, <span class="at">y =</span> <span class="st">"Cigarette sales (packs per capita)"</span>,</span>
-<span id="cb12-217"><a href="#cb12-217" aria-hidden="true" tabindex="-1"></a>       <span class="at">color =</span> <span class="cn">NULL</span>) <span class="sc">+</span></span>
-<span id="cb12-218"><a href="#cb12-218" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span>
-<span id="cb12-219"><a href="#cb12-219" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb12-220"><a href="#cb12-220" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-221"><a href="#cb12-221" aria-hidden="true" tabindex="-1"></a>**Reading the output.** The ARIMA-based ITS estimate comes out around $+4.5$ packs. That is *positive* — it would imply Proposition 99 *increased* California's smoking. That is plainly the wrong answer.</span>
-<span id="cb12-222"><a href="#cb12-222" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-223"><a href="#cb12-223" aria-hidden="true" tabindex="-1"></a>The visual diagnostic shows why. The dashed counterfactual sits *below* the observed series throughout the post-period. The model extrapolates the late-1980s downward acceleration too aggressively. It predicts California should have hit roughly 50 packs by 2000 if the pre-period momentum had continued. Since California actually only hit 60 packs, the model concludes Proposition 99 "raised" smoking by about 5 packs relative to that doomsday counterfactual.</span>
-<span id="cb12-224"><a href="#cb12-224" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-225"><a href="#cb12-225" aria-hidden="true" tabindex="-1"></a>**The pitfall in one sentence.** AICc minimises *in-sample* fit, but in-sample fit can come from features — here, second-order momentum — that do not persist *out-of-sample*.</span>
-<span id="cb12-226"><a href="#cb12-226" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-227"><a href="#cb12-227" aria-hidden="true" tabindex="-1"></a>**Common pitfall.** Trusting an information-criterion-selected model on a short pre-period. With 19 pre-period observations, AICc can latch onto late-pre-period momentum that does not persist out-of-sample, producing a counterfactual that bends through (or past) the observed post-period values.</span>
-<span id="cb12-228"><a href="#cb12-228" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-229"><a href="#cb12-229" aria-hidden="true" tabindex="-1"></a><span class="fu">## What the two ITS estimates tell us</span></span>
-<span id="cb12-230"><a href="#cb12-230" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-231"><a href="#cb12-231" aria-hidden="true" tabindex="-1"></a>**The disagreement.** Same data, same recipe, two answers more than 30 packs apart: the linear growth-curve variant gives an ATT of about $-28.3$ packs per capita per year — Proposition 99 "worked" — while the AICc-selected ARIMA(1,2,0) gives about $+4.5$ — Proposition 99 "backfired". Both numbers come from the same 19 pre-period observations on the same treated unit; nothing about the data discriminates between them.</span>
-<span id="cb12-232"><a href="#cb12-232" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-233"><a href="#cb12-233" aria-hidden="true" tabindex="-1"></a>The growth-curve and ARIMA variants share every step of the recipe — fit on pre-period, project forward, average the gap — but disagree because they extrapolate different features of that pre-period. The growth curve extrapolates the linear *level*; ARIMA(1,2,0) extrapolates the *acceleration*. There is no purely-within-California way to decide which is right, because the choice is identified by an assumption about the missing $Y_{1t}(0)$ that the data itself cannot verify.</span>
-<span id="cb12-234"><a href="#cb12-234" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-235"><a href="#cb12-235" aria-hidden="true" tabindex="-1"></a>**Where this leaves us.** The lesson is not "ARIMA is bad". The lesson is that **single-model ITS is fragile**: any within-unit method inherits the same problem of being identified by an assumption about the missing counterfactual that the data alone cannot verify. The remaining methods in the book each handle this fragility by borrowing strength from outside California: chapter 3 (Differences-in-Differences) uses the other 38 states as a common-trend control; chapter 4 (Synthetic Control) builds a weighted donor pool tailored to California's pre-period; chapter 5 (Bayesian Structural Time Series) combines both ideas inside a forecasting model with explicit uncertainty bands. Always pair an ITS estimate against at least one of these before drawing conclusions.</span>
-<span id="cb12-236"><a href="#cb12-236" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-237"><a href="#cb12-237" aria-hidden="true" tabindex="-1"></a><span class="fu">## Further reading</span></span>
-<span id="cb12-238"><a href="#cb12-238" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-239"><a href="#cb12-239" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>@bernal2017interrupted — practitioner's tutorial on ITS regression for public-health interventions.</span>
-<span id="cb12-240"><a href="#cb12-240" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>@hyndman2021forecasting — the canonical reference for the <span class="in">`fpp3`</span> ecosystem and AICc-selected ARIMA modelling.</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Interrupted Time Series"</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="fu">## The ITS idea</span></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>Interrupted time series (ITS) drops the comparison unit entirely. The counterfactual is built from the **treated unit's own pre-period dynamics**: fit a model on 1970–1988 California, extrapolate it into 1989–2000, and call the gap between the extrapolation and the observed data the effect. Where the naive pre-post estimate of chapter 1 assumes "no change", ITS allows a non-zero pre-trend. If California was already declining, the ITS counterfactual continues that decline; only the *extra* drop after 1989 gets attributed to the policy.</span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>This chapter fits two ITS variants on the same Proposition 99 data:</span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>A linear **growth-curve** model — the simplest pre-trend extrapolation possible.</span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>An **ARIMA(1, 2, 0)** model — a more flexible time-series alternative whose order is the AICc-minimising non-seasonal $(p, d, q)$ on this 19-observation pre-period (we verified the search range below before fitting that order explicitly).</span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>The two estimates disagree dramatically, and the disagreement is the lesson.</span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a>**Identification.** ITS recovers the ATT only under the assumption that the *same* stochastic process that generated 1970–1988 California cigarette sales would have continued to generate 1989–2000 California cigarette sales absent Proposition 99. Everything that follows in this chapter is conditional on that assumption. We will return to it in §6 because the two variants below fail in opposite directions precisely because they encode *different* versions of "the same process".</span>
+<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a><span class="fu">## Setup and data</span></span>
+<span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a>**Packages.** Four pieces of the R ecosystem do all the heavy lifting in this chapter. <span class="in">`tidyverse`</span> covers data wrangling and <span class="in">`ggplot2`</span> plotting. <span class="in">`fpp3`</span> is the meta-package that loads the modern Hyndman &amp; Athanasopoulos time-series toolchain: <span class="in">`tsibble`</span> for time-indexed data frames, <span class="in">`fable`</span> for forecasting (we use its <span class="in">`ARIMA()`</span> model), and <span class="in">`feasts`</span> for time-series diagnostics (<span class="in">`gg_tsresiduals()`</span> and the Ljung-Box test, both used below). <span class="in">`sandwich`</span> provides HAC-robust standard errors for the linear pre-trend regression — short autocorrelated time series need them for the same reason chapter 3 will need them on the DiD regression. We also <span class="in">`source()`</span> the small in-repo helper <span class="in">`R/table_helpers.R`</span> — it provides <span class="in">`ms_pretty()`</span>, the <span class="in">`modelsummary`</span> wrapper that renders the pre-period regression table later in this chapter with the book's house style.</span>
+<span id="cb15-21"><a href="#cb15-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-22"><a href="#cb15-22" aria-hidden="true" tabindex="-1"></a>ITS in this chapter is a <span class="in">`fable`</span> workflow: fit on a <span class="in">`tsibble`</span>-filtered pre-period, forecast $h$ years out, average the gap.</span>
+<span id="cb15-23"><a href="#cb15-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-26"><a href="#cb15-26" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb15-27"><a href="#cb15-27" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: setup</span></span>
+<span id="cb15-28"><a href="#cb15-28" aria-hidden="true" tabindex="-1"></a><span class="co">#| message: false</span></span>
+<span id="cb15-29"><a href="#cb15-29" aria-hidden="true" tabindex="-1"></a><span class="co">#| warning: false</span></span>
+<span id="cb15-30"><a href="#cb15-30" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb15-31"><a href="#cb15-31" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(fpp3)       <span class="co"># loads tsibble, fable, feasts</span></span>
+<span id="cb15-32"><a href="#cb15-32" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(sandwich)   <span class="co"># vcovHAC for the pre-trend regression</span></span>
+<span id="cb15-33"><a href="#cb15-33" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"R/table_helpers.R"</span>)</span>
+<span id="cb15-34"><a href="#cb15-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-35"><a href="#cb15-35" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span>opts_chunk<span class="sc">$</span><span class="fu">set</span>(<span class="at">dev.args =</span> <span class="fu">list</span>(<span class="at">bg =</span> <span class="st">"transparent"</span>))</span>
+<span id="cb15-36"><a href="#cb15-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-37"><a href="#cb15-37" aria-hidden="true" tabindex="-1"></a><span class="fu">theme_set</span>(</span>
+<span id="cb15-38"><a href="#cb15-38" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">12</span>) <span class="sc">+</span></span>
+<span id="cb15-39"><a href="#cb15-39" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(</span>
+<span id="cb15-40"><a href="#cb15-40" aria-hidden="true" tabindex="-1"></a>      <span class="at">plot.background  =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">"transparent"</span>, <span class="at">color =</span> <span class="cn">NA</span>),</span>
+<span id="cb15-41"><a href="#cb15-41" aria-hidden="true" tabindex="-1"></a>      <span class="at">panel.background =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">"transparent"</span>, <span class="at">color =</span> <span class="cn">NA</span>),</span>
+<span id="cb15-42"><a href="#cb15-42" aria-hidden="true" tabindex="-1"></a>      <span class="at">panel.grid.major =</span> <span class="fu">element_line</span>(<span class="at">color =</span> <span class="st">"#94a3b8"</span>, <span class="at">linewidth =</span> <span class="fl">0.25</span>),</span>
+<span id="cb15-43"><a href="#cb15-43" aria-hidden="true" tabindex="-1"></a>      <span class="at">panel.grid.minor =</span> <span class="fu">element_line</span>(<span class="at">color =</span> <span class="st">"#94a3b8"</span>, <span class="at">linewidth =</span> <span class="fl">0.15</span>),</span>
+<span id="cb15-44"><a href="#cb15-44" aria-hidden="true" tabindex="-1"></a>      <span class="at">text             =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"#94a3b8"</span>),</span>
+<span id="cb15-45"><a href="#cb15-45" aria-hidden="true" tabindex="-1"></a>      <span class="at">axis.text        =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"#94a3b8"</span>)</span>
+<span id="cb15-46"><a href="#cb15-46" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb15-47"><a href="#cb15-47" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb15-48"><a href="#cb15-48" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb15-49"><a href="#cb15-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-50"><a href="#cb15-50" aria-hidden="true" tabindex="-1"></a>**Dataset.** Proposition 99 ships as a balanced 39-state × 31-year panel covering 1970–2000 — the same dataset used throughout the book. California is the treated unit: the law passed by ballot initiative in November 1988 and took effect on January 1, 1989, so 1989 is the first post-period year. The outcome is per-capita cigarette sales in packs. For ITS we ignore the other 38 states entirely and collapse the panel to a California-only <span class="in">`tsibble`</span>, attaching a <span class="in">`Pre`</span>/<span class="in">`Post`</span> factor with the cutoff at 1988 so we can fit on the pre-period and project onto the post-period.</span>
+<span id="cb15-51"><a href="#cb15-51" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-54"><a href="#cb15-54" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb15-55"><a href="#cb15-55" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: data-load</span></span>
+<span id="cb15-56"><a href="#cb15-56" aria-hidden="true" tabindex="-1"></a>prop99 <span class="ot">&lt;-</span> <span class="fu">read_rds</span>(<span class="st">"data/proposition99.rds"</span>) <span class="sc">|&gt;</span> <span class="fu">as_tibble</span>()</span>
+<span id="cb15-57"><a href="#cb15-57" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-58"><a href="#cb15-58" aria-hidden="true" tabindex="-1"></a><span class="co"># California-only time series with a Pre/Post factor. The tsibble class</span></span>
+<span id="cb15-59"><a href="#cb15-59" aria-hidden="true" tabindex="-1"></a><span class="co"># is required by the fpp3 forecasting tools used later.</span></span>
+<span id="cb15-60"><a href="#cb15-60" aria-hidden="true" tabindex="-1"></a>prop99_ts <span class="ot">&lt;-</span> prop99 <span class="sc">|&gt;</span></span>
+<span id="cb15-61"><a href="#cb15-61" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(state <span class="sc">==</span> <span class="st">"California"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb15-62"><a href="#cb15-62" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(year, cigsale) <span class="sc">|&gt;</span></span>
+<span id="cb15-63"><a href="#cb15-63" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">prepost =</span> <span class="fu">factor</span>(year <span class="sc">&gt;</span> <span class="dv">1988</span>, <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Pre"</span>, <span class="st">"Post"</span>))) <span class="sc">|&gt;</span></span>
+<span id="cb15-64"><a href="#cb15-64" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_tsibble</span>(<span class="at">index =</span> year)</span>
+<span id="cb15-65"><a href="#cb15-65" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb15-66"><a href="#cb15-66" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-67"><a href="#cb15-67" aria-hidden="true" tabindex="-1"></a>The resulting <span class="in">`prop99_ts`</span> is a 31-row <span class="in">`tsibble`</span> (one row per year, 1970–2000) with two columns beside the index: <span class="in">`cigsale`</span> (the outcome) and <span class="in">`prepost`</span> (the Pre/Post factor). Everything in this chapter is fit on <span class="in">`prop99_ts |&gt; filter(prepost == "Pre")`</span> and projected onto <span class="in">`prop99_ts |&gt; filter(prepost == "Post")`</span>.</span>
+<span id="cb15-68"><a href="#cb15-68" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-69"><a href="#cb15-69" aria-hidden="true" tabindex="-1"></a><span class="fu">## Linear growth-curve ITS</span></span>
+<span id="cb15-70"><a href="#cb15-70" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-71"><a href="#cb15-71" aria-hidden="true" tabindex="-1"></a>**The idea.** Fit a single straight line on California's pre-period cigarette sales, then extrapolate it forward as the counterfactual.</span>
+<span id="cb15-72"><a href="#cb15-72" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-73"><a href="#cb15-73" aria-hidden="true" tabindex="-1"></a>**The equation.** Fit a linear trend on the pre-period only,</span>
+<span id="cb15-74"><a href="#cb15-74" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-75"><a href="#cb15-75" aria-hidden="true" tabindex="-1"></a>$$Y_{1t} = \alpha + \beta\, t + \varepsilon_t, \qquad t \le t^* = 1988,$$</span>
+<span id="cb15-76"><a href="#cb15-76" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-77"><a href="#cb15-77" aria-hidden="true" tabindex="-1"></a>then extrapolate the fitted line into the post-period as the counterfactual,</span>
+<span id="cb15-78"><a href="#cb15-78" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-79"><a href="#cb15-79" aria-hidden="true" tabindex="-1"></a>$$\widehat{Y_{1t}(0)} = \hat\alpha + \hat\beta\, t, \qquad t &gt; t^*,$$</span>
+<span id="cb15-80"><a href="#cb15-80" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-81"><a href="#cb15-81" aria-hidden="true" tabindex="-1"></a>and finally average the per-year gap between observed and counterfactual,</span>
+<span id="cb15-82"><a href="#cb15-82" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-83"><a href="#cb15-83" aria-hidden="true" tabindex="-1"></a>$$\widehat{\text{ATT}}_{\text{ITS-growth}} = \frac{1}{T_{\text{post}}} \sum_{t &gt; t^*} \Big[Y_{1t} - (\hat\alpha + \hat\beta\, t)\Big].$$</span>
+<span id="cb15-84"><a href="#cb15-84" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-85"><a href="#cb15-85" aria-hidden="true" tabindex="-1"></a>In words: a single straight line, fit on 1970–1988 cigarette sales in California, becomes the counterfactual for 1989–2000. The policy effect is the *average* of the per-year residuals between what was actually observed and what the extrapolated line predicted. The slope $\hat\beta$ captures whatever secular trend California was already on; only deviations *from* that trend after 1989 are attributed to Proposition 99.</span>
+<span id="cb15-86"><a href="#cb15-86" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-89"><a href="#cb15-89" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb15-90"><a href="#cb15-90" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: tbl-fit-growth</span></span>
+<span id="cb15-91"><a href="#cb15-91" aria-hidden="true" tabindex="-1"></a><span class="co">#| tbl-cap: "Linear growth-curve ITS — pre-period fit (HAC-robust SEs)."</span></span>
+<span id="cb15-92"><a href="#cb15-92" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit a linear pre-period trend (cigsale on year, 1970-1988 only). HAC</span></span>
+<span id="cb15-93"><a href="#cb15-93" aria-hidden="true" tabindex="-1"></a><span class="co"># standard errors are computed via sandwich::vcovHAC for parity with</span></span>
+<span id="cb15-94"><a href="#cb15-94" aria-hidden="true" tabindex="-1"></a><span class="co"># chapter 3 — a 19-year time series has substantial autocorrelation</span></span>
+<span id="cb15-95"><a href="#cb15-95" aria-hidden="true" tabindex="-1"></a><span class="co"># that classical OLS SEs ignore.</span></span>
+<span id="cb15-96"><a href="#cb15-96" aria-hidden="true" tabindex="-1"></a>fit_growth <span class="ot">&lt;-</span> <span class="fu">lm</span>(cigsale <span class="sc">~</span> year, <span class="at">data =</span> prop99_ts <span class="sc">|&gt;</span> <span class="fu">filter</span>(prepost <span class="sc">==</span> <span class="st">"Pre"</span>))</span>
+<span id="cb15-97"><a href="#cb15-97" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-98"><a href="#cb15-98" aria-hidden="true" tabindex="-1"></a><span class="fu">ms_pretty</span>(<span class="fu">list</span>(<span class="st">"Pre-period linear trend"</span> <span class="ot">=</span> fit_growth),</span>
+<span id="cb15-99"><a href="#cb15-99" aria-hidden="true" tabindex="-1"></a>          <span class="at">coef_map =</span> <span class="fu">c</span>(<span class="st">"(Intercept)"</span> <span class="ot">=</span> <span class="st">"Intercept"</span>,</span>
+<span id="cb15-100"><a href="#cb15-100" aria-hidden="true" tabindex="-1"></a>                       <span class="st">"year"</span>        <span class="ot">=</span> <span class="st">"Year"</span>),</span>
+<span id="cb15-101"><a href="#cb15-101" aria-hidden="true" tabindex="-1"></a>          <span class="at">vcov     =</span> sandwich<span class="sc">::</span>vcovHAC)</span>
+<span id="cb15-102"><a href="#cb15-102" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb15-103"><a href="#cb15-103" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-104"><a href="#cb15-104" aria-hidden="true" tabindex="-1"></a>The pre-period linear trend is about $-1.78$ packs per capita per year (statistically distinguishable from zero even after the HAC correction), with $R^2 \approx 0.73$ — so California was already declining about 1.8 packs per year before Proposition 99. The bigger uncertainty story in ITS is *not* the in-sample slope SE, though; it is the out-of-sample forecast variance, which we will visualise explicitly when we get to the ARIMA variant below. To estimate the policy effect we extrapolate the fitted line forward to 2000 and average the gap.</span>
+<span id="cb15-105"><a href="#cb15-105" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-108"><a href="#cb15-108" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb15-109"><a href="#cb15-109" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: its-growth-estimate</span></span>
+<span id="cb15-110"><a href="#cb15-110" aria-hidden="true" tabindex="-1"></a><span class="co"># Subset to the 1989-2000 rows and extrapolate the fitted line forward.</span></span>
+<span id="cb15-111"><a href="#cb15-111" aria-hidden="true" tabindex="-1"></a>post_df <span class="ot">&lt;-</span> prop99_ts <span class="sc">|&gt;</span> <span class="fu">filter</span>(prepost <span class="sc">==</span> <span class="st">"Post"</span>)</span>
+<span id="cb15-112"><a href="#cb15-112" aria-hidden="true" tabindex="-1"></a>pred_growth <span class="ot">&lt;-</span> <span class="fu">predict</span>(fit_growth, <span class="at">newdata =</span> <span class="fu">as_tibble</span>(post_df))</span>
+<span id="cb15-113"><a href="#cb15-113" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-114"><a href="#cb15-114" aria-hidden="true" tabindex="-1"></a><span class="co"># ATT estimate = average per-year gap between observed and extrapolation.</span></span>
+<span id="cb15-115"><a href="#cb15-115" aria-hidden="true" tabindex="-1"></a>its_growth_estimate <span class="ot">&lt;-</span> <span class="fu">mean</span>(post_df<span class="sc">$</span>cigsale <span class="sc">-</span> pred_growth)</span>
+<span id="cb15-116"><a href="#cb15-116" aria-hidden="true" tabindex="-1"></a>its_growth_estimate</span>
+<span id="cb15-117"><a href="#cb15-117" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb15-118"><a href="#cb15-118" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-119"><a href="#cb15-119" aria-hidden="true" tabindex="-1"></a>Plotting the observed series against the extrapolated line makes the size of the implied effect explicit: the dashed counterfactual continues the gentle pre-period decline, while the observed series breaks downward sharply after 1988.</span>
+<span id="cb15-120"><a href="#cb15-120" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-123"><a href="#cb15-123" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb15-124"><a href="#cb15-124" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-its-growth</span></span>
+<span id="cb15-125"><a href="#cb15-125" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "ITS counterfactual from a linear pre-period growth curve. Solid blue: in-sample fit (1970–1988). Dashed blue: extrapolation into the post-period (1989–2000)."</span></span>
+<span id="cb15-126"><a href="#cb15-126" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-width: 8</span></span>
+<span id="cb15-127"><a href="#cb15-127" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-height: 5</span></span>
+<span id="cb15-128"><a href="#cb15-128" aria-hidden="true" tabindex="-1"></a>its_growth_plot <span class="ot">&lt;-</span> prop99_ts <span class="sc">|&gt;</span></span>
+<span id="cb15-129"><a href="#cb15-129" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_tibble</span>() <span class="sc">|&gt;</span></span>
+<span id="cb15-130"><a href="#cb15-130" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">fitted_line =</span> <span class="fu">predict</span>(fit_growth, <span class="at">newdata =</span> <span class="fu">as_tibble</span>(prop99_ts))) <span class="sc">|&gt;</span></span>
+<span id="cb15-131"><a href="#cb15-131" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">in_sample     =</span> <span class="fu">if_else</span>(year <span class="sc">&lt;=</span> <span class="dv">1988</span>, fitted_line, <span class="cn">NA_real_</span>),</span>
+<span id="cb15-132"><a href="#cb15-132" aria-hidden="true" tabindex="-1"></a>         <span class="at">extrapolation =</span> <span class="fu">if_else</span>(year <span class="sc">&gt;=</span> <span class="dv">1989</span>, fitted_line, <span class="cn">NA_real_</span>))</span>
+<span id="cb15-133"><a href="#cb15-133" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-134"><a href="#cb15-134" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(its_growth_plot, <span class="fu">aes</span>(<span class="at">x =</span> year)) <span class="sc">+</span></span>
+<span id="cb15-135"><a href="#cb15-135" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> cigsale, <span class="at">color =</span> <span class="st">"Observed"</span>), <span class="at">linewidth =</span> <span class="fl">1.1</span>) <span class="sc">+</span></span>
+<span id="cb15-136"><a href="#cb15-136" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> in_sample, <span class="at">color =</span> <span class="st">"Pre-period fit"</span>),</span>
+<span id="cb15-137"><a href="#cb15-137" aria-hidden="true" tabindex="-1"></a>            <span class="at">linewidth =</span> <span class="dv">1</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
+<span id="cb15-138"><a href="#cb15-138" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> extrapolation, <span class="at">color =</span> <span class="st">"Pre-period fit"</span>),</span>
+<span id="cb15-139"><a href="#cb15-139" aria-hidden="true" tabindex="-1"></a>            <span class="at">linetype =</span> <span class="st">"dashed"</span>, <span class="at">linewidth =</span> <span class="dv">1</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
+<span id="cb15-140"><a href="#cb15-140" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="fl">1988.5</span>, <span class="at">color =</span> <span class="st">"#d97757"</span>,</span>
+<span id="cb15-141"><a href="#cb15-141" aria-hidden="true" tabindex="-1"></a>             <span class="at">linetype =</span> <span class="st">"dotted"</span>, <span class="at">linewidth =</span> <span class="fl">0.7</span>) <span class="sc">+</span></span>
+<span id="cb15-142"><a href="#cb15-142" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"Observed"</span> <span class="ot">=</span> <span class="st">"#d97757"</span>,</span>
+<span id="cb15-143"><a href="#cb15-143" aria-hidden="true" tabindex="-1"></a>                                <span class="st">"Pre-period fit"</span> <span class="ot">=</span> <span class="st">"#6a9bcc"</span>)) <span class="sc">+</span></span>
+<span id="cb15-144"><a href="#cb15-144" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Year"</span>, <span class="at">y =</span> <span class="st">"Cigarette sales (packs per capita)"</span>,</span>
+<span id="cb15-145"><a href="#cb15-145" aria-hidden="true" tabindex="-1"></a>       <span class="at">color =</span> <span class="cn">NULL</span>)</span>
+<span id="cb15-146"><a href="#cb15-146" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb15-147"><a href="#cb15-147" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-148"><a href="#cb15-148" aria-hidden="true" tabindex="-1"></a>**Reading the output.** The ITS-growth-curve estimate is about $-28.3$ packs per capita per year — averaged over the full 1989–2000 post-period and fit on the full 1970–1988 pre-period. Chapter 1's naive pre-post estimate of $-27.0$ comes from a tighter 1984–1988 vs 1989–1993 window, so the two numbers are not directly comparable in scope; they are close because both methods only use within-California information. Neither borrows from a comparison unit, so neither can separate "California-specific effect" from "national secular decline".</span>
+<span id="cb15-149"><a href="#cb15-149" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-150"><a href="#cb15-150" aria-hidden="true" tabindex="-1"></a>The coincidence is suggestive but not reassuring. Both methods can be biased the same way if California's pre-trend was *understating* the speed of the secular decline.</span>
+<span id="cb15-151"><a href="#cb15-151" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-152"><a href="#cb15-152" aria-hidden="true" tabindex="-1"></a>**Common pitfall.** Assuming the linear pre-trend is the right *shape*. If the true secular decline is accelerating or saturating, a linear extrapolation either understates or overstates what would have happened — and the policy effect inherits the bias.</span>
+<span id="cb15-153"><a href="#cb15-153" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-154"><a href="#cb15-154" aria-hidden="true" tabindex="-1"></a><span class="fu">## ARIMA-based ITS</span></span>
+<span id="cb15-155"><a href="#cb15-155" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-156"><a href="#cb15-156" aria-hidden="true" tabindex="-1"></a>**The idea.** Replace the straight line with a flexible time-series model. Let the data decide the model's complexity through an information criterion (AICc). Forecast forward as the counterfactual.</span>
+<span id="cb15-157"><a href="#cb15-157" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-158"><a href="#cb15-158" aria-hidden="true" tabindex="-1"></a>**The equation.** A general ARIMA$(p, d, q)$ model writes the $d$-th differenced series as an autoregressive-moving-average process. Using the lag operator $L$ (so $L\, Y_t = Y_{t-1}$):</span>
+<span id="cb15-159"><a href="#cb15-159" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-160"><a href="#cb15-160" aria-hidden="true" tabindex="-1"></a>$$\Phi(L)\, (1 - L)^d\, Y_{1t} \, = \, \Theta(L)\, \varepsilon_t, \qquad \varepsilon_t \sim \mathcal{N}(0, \sigma^2),$$</span>
+<span id="cb15-161"><a href="#cb15-161" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-162"><a href="#cb15-162" aria-hidden="true" tabindex="-1"></a>where $\Phi(L) = 1 - \phi_1 L - \cdots - \phi_p L^p$ collects the $p$ autoregressive coefficients and $\Theta(L) = 1 + \theta_1 L + \cdots + \theta_q L^q$ collects the $q$ moving-average coefficients. In principle <span class="in">`fable::ARIMA()`</span> searches over $(p, d, q)$ and picks the AICc-minimising combination, but with only 19 pre-period observations the default stepwise + seasonal search is unreliable on this series (it can silently return <span class="in">`&lt;NULL model&gt;`</span>). We therefore fit the AICc-minimising non-seasonal order $(p, d, q) = (1, 2, 0)$ *explicitly*, having verified the choice by a small grid search.</span>
+<span id="cb15-163"><a href="#cb15-163" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-164"><a href="#cb15-164" aria-hidden="true" tabindex="-1"></a>Once the model is fit, the post-period counterfactual is the model's $h$-step forecast and the ATT is the average gap, just as in the growth-curve version:</span>
+<span id="cb15-165"><a href="#cb15-165" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-166"><a href="#cb15-166" aria-hidden="true" tabindex="-1"></a>$$\widehat{Y_{1t}(0)} = \hat Y_{1t \mid t^*}, \qquad \widehat{\text{ATT}}_{\text{ITS-ARIMA}} = \frac{1}{T_{\text{post}}} \sum_{t &gt; t^*} \Big[Y_{1t} - \hat Y_{1t \mid t^*}\Big].$$</span>
+<span id="cb15-167"><a href="#cb15-167" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-168"><a href="#cb15-168" aria-hidden="true" tabindex="-1"></a>In words: same recipe as the growth-curve version — fit on pre-period, project forward, average the gap — but the "fit on pre-period" step now uses an autoregressive-integrated-moving-average model instead of a straight line.</span>
+<span id="cb15-169"><a href="#cb15-169" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-170"><a href="#cb15-170" aria-hidden="true" tabindex="-1"></a>**What ARIMA$(p, d, q)$ means in plain English.** $p$ is the number of past values the model uses (autoregression). $d$ is the number of times the series is differenced before fitting (to handle trends). $q$ is the number of past forecast errors used (moving average). Lower AICc = "better fit traded off against complexity".</span>
+<span id="cb15-171"><a href="#cb15-171" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-174"><a href="#cb15-174" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb15-175"><a href="#cb15-175" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fit-arima</span></span>
+<span id="cb15-176"><a href="#cb15-176" aria-hidden="true" tabindex="-1"></a><span class="co">#| message: false</span></span>
+<span id="cb15-177"><a href="#cb15-177" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit an ARIMA(1, 2, 0) explicitly on the 1970-1988 California series.</span></span>
+<span id="cb15-178"><a href="#cb15-178" aria-hidden="true" tabindex="-1"></a><span class="co"># This is the AICc-minimising non-seasonal order on this pre-period;</span></span>
+<span id="cb15-179"><a href="#cb15-179" aria-hidden="true" tabindex="-1"></a><span class="co"># we set PDQ(0, 0, 0) to disable the seasonal search (annual data has</span></span>
+<span id="cb15-180"><a href="#cb15-180" aria-hidden="true" tabindex="-1"></a><span class="co"># no within-year seasonality to find). We deliberately do NOT suppress</span></span>
+<span id="cb15-181"><a href="#cb15-181" aria-hidden="true" tabindex="-1"></a><span class="co"># warnings here — if the fit ever fails again on a future fable</span></span>
+<span id="cb15-182"><a href="#cb15-182" aria-hidden="true" tabindex="-1"></a><span class="co"># release, the warning needs to be visible to the reader.</span></span>
+<span id="cb15-183"><a href="#cb15-183" aria-hidden="true" tabindex="-1"></a>fit_arima <span class="ot">&lt;-</span> prop99_ts <span class="sc">|&gt;</span></span>
+<span id="cb15-184"><a href="#cb15-184" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(prepost <span class="sc">==</span> <span class="st">"Pre"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb15-185"><a href="#cb15-185" aria-hidden="true" tabindex="-1"></a>  <span class="fu">model</span>(<span class="at">timeseries =</span> <span class="fu">ARIMA</span>(cigsale <span class="sc">~</span> <span class="fu">pdq</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">0</span>) <span class="sc">+</span> <span class="fu">PDQ</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>)))</span>
+<span id="cb15-186"><a href="#cb15-186" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-187"><a href="#cb15-187" aria-hidden="true" tabindex="-1"></a><span class="fu">report</span>(fit_arima)</span>
+<span id="cb15-188"><a href="#cb15-188" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb15-189"><a href="#cb15-189" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-190"><a href="#cb15-190" aria-hidden="true" tabindex="-1"></a>The fitted model is <span class="in">`ARIMA(1, 2, 0)`</span>: one autoregressive lag and *two* rounds of differencing. The double-differencing means the model is tracking the *acceleration* of California's late-1980s drop, not just its level or slope.</span>
+<span id="cb15-191"><a href="#cb15-191" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-192"><a href="#cb15-192" aria-hidden="true" tabindex="-1"></a>**Residual diagnostics.** Before extrapolating 12 years out it is worth checking that the in-sample residuals look like white noise. <span class="in">`feasts::gg_tsresiduals()`</span> produces the standard three-panel diagnostic (residual series, ACF, histogram), and the Ljung-Box test gives a formal portmanteau check.</span>
+<span id="cb15-193"><a href="#cb15-193" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-196"><a href="#cb15-196" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb15-197"><a href="#cb15-197" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-arima-resid</span></span>
+<span id="cb15-198"><a href="#cb15-198" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Residual diagnostics for the pre-period ARIMA(1, 2, 0) fit. Residual series (top), ACF (bottom-left), histogram (bottom-right)."</span></span>
+<span id="cb15-199"><a href="#cb15-199" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-width: 8</span></span>
+<span id="cb15-200"><a href="#cb15-200" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-height: 5</span></span>
+<span id="cb15-201"><a href="#cb15-201" aria-hidden="true" tabindex="-1"></a><span class="fu">gg_tsresiduals</span>(fit_arima)</span>
+<span id="cb15-202"><a href="#cb15-202" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb15-203"><a href="#cb15-203" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-206"><a href="#cb15-206" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb15-207"><a href="#cb15-207" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: arima-ljung-box</span></span>
+<span id="cb15-208"><a href="#cb15-208" aria-hidden="true" tabindex="-1"></a><span class="co"># Ljung-Box test on the model innovations. dof = 1 because the model</span></span>
+<span id="cb15-209"><a href="#cb15-209" aria-hidden="true" tabindex="-1"></a><span class="co"># has 1 estimated coefficient (the AR(1) term); lag = 5 is a small-</span></span>
+<span id="cb15-210"><a href="#cb15-210" aria-hidden="true" tabindex="-1"></a><span class="co"># sample-friendly choice with 19 pre-period observations.</span></span>
+<span id="cb15-211"><a href="#cb15-211" aria-hidden="true" tabindex="-1"></a><span class="fu">augment</span>(fit_arima) <span class="sc">|&gt;</span></span>
+<span id="cb15-212"><a href="#cb15-212" aria-hidden="true" tabindex="-1"></a>  <span class="fu">features</span>(.innov, ljung_box, <span class="at">lag =</span> <span class="dv">5</span>, <span class="at">dof =</span> <span class="dv">1</span>)</span>
+<span id="cb15-213"><a href="#cb15-213" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb15-214"><a href="#cb15-214" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-215"><a href="#cb15-215" aria-hidden="true" tabindex="-1"></a>The Ljung-Box $p$-value sits well above the conventional 0.05 threshold, so we cannot reject white-noise residuals on the pre-period. But — and this is the punch line for the rest of the chapter — *in-sample* whiteness is necessary, not sufficient: it tells us the model is not mis-specified on 1970–1988, not that the model will extrapolate sensibly into 1989–2000. We then forecast 12 years out and average the gap.</span>
+<span id="cb15-216"><a href="#cb15-216" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-219"><a href="#cb15-219" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb15-220"><a href="#cb15-220" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: its-arima-estimate</span></span>
+<span id="cb15-221"><a href="#cb15-221" aria-hidden="true" tabindex="-1"></a><span class="co"># Project the fitted ARIMA 12 years forward as the post-period counterfactual.</span></span>
+<span id="cb15-222"><a href="#cb15-222" aria-hidden="true" tabindex="-1"></a><span class="co"># fcasts has a distributional column `cigsale` (the forecast distribution</span></span>
+<span id="cb15-223"><a href="#cb15-223" aria-hidden="true" tabindex="-1"></a><span class="co"># at each horizon) and a point-forecast column `.mean`.</span></span>
+<span id="cb15-224"><a href="#cb15-224" aria-hidden="true" tabindex="-1"></a>fcasts <span class="ot">&lt;-</span> <span class="fu">forecast</span>(fit_arima, <span class="at">h =</span> <span class="st">"12 years"</span>)</span>
+<span id="cb15-225"><a href="#cb15-225" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-226"><a href="#cb15-226" aria-hidden="true" tabindex="-1"></a><span class="co"># ATT estimate = average per-year gap between observed and ARIMA forecast.</span></span>
+<span id="cb15-227"><a href="#cb15-227" aria-hidden="true" tabindex="-1"></a>ce_arima <span class="ot">&lt;-</span> post_df<span class="sc">$</span>cigsale <span class="sc">-</span> fcasts<span class="sc">$</span>.mean</span>
+<span id="cb15-228"><a href="#cb15-228" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(ce_arima)</span>
+<span id="cb15-229"><a href="#cb15-229" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb15-230"><a href="#cb15-230" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-231"><a href="#cb15-231" aria-hidden="true" tabindex="-1"></a>Plotting the forecast against the observed post-period series shows where the model goes wrong — the dashed ARIMA counterfactual dives below the observed series almost immediately, so the per-year residuals are mostly positive. Crucially, the ARIMA forecast comes with a *distribution*, not just a point. The 80 % and 95 % prediction bands below show how much uncertainty the model itself attaches to its own counterfactual.</span>
+<span id="cb15-232"><a href="#cb15-232" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-235"><a href="#cb15-235" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb15-236"><a href="#cb15-236" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-its-arima</span></span>
+<span id="cb15-237"><a href="#cb15-237" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "ITS counterfactual from the pre-period ARIMA(1, 2, 0), forecast to 2000. The point forecast (dashed) is surrounded by 80 % and 95 % prediction bands derived from the model's own forecast distribution."</span></span>
+<span id="cb15-238"><a href="#cb15-238" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-width: 8</span></span>
+<span id="cb15-239"><a href="#cb15-239" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-height: 5</span></span>
+<span id="cb15-240"><a href="#cb15-240" aria-hidden="true" tabindex="-1"></a><span class="co"># Unpack the 80% and 95% prediction intervals from the distribution.</span></span>
+<span id="cb15-241"><a href="#cb15-241" aria-hidden="true" tabindex="-1"></a>fcast_bands <span class="ot">&lt;-</span> fcasts <span class="sc">|&gt;</span></span>
+<span id="cb15-242"><a href="#cb15-242" aria-hidden="true" tabindex="-1"></a>  <span class="fu">hilo</span>(<span class="at">level =</span> <span class="fu">c</span>(<span class="dv">80</span>, <span class="dv">95</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb15-243"><a href="#cb15-243" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unpack_hilo</span>(<span class="fu">c</span>(<span class="st">"80%"</span>, <span class="st">"95%"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb15-244"><a href="#cb15-244" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_tibble</span>() <span class="sc">|&gt;</span></span>
+<span id="cb15-245"><a href="#cb15-245" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(year, .mean, <span class="st">`</span><span class="at">80%_lower</span><span class="st">`</span>, <span class="st">`</span><span class="at">80%_upper</span><span class="st">`</span>, <span class="st">`</span><span class="at">95%_lower</span><span class="st">`</span>, <span class="st">`</span><span class="at">95%_upper</span><span class="st">`</span>)</span>
+<span id="cb15-246"><a href="#cb15-246" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-247"><a href="#cb15-247" aria-hidden="true" tabindex="-1"></a>plot_df <span class="ot">&lt;-</span> prop99_ts <span class="sc">|&gt;</span></span>
+<span id="cb15-248"><a href="#cb15-248" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_tibble</span>() <span class="sc">|&gt;</span></span>
+<span id="cb15-249"><a href="#cb15-249" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(year, cigsale) <span class="sc">|&gt;</span></span>
+<span id="cb15-250"><a href="#cb15-250" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(fcast_bands, <span class="at">by =</span> <span class="st">"year"</span>)</span>
+<span id="cb15-251"><a href="#cb15-251" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-252"><a href="#cb15-252" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(plot_df, <span class="fu">aes</span>(<span class="at">x =</span> year)) <span class="sc">+</span></span>
+<span id="cb15-253"><a href="#cb15-253" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_ribbon</span>(<span class="fu">aes</span>(<span class="at">ymin =</span> <span class="st">`</span><span class="at">95%_lower</span><span class="st">`</span>, <span class="at">ymax =</span> <span class="st">`</span><span class="at">95%_upper</span><span class="st">`</span>),</span>
+<span id="cb15-254"><a href="#cb15-254" aria-hidden="true" tabindex="-1"></a>              <span class="at">fill =</span> <span class="st">"#6a9bcc"</span>, <span class="at">alpha =</span> <span class="fl">0.15</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
+<span id="cb15-255"><a href="#cb15-255" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_ribbon</span>(<span class="fu">aes</span>(<span class="at">ymin =</span> <span class="st">`</span><span class="at">80%_lower</span><span class="st">`</span>, <span class="at">ymax =</span> <span class="st">`</span><span class="at">80%_upper</span><span class="st">`</span>),</span>
+<span id="cb15-256"><a href="#cb15-256" aria-hidden="true" tabindex="-1"></a>              <span class="at">fill =</span> <span class="st">"#6a9bcc"</span>, <span class="at">alpha =</span> <span class="fl">0.25</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
+<span id="cb15-257"><a href="#cb15-257" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> cigsale, <span class="at">color =</span> <span class="st">"Observed"</span>), <span class="at">linewidth =</span> <span class="fl">1.1</span>) <span class="sc">+</span></span>
+<span id="cb15-258"><a href="#cb15-258" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> .mean, <span class="at">color =</span> <span class="st">"ARIMA counterfactual"</span>),</span>
+<span id="cb15-259"><a href="#cb15-259" aria-hidden="true" tabindex="-1"></a>            <span class="at">linetype =</span> <span class="st">"dashed"</span>, <span class="at">linewidth =</span> <span class="dv">1</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
+<span id="cb15-260"><a href="#cb15-260" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="fl">1988.5</span>, <span class="at">color =</span> <span class="st">"#d97757"</span>,</span>
+<span id="cb15-261"><a href="#cb15-261" aria-hidden="true" tabindex="-1"></a>             <span class="at">linetype =</span> <span class="st">"dotted"</span>, <span class="at">linewidth =</span> <span class="fl">0.7</span>) <span class="sc">+</span></span>
+<span id="cb15-262"><a href="#cb15-262" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"Observed"</span> <span class="ot">=</span> <span class="st">"#d97757"</span>,</span>
+<span id="cb15-263"><a href="#cb15-263" aria-hidden="true" tabindex="-1"></a>                                <span class="st">"ARIMA counterfactual"</span> <span class="ot">=</span> <span class="st">"#6a9bcc"</span>)) <span class="sc">+</span></span>
+<span id="cb15-264"><a href="#cb15-264" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Year"</span>, <span class="at">y =</span> <span class="st">"Cigarette sales (packs per capita)"</span>,</span>
+<span id="cb15-265"><a href="#cb15-265" aria-hidden="true" tabindex="-1"></a>       <span class="at">color =</span> <span class="cn">NULL</span>)</span>
+<span id="cb15-266"><a href="#cb15-266" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb15-267"><a href="#cb15-267" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-268"><a href="#cb15-268" aria-hidden="true" tabindex="-1"></a>The width of the 95 % band by 2000 is far wider than the point estimate itself. Whatever the ARIMA counterfactual is saying about the *level* of California's smoking in 2000, the model is saying it with very low confidence — a property the *in-sample* fit table at the top of this section gave no hint of.</span>
+<span id="cb15-269"><a href="#cb15-269" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-270"><a href="#cb15-270" aria-hidden="true" tabindex="-1"></a>**Reading the output.** The ARIMA-based ITS estimate comes out around $+4.5$ packs. That is *positive* — it would imply Proposition 99 *increased* California's smoking. That is plainly the wrong answer.</span>
+<span id="cb15-271"><a href="#cb15-271" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-272"><a href="#cb15-272" aria-hidden="true" tabindex="-1"></a>The visual diagnostic shows why. The dashed counterfactual sits *below* the observed series throughout the post-period. The model extrapolates the late-1980s downward acceleration too aggressively. It predicts California should have hit roughly 50 packs by 2000 if the pre-period momentum had continued. Since California actually only hit 60 packs, the model concludes Proposition 99 "raised" smoking by about 5 packs relative to that doomsday counterfactual.</span>
+<span id="cb15-273"><a href="#cb15-273" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-274"><a href="#cb15-274" aria-hidden="true" tabindex="-1"></a>**The pitfall in one sentence.** AICc minimises *in-sample* fit, but in-sample fit can come from features — here, second-order momentum — that do not persist *out-of-sample*.</span>
+<span id="cb15-275"><a href="#cb15-275" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-276"><a href="#cb15-276" aria-hidden="true" tabindex="-1"></a>More technically: with $d = 2$ the model has no mean reversion, so the *slope* implied by the last few pre-period observations becomes the permanent slope of the forecast. The last three pre-period years (1986 = 99.7, 1987 = 97.5, 1988 = 90.1) imply an accelerating downward slope; with only three observations defining that slope, the forecast is extremely sensitive to the pre-period endpoint, and the prediction band above shows it.</span>
+<span id="cb15-277"><a href="#cb15-277" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-278"><a href="#cb15-278" aria-hidden="true" tabindex="-1"></a>**Common pitfall.** Trusting an information-criterion-selected model on a short pre-period. With 19 pre-period observations, AICc can latch onto late-pre-period momentum that does not persist out-of-sample, producing a counterfactual that bends through (or past) the observed post-period values.</span>
+<span id="cb15-279"><a href="#cb15-279" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-280"><a href="#cb15-280" aria-hidden="true" tabindex="-1"></a><span class="fu">## What the two ITS estimates tell us</span></span>
+<span id="cb15-281"><a href="#cb15-281" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-282"><a href="#cb15-282" aria-hidden="true" tabindex="-1"></a>**The disagreement.** Same data, same recipe, two answers more than 30 packs apart: the linear growth-curve variant gives $\tau_{\text{ITS-growth}} \approx -28.3$ packs per capita per year — Proposition 99 "worked" — while the explicitly-fit ARIMA(1, 2, 0) gives $\tau_{\text{ITS-ARIMA}} \approx +4.5$ — Proposition 99 "backfired". Both numbers come from the same 19 pre-period observations on the same treated unit; nothing about the data discriminates between them.</span>
+<span id="cb15-283"><a href="#cb15-283" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-284"><a href="#cb15-284" aria-hidden="true" tabindex="-1"></a>The growth-curve and ARIMA variants share every step of the recipe — fit on pre-period, project forward, average the gap — but disagree because they extrapolate different features of that pre-period. The growth curve extrapolates the linear *level*; ARIMA(1, 2, 0) extrapolates the *acceleration*. There is no purely-within-California way to decide which is right, because — as the identification assumption stated in §1 makes explicit — the choice is identified by an assumption about the missing $Y_{1t}(0)$ that the data itself cannot verify.</span>
+<span id="cb15-285"><a href="#cb15-285" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-286"><a href="#cb15-286" aria-hidden="true" tabindex="-1"></a>**Where this leaves us.** The lesson is not "ARIMA is bad". The lesson is that **single-model ITS is fragile**: any within-unit method inherits the same problem of being identified by an assumption about the missing counterfactual that the data alone cannot verify. The remaining methods in the book each handle this fragility by borrowing strength from outside California: chapter 3 (Differences-in-Differences) pairs California with a single comparison state (Nevada) and treats their pre-to-post change as the counterfactual; chapter 4 (Synthetic Control) builds a weighted donor pool of all available control states tailored to California's pre-period; chapter 5 (Bayesian Structural Time Series) combines those ideas inside a forecasting model with explicit posterior credible intervals; chapter 6 (synthetic control with prediction intervals) attaches frequentist prediction intervals to the SCM point estimate — the natural counterpart to the ARIMA forecast band above; and chapter 7 (Bayesian spatial SCM) further allows treatment to spill over onto neighbouring donor states. Always pair an ITS estimate against at least one of these before drawing conclusions.</span>
+<span id="cb15-287"><a href="#cb15-287" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-288"><a href="#cb15-288" aria-hidden="true" tabindex="-1"></a>**Recap.** Two ITS variants on the same 19 pre-period observations gave $\tau_{\text{ITS-growth}} \approx -28.3$ and $\tau_{\text{ITS-ARIMA}} \approx +4.5$; the disagreement is the lesson, and the rest of Part I exists to resolve it by borrowing information from outside California.</span>
+<span id="cb15-289"><a href="#cb15-289" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-290"><a href="#cb15-290" aria-hidden="true" tabindex="-1"></a><span class="fu">## Further reading</span></span>
+<span id="cb15-291"><a href="#cb15-291" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-292"><a href="#cb15-292" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>@bernal2017interrupted — practitioner's tutorial on ITS regression for public-health interventions.</span>
+<span id="cb15-293"><a href="#cb15-293" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>@wagner2002segmented — the canonical segmented-regression complement to Bernal et al., aimed at medication-use research but methodologically general.</span>
+<span id="cb15-294"><a href="#cb15-294" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>@hyndman2021forecasting — the canonical reference for the <span class="in">`fpp3`</span> ecosystem and AICc-selected ARIMA modelling.</span>
 </code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->

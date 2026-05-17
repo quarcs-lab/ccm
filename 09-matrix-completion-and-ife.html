@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>9&nbsp; Matrix Completion and Interactive Fixed Effects – Comparative Causal Metrics</title>
+<title>9&nbsp; Interactive Fixed Effects and Matrix Completion – Comparative Causal Metrics</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -332,7 +332,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./09-matrix-completion-and-ife.html"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Matrix Completion and Interactive Fixed Effects</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./09-matrix-completion-and-ife.html"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Interactive Fixed Effects and Matrix Completion</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -436,7 +436,7 @@ window.Quarto = {
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./09-matrix-completion-and-ife.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Matrix Completion and Interactive Fixed Effects</span></span></a>
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Interactive Fixed Effects and Matrix Completion</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -471,6 +471,7 @@ window.Quarto = {
   <li><a href="#recap" id="toc-recap" class="nav-link" data-scroll-target="#recap"><span class="header-section-number">9.8</span> Recap</a></li>
   <li><a href="#common-pitfall" id="toc-common-pitfall" class="nav-link" data-scroll-target="#common-pitfall"><span class="header-section-number">9.9</span> Common pitfall</a></li>
   <li><a href="#further-reading" id="toc-further-reading" class="nav-link" data-scroll-target="#further-reading"><span class="header-section-number">9.10</span> Further reading</a></li>
+  <li><a href="#exercises" id="toc-exercises" class="nav-link" data-scroll-target="#exercises"><span class="header-section-number">9.11</span> Exercises</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/quarcs-lab/ccm/edit/main/09-matrix-completion-and-ife.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/quarcs-lab/ccm/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
@@ -480,7 +481,7 @@ window.Quarto = {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Matrix Completion and Interactive Fixed Effects</span></h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li><li><hr class="dropdown-divider"></li><li><a id="quarto-view-source" class="dropdown-item" href="javascript:void(0)" role="button">View Source</a></li></ul></div></div>
+<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Interactive Fixed Effects and Matrix Completion</span></h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li><li><hr class="dropdown-divider"></li><li><a id="quarto-view-source" class="dropdown-item" href="javascript:void(0)" role="button">View Source</a></li></ul></div></div>
 </div>
 
 
@@ -503,12 +504,13 @@ window.Quarto = {
 <p>What if it would not have? Counties select into raising the minimum wage non-randomly. They are not a random subset of the country in the time-varying dimension either: industry mix, demographics, and local growth trends all shape both treatment timing and outcome paths. Two counties can share an industry-mix-driven trajectory that TWFE never absorbs — and so cannot net out.</p>
 <p>This chapter relaxes parallel trends in a specific way. We model the counterfactual outcome as a <strong>factor structure</strong>:</p>
 <p><span class="math display">\[Y_{it}(0) \;=\; \alpha_i + \xi_t + \lambda_i' f_t + \varepsilon_{it}.\]</span></p>
-<p>Each unit <span class="math inline">\(i\)</span> has a loading vector <span class="math inline">\(\lambda_i\)</span>; each period a factor vector <span class="math inline">\(f_t\)</span>. Their interaction <span class="math inline">\(\lambda_i' f_t\)</span> encodes time-varying unobserved heterogeneity that no county or year fixed effect can absorb. Two views of the same object give two estimators <span class="citation" data-cites="liu2024practical">(<a href="references.html#ref-liu2024practical" role="doc-biblioref">Liu et al., 2024</a>)</span>:</p>
+<p>Each unit <span class="math inline">\(i\)</span> has a loading vector <span class="math inline">\(\lambda_i\)</span>; each period a factor vector <span class="math inline">\(f_t\)</span>. Their interaction <span class="math inline">\(\lambda_i' f_t\)</span> encodes time-varying unobserved heterogeneity that no county or year fixed effect can absorb. We write the model without observable covariates for simplicity, but <code>fect()</code> accepts a covariate matrix <span class="math inline">\(X_{it}\)</span> — e.g.&nbsp;<code>lemp ~ D + lpop + lavg_pay</code> — and chapter 10 exercises exactly that extension on the same panel.</p>
+<p>Two views of the same object give two estimators <span class="citation" data-cites="liu2024practical">(<a href="references.html#ref-liu2024practical" role="doc-biblioref">Liu et al., 2024</a>)</span>:</p>
 <ul>
-<li><strong>Interactive Fixed Effects (IFEct)</strong> <span class="citation" data-cites="bai2009panel xu2017generalized">(<a href="references.html#ref-bai2009panel" role="doc-biblioref">Bai, 2009</a>; <a href="references.html#ref-xu2017generalized" role="doc-biblioref">Xu, 2017</a>)</span> treats <span class="math inline">\((\alpha, \xi, \Lambda, F)\)</span> as parameters to be estimated on control observations, then imputes <span class="math inline">\(Y_{it}(0)\)</span> on treated cells.</li>
+<li><strong>Interactive Fixed Effects (IFEct)</strong> <span class="citation" data-cites="bai2009panel xu2017generalized liu2024practical">(<a href="references.html#ref-bai2009panel" role="doc-biblioref">Bai, 2009</a>; <a href="references.html#ref-liu2024practical" role="doc-biblioref">Liu et al., 2024</a>; <a href="references.html#ref-xu2017generalized" role="doc-biblioref">Xu, 2017</a>)</span> treats <span class="math inline">\((\alpha, \xi, \Lambda, F)\)</span> as parameters to be estimated on control observations, then imputes <span class="math inline">\(Y_{it}(0)\)</span> on treated cells.</li>
 <li><strong>Matrix Completion (MC)</strong> <span class="citation" data-cites="athey2021matrix">(<a href="references.html#ref-athey2021matrix" role="doc-biblioref">Athey et al., 2021</a>)</span> reframes the same problem as filling missing entries of the implicit <span class="math inline">\(Y(0)\)</span> matrix: mask the treated cells, then complete via nuclear-norm-regularised SVD.</li>
 </ul>
-<p>Yiqing Xu’s <code>fect</code> package implements both with a common API and a common counterfactual-plot diagnostic. By chapter’s end we compare IFEct and MC on the same panel — two estimators, two identifying assumptions, one substantive question.</p>
+<p>Yiqing Xu’s <code>fect</code> <span class="citation" data-cites="liu2024practical">(<a href="references.html#ref-liu2024practical" role="doc-biblioref">Liu et al., 2024</a>)</span> package implements both with a common API and a common counterfactual-plot diagnostic. By chapter’s end we compare IFEct and MC on the same panel — two estimators, two identifying assumptions, one substantive question. Chapter 10 then does the deep dive on one specific member of this family — generalized synthetic control via the <code>gsynth</code> package — using the same panel.</p>
 </section>
 <section id="setup-and-data" class="level2" data-number="9.2">
 <h2 data-number="9.2" class="anchored" data-anchor-id="setup-and-data"><span class="header-section-number">9.2</span> Setup and data</h2>
@@ -540,7 +542,7 @@ window.Quarto = {
 <span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
-<p>We work from the same <code>cs_minwage.rds</code> panel as chapter 8, but with one small adjustment: factor-based estimators need <strong>at least as many pre-treatment periods per cohort as the number of factors they try to fit</strong>. Chapter 8’s 2003-2007 window leaves the 2004 cohort with only one pre-period, which would force <code>min.T0 = 1</code> and cap the rank at zero — collapsing IFEct back to TWFE. So we widen the pre-treatment window by two years to 2001-2007; everything else (cohort filter, region drop, treatment indicator) is identical.</p>
+<p>We work from the same <code>cs_minwage.rds</code> panel as chapter 8, but with one small adjustment: factor-based estimators need <strong>at least as many pre-treatment periods per cohort as the number of factors they try to fit</strong> — concretely, identifying <span class="math inline">\(r\)</span> factors on a treated unit requires at least <span class="math inline">\(r + 1\)</span> pre-treatment periods for that unit. Chapter 8’s 2003-2007 <code>data2</code> window (see <code>08-staggered-did.qmd:99</code>) leaves the 2004 cohort with only one pre-period (year 2003). To keep that cohort in the IFE sample we would need to set <code>min.T0 = 1</code> — the user-controlled inclusion threshold that drops treated units with fewer pre-periods — which in turn caps the identifiable rank at zero for that cohort and collapses IFEct back to TWFE. Widening the window to 2001-2007 gives 2004 three pre-periods (2001-2003), so we can set <code>min.T0 = 2</code> and let CV search over <span class="math inline">\(r \in \{0, 1, 2\}\)</span>. Everything else (cohort filter, region drop, treatment indicator) is identical to chapter 8.</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
@@ -1061,7 +1063,7 @@ Table&nbsp;9.1: Cohorts in the 2001-2007 working panel. <span class="math inline
 </figure>
 </div>
 </div>
-<p>The outcome <code>lemp</code> (log teen employment) and the treatment indicator <code>D</code> (1 once a county’s state has raised its minimum wage above the federal floor, 0 otherwise) line up with chapter 8’s definitions.</p>
+<p>The outcome <code>lemp</code> (log teen employment; see chapter 8 for full data provenance) and the treatment indicator <code>D</code> (1 once a county’s state has raised its minimum wage above the federal floor, 0 otherwise) line up with chapter 8’s definitions.</p>
 </section>
 <section id="visualising-the-panel" class="level2" data-number="9.3">
 <h2 data-number="9.3" class="anchored" data-anchor-id="visualising-the-panel"><span class="header-section-number">9.3</span> Visualising the panel</h2>
@@ -1073,16 +1075,10 @@ Table&nbsp;9.1: Cohorts in the 2001-2007 working panel. <span class="math inline
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>          <span class="at">index =</span> <span class="fu">c</span>(<span class="st">"id"</span>, <span class="st">"year"</span>),</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>          <span class="at">xlab =</span> <span class="st">"Year"</span>, <span class="at">ylab =</span> <span class="st">"County"</span>,</span>
 <span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>          <span class="at">main =</span> <span class="st">""</span>, <span class="at">legendOff =</span> <span class="cn">FALSE</span>,</span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>          <span class="at">theme.bw =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>          <span class="at">background =</span> <span class="st">"transparent"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>          <span class="at">display.all =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>          <span class="at">theme.bw =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>          <span class="at">background =</span> <span class="st">"transparent"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
-<div class="cell-output cell-output-stderr">
-<pre><code>If the number of units is more than 300, we set "gridOff = TRUE".</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code>If the number of units is more than 500, we randomly select 500 units to present.
-        You can set "display.all = TRUE" to show all units.</code></pre>
-</div>
 <div class="cell-output-display">
 <div id="fig-panelview" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
@@ -1090,7 +1086,7 @@ Table&nbsp;9.1: Cohorts in the 2001-2007 working panel. <span class="math inline
 <img src="09-matrix-completion-and-ife_files/figure-html/fig-panelview-1.png" class="img-fluid figure-img" width="768">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-panelview-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;9.1: Treatment status by county and year. The two horizontal bands of pink are the 2004 and 2006 cohorts; the wide grey band underneath is the never-treated <span class="math inline">\(G = 0\)</span> control pool. The visible step in the pink rows is the staggered adoption that breaks TWFE.
+Figure&nbsp;9.1: Treatment status by county and year. The two horizontal bands of pink are the 2004 and 2006 cohorts; the wide grey band underneath is the never-treated <span class="math inline">\(G = 0\)</span> control pool. The visible step in the pink rows is the staggered adoption that breaks TWFE. All 1,745 counties are shown.
 </figcaption>
 </figure>
 </div>
@@ -1102,12 +1098,22 @@ Figure&nbsp;9.1: Treatment status by county and year. The two horizontal bands o
 <p>Both estimators target the same object — the counterfactual matrix <span class="math inline">\(Y(0)\)</span> of what each county’s log teen employment <em>would</em> have been absent any minimum-wage increase. Where they differ is in how they restrict that matrix.</p>
 <p><strong>IFEct</strong> imposes the explicit factor decomposition <span class="math inline">\(Y_{it}(0) =
 \alpha_i + \xi_t + \lambda_i' f_t + \varepsilon_{it}\)</span>, fits <span class="math inline">\((\alpha, \xi, \Lambda, F)\)</span> on the <strong>control</strong> observations only, and uses those estimates to impute <span class="math inline">\(Y_{it}(0)\)</span> for treated cells. The choice of <span class="math inline">\(r\)</span> — how many factors — is made by cross-validation: hold out small blocks of control cells, refit, score by MSPE on the held-out cells <span class="citation" data-cites="xu2017generalized liu2024practical">(<a href="references.html#ref-liu2024practical" role="doc-biblioref">Liu et al., 2024</a>; <a href="references.html#ref-xu2017generalized" role="doc-biblioref">Xu, 2017</a>)</span>.</p>
-<p><strong>MC</strong> does not write the factor model down. It assumes only that the matrix of <span class="math inline">\(Y(0)\)</span> outcomes is <strong>approximately low rank</strong>, then completes it by minimising a Frobenius-norm fit penalty <em>plus</em> a nuclear-norm penalty on the singular values. Nuclear-norm regularisation is the convex relaxation of “low rank” the same way <span class="math inline">\(\ell_1\)</span> is the convex relaxation of “sparse” <span class="citation" data-cites="athey2021matrix">(<a href="references.html#ref-athey2021matrix" role="doc-biblioref">Athey et al., 2021</a>)</span>. The penalty weight <span class="math inline">\(\lambda\)</span> plays the role of <span class="math inline">\(r\)</span> and is again chosen by cross-validation.</p>
-<p>The key practical implication: both methods bake in <strong>unit-specific time trends</strong> automatically, without you having to specify which units or which trend shapes. Parallel trends becomes a special case (the <span class="math inline">\(r = 0\)</span> corner of IFEct, or the limit <span class="math inline">\(\lambda \to \infty\)</span> in MC) rather than an assumption.</p>
+<p><strong>MC</strong> does not write the factor model down. It assumes only that the matrix of <span class="math inline">\(Y(0)\)</span> outcomes is <strong>approximately low rank</strong>, then completes it by minimising a Frobenius-norm fit penalty <em>plus</em> a nuclear-norm penalty on the singular values. Nuclear-norm regularisation is the convex relaxation of “low rank” the same way <span class="math inline">\(\ell_1\)</span> is the convex relaxation of “sparse” <span class="citation" data-cites="athey2021matrix">(<a href="references.html#ref-athey2021matrix" role="doc-biblioref">Athey et al., 2021</a>)</span>. Concretely, MC solves <span class="math display">\[\min_{\widehat{Y(0)}} \; \|\,Y_{\mathrm{obs}} - \widehat{Y(0)}\,\|_F^2 \;+\; \eta \, \|\,\widehat{Y(0)}\,\|_*,\]</span> where <span class="math inline">\(\|\cdot\|_*\)</span> (the nuclear norm) is the sum of singular values. As <span class="math inline">\(\eta \to 0\)</span> the fit interpolates the observed cells; as <span class="math inline">\(\eta \to \infty\)</span> all singular values shrink to zero and <span class="math inline">\(\widehat{Y(0)}\)</span> collapses to a constant. The penalty weight <span class="math inline">\(\eta\)</span> (written as <code>lambda</code> in the <code>fect</code> API and sometimes as <span class="math inline">\(\lambda_{\mathrm{MC}}\)</span> in the matrix-completion literature; we use <span class="math inline">\(\eta\)</span> in prose to avoid confusion with the unit-level loading vector <span class="math inline">\(\lambda_i\)</span> from IFEct) plays the role of <span class="math inline">\(r\)</span> and is again chosen by cross-validation.</p>
+<p>The key practical implication: both methods bake in <strong>unit-specific time trends</strong> automatically, without you having to specify which units or which trend shapes. Parallel trends becomes a special case (the <span class="math inline">\(r = 0\)</span> corner of IFEct, or the limit <span class="math inline">\(\eta \to \infty\)</span> in MC) rather than an assumption.</p>
 </section>
 <section id="estimating-with-fect" class="level2" data-number="9.5">
 <h2 data-number="9.5" class="anchored" data-anchor-id="estimating-with-fect"><span class="header-section-number">9.5</span> Estimating with FECT</h2>
-<p>The two fits below cap the rank grid at <span class="math inline">\(r \in \{0, 1, 2\}\)</span>. With only 7 calendar years and 3 pre-periods on the shorter cohort, any <span class="math inline">\(r\)</span> larger than that would be statistical fantasy.</p>
+<div class="callout callout-style-simple callout-warning">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-body-container">
+<p><strong>The short-panel caveat (read first).</strong> With <span class="math inline">\(T = 7\)</span> and 3 pre-periods on the shorter cohort, the rank/penalty selected by cross-validation is borderline-identifiable; we cap <span class="math inline">\(r \le 2\)</span> deliberately and the <em>effective</em> identification ceiling is <span class="math inline">\(r \le \min(\text{pre-periods}) - 1 = 1\)</span>. On a genuinely short panel (<span class="math inline">\(T \le 5\)</span>) IFE and MC become numerically delicate, and the honest move is to <em>not</em> run them rather than to hand-pick a rank. The <code>fect::simdata</code> panel ships a <span class="math inline">\(T = 30\)</span> example that shows both methods working at full strength. Everything in the rest of this chapter should be read with this caveat in mind.</p>
+</div>
+</div>
+</div>
+<p>The two fits below cap the rank grid at <span class="math inline">\(r \in \{0, 1, 2\}\)</span>. The identification rule is that recovering <span class="math inline">\(r\)</span> factors on a treated unit requires at least <span class="math inline">\(r + 1\)</span> pre-periods for that unit; with <code>min.T0 = 2</code> the <em>effective</em> ceiling is <span class="math inline">\(r = 1\)</span>. We let CV search up to <span class="math inline">\(r = 2\)</span> only to verify it does not get fooled into climbing past the ceiling. Any <span class="math inline">\(r\)</span> larger than that would be statistical fantasy.</p>
 <div class="callout callout-style-simple callout-note">
 <div class="callout-body d-flex">
 <div class="callout-icon-container">
@@ -1121,56 +1127,56 @@ Figure&nbsp;9.1: Treatment status by county and year. The two horizontal bands o
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>out_ife <span class="ot">&lt;-</span> <span class="fu">fect</span>(</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  lemp <span class="sc">~</span> D, <span class="at">data =</span> <span class="fu">as.data.frame</span>(mw),</span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">index    =</span> <span class="fu">c</span>(<span class="st">"id"</span>, <span class="st">"year"</span>),</span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">method   =</span> <span class="st">"ife"</span>,</span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">force    =</span> <span class="st">"two-way"</span>,</span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">CV       =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">r        =</span> <span class="dv">0</span><span class="sc">:</span><span class="dv">2</span>,</span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">min.T0   =</span> <span class="dv">2</span>,</span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">cv.nobs  =</span> <span class="dv">2</span>,</span>
-<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">cv.donut =</span> <span class="dv">0</span>,</span>
-<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">se       =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">nboots   =</span> <span class="dv">50</span>,</span>
-<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">parallel =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">seed     =</span> <span class="dv">42</span></span>
-<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>out_ife <span class="ot">&lt;-</span> <span class="fu">fect</span>(</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  lemp <span class="sc">~</span> D, <span class="at">data =</span> <span class="fu">as.data.frame</span>(mw),</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">index    =</span> <span class="fu">c</span>(<span class="st">"id"</span>, <span class="st">"year"</span>),</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">method   =</span> <span class="st">"ife"</span>,</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">force    =</span> <span class="st">"two-way"</span>,</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">CV       =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">r        =</span> <span class="dv">0</span><span class="sc">:</span><span class="dv">2</span>,</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">min.T0   =</span> <span class="dv">2</span>,</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">cv.nobs  =</span> <span class="dv">2</span>,</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">cv.donut =</span> <span class="dv">0</span>,</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">se       =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">nboots   =</span> <span class="dv">50</span>,</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">parallel =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">seed     =</span> <span class="dv">42</span></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>out_mc <span class="ot">&lt;-</span> <span class="fu">fect</span>(</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  lemp <span class="sc">~</span> D, <span class="at">data =</span> <span class="fu">as.data.frame</span>(mw),</span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">index    =</span> <span class="fu">c</span>(<span class="st">"id"</span>, <span class="st">"year"</span>),</span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">method   =</span> <span class="st">"mc"</span>,</span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">force    =</span> <span class="st">"two-way"</span>,</span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">CV       =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">min.T0   =</span> <span class="dv">2</span>,</span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">cv.nobs  =</span> <span class="dv">2</span>,</span>
-<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">cv.donut =</span> <span class="dv">0</span>,</span>
-<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">se       =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">nboots   =</span> <span class="dv">50</span>,</span>
-<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">parallel =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">seed     =</span> <span class="dv">42</span></span>
-<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>out_mc <span class="ot">&lt;-</span> <span class="fu">fect</span>(</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  lemp <span class="sc">~</span> D, <span class="at">data =</span> <span class="fu">as.data.frame</span>(mw),</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">index    =</span> <span class="fu">c</span>(<span class="st">"id"</span>, <span class="st">"year"</span>),</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">method   =</span> <span class="st">"mc"</span>,</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">force    =</span> <span class="st">"two-way"</span>,</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">CV       =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">min.T0   =</span> <span class="dv">2</span>,</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">cv.nobs  =</span> <span class="dv">2</span>,</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">cv.donut =</span> <span class="dv">0</span>,</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">se       =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">nboots   =</span> <span class="dv">50</span>,</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">parallel =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">seed     =</span> <span class="dv">42</span></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tibble</span>(</span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">Method            =</span> <span class="fu">c</span>(<span class="st">"IFEct"</span>, <span class="st">"MC"</span>),</span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">CV-selected</span><span class="st">`</span>     <span class="ot">=</span> <span class="fu">c</span>(<span class="fu">paste0</span>(<span class="st">"r = "</span>, <span class="fu">unname</span>(out_ife<span class="sc">$</span>r.cv)),</span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>                        <span class="fu">sprintf</span>(<span class="st">"lambda = %.4f"</span>, out_mc<span class="sc">$</span>lambda.cv))</span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>) <span class="sc">|&gt;</span></span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gt_pretty</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tibble</span>(</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">Method            =</span> <span class="fu">c</span>(<span class="st">"IFEct"</span>, <span class="st">"MC"</span>),</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">CV-selected</span><span class="st">`</span>     <span class="ot">=</span> <span class="fu">c</span>(<span class="fu">paste0</span>(<span class="st">"r = "</span>, <span class="fu">unname</span>(out_ife<span class="sc">$</span>r.cv)),</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>                        <span class="fu">sprintf</span>(<span class="st">"eta = %.4f"</span>, out_mc<span class="sc">$</span>lambda.cv))</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>) <span class="sc">|&gt;</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gt_pretty</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div id="tbl-cv" class="cell quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-cv-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Table&nbsp;9.2: Hyperparameters selected by cross-validation. IFEct picks the number of latent factors <span class="math inline">\(r\)</span>; MC picks the nuclear-norm penalty weight <span class="math inline">\(\lambda\)</span>.
+Table&nbsp;9.2: Hyperparameters selected by cross-validation. IFEct picks the number of latent factors <span class="math inline">\(r\)</span>; MC picks the nuclear-norm penalty weight <span class="math inline">\(\eta\)</span> (returned by <code>fect</code> as <code>lambda.cv</code>).
 </figcaption>
 <div aria-describedby="tbl-cv-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output-display">
@@ -1638,7 +1644,7 @@ Table&nbsp;9.2: Hyperparameters selected by cross-validation. IFEct picks the nu
 </tr>
 <tr class="even">
 <td class="gt_row gt_left gt_striped" headers="Method">MC</td>
-<td class="gt_row gt_left gt_striped" headers="CV-selected">lambda = 0.0007</td>
+<td class="gt_row gt_left gt_striped" headers="CV-selected">eta = 0.0007</td>
 </tr>
 </tbody>
 </table>
@@ -1656,20 +1662,20 @@ Table&nbsp;9.2: Hyperparameters selected by cross-validation. IFEct picks the nu
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>p_ife_ct <span class="ot">&lt;-</span> <span class="fu">plot</span>(out_ife, <span class="at">type =</span> <span class="st">"counterfactual"</span>,</span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>                 <span class="at">main =</span> <span class="st">"IFEct: observed vs counterfactual"</span>,</span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>                 <span class="at">xlab =</span> <span class="st">"Year"</span>, <span class="at">ylab =</span> <span class="st">"Log teen employment"</span>)</span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>p_ife_gap <span class="ot">&lt;-</span> <span class="fu">plot</span>(out_ife, <span class="at">type =</span> <span class="st">"gap"</span>,</span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>                  <span class="at">main =</span> <span class="st">"IFEct: event-study ATT"</span>,</span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>                  <span class="at">xlab =</span> <span class="st">"Event time"</span>, <span class="at">ylab =</span> <span class="st">"ATT"</span>)</span>
-<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>p_mc_ct <span class="ot">&lt;-</span> <span class="fu">plot</span>(out_mc, <span class="at">type =</span> <span class="st">"counterfactual"</span>,</span>
-<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>                <span class="at">main =</span> <span class="st">"MC: observed vs counterfactual"</span>,</span>
-<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>                <span class="at">xlab =</span> <span class="st">"Year"</span>, <span class="at">ylab =</span> <span class="st">"Log teen employment"</span>)</span>
-<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>p_mc_gap <span class="ot">&lt;-</span> <span class="fu">plot</span>(out_mc, <span class="at">type =</span> <span class="st">"gap"</span>,</span>
-<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>                 <span class="at">main =</span> <span class="st">"MC: event-study ATT"</span>,</span>
-<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>                 <span class="at">xlab =</span> <span class="st">"Event time"</span>, <span class="at">ylab =</span> <span class="st">"ATT"</span>)</span>
-<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>(p_ife_ct <span class="sc">+</span> p_ife_gap) <span class="sc">/</span> (p_mc_ct <span class="sc">+</span> p_mc_gap)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>p_ife_ct <span class="ot">&lt;-</span> <span class="fu">plot</span>(out_ife, <span class="at">type =</span> <span class="st">"counterfactual"</span>,</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>                 <span class="at">main =</span> <span class="st">"IFEct: observed vs counterfactual"</span>,</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>                 <span class="at">xlab =</span> <span class="st">"Year"</span>, <span class="at">ylab =</span> <span class="st">"Log teen employment"</span>)</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>p_ife_gap <span class="ot">&lt;-</span> <span class="fu">plot</span>(out_ife, <span class="at">type =</span> <span class="st">"gap"</span>,</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>                  <span class="at">main =</span> <span class="st">"IFEct: event-study ATT"</span>,</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>                  <span class="at">xlab =</span> <span class="st">"Event time"</span>, <span class="at">ylab =</span> <span class="st">"ATT"</span>)</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>p_mc_ct <span class="ot">&lt;-</span> <span class="fu">plot</span>(out_mc, <span class="at">type =</span> <span class="st">"counterfactual"</span>,</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>                <span class="at">main =</span> <span class="st">"MC: observed vs counterfactual"</span>,</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>                <span class="at">xlab =</span> <span class="st">"Year"</span>, <span class="at">ylab =</span> <span class="st">"Log teen employment"</span>)</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>p_mc_gap <span class="ot">&lt;-</span> <span class="fu">plot</span>(out_mc, <span class="at">type =</span> <span class="st">"gap"</span>,</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>                 <span class="at">main =</span> <span class="st">"MC: event-study ATT"</span>,</span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>                 <span class="at">xlab =</span> <span class="st">"Event time"</span>, <span class="at">ylab =</span> <span class="st">"ATT"</span>)</span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>(p_ife_ct <span class="sc">+</span> p_ife_gap) <span class="sc">/</span> (p_mc_ct <span class="sc">+</span> p_mc_gap)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output-display">
 <div id="fig-ife-mc" class="quarto-float quarto-figure quarto-figure-center anchored">
@@ -1685,20 +1691,515 @@ Figure&nbsp;9.2: Counterfactual trajectories and event-study ATT. Top row: IFEct
 </div>
 </div>
 <p>Both estimators reproduce the textbook story: a flat-ish pre-trend that breaks downward at event time zero. The MC counterfactual is a touch smoother than IFEct’s, which is the regularisation doing its job.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tibble</span>(</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">Method   =</span> <span class="fu">c</span>(<span class="st">"IFEct"</span>, <span class="st">"MC"</span>),</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">ATT      =</span> <span class="fu">c</span>(out_ife<span class="sc">$</span>att.avg, out_mc<span class="sc">$</span>att.avg),</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">S.E.</span><span class="st">`</span>   <span class="ot">=</span> <span class="fu">c</span>(out_ife<span class="sc">$</span>est.avg[<span class="dv">1</span>, <span class="st">"S.E."</span>], out_mc<span class="sc">$</span>est.avg[<span class="dv">1</span>, <span class="st">"S.E."</span>]),</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">CI lo</span><span class="st">`</span>  <span class="ot">=</span> <span class="fu">c</span>(out_ife<span class="sc">$</span>est.avg[<span class="dv">1</span>, <span class="st">"CI.lower"</span>], out_mc<span class="sc">$</span>est.avg[<span class="dv">1</span>, <span class="st">"CI.lower"</span>]),</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">CI hi</span><span class="st">`</span>  <span class="ot">=</span> <span class="fu">c</span>(out_ife<span class="sc">$</span>est.avg[<span class="dv">1</span>, <span class="st">"CI.upper"</span>], out_mc<span class="sc">$</span>est.avg[<span class="dv">1</span>, <span class="st">"CI.upper"</span>])</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>) <span class="sc">|&gt;</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gt_pretty</span>(<span class="at">decimals =</span> <span class="dv">4</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div id="tbl-att" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-att-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;9.3: Average post-treatment ATT under IFEct and MC, with bootstrap standard errors and 95% CIs. The two methods reach the same neighbourhood; CIs are wide because <span class="math inline">\(T = 7\)</span> and <code>nboots = 50</code>.
+</figcaption>
+<div aria-describedby="tbl-att-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output-display">
+<div id="esdalvyfpu" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#esdalvyfpu table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#esdalvyfpu thead, #esdalvyfpu tbody, #esdalvyfpu tfoot, #esdalvyfpu tr, #esdalvyfpu td, #esdalvyfpu th {
+  border-style: none;
+}
+
+#esdalvyfpu p {
+  margin: 0;
+  padding: 0;
+}
+
+#esdalvyfpu .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 0.95em;
+  font-weight: normal;
+  font-style: normal;
+  background-color: rgba(255, 255, 255, 0);
+  width: auto;
+  border-top-style: hidden;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: hidden;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#esdalvyfpu .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#esdalvyfpu .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: rgba(255, 255, 255, 0);
+  border-bottom-width: 0;
+}
+
+#esdalvyfpu .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: rgba(255, 255, 255, 0);
+  border-top-width: 0;
+}
+
+#esdalvyfpu .gt_heading {
+  background-color: rgba(255, 255, 255, 0);
+  text-align: center;
+  border-bottom-color: rgba(255, 255, 255, 0);
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#esdalvyfpu .gt_bottom_border {
+  border-bottom-style: hidden;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#esdalvyfpu .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 1px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#esdalvyfpu .gt_col_heading {
+  color: #333333;
+  background-color: rgba(255, 255, 255, 0);
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#esdalvyfpu .gt_column_spanner_outer {
+  color: #333333;
+  background-color: rgba(255, 255, 255, 0);
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#esdalvyfpu .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#esdalvyfpu .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#esdalvyfpu .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 1px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#esdalvyfpu .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#esdalvyfpu .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: rgba(255, 255, 255, 0);
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#esdalvyfpu .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: rgba(255, 255, 255, 0);
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#esdalvyfpu .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#esdalvyfpu .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#esdalvyfpu .gt_row {
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: none;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#esdalvyfpu .gt_stub {
+  color: #333333;
+  background-color: rgba(255, 255, 255, 0);
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#esdalvyfpu .gt_stub_row_group {
+  color: #333333;
+  background-color: rgba(255, 255, 255, 0);
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#esdalvyfpu .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#esdalvyfpu .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#esdalvyfpu .gt_summary_row {
+  color: #333333;
+  background-color: rgba(255, 255, 255, 0);
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#esdalvyfpu .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#esdalvyfpu .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#esdalvyfpu .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#esdalvyfpu .gt_grand_summary_row {
+  color: #333333;
+  background-color: rgba(255, 255, 255, 0);
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#esdalvyfpu .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#esdalvyfpu .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#esdalvyfpu .gt_striped {
+  background-color: rgba(127, 127, 127, 0.06);
+}
+
+#esdalvyfpu .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#esdalvyfpu .gt_footnotes {
+  color: #333333;
+  background-color: rgba(255, 255, 255, 0);
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#esdalvyfpu .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#esdalvyfpu .gt_sourcenotes {
+  color: #333333;
+  background-color: rgba(255, 255, 255, 0);
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#esdalvyfpu .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#esdalvyfpu .gt_left {
+  text-align: left;
+}
+
+#esdalvyfpu .gt_center {
+  text-align: center;
+}
+
+#esdalvyfpu .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#esdalvyfpu .gt_font_normal {
+  font-weight: normal;
+}
+
+#esdalvyfpu .gt_font_bold {
+  font-weight: bold;
+}
+
+#esdalvyfpu .gt_font_italic {
+  font-style: italic;
+}
+
+#esdalvyfpu .gt_super {
+  font-size: 65%;
+}
+
+#esdalvyfpu .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#esdalvyfpu .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#esdalvyfpu .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#esdalvyfpu .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#esdalvyfpu .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#esdalvyfpu .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#esdalvyfpu .gt_indent_5 {
+  text-indent: 25px;
+}
+
+#esdalvyfpu .katex-display {
+  display: inline-flex !important;
+  margin-bottom: 0.75em !important;
+}
+
+#esdalvyfpu div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+  height: 0px !important;
+}
+</style>
+
+<table class="gt_table do-not-create-environment cell caption-top table table-sm table-striped small" data-quarto-bootstrap="false">
+<thead>
+<tr class="gt_col_headings header">
+<th id="Method" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col">Method</th>
+<th id="ATT" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">ATT</th>
+<th id="S.E." class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">S.E.</th>
+<th id="CI-lo" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">CI lo</th>
+<th id="CI-hi" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">CI hi</th>
+</tr>
+</thead>
+<tbody class="gt_table_body">
+<tr class="odd">
+<td class="gt_row gt_left" headers="Method">IFEct</td>
+<td class="gt_row gt_right" headers="ATT">−0.0415</td>
+<td class="gt_row gt_right" headers="S.E.">0.0091</td>
+<td class="gt_row gt_right" headers="CI lo">−0.0594</td>
+<td class="gt_row gt_right" headers="CI hi">−0.0235</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left gt_striped" headers="Method">MC</td>
+<td class="gt_row gt_right gt_striped" headers="ATT">−0.0415</td>
+<td class="gt_row gt_right gt_striped" headers="S.E.">0.0091</td>
+<td class="gt_row gt_right gt_striped" headers="CI lo">−0.0594</td>
+<td class="gt_row gt_right gt_striped" headers="CI hi">−0.0235</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+</figure>
+</div>
+</div>
 </section>
 <section id="ifect-and-mc-compared" class="level2" data-number="9.7">
 <h2 data-number="9.7" class="anchored" data-anchor-id="ifect-and-mc-compared"><span class="header-section-number">9.7</span> IFEct and MC compared</h2>
-<p>Two estimators that disagree about the identifying assumption — an explicit linear factor model vs.&nbsp;an approximately low-rank <span class="math inline">\(Y(0)\)</span> matrix — point to the same sign and the same order of magnitude on this panel. The CV-selected hyperparameters are not directly comparable (an integer rank vs.&nbsp;a continuous penalty), but the counterfactual-path overlay and ATT trajectory are. When the two methods agree, both relaxations of parallel trends are consistent with the same conclusion, which is the strongest evidence a short panel design can produce.</p>
-<div class="callout callout-style-simple callout-warning">
-<div class="callout-body d-flex">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-body-container">
-<p><strong>The short-panel caveat.</strong> With <span class="math inline">\(T = 7\)</span> and 3 pre-periods on the shorter cohort, the rank/penalty selected by cross-validation is borderline-identifiable; we capped <span class="math inline">\(r \le 2\)</span> deliberately. On a genuinely short panel (<span class="math inline">\(T \le 5\)</span>) IFE and MC become numerically delicate, and the honest move is to <em>not</em> run them rather than to hand-pick a rank. The <code>fect::simdata</code> panel ships a <span class="math inline">\(T = 30\)</span> example that shows both methods working at full strength.</p>
-</div>
-</div>
-</div>
+<p>A caveat first, then the comparison. On this 7-year window, CV selects <span class="math inline">\(r = 0\)</span> for IFEct — meaning IFEct here operationally collapses to two-way fixed effects: the factor term <span class="math inline">\(\lambda_i' f_t\)</span> drops out and the imputation reduces to <span class="math inline">\(\widehat{Y_{it}(0)} =
+\widehat{\alpha}_i + \widehat{\xi}_t\)</span>. This is not a bug, it is a finding: with <span class="math inline">\(T = 7\)</span> and 3 pre-periods on the shorter cohort, CV is conservative and refuses to credit a latent factor it cannot validate out-of-sample. MC, by contrast, lands on a small but non-zero penalty (<span class="math inline">\(\eta = 0.0007\)</span>), so MC retains a regularised low-rank deviation from TWFE.</p>
+<p>So the empirical contrast on this panel is <strong>not</strong> between an explicit factor model and a low-rank completion — it is between TWFE-style imputation (IFEct at <span class="math inline">\(r = 0\)</span>) and nuclear-norm penalised imputation (MC at <span class="math inline">\(\eta = 0.0007\)</span>). That two estimators that disagree about the identifying assumption — <em>in principle</em> an explicit linear factor model vs.&nbsp;an approximately low-rank <span class="math inline">\(Y(0)\)</span> matrix — still point to the same sign and the same order of magnitude is meaningful: the qualitative conclusion is robust to the relaxation of parallel trends that MC offers, exactly because MC’s relaxation is small here. The CV-selected hyperparameters are not directly comparable (an integer rank vs.&nbsp;a continuous penalty), but the counterfactual-path overlay, the ATT trajectory, and the numeric ATT in <a href="#tbl-att" class="quarto-xref">Table&nbsp;<span>9.3</span></a> are. When the two methods agree, both relaxations of parallel trends are consistent with the same conclusion, which is the strongest evidence a short panel design can produce.</p>
 </section>
 <section id="recap" class="level2" data-number="9.8">
 <h2 data-number="9.8" class="anchored" data-anchor-id="recap"><span class="header-section-number">9.8</span> Recap</h2>
@@ -1710,8 +2211,8 @@ Figure&nbsp;9.2: Counterfactual trajectories and event-study ATT. Top row: IFEct
 <div class="callout-body-container">
 <p><strong>The methods reconciled.</strong> Two answers to the same question on the 2001-2007 minimum-wage panel:</p>
 <ul>
-<li><em>IFEct</em>: factor model of <span class="math inline">\(Y(0)\)</span> fit on never-treated, imputed on treated, <span class="math inline">\(r\)</span> chosen by cross-validation.</li>
-<li><em>Matrix Completion</em>: low-rank completion of the masked <span class="math inline">\(Y(0)\)</span> matrix, nuclear-norm penalty <span class="math inline">\(\lambda\)</span> chosen by cross-validation.</li>
+<li><em>IFEct</em>: factor model of <span class="math inline">\(Y(0)\)</span> fit on never-treated, imputed on treated, <span class="math inline">\(r\)</span> chosen by cross-validation. Here CV picks <span class="math inline">\(r = 0\)</span>, so IFEct collapses to two-way fixed effects — a finding, not a bug.</li>
+<li><em>Matrix Completion</em>: low-rank completion of the masked <span class="math inline">\(Y(0)\)</span> matrix, nuclear-norm penalty <span class="math inline">\(\eta\)</span> chosen by cross-validation.</li>
 </ul>
 <p>Both point downward; both sit in the same neighbourhood; neither is uniquely correct. Factor-based estimators <em>relax</em> parallel trends rather than replace it — the counterfactual-path plot is the visual quality check, and a flat pre-treatment overlay is the signal you want.</p>
 </div>
@@ -1720,11 +2221,19 @@ Figure&nbsp;9.2: Counterfactual trajectories and event-study ATT. Top row: IFEct
 </section>
 <section id="common-pitfall" class="level2" data-number="9.9">
 <h2 data-number="9.9" class="anchored" data-anchor-id="common-pitfall"><span class="header-section-number">9.9</span> Common pitfall</h2>
-<p>Cranking <span class="math inline">\(r\)</span> up until the in-sample fit looks great. With a panel this short, an IFEct with <span class="math inline">\(r\)</span> near <span class="math inline">\(T/2\)</span> will fit the pre-treatment cells almost perfectly and produce an absurd counterfactual on the treated cells, because it has fitted noise into the loadings. Trust the CV-selected rank; the MC analogue is choosing <span class="math inline">\(\lambda\)</span> too small. Both are over-fitting masquerading as identification.</p>
+<p>Cranking <span class="math inline">\(r\)</span> up until the in-sample fit looks great. With a panel this short, an IFEct with <span class="math inline">\(r\)</span> near <span class="math inline">\(T/2\)</span> will fit the pre-treatment cells almost perfectly and produce an absurd counterfactual on the treated cells, because it has fitted noise into the loadings. Trust the CV-selected rank; the MC analogue is choosing <span class="math inline">\(\eta\)</span> too small. Both are over-fitting masquerading as identification.</p>
 </section>
 <section id="further-reading" class="level2" data-number="9.10">
 <h2 data-number="9.10" class="anchored" data-anchor-id="further-reading"><span class="header-section-number">9.10</span> Further reading</h2>
-<p>The factor-model formulation traces to <span class="citation" data-cites="bai2009panel">Bai (<a href="references.html#ref-bai2009panel" role="doc-biblioref">2009</a>)</span> and the IFEct / generalised synthetic control reading is <span class="citation" data-cites="xu2017generalized">Xu (<a href="references.html#ref-xu2017generalized" role="doc-biblioref">2017</a>)</span>; the matrix-completion view is <span class="citation" data-cites="athey2021matrix">Athey et al. (<a href="references.html#ref-athey2021matrix" role="doc-biblioref">2021</a>)</span>. <span class="citation" data-cites="liu2024practical">Liu et al. (<a href="references.html#ref-liu2024practical" role="doc-biblioref">2024</a>)</span> pairs with the <code>fect</code> package — its online companion at <a href="https://yiqingxu.org/packages/fect/04-ife-mc.html" class="uri">https://yiqingxu.org/packages/fect/04-ife-mc.html</a> is the authoritative tutorial.</p>
+<p>The factor-model formulation traces to <span class="citation" data-cites="bai2009panel">Bai (<a href="references.html#ref-bai2009panel" role="doc-biblioref">2009</a>)</span> and the IFEct / generalised synthetic control reading is <span class="citation" data-cites="xu2017generalized">Xu (<a href="references.html#ref-xu2017generalized" role="doc-biblioref">2017</a>)</span>; the matrix-completion view is <span class="citation" data-cites="athey2021matrix">Athey et al. (<a href="references.html#ref-athey2021matrix" role="doc-biblioref">2021</a>)</span>. <span class="citation" data-cites="liu2024practical">Liu et al. (<a href="references.html#ref-liu2024practical" role="doc-biblioref">2024</a>)</span> pairs with the <code>fect</code> package — its online companion at <a href="https://yiqingxu.org/packages/fect/04-ife-mc.html" class="uri">https://yiqingxu.org/packages/fect/04-ife-mc.html</a> is the authoritative tutorial. Athey et al.’s own implementation lives in the <code>MCPanel</code> package (<a href="https://github.com/susanathey/MCPanel" class="uri">https://github.com/susanathey/MCPanel</a>) for readers who want to compare <code>fect::mc</code> against the canonical reference code. Chapter 10 zooms in on <code>gsynth</code>, the IFE estimator implemented in a standalone package, on the same Callaway-Sant’Anna panel.</p>
+</section>
+<section id="exercises" class="level2" data-number="9.11">
+<h2 data-number="9.11" class="anchored" data-anchor-id="exercises"><span class="header-section-number">9.11</span> Exercises</h2>
+<ol type="1">
+<li>Re-fit <code>out_ife</code> with <code>r=0:3</code> (raising the search ceiling above the theoretical <code>min.T0</code> bound) and inspect <code>out_ife$MSPE</code>. Does CV ever pick a rank above 0 on this panel? What does that tell you about the data?</li>
+<li>Add the two-covariate extension <code>lemp ~ D + lpop + lavg_pay</code> to both <code>fect()</code> calls, refit, and compare the ATT trajectory and the numeric headline ATT against <a href="#tbl-att" class="quarto-xref">Table&nbsp;<span>9.3</span></a>. Does conditioning on log population and log average pay move the gap plot meaningfully?</li>
+<li>Re-fit <code>out_mc</code> on a tighter window (<code>year &gt;= 2002</code>) so cohort 2004 has 2 pre-periods instead of 3. At what window does the MC counterfactual visibly break (sharp pre-trend in the gap plot)?</li>
+</ol>
 
 
 <!-- -->
@@ -2229,332 +2738,422 @@ Xu, Y. (2017). Generalized synthetic control method: Causal inference with inter
       </a>
   </div>
 </nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Matrix Completion and Interactive Fixed Effects"</span></span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="fu">## When parallel trends isn't enough</span></span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>Chapter 8 squeezed every drop of usable signal out of the</span>
-<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>Callaway-Sant'Anna minimum-wage panel under one identifying</span>
-<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>assumption: **parallel trends**. Conditional or unconditional, with</span>
-<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>or without never-treated counties, with or without anticipation</span>
-<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>slack, with Rambachan-Roth bounds on top — the assumption is always</span>
-<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>that, absent treatment, the trajectory of the treated counties would</span>
-<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>have moved *in parallel* with the untreated.</span>
-<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>What if it would not have? Counties select into raising the minimum</span>
-<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>wage non-randomly. They are not a random subset of the country in</span>
-<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a>the time-varying dimension either: industry mix, demographics, and</span>
-<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a>local growth trends all shape both treatment timing and outcome</span>
-<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a>paths. Two counties can share an industry-mix-driven trajectory that</span>
-<span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a>TWFE never absorbs — and so cannot net out.</span>
-<span id="cb12-21"><a href="#cb12-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-22"><a href="#cb12-22" aria-hidden="true" tabindex="-1"></a>This chapter relaxes parallel trends in a specific way. We model the</span>
-<span id="cb12-23"><a href="#cb12-23" aria-hidden="true" tabindex="-1"></a>counterfactual outcome as a **factor structure**:</span>
-<span id="cb12-24"><a href="#cb12-24" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-25"><a href="#cb12-25" aria-hidden="true" tabindex="-1"></a>$$Y_{it}(0) \;=\; \alpha_i + \xi_t + \lambda_i' f_t + \varepsilon_{it}.$$</span>
-<span id="cb12-26"><a href="#cb12-26" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-27"><a href="#cb12-27" aria-hidden="true" tabindex="-1"></a>Each unit $i$ has a loading vector $\lambda_i$; each period a factor</span>
-<span id="cb12-28"><a href="#cb12-28" aria-hidden="true" tabindex="-1"></a>vector $f_t$. Their interaction $\lambda_i' f_t$ encodes</span>
-<span id="cb12-29"><a href="#cb12-29" aria-hidden="true" tabindex="-1"></a>time-varying unobserved heterogeneity that no county or year fixed</span>
-<span id="cb12-30"><a href="#cb12-30" aria-hidden="true" tabindex="-1"></a>effect can absorb. Two views of the same object give two estimators</span>
-<span id="cb12-31"><a href="#cb12-31" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="ot">@liu2024practical</span><span class="co">]</span>:</span>
-<span id="cb12-32"><a href="#cb12-32" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-33"><a href="#cb12-33" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Interactive Fixed Effects (IFEct)** <span class="co">[</span><span class="ot">@bai2009panel; @xu2017generalized</span><span class="co">]</span></span>
-<span id="cb12-34"><a href="#cb12-34" aria-hidden="true" tabindex="-1"></a>  treats $(\alpha, \xi, \Lambda, F)$ as parameters to be estimated on</span>
-<span id="cb12-35"><a href="#cb12-35" aria-hidden="true" tabindex="-1"></a>  control observations, then imputes $Y_{it}(0)$ on treated cells.</span>
-<span id="cb12-36"><a href="#cb12-36" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Matrix Completion (MC)** <span class="co">[</span><span class="ot">@athey2021matrix</span><span class="co">]</span> reframes the same</span>
-<span id="cb12-37"><a href="#cb12-37" aria-hidden="true" tabindex="-1"></a>  problem as filling missing entries of the implicit $Y(0)$ matrix:</span>
-<span id="cb12-38"><a href="#cb12-38" aria-hidden="true" tabindex="-1"></a>  mask the treated cells, then complete via nuclear-norm-regularised</span>
-<span id="cb12-39"><a href="#cb12-39" aria-hidden="true" tabindex="-1"></a>  SVD.</span>
-<span id="cb12-40"><a href="#cb12-40" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-41"><a href="#cb12-41" aria-hidden="true" tabindex="-1"></a>Yiqing Xu's <span class="in">`fect`</span> package implements both with a common API and a</span>
-<span id="cb12-42"><a href="#cb12-42" aria-hidden="true" tabindex="-1"></a>common counterfactual-plot diagnostic. By chapter's end we compare</span>
-<span id="cb12-43"><a href="#cb12-43" aria-hidden="true" tabindex="-1"></a>IFEct and MC on the same panel — two estimators, two identifying</span>
-<span id="cb12-44"><a href="#cb12-44" aria-hidden="true" tabindex="-1"></a>assumptions, one substantive question.</span>
-<span id="cb12-45"><a href="#cb12-45" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-46"><a href="#cb12-46" aria-hidden="true" tabindex="-1"></a><span class="fu">## Setup and data</span></span>
-<span id="cb12-47"><a href="#cb12-47" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-50"><a href="#cb12-50" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb12-51"><a href="#cb12-51" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: setup</span></span>
-<span id="cb12-52"><a href="#cb12-52" aria-hidden="true" tabindex="-1"></a><span class="co">#| message: false</span></span>
-<span id="cb12-53"><a href="#cb12-53" aria-hidden="true" tabindex="-1"></a><span class="co">#| warning: false</span></span>
-<span id="cb12-54"><a href="#cb12-54" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
-<span id="cb12-55"><a href="#cb12-55" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(fect)</span>
-<span id="cb12-56"><a href="#cb12-56" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(panelView)</span>
-<span id="cb12-57"><a href="#cb12-57" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(patchwork)</span>
-<span id="cb12-58"><a href="#cb12-58" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"R/table_helpers.R"</span>)</span>
-<span id="cb12-59"><a href="#cb12-59" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-60"><a href="#cb12-60" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
-<span id="cb12-61"><a href="#cb12-61" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-62"><a href="#cb12-62" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span>opts_chunk<span class="sc">$</span><span class="fu">set</span>(<span class="at">dev.args =</span> <span class="fu">list</span>(<span class="at">bg =</span> <span class="st">"transparent"</span>))</span>
-<span id="cb12-63"><a href="#cb12-63" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-64"><a href="#cb12-64" aria-hidden="true" tabindex="-1"></a><span class="fu">theme_set</span>(</span>
-<span id="cb12-65"><a href="#cb12-65" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">12</span>) <span class="sc">+</span></span>
-<span id="cb12-66"><a href="#cb12-66" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(</span>
-<span id="cb12-67"><a href="#cb12-67" aria-hidden="true" tabindex="-1"></a>      <span class="at">plot.background  =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">"transparent"</span>, <span class="at">color =</span> <span class="cn">NA</span>),</span>
-<span id="cb12-68"><a href="#cb12-68" aria-hidden="true" tabindex="-1"></a>      <span class="at">panel.background =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">"transparent"</span>, <span class="at">color =</span> <span class="cn">NA</span>),</span>
-<span id="cb12-69"><a href="#cb12-69" aria-hidden="true" tabindex="-1"></a>      <span class="at">panel.grid.major =</span> <span class="fu">element_line</span>(<span class="at">color =</span> <span class="st">"#94a3b8"</span>, <span class="at">linewidth =</span> <span class="fl">0.25</span>),</span>
-<span id="cb12-70"><a href="#cb12-70" aria-hidden="true" tabindex="-1"></a>      <span class="at">panel.grid.minor =</span> <span class="fu">element_line</span>(<span class="at">color =</span> <span class="st">"#94a3b8"</span>, <span class="at">linewidth =</span> <span class="fl">0.15</span>),</span>
-<span id="cb12-71"><a href="#cb12-71" aria-hidden="true" tabindex="-1"></a>      <span class="at">text             =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"#94a3b8"</span>),</span>
-<span id="cb12-72"><a href="#cb12-72" aria-hidden="true" tabindex="-1"></a>      <span class="at">axis.text        =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"#94a3b8"</span>),</span>
-<span id="cb12-73"><a href="#cb12-73" aria-hidden="true" tabindex="-1"></a>      <span class="at">strip.text       =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"#94a3b8"</span>),</span>
-<span id="cb12-74"><a href="#cb12-74" aria-hidden="true" tabindex="-1"></a>      <span class="at">legend.text      =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"#94a3b8"</span>)</span>
-<span id="cb12-75"><a href="#cb12-75" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb12-76"><a href="#cb12-76" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb12-77"><a href="#cb12-77" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb12-78"><a href="#cb12-78" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-79"><a href="#cb12-79" aria-hidden="true" tabindex="-1"></a>We work from the same <span class="in">`cs_minwage.rds`</span> panel as chapter 8, but with</span>
-<span id="cb12-80"><a href="#cb12-80" aria-hidden="true" tabindex="-1"></a>one small adjustment: factor-based estimators need **at least as</span>
-<span id="cb12-81"><a href="#cb12-81" aria-hidden="true" tabindex="-1"></a>many pre-treatment periods per cohort as the number of factors they</span>
-<span id="cb12-82"><a href="#cb12-82" aria-hidden="true" tabindex="-1"></a>try to fit**. Chapter 8's 2003-2007 window leaves the 2004 cohort</span>
-<span id="cb12-83"><a href="#cb12-83" aria-hidden="true" tabindex="-1"></a>with only one pre-period, which would force <span class="in">`min.T0 = 1`</span> and cap</span>
-<span id="cb12-84"><a href="#cb12-84" aria-hidden="true" tabindex="-1"></a>the rank at zero — collapsing IFEct back to TWFE. So we widen the</span>
-<span id="cb12-85"><a href="#cb12-85" aria-hidden="true" tabindex="-1"></a>pre-treatment window by two years to 2001-2007; everything else</span>
-<span id="cb12-86"><a href="#cb12-86" aria-hidden="true" tabindex="-1"></a>(cohort filter, region drop, treatment indicator) is identical.</span>
-<span id="cb12-87"><a href="#cb12-87" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-90"><a href="#cb12-90" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb12-91"><a href="#cb12-91" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: data-load</span></span>
-<span id="cb12-92"><a href="#cb12-92" aria-hidden="true" tabindex="-1"></a>mw_raw <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">"data/cs_minwage.rds"</span>) <span class="sc">|&gt;</span> <span class="fu">as_tibble</span>()</span>
-<span id="cb12-93"><a href="#cb12-93" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-94"><a href="#cb12-94" aria-hidden="true" tabindex="-1"></a>mw <span class="ot">&lt;-</span> mw_raw <span class="sc">|&gt;</span></span>
-<span id="cb12-95"><a href="#cb12-95" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(G <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">2004</span>, <span class="dv">2006</span>, <span class="dv">2007</span>), region <span class="sc">!=</span> <span class="st">"1"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb12-96"><a href="#cb12-96" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(G <span class="sc">!=</span> <span class="dv">2007</span>, year <span class="sc">&gt;=</span> <span class="dv">2001</span>) <span class="sc">|&gt;</span></span>
-<span id="cb12-97"><a href="#cb12-97" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">D =</span> <span class="fu">as.integer</span>(year <span class="sc">&gt;=</span> G <span class="sc">&amp;</span> G <span class="sc">!=</span> <span class="dv">0</span>))</span>
-<span id="cb12-98"><a href="#cb12-98" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-99"><a href="#cb12-99" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(mw)</span>
-<span id="cb12-100"><a href="#cb12-100" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb12-101"><a href="#cb12-101" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-104"><a href="#cb12-104" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb12-105"><a href="#cb12-105" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: tbl-cohorts</span></span>
-<span id="cb12-106"><a href="#cb12-106" aria-hidden="true" tabindex="-1"></a><span class="co">#| tbl-cap: "Cohorts in the 2001-2007 working panel. $G = 0$ is the never-treated control pool; the two treated cohorts have 3 and 5 pre-treatment years respectively."</span></span>
-<span id="cb12-107"><a href="#cb12-107" aria-hidden="true" tabindex="-1"></a>mw <span class="sc">|&gt;</span></span>
-<span id="cb12-108"><a href="#cb12-108" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(year <span class="sc">==</span> <span class="dv">2001</span>) <span class="sc">|&gt;</span></span>
-<span id="cb12-109"><a href="#cb12-109" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(G, <span class="at">name =</span> <span class="st">"counties"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb12-110"><a href="#cb12-110" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="st">`</span><span class="at">Pre-periods</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">case_when</span>(</span>
-<span id="cb12-111"><a href="#cb12-111" aria-hidden="true" tabindex="-1"></a>    G <span class="sc">==</span> <span class="dv">0</span>    <span class="sc">~</span> <span class="cn">NA_integer_</span>,</span>
-<span id="cb12-112"><a href="#cb12-112" aria-hidden="true" tabindex="-1"></a>    G <span class="sc">==</span> <span class="dv">2004</span> <span class="sc">~</span> <span class="dv">3</span>L,</span>
-<span id="cb12-113"><a href="#cb12-113" aria-hidden="true" tabindex="-1"></a>    G <span class="sc">==</span> <span class="dv">2006</span> <span class="sc">~</span> <span class="dv">5</span>L</span>
-<span id="cb12-114"><a href="#cb12-114" aria-hidden="true" tabindex="-1"></a>  )) <span class="sc">|&gt;</span></span>
-<span id="cb12-115"><a href="#cb12-115" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="st">`</span><span class="at">Cohort (G)</span><span class="st">`</span> <span class="ot">=</span> G) <span class="sc">|&gt;</span></span>
-<span id="cb12-116"><a href="#cb12-116" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gt_pretty</span>()</span>
-<span id="cb12-117"><a href="#cb12-117" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb12-118"><a href="#cb12-118" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-119"><a href="#cb12-119" aria-hidden="true" tabindex="-1"></a>The outcome <span class="in">`lemp`</span> (log teen employment) and the treatment indicator</span>
-<span id="cb12-120"><a href="#cb12-120" aria-hidden="true" tabindex="-1"></a><span class="in">`D`</span> (1 once a county's state has raised its minimum wage above the</span>
-<span id="cb12-121"><a href="#cb12-121" aria-hidden="true" tabindex="-1"></a>federal floor, 0 otherwise) line up with chapter 8's definitions.</span>
-<span id="cb12-122"><a href="#cb12-122" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-123"><a href="#cb12-123" aria-hidden="true" tabindex="-1"></a><span class="fu">## Visualising the panel</span></span>
-<span id="cb12-124"><a href="#cb12-124" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-125"><a href="#cb12-125" aria-hidden="true" tabindex="-1"></a><span class="in">`panelView`</span> is the natural opener for any FECT workflow. It draws</span>
-<span id="cb12-126"><a href="#cb12-126" aria-hidden="true" tabindex="-1"></a>units on the vertical axis and time on the horizontal, coloured by</span>
-<span id="cb12-127"><a href="#cb12-127" aria-hidden="true" tabindex="-1"></a>treatment status, so the staggered-adoption structure of the panel</span>
-<span id="cb12-128"><a href="#cb12-128" aria-hidden="true" tabindex="-1"></a>is immediate.</span>
-<span id="cb12-129"><a href="#cb12-129" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-132"><a href="#cb12-132" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb12-133"><a href="#cb12-133" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-panelview</span></span>
-<span id="cb12-134"><a href="#cb12-134" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Treatment status by county and year. The two horizontal bands of pink are the 2004 and 2006 cohorts; the wide grey band underneath is the never-treated $G = 0$ control pool. The visible step in the pink rows is the staggered adoption that breaks TWFE."</span></span>
-<span id="cb12-135"><a href="#cb12-135" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-width: 8</span></span>
-<span id="cb12-136"><a href="#cb12-136" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-height: 5</span></span>
-<span id="cb12-137"><a href="#cb12-137" aria-hidden="true" tabindex="-1"></a><span class="fu">panelview</span>(<span class="at">data =</span> <span class="fu">as.data.frame</span>(mw), <span class="at">formula =</span> lemp <span class="sc">~</span> D,</span>
-<span id="cb12-138"><a href="#cb12-138" aria-hidden="true" tabindex="-1"></a>          <span class="at">index =</span> <span class="fu">c</span>(<span class="st">"id"</span>, <span class="st">"year"</span>),</span>
-<span id="cb12-139"><a href="#cb12-139" aria-hidden="true" tabindex="-1"></a>          <span class="at">xlab =</span> <span class="st">"Year"</span>, <span class="at">ylab =</span> <span class="st">"County"</span>,</span>
-<span id="cb12-140"><a href="#cb12-140" aria-hidden="true" tabindex="-1"></a>          <span class="at">main =</span> <span class="st">""</span>, <span class="at">legendOff =</span> <span class="cn">FALSE</span>,</span>
-<span id="cb12-141"><a href="#cb12-141" aria-hidden="true" tabindex="-1"></a>          <span class="at">theme.bw =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb12-142"><a href="#cb12-142" aria-hidden="true" tabindex="-1"></a>          <span class="at">background =</span> <span class="st">"transparent"</span>)</span>
-<span id="cb12-143"><a href="#cb12-143" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb12-144"><a href="#cb12-144" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-145"><a href="#cb12-145" aria-hidden="true" tabindex="-1"></a><span class="fu">## The factor model of counterfactuals</span></span>
-<span id="cb12-146"><a href="#cb12-146" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-147"><a href="#cb12-147" aria-hidden="true" tabindex="-1"></a>Both estimators target the same object — the counterfactual matrix</span>
-<span id="cb12-148"><a href="#cb12-148" aria-hidden="true" tabindex="-1"></a>$Y(0)$ of what each county's log teen employment *would* have been</span>
-<span id="cb12-149"><a href="#cb12-149" aria-hidden="true" tabindex="-1"></a>absent any minimum-wage increase. Where they differ is in how they</span>
-<span id="cb12-150"><a href="#cb12-150" aria-hidden="true" tabindex="-1"></a>restrict that matrix.</span>
-<span id="cb12-151"><a href="#cb12-151" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-152"><a href="#cb12-152" aria-hidden="true" tabindex="-1"></a>**IFEct** imposes the explicit factor decomposition $Y_{it}(0) =</span>
-<span id="cb12-153"><a href="#cb12-153" aria-hidden="true" tabindex="-1"></a>\alpha_i + \xi_t + \lambda_i' f_t + \varepsilon_{it}$, fits</span>
-<span id="cb12-154"><a href="#cb12-154" aria-hidden="true" tabindex="-1"></a>$(\alpha, \xi, \Lambda, F)$ on the **control** observations only,</span>
-<span id="cb12-155"><a href="#cb12-155" aria-hidden="true" tabindex="-1"></a>and uses those estimates to impute $Y_{it}(0)$ for treated</span>
-<span id="cb12-156"><a href="#cb12-156" aria-hidden="true" tabindex="-1"></a>cells. The choice of $r$ — how many factors — is made by</span>
-<span id="cb12-157"><a href="#cb12-157" aria-hidden="true" tabindex="-1"></a>cross-validation: hold out small blocks of control cells, refit,</span>
-<span id="cb12-158"><a href="#cb12-158" aria-hidden="true" tabindex="-1"></a>score by MSPE on the held-out cells [@xu2017generalized;</span>
-<span id="cb12-159"><a href="#cb12-159" aria-hidden="true" tabindex="-1"></a>@liu2024practical].</span>
-<span id="cb12-160"><a href="#cb12-160" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-161"><a href="#cb12-161" aria-hidden="true" tabindex="-1"></a>**MC** does not write the factor model down. It assumes only that</span>
-<span id="cb12-162"><a href="#cb12-162" aria-hidden="true" tabindex="-1"></a>the matrix of $Y(0)$ outcomes is **approximately low rank**, then</span>
-<span id="cb12-163"><a href="#cb12-163" aria-hidden="true" tabindex="-1"></a>completes it by minimising a Frobenius-norm fit penalty *plus* a</span>
-<span id="cb12-164"><a href="#cb12-164" aria-hidden="true" tabindex="-1"></a>nuclear-norm penalty on the singular values. Nuclear-norm</span>
-<span id="cb12-165"><a href="#cb12-165" aria-hidden="true" tabindex="-1"></a>regularisation is the convex relaxation of "low rank" the same way</span>
-<span id="cb12-166"><a href="#cb12-166" aria-hidden="true" tabindex="-1"></a>$\ell_1$ is the convex relaxation of "sparse" <span class="co">[</span><span class="ot">@athey2021matrix</span><span class="co">]</span>.</span>
-<span id="cb12-167"><a href="#cb12-167" aria-hidden="true" tabindex="-1"></a>The penalty weight $\lambda$ plays the role of $r$ and is again</span>
-<span id="cb12-168"><a href="#cb12-168" aria-hidden="true" tabindex="-1"></a>chosen by cross-validation.</span>
-<span id="cb12-169"><a href="#cb12-169" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-170"><a href="#cb12-170" aria-hidden="true" tabindex="-1"></a>The key practical implication: both methods bake in</span>
-<span id="cb12-171"><a href="#cb12-171" aria-hidden="true" tabindex="-1"></a>**unit-specific time trends** automatically, without you having to</span>
-<span id="cb12-172"><a href="#cb12-172" aria-hidden="true" tabindex="-1"></a>specify which units or which trend shapes. Parallel trends becomes</span>
-<span id="cb12-173"><a href="#cb12-173" aria-hidden="true" tabindex="-1"></a>a special case (the $r = 0$ corner of IFEct, or the limit</span>
-<span id="cb12-174"><a href="#cb12-174" aria-hidden="true" tabindex="-1"></a>$\lambda \to \infty$ in MC) rather than an assumption.</span>
-<span id="cb12-175"><a href="#cb12-175" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-176"><a href="#cb12-176" aria-hidden="true" tabindex="-1"></a><span class="fu">## Estimating with FECT</span></span>
-<span id="cb12-177"><a href="#cb12-177" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-178"><a href="#cb12-178" aria-hidden="true" tabindex="-1"></a>The two fits below cap the rank grid at $r \in <span class="sc">\{</span>0, 1, 2<span class="sc">\}</span>$. With</span>
-<span id="cb12-179"><a href="#cb12-179" aria-hidden="true" tabindex="-1"></a>only 7 calendar years and 3 pre-periods on the shorter cohort, any</span>
-<span id="cb12-180"><a href="#cb12-180" aria-hidden="true" tabindex="-1"></a>$r$ larger than that would be statistical fantasy.</span>
-<span id="cb12-181"><a href="#cb12-181" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-182"><a href="#cb12-182" aria-hidden="true" tabindex="-1"></a>::: {.callout-note appearance="simple"}</span>
-<span id="cb12-183"><a href="#cb12-183" aria-hidden="true" tabindex="-1"></a>**Learning-mode compute.** We set <span class="in">`nboots = 50`</span> here so the chapter</span>
-<span id="cb12-184"><a href="#cb12-184" aria-hidden="true" tabindex="-1"></a>renders quickly. The bootstrap dominates runtime and only affects</span>
-<span id="cb12-185"><a href="#cb12-185" aria-hidden="true" tabindex="-1"></a>the *width* of confidence intervals — point estimates and the</span>
-<span id="cb12-186"><a href="#cb12-186" aria-hidden="true" tabindex="-1"></a>CV-selected rank or penalty are unchanged. For research use, bump</span>
-<span id="cb12-187"><a href="#cb12-187" aria-hidden="true" tabindex="-1"></a><span class="in">`nboots`</span> to 500-1000 so the bootstrap distribution of the ATT is</span>
-<span id="cb12-188"><a href="#cb12-188" aria-hidden="true" tabindex="-1"></a>properly resolved.</span>
-<span id="cb12-189"><a href="#cb12-189" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb12-190"><a href="#cb12-190" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-193"><a href="#cb12-193" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb12-194"><a href="#cb12-194" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fit-ife</span></span>
-<span id="cb12-195"><a href="#cb12-195" aria-hidden="true" tabindex="-1"></a><span class="co">#| message: false</span></span>
-<span id="cb12-196"><a href="#cb12-196" aria-hidden="true" tabindex="-1"></a><span class="co">#| warning: false</span></span>
-<span id="cb12-197"><a href="#cb12-197" aria-hidden="true" tabindex="-1"></a>out_ife <span class="ot">&lt;-</span> <span class="fu">fect</span>(</span>
-<span id="cb12-198"><a href="#cb12-198" aria-hidden="true" tabindex="-1"></a>  lemp <span class="sc">~</span> D, <span class="at">data =</span> <span class="fu">as.data.frame</span>(mw),</span>
-<span id="cb12-199"><a href="#cb12-199" aria-hidden="true" tabindex="-1"></a>  <span class="at">index    =</span> <span class="fu">c</span>(<span class="st">"id"</span>, <span class="st">"year"</span>),</span>
-<span id="cb12-200"><a href="#cb12-200" aria-hidden="true" tabindex="-1"></a>  <span class="at">method   =</span> <span class="st">"ife"</span>,</span>
-<span id="cb12-201"><a href="#cb12-201" aria-hidden="true" tabindex="-1"></a>  <span class="at">force    =</span> <span class="st">"two-way"</span>,</span>
-<span id="cb12-202"><a href="#cb12-202" aria-hidden="true" tabindex="-1"></a>  <span class="at">CV       =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb12-203"><a href="#cb12-203" aria-hidden="true" tabindex="-1"></a>  <span class="at">r        =</span> <span class="dv">0</span><span class="sc">:</span><span class="dv">2</span>,</span>
-<span id="cb12-204"><a href="#cb12-204" aria-hidden="true" tabindex="-1"></a>  <span class="at">min.T0   =</span> <span class="dv">2</span>,</span>
-<span id="cb12-205"><a href="#cb12-205" aria-hidden="true" tabindex="-1"></a>  <span class="at">cv.nobs  =</span> <span class="dv">2</span>,</span>
-<span id="cb12-206"><a href="#cb12-206" aria-hidden="true" tabindex="-1"></a>  <span class="at">cv.donut =</span> <span class="dv">0</span>,</span>
-<span id="cb12-207"><a href="#cb12-207" aria-hidden="true" tabindex="-1"></a>  <span class="at">se       =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb12-208"><a href="#cb12-208" aria-hidden="true" tabindex="-1"></a>  <span class="at">nboots   =</span> <span class="dv">50</span>,</span>
-<span id="cb12-209"><a href="#cb12-209" aria-hidden="true" tabindex="-1"></a>  <span class="at">parallel =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb12-210"><a href="#cb12-210" aria-hidden="true" tabindex="-1"></a>  <span class="at">seed     =</span> <span class="dv">42</span></span>
-<span id="cb12-211"><a href="#cb12-211" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb12-212"><a href="#cb12-212" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb12-213"><a href="#cb12-213" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-216"><a href="#cb12-216" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb12-217"><a href="#cb12-217" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fit-mc</span></span>
-<span id="cb12-218"><a href="#cb12-218" aria-hidden="true" tabindex="-1"></a><span class="co">#| message: false</span></span>
-<span id="cb12-219"><a href="#cb12-219" aria-hidden="true" tabindex="-1"></a><span class="co">#| warning: false</span></span>
-<span id="cb12-220"><a href="#cb12-220" aria-hidden="true" tabindex="-1"></a>out_mc <span class="ot">&lt;-</span> <span class="fu">fect</span>(</span>
-<span id="cb12-221"><a href="#cb12-221" aria-hidden="true" tabindex="-1"></a>  lemp <span class="sc">~</span> D, <span class="at">data =</span> <span class="fu">as.data.frame</span>(mw),</span>
-<span id="cb12-222"><a href="#cb12-222" aria-hidden="true" tabindex="-1"></a>  <span class="at">index    =</span> <span class="fu">c</span>(<span class="st">"id"</span>, <span class="st">"year"</span>),</span>
-<span id="cb12-223"><a href="#cb12-223" aria-hidden="true" tabindex="-1"></a>  <span class="at">method   =</span> <span class="st">"mc"</span>,</span>
-<span id="cb12-224"><a href="#cb12-224" aria-hidden="true" tabindex="-1"></a>  <span class="at">force    =</span> <span class="st">"two-way"</span>,</span>
-<span id="cb12-225"><a href="#cb12-225" aria-hidden="true" tabindex="-1"></a>  <span class="at">CV       =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb12-226"><a href="#cb12-226" aria-hidden="true" tabindex="-1"></a>  <span class="at">min.T0   =</span> <span class="dv">2</span>,</span>
-<span id="cb12-227"><a href="#cb12-227" aria-hidden="true" tabindex="-1"></a>  <span class="at">cv.nobs  =</span> <span class="dv">2</span>,</span>
-<span id="cb12-228"><a href="#cb12-228" aria-hidden="true" tabindex="-1"></a>  <span class="at">cv.donut =</span> <span class="dv">0</span>,</span>
-<span id="cb12-229"><a href="#cb12-229" aria-hidden="true" tabindex="-1"></a>  <span class="at">se       =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb12-230"><a href="#cb12-230" aria-hidden="true" tabindex="-1"></a>  <span class="at">nboots   =</span> <span class="dv">50</span>,</span>
-<span id="cb12-231"><a href="#cb12-231" aria-hidden="true" tabindex="-1"></a>  <span class="at">parallel =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb12-232"><a href="#cb12-232" aria-hidden="true" tabindex="-1"></a>  <span class="at">seed     =</span> <span class="dv">42</span></span>
-<span id="cb12-233"><a href="#cb12-233" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb12-234"><a href="#cb12-234" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb12-235"><a href="#cb12-235" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-238"><a href="#cb12-238" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb12-239"><a href="#cb12-239" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: tbl-cv</span></span>
-<span id="cb12-240"><a href="#cb12-240" aria-hidden="true" tabindex="-1"></a><span class="co">#| tbl-cap: "Hyperparameters selected by cross-validation. IFEct picks the number of latent factors $r$; MC picks the nuclear-norm penalty weight $\\lambda$."</span></span>
-<span id="cb12-241"><a href="#cb12-241" aria-hidden="true" tabindex="-1"></a><span class="fu">tibble</span>(</span>
-<span id="cb12-242"><a href="#cb12-242" aria-hidden="true" tabindex="-1"></a>  <span class="at">Method            =</span> <span class="fu">c</span>(<span class="st">"IFEct"</span>, <span class="st">"MC"</span>),</span>
-<span id="cb12-243"><a href="#cb12-243" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">CV-selected</span><span class="st">`</span>     <span class="ot">=</span> <span class="fu">c</span>(<span class="fu">paste0</span>(<span class="st">"r = "</span>, <span class="fu">unname</span>(out_ife<span class="sc">$</span>r.cv)),</span>
-<span id="cb12-244"><a href="#cb12-244" aria-hidden="true" tabindex="-1"></a>                        <span class="fu">sprintf</span>(<span class="st">"lambda = %.4f"</span>, out_mc<span class="sc">$</span>lambda.cv))</span>
-<span id="cb12-245"><a href="#cb12-245" aria-hidden="true" tabindex="-1"></a>) <span class="sc">|&gt;</span></span>
-<span id="cb12-246"><a href="#cb12-246" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gt_pretty</span>()</span>
-<span id="cb12-247"><a href="#cb12-247" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb12-248"><a href="#cb12-248" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-249"><a href="#cb12-249" aria-hidden="true" tabindex="-1"></a><span class="fu">## Counterfactual paths and the ATT trajectory</span></span>
-<span id="cb12-250"><a href="#cb12-250" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-251"><a href="#cb12-251" aria-hidden="true" tabindex="-1"></a>The signature FECT figure overlays the observed average outcome on</span>
-<span id="cb12-252"><a href="#cb12-252" aria-hidden="true" tabindex="-1"></a>treated units against the model-implied $Y(0)$, then plots the gap</span>
-<span id="cb12-253"><a href="#cb12-253" aria-hidden="true" tabindex="-1"></a>— the ATT path — by event time. A credible factor model should</span>
-<span id="cb12-254"><a href="#cb12-254" aria-hidden="true" tabindex="-1"></a>track the observed $Y$ closely before treatment and only diverge</span>
-<span id="cb12-255"><a href="#cb12-255" aria-hidden="true" tabindex="-1"></a>after.</span>
-<span id="cb12-256"><a href="#cb12-256" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-259"><a href="#cb12-259" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb12-260"><a href="#cb12-260" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-ife-mc</span></span>
-<span id="cb12-261"><a href="#cb12-261" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Counterfactual trajectories and event-study ATT. Top row: IFEct. Bottom row: MC. Left panels overlay observed average outcome on treated units (solid) with model-implied $Y(0)$ (dashed). Right panels show the implied ATT by event time relative to a county's adoption year, with bootstrap 95% CIs."</span></span>
-<span id="cb12-262"><a href="#cb12-262" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-width: 9</span></span>
-<span id="cb12-263"><a href="#cb12-263" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-height: 7</span></span>
-<span id="cb12-264"><a href="#cb12-264" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-265"><a href="#cb12-265" aria-hidden="true" tabindex="-1"></a>p_ife_ct <span class="ot">&lt;-</span> <span class="fu">plot</span>(out_ife, <span class="at">type =</span> <span class="st">"counterfactual"</span>,</span>
-<span id="cb12-266"><a href="#cb12-266" aria-hidden="true" tabindex="-1"></a>                 <span class="at">main =</span> <span class="st">"IFEct: observed vs counterfactual"</span>,</span>
-<span id="cb12-267"><a href="#cb12-267" aria-hidden="true" tabindex="-1"></a>                 <span class="at">xlab =</span> <span class="st">"Year"</span>, <span class="at">ylab =</span> <span class="st">"Log teen employment"</span>)</span>
-<span id="cb12-268"><a href="#cb12-268" aria-hidden="true" tabindex="-1"></a>p_ife_gap <span class="ot">&lt;-</span> <span class="fu">plot</span>(out_ife, <span class="at">type =</span> <span class="st">"gap"</span>,</span>
-<span id="cb12-269"><a href="#cb12-269" aria-hidden="true" tabindex="-1"></a>                  <span class="at">main =</span> <span class="st">"IFEct: event-study ATT"</span>,</span>
-<span id="cb12-270"><a href="#cb12-270" aria-hidden="true" tabindex="-1"></a>                  <span class="at">xlab =</span> <span class="st">"Event time"</span>, <span class="at">ylab =</span> <span class="st">"ATT"</span>)</span>
-<span id="cb12-271"><a href="#cb12-271" aria-hidden="true" tabindex="-1"></a>p_mc_ct <span class="ot">&lt;-</span> <span class="fu">plot</span>(out_mc, <span class="at">type =</span> <span class="st">"counterfactual"</span>,</span>
-<span id="cb12-272"><a href="#cb12-272" aria-hidden="true" tabindex="-1"></a>                <span class="at">main =</span> <span class="st">"MC: observed vs counterfactual"</span>,</span>
-<span id="cb12-273"><a href="#cb12-273" aria-hidden="true" tabindex="-1"></a>                <span class="at">xlab =</span> <span class="st">"Year"</span>, <span class="at">ylab =</span> <span class="st">"Log teen employment"</span>)</span>
-<span id="cb12-274"><a href="#cb12-274" aria-hidden="true" tabindex="-1"></a>p_mc_gap <span class="ot">&lt;-</span> <span class="fu">plot</span>(out_mc, <span class="at">type =</span> <span class="st">"gap"</span>,</span>
-<span id="cb12-275"><a href="#cb12-275" aria-hidden="true" tabindex="-1"></a>                 <span class="at">main =</span> <span class="st">"MC: event-study ATT"</span>,</span>
-<span id="cb12-276"><a href="#cb12-276" aria-hidden="true" tabindex="-1"></a>                 <span class="at">xlab =</span> <span class="st">"Event time"</span>, <span class="at">ylab =</span> <span class="st">"ATT"</span>)</span>
-<span id="cb12-277"><a href="#cb12-277" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-278"><a href="#cb12-278" aria-hidden="true" tabindex="-1"></a>(p_ife_ct <span class="sc">+</span> p_ife_gap) <span class="sc">/</span> (p_mc_ct <span class="sc">+</span> p_mc_gap)</span>
-<span id="cb12-279"><a href="#cb12-279" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb12-280"><a href="#cb12-280" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-281"><a href="#cb12-281" aria-hidden="true" tabindex="-1"></a>Both estimators reproduce the textbook story: a flat-ish pre-trend</span>
-<span id="cb12-282"><a href="#cb12-282" aria-hidden="true" tabindex="-1"></a>that breaks downward at event time zero. The MC counterfactual is a</span>
-<span id="cb12-283"><a href="#cb12-283" aria-hidden="true" tabindex="-1"></a>touch smoother than IFEct's, which is the regularisation doing its</span>
-<span id="cb12-284"><a href="#cb12-284" aria-hidden="true" tabindex="-1"></a>job.</span>
-<span id="cb12-285"><a href="#cb12-285" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-286"><a href="#cb12-286" aria-hidden="true" tabindex="-1"></a><span class="fu">## IFEct and MC compared</span></span>
-<span id="cb12-287"><a href="#cb12-287" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-288"><a href="#cb12-288" aria-hidden="true" tabindex="-1"></a>Two estimators that disagree about the identifying assumption — an</span>
-<span id="cb12-289"><a href="#cb12-289" aria-hidden="true" tabindex="-1"></a>explicit linear factor model vs. an approximately low-rank</span>
-<span id="cb12-290"><a href="#cb12-290" aria-hidden="true" tabindex="-1"></a>$Y(0)$ matrix — point to the same sign and the same order of</span>
-<span id="cb12-291"><a href="#cb12-291" aria-hidden="true" tabindex="-1"></a>magnitude on this panel. The CV-selected hyperparameters are not</span>
-<span id="cb12-292"><a href="#cb12-292" aria-hidden="true" tabindex="-1"></a>directly comparable (an integer rank vs. a continuous penalty), but</span>
-<span id="cb12-293"><a href="#cb12-293" aria-hidden="true" tabindex="-1"></a>the counterfactual-path overlay and ATT trajectory are. When the</span>
-<span id="cb12-294"><a href="#cb12-294" aria-hidden="true" tabindex="-1"></a>two methods agree, both relaxations of parallel trends are</span>
-<span id="cb12-295"><a href="#cb12-295" aria-hidden="true" tabindex="-1"></a>consistent with the same conclusion, which is the strongest</span>
-<span id="cb12-296"><a href="#cb12-296" aria-hidden="true" tabindex="-1"></a>evidence a short panel design can produce.</span>
-<span id="cb12-297"><a href="#cb12-297" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-298"><a href="#cb12-298" aria-hidden="true" tabindex="-1"></a>::: {.callout-warning appearance="simple"}</span>
-<span id="cb12-299"><a href="#cb12-299" aria-hidden="true" tabindex="-1"></a>**The short-panel caveat.** With $T = 7$ and 3 pre-periods on the</span>
-<span id="cb12-300"><a href="#cb12-300" aria-hidden="true" tabindex="-1"></a>shorter cohort, the rank/penalty selected by cross-validation is</span>
-<span id="cb12-301"><a href="#cb12-301" aria-hidden="true" tabindex="-1"></a>borderline-identifiable; we capped $r \le 2$ deliberately. On a</span>
-<span id="cb12-302"><a href="#cb12-302" aria-hidden="true" tabindex="-1"></a>genuinely short panel ($T \le 5$) IFE and MC become numerically</span>
-<span id="cb12-303"><a href="#cb12-303" aria-hidden="true" tabindex="-1"></a>delicate, and the honest move is to *not* run them rather than to</span>
-<span id="cb12-304"><a href="#cb12-304" aria-hidden="true" tabindex="-1"></a>hand-pick a rank. The <span class="in">`fect::simdata`</span> panel ships a $T = 30$</span>
-<span id="cb12-305"><a href="#cb12-305" aria-hidden="true" tabindex="-1"></a>example that shows both methods working at full strength.</span>
-<span id="cb12-306"><a href="#cb12-306" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb12-307"><a href="#cb12-307" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-308"><a href="#cb12-308" aria-hidden="true" tabindex="-1"></a><span class="fu">## Recap</span></span>
-<span id="cb12-309"><a href="#cb12-309" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-310"><a href="#cb12-310" aria-hidden="true" tabindex="-1"></a>::: {.callout-note appearance="simple"}</span>
-<span id="cb12-311"><a href="#cb12-311" aria-hidden="true" tabindex="-1"></a>**The methods reconciled.** Two answers to the same question on the</span>
-<span id="cb12-312"><a href="#cb12-312" aria-hidden="true" tabindex="-1"></a>2001-2007 minimum-wage panel:</span>
-<span id="cb12-313"><a href="#cb12-313" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-314"><a href="#cb12-314" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>*IFEct*: factor model of $Y(0)$ fit on never-treated, imputed on</span>
-<span id="cb12-315"><a href="#cb12-315" aria-hidden="true" tabindex="-1"></a>  treated, $r$ chosen by cross-validation.</span>
-<span id="cb12-316"><a href="#cb12-316" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>*Matrix Completion*: low-rank completion of the masked $Y(0)$</span>
-<span id="cb12-317"><a href="#cb12-317" aria-hidden="true" tabindex="-1"></a>  matrix, nuclear-norm penalty $\lambda$ chosen by cross-validation.</span>
-<span id="cb12-318"><a href="#cb12-318" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-319"><a href="#cb12-319" aria-hidden="true" tabindex="-1"></a>Both point downward; both sit in the same neighbourhood; neither is</span>
-<span id="cb12-320"><a href="#cb12-320" aria-hidden="true" tabindex="-1"></a>uniquely correct. Factor-based estimators *relax* parallel trends</span>
-<span id="cb12-321"><a href="#cb12-321" aria-hidden="true" tabindex="-1"></a>rather than replace it — the counterfactual-path plot is the visual</span>
-<span id="cb12-322"><a href="#cb12-322" aria-hidden="true" tabindex="-1"></a>quality check, and a flat pre-treatment overlay is the signal you</span>
-<span id="cb12-323"><a href="#cb12-323" aria-hidden="true" tabindex="-1"></a>want.</span>
-<span id="cb12-324"><a href="#cb12-324" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb12-325"><a href="#cb12-325" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-326"><a href="#cb12-326" aria-hidden="true" tabindex="-1"></a><span class="fu">## Common pitfall</span></span>
-<span id="cb12-327"><a href="#cb12-327" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-328"><a href="#cb12-328" aria-hidden="true" tabindex="-1"></a>Cranking $r$ up until the in-sample fit looks great. With a panel</span>
-<span id="cb12-329"><a href="#cb12-329" aria-hidden="true" tabindex="-1"></a>this short, an IFEct with $r$ near $T/2$ will fit the pre-treatment</span>
-<span id="cb12-330"><a href="#cb12-330" aria-hidden="true" tabindex="-1"></a>cells almost perfectly and produce an absurd counterfactual on the</span>
-<span id="cb12-331"><a href="#cb12-331" aria-hidden="true" tabindex="-1"></a>treated cells, because it has fitted noise into the loadings.</span>
-<span id="cb12-332"><a href="#cb12-332" aria-hidden="true" tabindex="-1"></a>Trust the CV-selected rank; the MC analogue is choosing $\lambda$</span>
-<span id="cb12-333"><a href="#cb12-333" aria-hidden="true" tabindex="-1"></a>too small. Both are over-fitting masquerading as identification.</span>
-<span id="cb12-334"><a href="#cb12-334" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-335"><a href="#cb12-335" aria-hidden="true" tabindex="-1"></a><span class="fu">## Further reading</span></span>
-<span id="cb12-336"><a href="#cb12-336" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-337"><a href="#cb12-337" aria-hidden="true" tabindex="-1"></a>The factor-model formulation traces to @bai2009panel and the IFEct /</span>
-<span id="cb12-338"><a href="#cb12-338" aria-hidden="true" tabindex="-1"></a>generalised synthetic control reading is @xu2017generalized; the</span>
-<span id="cb12-339"><a href="#cb12-339" aria-hidden="true" tabindex="-1"></a>matrix-completion view is @athey2021matrix. @liu2024practical pairs</span>
-<span id="cb12-340"><a href="#cb12-340" aria-hidden="true" tabindex="-1"></a>with the <span class="in">`fect`</span> package — its online companion at</span>
-<span id="cb12-341"><a href="#cb12-341" aria-hidden="true" tabindex="-1"></a><span class="ot">&lt;https://yiqingxu.org/packages/fect/04-ife-mc.html&gt;</span> is the</span>
-<span id="cb12-342"><a href="#cb12-342" aria-hidden="true" tabindex="-1"></a>authoritative tutorial.</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Interactive Fixed Effects and Matrix Completion"</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="fu">## When parallel trends isn't enough</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>Chapter 8 squeezed every drop of usable signal out of the</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>Callaway-Sant'Anna minimum-wage panel under one identifying</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>assumption: **parallel trends**. Conditional or unconditional, with</span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>or without never-treated counties, with or without anticipation</span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>slack, with Rambachan-Roth bounds on top — the assumption is always</span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>that, absent treatment, the trajectory of the treated counties would</span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>have moved *in parallel* with the untreated.</span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>What if it would not have? Counties select into raising the minimum</span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>wage non-randomly. They are not a random subset of the country in</span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a>the time-varying dimension either: industry mix, demographics, and</span>
+<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a>local growth trends all shape both treatment timing and outcome</span>
+<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a>paths. Two counties can share an industry-mix-driven trajectory that</span>
+<span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a>TWFE never absorbs — and so cannot net out.</span>
+<span id="cb11-21"><a href="#cb11-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-22"><a href="#cb11-22" aria-hidden="true" tabindex="-1"></a>This chapter relaxes parallel trends in a specific way. We model the</span>
+<span id="cb11-23"><a href="#cb11-23" aria-hidden="true" tabindex="-1"></a>counterfactual outcome as a **factor structure**:</span>
+<span id="cb11-24"><a href="#cb11-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-25"><a href="#cb11-25" aria-hidden="true" tabindex="-1"></a>$$Y_{it}(0) \;=\; \alpha_i + \xi_t + \lambda_i' f_t + \varepsilon_{it}.$$</span>
+<span id="cb11-26"><a href="#cb11-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-27"><a href="#cb11-27" aria-hidden="true" tabindex="-1"></a>Each unit $i$ has a loading vector $\lambda_i$; each period a factor</span>
+<span id="cb11-28"><a href="#cb11-28" aria-hidden="true" tabindex="-1"></a>vector $f_t$. Their interaction $\lambda_i' f_t$ encodes</span>
+<span id="cb11-29"><a href="#cb11-29" aria-hidden="true" tabindex="-1"></a>time-varying unobserved heterogeneity that no county or year fixed</span>
+<span id="cb11-30"><a href="#cb11-30" aria-hidden="true" tabindex="-1"></a>effect can absorb. We write the model without observable covariates</span>
+<span id="cb11-31"><a href="#cb11-31" aria-hidden="true" tabindex="-1"></a>for simplicity, but <span class="in">`fect()`</span> accepts a covariate matrix</span>
+<span id="cb11-32"><a href="#cb11-32" aria-hidden="true" tabindex="-1"></a>$X_{it}$ — e.g. <span class="in">`lemp ~ D + lpop + lavg_pay`</span> — and chapter 10</span>
+<span id="cb11-33"><a href="#cb11-33" aria-hidden="true" tabindex="-1"></a>exercises exactly that extension on the same panel.</span>
+<span id="cb11-34"><a href="#cb11-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-35"><a href="#cb11-35" aria-hidden="true" tabindex="-1"></a>Two views of the same object give two estimators</span>
+<span id="cb11-36"><a href="#cb11-36" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="ot">@liu2024practical</span><span class="co">]</span>:</span>
+<span id="cb11-37"><a href="#cb11-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-38"><a href="#cb11-38" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Interactive Fixed Effects (IFEct)** [@bai2009panel;</span>
+<span id="cb11-39"><a href="#cb11-39" aria-hidden="true" tabindex="-1"></a>  @xu2017generalized; @liu2024practical] treats</span>
+<span id="cb11-40"><a href="#cb11-40" aria-hidden="true" tabindex="-1"></a>  $(\alpha, \xi, \Lambda, F)$ as parameters to be estimated on</span>
+<span id="cb11-41"><a href="#cb11-41" aria-hidden="true" tabindex="-1"></a>  control observations, then imputes $Y_{it}(0)$ on treated cells.</span>
+<span id="cb11-42"><a href="#cb11-42" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Matrix Completion (MC)** <span class="co">[</span><span class="ot">@athey2021matrix</span><span class="co">]</span> reframes the same</span>
+<span id="cb11-43"><a href="#cb11-43" aria-hidden="true" tabindex="-1"></a>  problem as filling missing entries of the implicit $Y(0)$ matrix:</span>
+<span id="cb11-44"><a href="#cb11-44" aria-hidden="true" tabindex="-1"></a>  mask the treated cells, then complete via nuclear-norm-regularised</span>
+<span id="cb11-45"><a href="#cb11-45" aria-hidden="true" tabindex="-1"></a>  SVD.</span>
+<span id="cb11-46"><a href="#cb11-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-47"><a href="#cb11-47" aria-hidden="true" tabindex="-1"></a>Yiqing Xu's <span class="in">`fect`</span> <span class="co">[</span><span class="ot">@liu2024practical</span><span class="co">]</span> package implements both with</span>
+<span id="cb11-48"><a href="#cb11-48" aria-hidden="true" tabindex="-1"></a>a common API and a common counterfactual-plot diagnostic. By</span>
+<span id="cb11-49"><a href="#cb11-49" aria-hidden="true" tabindex="-1"></a>chapter's end we compare IFEct and MC on the same panel — two</span>
+<span id="cb11-50"><a href="#cb11-50" aria-hidden="true" tabindex="-1"></a>estimators, two identifying assumptions, one substantive question.</span>
+<span id="cb11-51"><a href="#cb11-51" aria-hidden="true" tabindex="-1"></a>Chapter 10 then does the deep dive on one specific member of this</span>
+<span id="cb11-52"><a href="#cb11-52" aria-hidden="true" tabindex="-1"></a>family — generalized synthetic control via the <span class="in">`gsynth`</span> package —</span>
+<span id="cb11-53"><a href="#cb11-53" aria-hidden="true" tabindex="-1"></a>using the same panel.</span>
+<span id="cb11-54"><a href="#cb11-54" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-55"><a href="#cb11-55" aria-hidden="true" tabindex="-1"></a><span class="fu">## Setup and data</span></span>
+<span id="cb11-56"><a href="#cb11-56" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-59"><a href="#cb11-59" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb11-60"><a href="#cb11-60" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: setup</span></span>
+<span id="cb11-61"><a href="#cb11-61" aria-hidden="true" tabindex="-1"></a><span class="co">#| message: false</span></span>
+<span id="cb11-62"><a href="#cb11-62" aria-hidden="true" tabindex="-1"></a><span class="co">#| warning: false</span></span>
+<span id="cb11-63"><a href="#cb11-63" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb11-64"><a href="#cb11-64" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(fect)</span>
+<span id="cb11-65"><a href="#cb11-65" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(panelView)</span>
+<span id="cb11-66"><a href="#cb11-66" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(patchwork)</span>
+<span id="cb11-67"><a href="#cb11-67" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"R/table_helpers.R"</span>)</span>
+<span id="cb11-68"><a href="#cb11-68" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-69"><a href="#cb11-69" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
+<span id="cb11-70"><a href="#cb11-70" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-71"><a href="#cb11-71" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span>opts_chunk<span class="sc">$</span><span class="fu">set</span>(<span class="at">dev.args =</span> <span class="fu">list</span>(<span class="at">bg =</span> <span class="st">"transparent"</span>))</span>
+<span id="cb11-72"><a href="#cb11-72" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-73"><a href="#cb11-73" aria-hidden="true" tabindex="-1"></a><span class="fu">theme_set</span>(</span>
+<span id="cb11-74"><a href="#cb11-74" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">12</span>) <span class="sc">+</span></span>
+<span id="cb11-75"><a href="#cb11-75" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(</span>
+<span id="cb11-76"><a href="#cb11-76" aria-hidden="true" tabindex="-1"></a>      <span class="at">plot.background  =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">"transparent"</span>, <span class="at">color =</span> <span class="cn">NA</span>),</span>
+<span id="cb11-77"><a href="#cb11-77" aria-hidden="true" tabindex="-1"></a>      <span class="at">panel.background =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">"transparent"</span>, <span class="at">color =</span> <span class="cn">NA</span>),</span>
+<span id="cb11-78"><a href="#cb11-78" aria-hidden="true" tabindex="-1"></a>      <span class="at">panel.grid.major =</span> <span class="fu">element_line</span>(<span class="at">color =</span> <span class="st">"#94a3b8"</span>, <span class="at">linewidth =</span> <span class="fl">0.25</span>),</span>
+<span id="cb11-79"><a href="#cb11-79" aria-hidden="true" tabindex="-1"></a>      <span class="at">panel.grid.minor =</span> <span class="fu">element_line</span>(<span class="at">color =</span> <span class="st">"#94a3b8"</span>, <span class="at">linewidth =</span> <span class="fl">0.15</span>),</span>
+<span id="cb11-80"><a href="#cb11-80" aria-hidden="true" tabindex="-1"></a>      <span class="at">text             =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"#94a3b8"</span>),</span>
+<span id="cb11-81"><a href="#cb11-81" aria-hidden="true" tabindex="-1"></a>      <span class="at">axis.text        =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"#94a3b8"</span>),</span>
+<span id="cb11-82"><a href="#cb11-82" aria-hidden="true" tabindex="-1"></a>      <span class="at">strip.text       =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"#94a3b8"</span>),</span>
+<span id="cb11-83"><a href="#cb11-83" aria-hidden="true" tabindex="-1"></a>      <span class="at">legend.text      =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"#94a3b8"</span>)</span>
+<span id="cb11-84"><a href="#cb11-84" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb11-85"><a href="#cb11-85" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb11-86"><a href="#cb11-86" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb11-87"><a href="#cb11-87" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-88"><a href="#cb11-88" aria-hidden="true" tabindex="-1"></a>We work from the same <span class="in">`cs_minwage.rds`</span> panel as chapter 8, but with</span>
+<span id="cb11-89"><a href="#cb11-89" aria-hidden="true" tabindex="-1"></a>one small adjustment: factor-based estimators need **at least as</span>
+<span id="cb11-90"><a href="#cb11-90" aria-hidden="true" tabindex="-1"></a>many pre-treatment periods per cohort as the number of factors they</span>
+<span id="cb11-91"><a href="#cb11-91" aria-hidden="true" tabindex="-1"></a>try to fit** — concretely, identifying $r$ factors on a treated unit</span>
+<span id="cb11-92"><a href="#cb11-92" aria-hidden="true" tabindex="-1"></a>requires at least $r + 1$ pre-treatment periods for that unit.</span>
+<span id="cb11-93"><a href="#cb11-93" aria-hidden="true" tabindex="-1"></a>Chapter 8's 2003-2007 <span class="in">`data2`</span> window (see</span>
+<span id="cb11-94"><a href="#cb11-94" aria-hidden="true" tabindex="-1"></a><span class="in">`08-staggered-did.qmd:99`</span>) leaves the 2004 cohort with only one</span>
+<span id="cb11-95"><a href="#cb11-95" aria-hidden="true" tabindex="-1"></a>pre-period (year 2003). To keep that cohort in the IFE sample we</span>
+<span id="cb11-96"><a href="#cb11-96" aria-hidden="true" tabindex="-1"></a>would need to set <span class="in">`min.T0 = 1`</span> — the user-controlled inclusion</span>
+<span id="cb11-97"><a href="#cb11-97" aria-hidden="true" tabindex="-1"></a>threshold that drops treated units with fewer pre-periods — which</span>
+<span id="cb11-98"><a href="#cb11-98" aria-hidden="true" tabindex="-1"></a>in turn caps the identifiable rank at zero for that cohort and</span>
+<span id="cb11-99"><a href="#cb11-99" aria-hidden="true" tabindex="-1"></a>collapses IFEct back to TWFE. Widening the window to 2001-2007</span>
+<span id="cb11-100"><a href="#cb11-100" aria-hidden="true" tabindex="-1"></a>gives 2004 three pre-periods (2001-2003), so we can set</span>
+<span id="cb11-101"><a href="#cb11-101" aria-hidden="true" tabindex="-1"></a><span class="in">`min.T0 = 2`</span> and let CV search over $r \in <span class="sc">\{</span>0, 1, 2<span class="sc">\}</span>$. Everything</span>
+<span id="cb11-102"><a href="#cb11-102" aria-hidden="true" tabindex="-1"></a>else (cohort filter, region drop, treatment indicator) is identical</span>
+<span id="cb11-103"><a href="#cb11-103" aria-hidden="true" tabindex="-1"></a>to chapter 8.</span>
+<span id="cb11-104"><a href="#cb11-104" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-107"><a href="#cb11-107" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb11-108"><a href="#cb11-108" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: data-load</span></span>
+<span id="cb11-109"><a href="#cb11-109" aria-hidden="true" tabindex="-1"></a>mw_raw <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">"data/cs_minwage.rds"</span>) <span class="sc">|&gt;</span> <span class="fu">as_tibble</span>()</span>
+<span id="cb11-110"><a href="#cb11-110" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-111"><a href="#cb11-111" aria-hidden="true" tabindex="-1"></a>mw <span class="ot">&lt;-</span> mw_raw <span class="sc">|&gt;</span></span>
+<span id="cb11-112"><a href="#cb11-112" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(G <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">2004</span>, <span class="dv">2006</span>, <span class="dv">2007</span>), region <span class="sc">!=</span> <span class="st">"1"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb11-113"><a href="#cb11-113" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(G <span class="sc">!=</span> <span class="dv">2007</span>, year <span class="sc">&gt;=</span> <span class="dv">2001</span>) <span class="sc">|&gt;</span></span>
+<span id="cb11-114"><a href="#cb11-114" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">D =</span> <span class="fu">as.integer</span>(year <span class="sc">&gt;=</span> G <span class="sc">&amp;</span> G <span class="sc">!=</span> <span class="dv">0</span>))</span>
+<span id="cb11-115"><a href="#cb11-115" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-116"><a href="#cb11-116" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(mw)</span>
+<span id="cb11-117"><a href="#cb11-117" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb11-118"><a href="#cb11-118" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-121"><a href="#cb11-121" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb11-122"><a href="#cb11-122" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: tbl-cohorts</span></span>
+<span id="cb11-123"><a href="#cb11-123" aria-hidden="true" tabindex="-1"></a><span class="co">#| tbl-cap: "Cohorts in the 2001-2007 working panel. $G = 0$ is the never-treated control pool; the two treated cohorts have 3 and 5 pre-treatment years respectively."</span></span>
+<span id="cb11-124"><a href="#cb11-124" aria-hidden="true" tabindex="-1"></a>mw <span class="sc">|&gt;</span></span>
+<span id="cb11-125"><a href="#cb11-125" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(year <span class="sc">==</span> <span class="dv">2001</span>) <span class="sc">|&gt;</span></span>
+<span id="cb11-126"><a href="#cb11-126" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(G, <span class="at">name =</span> <span class="st">"counties"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb11-127"><a href="#cb11-127" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="st">`</span><span class="at">Pre-periods</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">case_when</span>(</span>
+<span id="cb11-128"><a href="#cb11-128" aria-hidden="true" tabindex="-1"></a>    G <span class="sc">==</span> <span class="dv">0</span>    <span class="sc">~</span> <span class="cn">NA_integer_</span>,</span>
+<span id="cb11-129"><a href="#cb11-129" aria-hidden="true" tabindex="-1"></a>    G <span class="sc">==</span> <span class="dv">2004</span> <span class="sc">~</span> <span class="dv">3</span>L,</span>
+<span id="cb11-130"><a href="#cb11-130" aria-hidden="true" tabindex="-1"></a>    G <span class="sc">==</span> <span class="dv">2006</span> <span class="sc">~</span> <span class="dv">5</span>L</span>
+<span id="cb11-131"><a href="#cb11-131" aria-hidden="true" tabindex="-1"></a>  )) <span class="sc">|&gt;</span></span>
+<span id="cb11-132"><a href="#cb11-132" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="st">`</span><span class="at">Cohort (G)</span><span class="st">`</span> <span class="ot">=</span> G) <span class="sc">|&gt;</span></span>
+<span id="cb11-133"><a href="#cb11-133" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gt_pretty</span>()</span>
+<span id="cb11-134"><a href="#cb11-134" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb11-135"><a href="#cb11-135" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-136"><a href="#cb11-136" aria-hidden="true" tabindex="-1"></a>The outcome <span class="in">`lemp`</span> (log teen employment; see chapter 8 for full</span>
+<span id="cb11-137"><a href="#cb11-137" aria-hidden="true" tabindex="-1"></a>data provenance) and the treatment indicator <span class="in">`D`</span> (1 once a county's</span>
+<span id="cb11-138"><a href="#cb11-138" aria-hidden="true" tabindex="-1"></a>state has raised its minimum wage above the federal floor, 0</span>
+<span id="cb11-139"><a href="#cb11-139" aria-hidden="true" tabindex="-1"></a>otherwise) line up with chapter 8's definitions.</span>
+<span id="cb11-140"><a href="#cb11-140" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-141"><a href="#cb11-141" aria-hidden="true" tabindex="-1"></a><span class="fu">## Visualising the panel</span></span>
+<span id="cb11-142"><a href="#cb11-142" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-143"><a href="#cb11-143" aria-hidden="true" tabindex="-1"></a><span class="in">`panelView`</span> is the natural opener for any FECT workflow. It draws</span>
+<span id="cb11-144"><a href="#cb11-144" aria-hidden="true" tabindex="-1"></a>units on the vertical axis and time on the horizontal, coloured by</span>
+<span id="cb11-145"><a href="#cb11-145" aria-hidden="true" tabindex="-1"></a>treatment status, so the staggered-adoption structure of the panel</span>
+<span id="cb11-146"><a href="#cb11-146" aria-hidden="true" tabindex="-1"></a>is immediate.</span>
+<span id="cb11-147"><a href="#cb11-147" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-150"><a href="#cb11-150" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb11-151"><a href="#cb11-151" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-panelview</span></span>
+<span id="cb11-152"><a href="#cb11-152" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Treatment status by county and year. The two horizontal bands of pink are the 2004 and 2006 cohorts; the wide grey band underneath is the never-treated $G = 0$ control pool. The visible step in the pink rows is the staggered adoption that breaks TWFE. All 1,745 counties are shown."</span></span>
+<span id="cb11-153"><a href="#cb11-153" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-width: 8</span></span>
+<span id="cb11-154"><a href="#cb11-154" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-height: 6</span></span>
+<span id="cb11-155"><a href="#cb11-155" aria-hidden="true" tabindex="-1"></a><span class="co">#| message: false</span></span>
+<span id="cb11-156"><a href="#cb11-156" aria-hidden="true" tabindex="-1"></a><span class="co">#| warning: false</span></span>
+<span id="cb11-157"><a href="#cb11-157" aria-hidden="true" tabindex="-1"></a><span class="fu">panelview</span>(<span class="at">data =</span> <span class="fu">as.data.frame</span>(mw), <span class="at">formula =</span> lemp <span class="sc">~</span> D,</span>
+<span id="cb11-158"><a href="#cb11-158" aria-hidden="true" tabindex="-1"></a>          <span class="at">index =</span> <span class="fu">c</span>(<span class="st">"id"</span>, <span class="st">"year"</span>),</span>
+<span id="cb11-159"><a href="#cb11-159" aria-hidden="true" tabindex="-1"></a>          <span class="at">xlab =</span> <span class="st">"Year"</span>, <span class="at">ylab =</span> <span class="st">"County"</span>,</span>
+<span id="cb11-160"><a href="#cb11-160" aria-hidden="true" tabindex="-1"></a>          <span class="at">main =</span> <span class="st">""</span>, <span class="at">legendOff =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb11-161"><a href="#cb11-161" aria-hidden="true" tabindex="-1"></a>          <span class="at">display.all =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb11-162"><a href="#cb11-162" aria-hidden="true" tabindex="-1"></a>          <span class="at">theme.bw =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb11-163"><a href="#cb11-163" aria-hidden="true" tabindex="-1"></a>          <span class="at">background =</span> <span class="st">"transparent"</span>)</span>
+<span id="cb11-164"><a href="#cb11-164" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb11-165"><a href="#cb11-165" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-166"><a href="#cb11-166" aria-hidden="true" tabindex="-1"></a><span class="fu">## The factor model of counterfactuals</span></span>
+<span id="cb11-167"><a href="#cb11-167" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-168"><a href="#cb11-168" aria-hidden="true" tabindex="-1"></a>Both estimators target the same object — the counterfactual matrix</span>
+<span id="cb11-169"><a href="#cb11-169" aria-hidden="true" tabindex="-1"></a>$Y(0)$ of what each county's log teen employment *would* have been</span>
+<span id="cb11-170"><a href="#cb11-170" aria-hidden="true" tabindex="-1"></a>absent any minimum-wage increase. Where they differ is in how they</span>
+<span id="cb11-171"><a href="#cb11-171" aria-hidden="true" tabindex="-1"></a>restrict that matrix.</span>
+<span id="cb11-172"><a href="#cb11-172" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-173"><a href="#cb11-173" aria-hidden="true" tabindex="-1"></a>**IFEct** imposes the explicit factor decomposition $Y_{it}(0) =</span>
+<span id="cb11-174"><a href="#cb11-174" aria-hidden="true" tabindex="-1"></a>\alpha_i + \xi_t + \lambda_i' f_t + \varepsilon_{it}$, fits</span>
+<span id="cb11-175"><a href="#cb11-175" aria-hidden="true" tabindex="-1"></a>$(\alpha, \xi, \Lambda, F)$ on the **control** observations only,</span>
+<span id="cb11-176"><a href="#cb11-176" aria-hidden="true" tabindex="-1"></a>and uses those estimates to impute $Y_{it}(0)$ for treated</span>
+<span id="cb11-177"><a href="#cb11-177" aria-hidden="true" tabindex="-1"></a>cells. The choice of $r$ — how many factors — is made by</span>
+<span id="cb11-178"><a href="#cb11-178" aria-hidden="true" tabindex="-1"></a>cross-validation: hold out small blocks of control cells, refit,</span>
+<span id="cb11-179"><a href="#cb11-179" aria-hidden="true" tabindex="-1"></a>score by MSPE on the held-out cells [@xu2017generalized;</span>
+<span id="cb11-180"><a href="#cb11-180" aria-hidden="true" tabindex="-1"></a>@liu2024practical].</span>
+<span id="cb11-181"><a href="#cb11-181" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-182"><a href="#cb11-182" aria-hidden="true" tabindex="-1"></a>**MC** does not write the factor model down. It assumes only that</span>
+<span id="cb11-183"><a href="#cb11-183" aria-hidden="true" tabindex="-1"></a>the matrix of $Y(0)$ outcomes is **approximately low rank**, then</span>
+<span id="cb11-184"><a href="#cb11-184" aria-hidden="true" tabindex="-1"></a>completes it by minimising a Frobenius-norm fit penalty *plus* a</span>
+<span id="cb11-185"><a href="#cb11-185" aria-hidden="true" tabindex="-1"></a>nuclear-norm penalty on the singular values. Nuclear-norm</span>
+<span id="cb11-186"><a href="#cb11-186" aria-hidden="true" tabindex="-1"></a>regularisation is the convex relaxation of "low rank" the same way</span>
+<span id="cb11-187"><a href="#cb11-187" aria-hidden="true" tabindex="-1"></a>$\ell_1$ is the convex relaxation of "sparse" <span class="co">[</span><span class="ot">@athey2021matrix</span><span class="co">]</span>.</span>
+<span id="cb11-188"><a href="#cb11-188" aria-hidden="true" tabindex="-1"></a>Concretely, MC solves</span>
+<span id="cb11-189"><a href="#cb11-189" aria-hidden="true" tabindex="-1"></a>$$\min_{\widehat{Y(0)}} \; <span class="sc">\|</span>\,Y_{\mathrm{obs}} - \widehat{Y(0)}\,<span class="sc">\|</span>_F^2 \;+\; \eta \, \|\,\widehat{Y(0)}\,\|_*,$$</span>
+<span id="cb11-190"><a href="#cb11-190" aria-hidden="true" tabindex="-1"></a>where $<span class="sc">\|</span>\cdot<span class="sc">\|</span>_*$ (the nuclear norm) is the sum of singular</span>
+<span id="cb11-191"><a href="#cb11-191" aria-hidden="true" tabindex="-1"></a>values. As $\eta \to 0$ the fit interpolates the observed cells; as</span>
+<span id="cb11-192"><a href="#cb11-192" aria-hidden="true" tabindex="-1"></a>$\eta \to \infty$ all singular values shrink to zero and</span>
+<span id="cb11-193"><a href="#cb11-193" aria-hidden="true" tabindex="-1"></a>$\widehat{Y(0)}$ collapses to a constant. The penalty weight $\eta$</span>
+<span id="cb11-194"><a href="#cb11-194" aria-hidden="true" tabindex="-1"></a>(written as <span class="in">`lambda`</span> in the <span class="in">`fect`</span> API and sometimes as</span>
+<span id="cb11-195"><a href="#cb11-195" aria-hidden="true" tabindex="-1"></a>$\lambda_{\mathrm{MC}}$ in the matrix-completion literature; we use</span>
+<span id="cb11-196"><a href="#cb11-196" aria-hidden="true" tabindex="-1"></a>$\eta$ in prose to avoid confusion with the unit-level loading</span>
+<span id="cb11-197"><a href="#cb11-197" aria-hidden="true" tabindex="-1"></a>vector $\lambda_i$ from IFEct) plays the role of $r$ and is again</span>
+<span id="cb11-198"><a href="#cb11-198" aria-hidden="true" tabindex="-1"></a>chosen by cross-validation.</span>
+<span id="cb11-199"><a href="#cb11-199" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-200"><a href="#cb11-200" aria-hidden="true" tabindex="-1"></a>The key practical implication: both methods bake in</span>
+<span id="cb11-201"><a href="#cb11-201" aria-hidden="true" tabindex="-1"></a>**unit-specific time trends** automatically, without you having to</span>
+<span id="cb11-202"><a href="#cb11-202" aria-hidden="true" tabindex="-1"></a>specify which units or which trend shapes. Parallel trends becomes</span>
+<span id="cb11-203"><a href="#cb11-203" aria-hidden="true" tabindex="-1"></a>a special case (the $r = 0$ corner of IFEct, or the limit</span>
+<span id="cb11-204"><a href="#cb11-204" aria-hidden="true" tabindex="-1"></a>$\eta \to \infty$ in MC) rather than an assumption.</span>
+<span id="cb11-205"><a href="#cb11-205" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-206"><a href="#cb11-206" aria-hidden="true" tabindex="-1"></a><span class="fu">## Estimating with FECT</span></span>
+<span id="cb11-207"><a href="#cb11-207" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-208"><a href="#cb11-208" aria-hidden="true" tabindex="-1"></a>::: {.callout-warning appearance="simple"}</span>
+<span id="cb11-209"><a href="#cb11-209" aria-hidden="true" tabindex="-1"></a>**The short-panel caveat (read first).** With $T = 7$ and 3</span>
+<span id="cb11-210"><a href="#cb11-210" aria-hidden="true" tabindex="-1"></a>pre-periods on the shorter cohort, the rank/penalty selected by</span>
+<span id="cb11-211"><a href="#cb11-211" aria-hidden="true" tabindex="-1"></a>cross-validation is borderline-identifiable; we cap $r \le 2$</span>
+<span id="cb11-212"><a href="#cb11-212" aria-hidden="true" tabindex="-1"></a>deliberately and the *effective* identification ceiling is</span>
+<span id="cb11-213"><a href="#cb11-213" aria-hidden="true" tabindex="-1"></a>$r \le \min(\text{pre-periods}) - 1 = 1$. On a genuinely short</span>
+<span id="cb11-214"><a href="#cb11-214" aria-hidden="true" tabindex="-1"></a>panel ($T \le 5$) IFE and MC become numerically delicate, and the</span>
+<span id="cb11-215"><a href="#cb11-215" aria-hidden="true" tabindex="-1"></a>honest move is to *not* run them rather than to hand-pick a rank.</span>
+<span id="cb11-216"><a href="#cb11-216" aria-hidden="true" tabindex="-1"></a>The <span class="in">`fect::simdata`</span> panel ships a $T = 30$ example that shows both</span>
+<span id="cb11-217"><a href="#cb11-217" aria-hidden="true" tabindex="-1"></a>methods working at full strength. Everything in the rest of this</span>
+<span id="cb11-218"><a href="#cb11-218" aria-hidden="true" tabindex="-1"></a>chapter should be read with this caveat in mind.</span>
+<span id="cb11-219"><a href="#cb11-219" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb11-220"><a href="#cb11-220" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-221"><a href="#cb11-221" aria-hidden="true" tabindex="-1"></a>The two fits below cap the rank grid at $r \in <span class="sc">\{</span>0, 1, 2<span class="sc">\}</span>$. The</span>
+<span id="cb11-222"><a href="#cb11-222" aria-hidden="true" tabindex="-1"></a>identification rule is that recovering $r$ factors on a treated</span>
+<span id="cb11-223"><a href="#cb11-223" aria-hidden="true" tabindex="-1"></a>unit requires at least $r + 1$ pre-periods for that unit; with</span>
+<span id="cb11-224"><a href="#cb11-224" aria-hidden="true" tabindex="-1"></a><span class="in">`min.T0 = 2`</span> the *effective* ceiling is $r = 1$. We let CV search</span>
+<span id="cb11-225"><a href="#cb11-225" aria-hidden="true" tabindex="-1"></a>up to $r = 2$ only to verify it does not get fooled into climbing</span>
+<span id="cb11-226"><a href="#cb11-226" aria-hidden="true" tabindex="-1"></a>past the ceiling. Any $r$ larger than that would be statistical</span>
+<span id="cb11-227"><a href="#cb11-227" aria-hidden="true" tabindex="-1"></a>fantasy.</span>
+<span id="cb11-228"><a href="#cb11-228" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-229"><a href="#cb11-229" aria-hidden="true" tabindex="-1"></a>::: {.callout-note appearance="simple"}</span>
+<span id="cb11-230"><a href="#cb11-230" aria-hidden="true" tabindex="-1"></a>**Learning-mode compute.** We set <span class="in">`nboots = 50`</span> here so the chapter</span>
+<span id="cb11-231"><a href="#cb11-231" aria-hidden="true" tabindex="-1"></a>renders quickly. The bootstrap dominates runtime and only affects</span>
+<span id="cb11-232"><a href="#cb11-232" aria-hidden="true" tabindex="-1"></a>the *width* of confidence intervals — point estimates and the</span>
+<span id="cb11-233"><a href="#cb11-233" aria-hidden="true" tabindex="-1"></a>CV-selected rank or penalty are unchanged. For research use, bump</span>
+<span id="cb11-234"><a href="#cb11-234" aria-hidden="true" tabindex="-1"></a><span class="in">`nboots`</span> to 500-1000 so the bootstrap distribution of the ATT is</span>
+<span id="cb11-235"><a href="#cb11-235" aria-hidden="true" tabindex="-1"></a>properly resolved.</span>
+<span id="cb11-236"><a href="#cb11-236" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb11-237"><a href="#cb11-237" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-240"><a href="#cb11-240" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb11-241"><a href="#cb11-241" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fit-ife</span></span>
+<span id="cb11-242"><a href="#cb11-242" aria-hidden="true" tabindex="-1"></a><span class="co">#| message: false</span></span>
+<span id="cb11-243"><a href="#cb11-243" aria-hidden="true" tabindex="-1"></a><span class="co">#| warning: false</span></span>
+<span id="cb11-244"><a href="#cb11-244" aria-hidden="true" tabindex="-1"></a>out_ife <span class="ot">&lt;-</span> <span class="fu">fect</span>(</span>
+<span id="cb11-245"><a href="#cb11-245" aria-hidden="true" tabindex="-1"></a>  lemp <span class="sc">~</span> D, <span class="at">data =</span> <span class="fu">as.data.frame</span>(mw),</span>
+<span id="cb11-246"><a href="#cb11-246" aria-hidden="true" tabindex="-1"></a>  <span class="at">index    =</span> <span class="fu">c</span>(<span class="st">"id"</span>, <span class="st">"year"</span>),</span>
+<span id="cb11-247"><a href="#cb11-247" aria-hidden="true" tabindex="-1"></a>  <span class="at">method   =</span> <span class="st">"ife"</span>,</span>
+<span id="cb11-248"><a href="#cb11-248" aria-hidden="true" tabindex="-1"></a>  <span class="at">force    =</span> <span class="st">"two-way"</span>,</span>
+<span id="cb11-249"><a href="#cb11-249" aria-hidden="true" tabindex="-1"></a>  <span class="at">CV       =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb11-250"><a href="#cb11-250" aria-hidden="true" tabindex="-1"></a>  <span class="at">r        =</span> <span class="dv">0</span><span class="sc">:</span><span class="dv">2</span>,</span>
+<span id="cb11-251"><a href="#cb11-251" aria-hidden="true" tabindex="-1"></a>  <span class="at">min.T0   =</span> <span class="dv">2</span>,</span>
+<span id="cb11-252"><a href="#cb11-252" aria-hidden="true" tabindex="-1"></a>  <span class="at">cv.nobs  =</span> <span class="dv">2</span>,</span>
+<span id="cb11-253"><a href="#cb11-253" aria-hidden="true" tabindex="-1"></a>  <span class="at">cv.donut =</span> <span class="dv">0</span>,</span>
+<span id="cb11-254"><a href="#cb11-254" aria-hidden="true" tabindex="-1"></a>  <span class="at">se       =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb11-255"><a href="#cb11-255" aria-hidden="true" tabindex="-1"></a>  <span class="at">nboots   =</span> <span class="dv">50</span>,</span>
+<span id="cb11-256"><a href="#cb11-256" aria-hidden="true" tabindex="-1"></a>  <span class="at">parallel =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb11-257"><a href="#cb11-257" aria-hidden="true" tabindex="-1"></a>  <span class="at">seed     =</span> <span class="dv">42</span></span>
+<span id="cb11-258"><a href="#cb11-258" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb11-259"><a href="#cb11-259" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb11-260"><a href="#cb11-260" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-263"><a href="#cb11-263" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb11-264"><a href="#cb11-264" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fit-mc</span></span>
+<span id="cb11-265"><a href="#cb11-265" aria-hidden="true" tabindex="-1"></a><span class="co">#| message: false</span></span>
+<span id="cb11-266"><a href="#cb11-266" aria-hidden="true" tabindex="-1"></a><span class="co">#| warning: false</span></span>
+<span id="cb11-267"><a href="#cb11-267" aria-hidden="true" tabindex="-1"></a>out_mc <span class="ot">&lt;-</span> <span class="fu">fect</span>(</span>
+<span id="cb11-268"><a href="#cb11-268" aria-hidden="true" tabindex="-1"></a>  lemp <span class="sc">~</span> D, <span class="at">data =</span> <span class="fu">as.data.frame</span>(mw),</span>
+<span id="cb11-269"><a href="#cb11-269" aria-hidden="true" tabindex="-1"></a>  <span class="at">index    =</span> <span class="fu">c</span>(<span class="st">"id"</span>, <span class="st">"year"</span>),</span>
+<span id="cb11-270"><a href="#cb11-270" aria-hidden="true" tabindex="-1"></a>  <span class="at">method   =</span> <span class="st">"mc"</span>,</span>
+<span id="cb11-271"><a href="#cb11-271" aria-hidden="true" tabindex="-1"></a>  <span class="at">force    =</span> <span class="st">"two-way"</span>,</span>
+<span id="cb11-272"><a href="#cb11-272" aria-hidden="true" tabindex="-1"></a>  <span class="at">CV       =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb11-273"><a href="#cb11-273" aria-hidden="true" tabindex="-1"></a>  <span class="at">min.T0   =</span> <span class="dv">2</span>,</span>
+<span id="cb11-274"><a href="#cb11-274" aria-hidden="true" tabindex="-1"></a>  <span class="at">cv.nobs  =</span> <span class="dv">2</span>,</span>
+<span id="cb11-275"><a href="#cb11-275" aria-hidden="true" tabindex="-1"></a>  <span class="at">cv.donut =</span> <span class="dv">0</span>,</span>
+<span id="cb11-276"><a href="#cb11-276" aria-hidden="true" tabindex="-1"></a>  <span class="at">se       =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb11-277"><a href="#cb11-277" aria-hidden="true" tabindex="-1"></a>  <span class="at">nboots   =</span> <span class="dv">50</span>,</span>
+<span id="cb11-278"><a href="#cb11-278" aria-hidden="true" tabindex="-1"></a>  <span class="at">parallel =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb11-279"><a href="#cb11-279" aria-hidden="true" tabindex="-1"></a>  <span class="at">seed     =</span> <span class="dv">42</span></span>
+<span id="cb11-280"><a href="#cb11-280" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb11-281"><a href="#cb11-281" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb11-282"><a href="#cb11-282" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-285"><a href="#cb11-285" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb11-286"><a href="#cb11-286" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: tbl-cv</span></span>
+<span id="cb11-287"><a href="#cb11-287" aria-hidden="true" tabindex="-1"></a><span class="co">#| tbl-cap: "Hyperparameters selected by cross-validation. IFEct picks the number of latent factors $r$; MC picks the nuclear-norm penalty weight $\\eta$ (returned by `fect` as `lambda.cv`)."</span></span>
+<span id="cb11-288"><a href="#cb11-288" aria-hidden="true" tabindex="-1"></a><span class="fu">tibble</span>(</span>
+<span id="cb11-289"><a href="#cb11-289" aria-hidden="true" tabindex="-1"></a>  <span class="at">Method            =</span> <span class="fu">c</span>(<span class="st">"IFEct"</span>, <span class="st">"MC"</span>),</span>
+<span id="cb11-290"><a href="#cb11-290" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">CV-selected</span><span class="st">`</span>     <span class="ot">=</span> <span class="fu">c</span>(<span class="fu">paste0</span>(<span class="st">"r = "</span>, <span class="fu">unname</span>(out_ife<span class="sc">$</span>r.cv)),</span>
+<span id="cb11-291"><a href="#cb11-291" aria-hidden="true" tabindex="-1"></a>                        <span class="fu">sprintf</span>(<span class="st">"eta = %.4f"</span>, out_mc<span class="sc">$</span>lambda.cv))</span>
+<span id="cb11-292"><a href="#cb11-292" aria-hidden="true" tabindex="-1"></a>) <span class="sc">|&gt;</span></span>
+<span id="cb11-293"><a href="#cb11-293" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gt_pretty</span>()</span>
+<span id="cb11-294"><a href="#cb11-294" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb11-295"><a href="#cb11-295" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-296"><a href="#cb11-296" aria-hidden="true" tabindex="-1"></a><span class="fu">## Counterfactual paths and the ATT trajectory</span></span>
+<span id="cb11-297"><a href="#cb11-297" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-298"><a href="#cb11-298" aria-hidden="true" tabindex="-1"></a>The signature FECT figure overlays the observed average outcome on</span>
+<span id="cb11-299"><a href="#cb11-299" aria-hidden="true" tabindex="-1"></a>treated units against the model-implied $Y(0)$, then plots the gap</span>
+<span id="cb11-300"><a href="#cb11-300" aria-hidden="true" tabindex="-1"></a>— the ATT path — by event time. A credible factor model should</span>
+<span id="cb11-301"><a href="#cb11-301" aria-hidden="true" tabindex="-1"></a>track the observed $Y$ closely before treatment and only diverge</span>
+<span id="cb11-302"><a href="#cb11-302" aria-hidden="true" tabindex="-1"></a>after.</span>
+<span id="cb11-303"><a href="#cb11-303" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-306"><a href="#cb11-306" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb11-307"><a href="#cb11-307" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-ife-mc</span></span>
+<span id="cb11-308"><a href="#cb11-308" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Counterfactual trajectories and event-study ATT. Top row: IFEct. Bottom row: MC. Left panels overlay observed average outcome on treated units (solid) with model-implied $Y(0)$ (dashed). Right panels show the implied ATT by event time relative to a county's adoption year, with bootstrap 95% CIs."</span></span>
+<span id="cb11-309"><a href="#cb11-309" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-width: 9</span></span>
+<span id="cb11-310"><a href="#cb11-310" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-height: 7</span></span>
+<span id="cb11-311"><a href="#cb11-311" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-312"><a href="#cb11-312" aria-hidden="true" tabindex="-1"></a>p_ife_ct <span class="ot">&lt;-</span> <span class="fu">plot</span>(out_ife, <span class="at">type =</span> <span class="st">"counterfactual"</span>,</span>
+<span id="cb11-313"><a href="#cb11-313" aria-hidden="true" tabindex="-1"></a>                 <span class="at">main =</span> <span class="st">"IFEct: observed vs counterfactual"</span>,</span>
+<span id="cb11-314"><a href="#cb11-314" aria-hidden="true" tabindex="-1"></a>                 <span class="at">xlab =</span> <span class="st">"Year"</span>, <span class="at">ylab =</span> <span class="st">"Log teen employment"</span>)</span>
+<span id="cb11-315"><a href="#cb11-315" aria-hidden="true" tabindex="-1"></a>p_ife_gap <span class="ot">&lt;-</span> <span class="fu">plot</span>(out_ife, <span class="at">type =</span> <span class="st">"gap"</span>,</span>
+<span id="cb11-316"><a href="#cb11-316" aria-hidden="true" tabindex="-1"></a>                  <span class="at">main =</span> <span class="st">"IFEct: event-study ATT"</span>,</span>
+<span id="cb11-317"><a href="#cb11-317" aria-hidden="true" tabindex="-1"></a>                  <span class="at">xlab =</span> <span class="st">"Event time"</span>, <span class="at">ylab =</span> <span class="st">"ATT"</span>)</span>
+<span id="cb11-318"><a href="#cb11-318" aria-hidden="true" tabindex="-1"></a>p_mc_ct <span class="ot">&lt;-</span> <span class="fu">plot</span>(out_mc, <span class="at">type =</span> <span class="st">"counterfactual"</span>,</span>
+<span id="cb11-319"><a href="#cb11-319" aria-hidden="true" tabindex="-1"></a>                <span class="at">main =</span> <span class="st">"MC: observed vs counterfactual"</span>,</span>
+<span id="cb11-320"><a href="#cb11-320" aria-hidden="true" tabindex="-1"></a>                <span class="at">xlab =</span> <span class="st">"Year"</span>, <span class="at">ylab =</span> <span class="st">"Log teen employment"</span>)</span>
+<span id="cb11-321"><a href="#cb11-321" aria-hidden="true" tabindex="-1"></a>p_mc_gap <span class="ot">&lt;-</span> <span class="fu">plot</span>(out_mc, <span class="at">type =</span> <span class="st">"gap"</span>,</span>
+<span id="cb11-322"><a href="#cb11-322" aria-hidden="true" tabindex="-1"></a>                 <span class="at">main =</span> <span class="st">"MC: event-study ATT"</span>,</span>
+<span id="cb11-323"><a href="#cb11-323" aria-hidden="true" tabindex="-1"></a>                 <span class="at">xlab =</span> <span class="st">"Event time"</span>, <span class="at">ylab =</span> <span class="st">"ATT"</span>)</span>
+<span id="cb11-324"><a href="#cb11-324" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-325"><a href="#cb11-325" aria-hidden="true" tabindex="-1"></a>(p_ife_ct <span class="sc">+</span> p_ife_gap) <span class="sc">/</span> (p_mc_ct <span class="sc">+</span> p_mc_gap)</span>
+<span id="cb11-326"><a href="#cb11-326" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb11-327"><a href="#cb11-327" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-328"><a href="#cb11-328" aria-hidden="true" tabindex="-1"></a>Both estimators reproduce the textbook story: a flat-ish pre-trend</span>
+<span id="cb11-329"><a href="#cb11-329" aria-hidden="true" tabindex="-1"></a>that breaks downward at event time zero. The MC counterfactual is a</span>
+<span id="cb11-330"><a href="#cb11-330" aria-hidden="true" tabindex="-1"></a>touch smoother than IFEct's, which is the regularisation doing its</span>
+<span id="cb11-331"><a href="#cb11-331" aria-hidden="true" tabindex="-1"></a>job.</span>
+<span id="cb11-332"><a href="#cb11-332" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-335"><a href="#cb11-335" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb11-336"><a href="#cb11-336" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: tbl-att</span></span>
+<span id="cb11-337"><a href="#cb11-337" aria-hidden="true" tabindex="-1"></a><span class="co">#| tbl-cap: "Average post-treatment ATT under IFEct and MC, with bootstrap standard errors and 95% CIs. The two methods reach the same neighbourhood; CIs are wide because $T = 7$ and `nboots = 50`."</span></span>
+<span id="cb11-338"><a href="#cb11-338" aria-hidden="true" tabindex="-1"></a><span class="fu">tibble</span>(</span>
+<span id="cb11-339"><a href="#cb11-339" aria-hidden="true" tabindex="-1"></a>  <span class="at">Method   =</span> <span class="fu">c</span>(<span class="st">"IFEct"</span>, <span class="st">"MC"</span>),</span>
+<span id="cb11-340"><a href="#cb11-340" aria-hidden="true" tabindex="-1"></a>  <span class="at">ATT      =</span> <span class="fu">c</span>(out_ife<span class="sc">$</span>att.avg, out_mc<span class="sc">$</span>att.avg),</span>
+<span id="cb11-341"><a href="#cb11-341" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">S.E.</span><span class="st">`</span>   <span class="ot">=</span> <span class="fu">c</span>(out_ife<span class="sc">$</span>est.avg[<span class="dv">1</span>, <span class="st">"S.E."</span>], out_mc<span class="sc">$</span>est.avg[<span class="dv">1</span>, <span class="st">"S.E."</span>]),</span>
+<span id="cb11-342"><a href="#cb11-342" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">CI lo</span><span class="st">`</span>  <span class="ot">=</span> <span class="fu">c</span>(out_ife<span class="sc">$</span>est.avg[<span class="dv">1</span>, <span class="st">"CI.lower"</span>], out_mc<span class="sc">$</span>est.avg[<span class="dv">1</span>, <span class="st">"CI.lower"</span>]),</span>
+<span id="cb11-343"><a href="#cb11-343" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">CI hi</span><span class="st">`</span>  <span class="ot">=</span> <span class="fu">c</span>(out_ife<span class="sc">$</span>est.avg[<span class="dv">1</span>, <span class="st">"CI.upper"</span>], out_mc<span class="sc">$</span>est.avg[<span class="dv">1</span>, <span class="st">"CI.upper"</span>])</span>
+<span id="cb11-344"><a href="#cb11-344" aria-hidden="true" tabindex="-1"></a>) <span class="sc">|&gt;</span></span>
+<span id="cb11-345"><a href="#cb11-345" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gt_pretty</span>(<span class="at">decimals =</span> <span class="dv">4</span>)</span>
+<span id="cb11-346"><a href="#cb11-346" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb11-347"><a href="#cb11-347" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-348"><a href="#cb11-348" aria-hidden="true" tabindex="-1"></a><span class="fu">## IFEct and MC compared</span></span>
+<span id="cb11-349"><a href="#cb11-349" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-350"><a href="#cb11-350" aria-hidden="true" tabindex="-1"></a>A caveat first, then the comparison. On this 7-year window, CV</span>
+<span id="cb11-351"><a href="#cb11-351" aria-hidden="true" tabindex="-1"></a>selects $r = 0$ for IFEct — meaning IFEct here operationally</span>
+<span id="cb11-352"><a href="#cb11-352" aria-hidden="true" tabindex="-1"></a>collapses to two-way fixed effects: the factor term $\lambda_i' f_t$</span>
+<span id="cb11-353"><a href="#cb11-353" aria-hidden="true" tabindex="-1"></a>drops out and the imputation reduces to $\widehat{Y_{it}(0)} =</span>
+<span id="cb11-354"><a href="#cb11-354" aria-hidden="true" tabindex="-1"></a>\widehat{\alpha}_i + \widehat{\xi}_t$. This is not a bug, it is a</span>
+<span id="cb11-355"><a href="#cb11-355" aria-hidden="true" tabindex="-1"></a>finding: with $T = 7$ and 3 pre-periods on the shorter cohort, CV</span>
+<span id="cb11-356"><a href="#cb11-356" aria-hidden="true" tabindex="-1"></a>is conservative and refuses to credit a latent factor it cannot</span>
+<span id="cb11-357"><a href="#cb11-357" aria-hidden="true" tabindex="-1"></a>validate out-of-sample. MC, by contrast, lands on a small but</span>
+<span id="cb11-358"><a href="#cb11-358" aria-hidden="true" tabindex="-1"></a>non-zero penalty ($\eta = 0.0007$), so MC retains a regularised</span>
+<span id="cb11-359"><a href="#cb11-359" aria-hidden="true" tabindex="-1"></a>low-rank deviation from TWFE.</span>
+<span id="cb11-360"><a href="#cb11-360" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-361"><a href="#cb11-361" aria-hidden="true" tabindex="-1"></a>So the empirical contrast on this panel is **not** between an</span>
+<span id="cb11-362"><a href="#cb11-362" aria-hidden="true" tabindex="-1"></a>explicit factor model and a low-rank completion — it is between</span>
+<span id="cb11-363"><a href="#cb11-363" aria-hidden="true" tabindex="-1"></a>TWFE-style imputation (IFEct at $r = 0$) and nuclear-norm</span>
+<span id="cb11-364"><a href="#cb11-364" aria-hidden="true" tabindex="-1"></a>penalised imputation (MC at $\eta = 0.0007$). That two estimators</span>
+<span id="cb11-365"><a href="#cb11-365" aria-hidden="true" tabindex="-1"></a>that disagree about the identifying assumption — *in principle* an</span>
+<span id="cb11-366"><a href="#cb11-366" aria-hidden="true" tabindex="-1"></a>explicit linear factor model vs. an approximately low-rank $Y(0)$</span>
+<span id="cb11-367"><a href="#cb11-367" aria-hidden="true" tabindex="-1"></a>matrix — still point to the same sign and the same order of</span>
+<span id="cb11-368"><a href="#cb11-368" aria-hidden="true" tabindex="-1"></a>magnitude is meaningful: the qualitative conclusion is robust to</span>
+<span id="cb11-369"><a href="#cb11-369" aria-hidden="true" tabindex="-1"></a>the relaxation of parallel trends that MC offers, exactly because</span>
+<span id="cb11-370"><a href="#cb11-370" aria-hidden="true" tabindex="-1"></a>MC's relaxation is small here. The CV-selected hyperparameters are</span>
+<span id="cb11-371"><a href="#cb11-371" aria-hidden="true" tabindex="-1"></a>not directly comparable (an integer rank vs. a continuous penalty),</span>
+<span id="cb11-372"><a href="#cb11-372" aria-hidden="true" tabindex="-1"></a>but the counterfactual-path overlay, the ATT trajectory, and the</span>
+<span id="cb11-373"><a href="#cb11-373" aria-hidden="true" tabindex="-1"></a>numeric ATT in @tbl-att are. When the two methods agree, both</span>
+<span id="cb11-374"><a href="#cb11-374" aria-hidden="true" tabindex="-1"></a>relaxations of parallel trends are consistent with the same</span>
+<span id="cb11-375"><a href="#cb11-375" aria-hidden="true" tabindex="-1"></a>conclusion, which is the strongest evidence a short panel design</span>
+<span id="cb11-376"><a href="#cb11-376" aria-hidden="true" tabindex="-1"></a>can produce.</span>
+<span id="cb11-377"><a href="#cb11-377" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-378"><a href="#cb11-378" aria-hidden="true" tabindex="-1"></a><span class="fu">## Recap</span></span>
+<span id="cb11-379"><a href="#cb11-379" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-380"><a href="#cb11-380" aria-hidden="true" tabindex="-1"></a>::: {.callout-note appearance="simple"}</span>
+<span id="cb11-381"><a href="#cb11-381" aria-hidden="true" tabindex="-1"></a>**The methods reconciled.** Two answers to the same question on the</span>
+<span id="cb11-382"><a href="#cb11-382" aria-hidden="true" tabindex="-1"></a>2001-2007 minimum-wage panel:</span>
+<span id="cb11-383"><a href="#cb11-383" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-384"><a href="#cb11-384" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>*IFEct*: factor model of $Y(0)$ fit on never-treated, imputed on</span>
+<span id="cb11-385"><a href="#cb11-385" aria-hidden="true" tabindex="-1"></a>  treated, $r$ chosen by cross-validation. Here CV picks $r = 0$,</span>
+<span id="cb11-386"><a href="#cb11-386" aria-hidden="true" tabindex="-1"></a>  so IFEct collapses to two-way fixed effects — a finding, not a</span>
+<span id="cb11-387"><a href="#cb11-387" aria-hidden="true" tabindex="-1"></a>  bug.</span>
+<span id="cb11-388"><a href="#cb11-388" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>*Matrix Completion*: low-rank completion of the masked $Y(0)$</span>
+<span id="cb11-389"><a href="#cb11-389" aria-hidden="true" tabindex="-1"></a>  matrix, nuclear-norm penalty $\eta$ chosen by cross-validation.</span>
+<span id="cb11-390"><a href="#cb11-390" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-391"><a href="#cb11-391" aria-hidden="true" tabindex="-1"></a>Both point downward; both sit in the same neighbourhood; neither is</span>
+<span id="cb11-392"><a href="#cb11-392" aria-hidden="true" tabindex="-1"></a>uniquely correct. Factor-based estimators *relax* parallel trends</span>
+<span id="cb11-393"><a href="#cb11-393" aria-hidden="true" tabindex="-1"></a>rather than replace it — the counterfactual-path plot is the visual</span>
+<span id="cb11-394"><a href="#cb11-394" aria-hidden="true" tabindex="-1"></a>quality check, and a flat pre-treatment overlay is the signal you</span>
+<span id="cb11-395"><a href="#cb11-395" aria-hidden="true" tabindex="-1"></a>want.</span>
+<span id="cb11-396"><a href="#cb11-396" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb11-397"><a href="#cb11-397" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-398"><a href="#cb11-398" aria-hidden="true" tabindex="-1"></a><span class="fu">## Common pitfall</span></span>
+<span id="cb11-399"><a href="#cb11-399" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-400"><a href="#cb11-400" aria-hidden="true" tabindex="-1"></a>Cranking $r$ up until the in-sample fit looks great. With a panel</span>
+<span id="cb11-401"><a href="#cb11-401" aria-hidden="true" tabindex="-1"></a>this short, an IFEct with $r$ near $T/2$ will fit the pre-treatment</span>
+<span id="cb11-402"><a href="#cb11-402" aria-hidden="true" tabindex="-1"></a>cells almost perfectly and produce an absurd counterfactual on the</span>
+<span id="cb11-403"><a href="#cb11-403" aria-hidden="true" tabindex="-1"></a>treated cells, because it has fitted noise into the loadings.</span>
+<span id="cb11-404"><a href="#cb11-404" aria-hidden="true" tabindex="-1"></a>Trust the CV-selected rank; the MC analogue is choosing $\eta$</span>
+<span id="cb11-405"><a href="#cb11-405" aria-hidden="true" tabindex="-1"></a>too small. Both are over-fitting masquerading as identification.</span>
+<span id="cb11-406"><a href="#cb11-406" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-407"><a href="#cb11-407" aria-hidden="true" tabindex="-1"></a><span class="fu">## Further reading</span></span>
+<span id="cb11-408"><a href="#cb11-408" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-409"><a href="#cb11-409" aria-hidden="true" tabindex="-1"></a>The factor-model formulation traces to @bai2009panel and the IFEct /</span>
+<span id="cb11-410"><a href="#cb11-410" aria-hidden="true" tabindex="-1"></a>generalised synthetic control reading is @xu2017generalized; the</span>
+<span id="cb11-411"><a href="#cb11-411" aria-hidden="true" tabindex="-1"></a>matrix-completion view is @athey2021matrix. @liu2024practical pairs</span>
+<span id="cb11-412"><a href="#cb11-412" aria-hidden="true" tabindex="-1"></a>with the <span class="in">`fect`</span> package — its online companion at</span>
+<span id="cb11-413"><a href="#cb11-413" aria-hidden="true" tabindex="-1"></a><span class="ot">&lt;https://yiqingxu.org/packages/fect/04-ife-mc.html&gt;</span> is the</span>
+<span id="cb11-414"><a href="#cb11-414" aria-hidden="true" tabindex="-1"></a>authoritative tutorial. Athey et al.'s own implementation lives in</span>
+<span id="cb11-415"><a href="#cb11-415" aria-hidden="true" tabindex="-1"></a>the <span class="in">`MCPanel`</span> package</span>
+<span id="cb11-416"><a href="#cb11-416" aria-hidden="true" tabindex="-1"></a>(<span class="ot">&lt;https://github.com/susanathey/MCPanel&gt;</span>) for readers who want to</span>
+<span id="cb11-417"><a href="#cb11-417" aria-hidden="true" tabindex="-1"></a>compare <span class="in">`fect::mc`</span> against the canonical reference code. Chapter 10</span>
+<span id="cb11-418"><a href="#cb11-418" aria-hidden="true" tabindex="-1"></a>zooms in on <span class="in">`gsynth`</span>, the IFE estimator implemented in a</span>
+<span id="cb11-419"><a href="#cb11-419" aria-hidden="true" tabindex="-1"></a>standalone package, on the same Callaway-Sant'Anna panel.</span>
+<span id="cb11-420"><a href="#cb11-420" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-421"><a href="#cb11-421" aria-hidden="true" tabindex="-1"></a><span class="fu">## Exercises</span></span>
+<span id="cb11-422"><a href="#cb11-422" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-423"><a href="#cb11-423" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Re-fit <span class="in">`out_ife`</span> with <span class="in">`r=0:3`</span> (raising the search ceiling</span>
+<span id="cb11-424"><a href="#cb11-424" aria-hidden="true" tabindex="-1"></a>   above the theoretical <span class="in">`min.T0`</span> bound) and inspect <span class="in">`out_ife$MSPE`</span>.</span>
+<span id="cb11-425"><a href="#cb11-425" aria-hidden="true" tabindex="-1"></a>   Does CV ever pick a rank above 0 on this panel? What does that</span>
+<span id="cb11-426"><a href="#cb11-426" aria-hidden="true" tabindex="-1"></a>   tell you about the data?</span>
+<span id="cb11-427"><a href="#cb11-427" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>Add the two-covariate extension <span class="in">`lemp ~ D + lpop + lavg_pay`</span> to</span>
+<span id="cb11-428"><a href="#cb11-428" aria-hidden="true" tabindex="-1"></a>   both <span class="in">`fect()`</span> calls, refit, and compare the ATT trajectory and</span>
+<span id="cb11-429"><a href="#cb11-429" aria-hidden="true" tabindex="-1"></a>   the numeric headline ATT against @tbl-att. Does conditioning on</span>
+<span id="cb11-430"><a href="#cb11-430" aria-hidden="true" tabindex="-1"></a>   log population and log average pay move the gap plot</span>
+<span id="cb11-431"><a href="#cb11-431" aria-hidden="true" tabindex="-1"></a>   meaningfully?</span>
+<span id="cb11-432"><a href="#cb11-432" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>Re-fit <span class="in">`out_mc`</span> on a tighter window (<span class="in">`year &gt;= 2002`</span>) so cohort</span>
+<span id="cb11-433"><a href="#cb11-433" aria-hidden="true" tabindex="-1"></a>   2004 has 2 pre-periods instead of 3. At what window does the MC</span>
+<span id="cb11-434"><a href="#cb11-434" aria-hidden="true" tabindex="-1"></a>   counterfactual visibly break (sharp pre-trend in the gap plot)?</span>
 </code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
