@@ -293,6 +293,18 @@ Chapter 8 introduces a second dataset: the **Callaway-Sant'Anna minimum-wage cou
 
 The disagreements between estimators applied to the same data are the lesson of this book.
 
+## Key takeaways
+
+- **Method:** The book frames regional impact evaluation as a missing-data problem under the Neyman-Rubin potential outcomes model: every estimator imputes the unobserved $Y_{it}(0)$ for treated cells and subtracts it from the observed $Y_{it}(1)$ to recover the ATT.
+- **Method:** SUTVA plus a single observed potential outcome per $(i,t)$ pin down the estimand as the ATT — $\mathbb{E}[Y_{it}(1) - Y_{it}(0) \mid D_{it} = 1]$ — not the ATE; under staggered adoption this generalises to a family of cohort-by-time effects $\text{ATT}(g, t)$.
+- **Lesson:** Part I (chs. 2–7) holds the Proposition 99 single-treated-unit case study fixed and swaps in progressively richer counterfactuals — pre-trend extrapolation (ITS), one control state (DiD), donor-pool blends (SCM family), and Bayesian state-space models — so the disagreements between estimates isolate the cost of each identifying assumption.
+- **Lesson:** Part II (chs. 8–10) switches to the Callaway-Sant'Anna minimum-wage county panel because staggered adoption breaks single-time-series tools; the toolkit shifts to group-time ATT estimators, matrix completion, interactive fixed effects, and generalized synthetic control, all of which still impute $Y_{it}(0)$ but exploit the full panel structure.
+- **Lesson:** California's raw pre-vs-post drop of about 56 packs per capita (48% of the pre-period mean) is a within-state difference of means, not a causal effect — the nationwide secular decline in smoking is silently bundled in, and the rest of the book exists to peel that bundle apart.
+- **Lesson:** Choosing a method is a sequence of data-availability questions — staggered vs. single treatment, donor pool vs. only the treated series, parallel trends vs. a factor structure, frequentist vs. Bayesian inference, SUTVA vs. spillovers — and the decision tree in this chapter maps each branch to a specific chapter.
+- **Caveat:** Every estimator covered targets the ATT on already-treated units; none of them identifies the ATE, and extrapolating their results to "what if every state had passed Proposition 99" is outside the book's scope.
+- **Caveat:** The naive pre-post regression is reported only as a baseline and bias yardstick — its implicit counterfactual freezes California at its pre-period mean and is almost certainly wrong, so it must never be read as a causal estimate.
+- **Caveat:** Short time series demand HAC (heteroskedasticity- and autocorrelation-consistent) standard errors — classical OLS errors are roughly half the Newey-West value in the naive fit and would be wildly overconfident.
+
 ## Further reading
 
 - @abadie2010synthetic — *original method* — the synthetic-control treatment of Proposition 99 (ch. 4).

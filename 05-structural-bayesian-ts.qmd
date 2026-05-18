@@ -318,17 +318,17 @@ Imputing missing covariates without thinking about the imputation model. The ran
 
 The credible interval here is a Bayesian object — its width depends on the prior. The natural follow-up question is whether a **frequentist** prediction interval, built without a prior over donor weights, would tell the same story. Chapter 6 answers that with the `scpi` framework of @cattaneo2021prediction and @cattaneo2025scpi, which constructs a finite-sample prediction interval around the *synthetic-control* counterfactual from chapter 4 by separating in-sample weight uncertainty from out-of-sample forecast error.
 
-## Recap
+## Key takeaways
 
-CausalImpact lands at $-13$ to $-21$ packs depending on whether covariates are included, with a 92–97% posterior probability of a non-zero effect. It is the only method in the book that delivers a *credible* interval (a direct probability statement about the parameter), not a frequentist confidence band.
-
-| Question | Answer |
-|---|---|
-| What does CausalImpact estimate? | The ATT on California, 1989–2000 |
-| What is the point estimate? | Average ≈ $-13$ packs/capita; cumulative ≈ $-154$ packs over 12 years |
-| What is the uncertainty quantification? | 95% Bayesian credible interval ≈ $[-32, +5]$ packs, widened by 1–3 packs under proper $m \ge 5$ multiple imputation (see pitfall); posterior probability of any effect ≈ 92% |
-| How is the counterfactual built? | Local-level trend + Bayesian regression on donor-state cigarette sales (+ imputed covariates), with a spike-and-slab (SSVS) prior on the regression coefficients (default `expected.model.size = 3`) |
-| What is the design-time pitfall? | Single-imputation shortcuts on covariates with high missingness; never impute donors using the treated unit; do not read inclusion probabilities as causal weights; always check MCMC convergence |
+- **Method:** Bayesian structural time series (BSTS) — implemented in `CausalImpact` — fits a state-space model $Y_{1t} = \mu_t + \beta^\top x_t + \varepsilon_t$ on the pre-period, where $\mu_t$ is a local-level trend and $\beta^\top x_t$ is a regression on donor-state series and covariates; projecting the fit forward yields a posterior counterfactual whose difference from observed $Y_{1t}$ is the policy effect.
+- **Method:** A spike-and-slab (SSVS) prior on $\beta$ — with default `expected.model.size = 3` out of 194 candidate regressors — performs sparse Bayesian variable selection, producing **posterior inclusion probabilities** (the share of MCMC iterations in which a donor's coefficient is non-zero) that play the role classical synthetic control's simplex weights play, but allow negative coefficients and lie outside the donors' convex hull.
+- **Method:** The output is a **posterior** distribution — a full probability distribution over the unknown effect given model and data — summarised by a 95% **credible interval**, the Bayesian interval inside which the parameter lies with 95% probability; this is a direct probability statement about the effect, unlike the frequentist placebo $p$-values from chapter 4, which characterise the procedure rather than the parameter.
+- **Lesson:** On Prop 99, CausalImpact estimates an average ATT of roughly $-13$ packs/capita (cumulative $\approx -154$ packs over 1989–2000), with a posterior probability of any non-zero effect of $\approx 92\%$ — qualitatively the same story as classical synthetic control, but expressed as "the data give 92% posterior weight to an effect" rather than as a placebo rank.
+- **Lesson:** Pointwise certainty and cumulative certainty are not the same: the dashed counterfactual sits visibly above observed California from 1989 on, yet the 95% credible band on the *cumulative* effect by 2000 ($[-385, +60]$) still contains zero because twelve overlapping pointwise bands compound into a wider cumulative one.
+- **Lesson:** Dropping the imputed covariates and refitting on donor `cigsale` columns alone moves the headline estimate by a few packs and shifts the posterior probability accordingly — a useful built-in robustness check that exposes how much of the result rides on the imputed `beer`, `lnincome`, and `age15to24` columns rather than on the cigarette-sales donor pool itself.
+- **Caveat:** The credible interval is conditional on the prior. The spike-and-slab `expected.model.size = 3` choice strongly favours sparse counterfactuals; a different shrinkage prior (e.g. horseshoe) or a different expected model size would yield different inclusion probabilities and a different — possibly wider — interval, so prior sensitivity should be reported, not assumed away.
+- **Caveat:** Single ($m = 1$) random-forest imputation treats the imputed covariate cells as if observed, so the reported credible band understates uncertainty by 1–3 packs relative to proper multiple imputation ($m \ge 5$ with Rubin's-rules pooling); imputing donors with a model that "sees" the treated unit's post-period is the more dangerous failure, biasing the estimated effect toward zero by construction.
+- **Caveat:** With 19 pre-period observations and 1,000 default MCMC iterations, convergence is not automatic — Rhat near 1 and ESS in the low hundreds are the minimum honest check, and `model.args = list(niter = 10000)` is the cheap upgrade for any non-tutorial use. As in chapter 4, high posterior inclusion probability means a donor *predicts* California well, not that it is causally similar.
 
 ## Further reading
 
