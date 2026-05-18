@@ -286,14 +286,22 @@ The growth-curve and ARIMA variants share every step of the recipe — fit on pr
 
 ## Key takeaways
 
-- **Method:** ITS estimates the ATT for a single treated unit by fitting a model to the pre-period series and treating its $h$-step extrapolation as $\widehat{Y_{1t}(0)}$; this chapter compares a linear pre-trend with HAC-robust SEs against an AICc-selected non-seasonal ARIMA$(1, 2, 0)$ fit via `fable::ARIMA()` on 19 pre-period observations.
-- **Method:** Identification rests on the assumption that the stochastic process generating $Y_{1t}$ in the pre-period would continue to generate it in the post-period, so the growth-curve variant extrapolates the in-sample *level*-and-slope while the $d = 2$ ARIMA extrapolates the *acceleration* implied by the last few pre-period observations.
-- **Lesson:** Interrupted time series (ITS) drops the comparison unit entirely and builds the counterfactual from the treated unit's own pre-period dynamics, so it can do what the chapter 1 naive pre-post estimator cannot: allow a non-zero secular pre-trend and attribute only the *extra* break to the policy.
-- **Lesson:** On Proposition 99, the linear growth-curve variant returns about $-28.3$ packs per capita per year while the ARIMA(1, 2, 0) returns about $+4.5$ — same data, same recipe, two answers more than 30 packs apart and on opposite sides of zero — and the disagreement *is* the lesson: nothing inside California can decide which extrapolation is correct.
-- **Lesson:** In-sample residual diagnostics (Ljung-Box, ACF) tell you the ARIMA is not mis-specified on 1970–1988, but they say nothing about whether the out-of-sample forecast is sensible — and the wide 95 % prediction band by 2000 makes the model's *own* honesty about that uncertainty explicit.
-- **Caveat:** Single-unit ITS has no comparison group, so any contemporaneous shock — a federal tax change, a national advertising shift, a recession — is mechanically confounded with Proposition 99 and absorbed into the estimated effect.
-- **Caveat:** Information-criterion model selection on a short pre-period (here just 19 years) is fragile: AICc rewards in-sample fit, and with $d = 2$ the ARIMA has no mean reversion, so the slope implied by the last three pre-period observations becomes the permanent slope of the forecast.
-- **Caveat:** Because there is no within-California way to discriminate between the linear and the ARIMA counterfactuals, an ITS estimate should always be paired against a method that borrows information from outside the treated unit — DiD, synthetic control, or BSTS — before drawing causal conclusions.
+**Methods:**
+
+- ITS estimates the ATT for a single treated unit by fitting a model to the pre-period series and treating its $h$-step extrapolation as $\widehat{Y_{1t}(0)}$; this chapter compares a linear pre-trend with HAC-robust SEs against an AICc-selected non-seasonal ARIMA$(1, 2, 0)$ fit via `fable::ARIMA()` on 19 pre-period observations.
+- Identification rests on the assumption that the stochastic process generating $Y_{1t}$ in the pre-period would continue to generate it in the post-period, so the growth-curve variant extrapolates the in-sample *level*-and-slope while the $d = 2$ ARIMA extrapolates the *acceleration* implied by the last few pre-period observations.
+
+**Lessons:**
+
+- Interrupted time series (ITS) drops the comparison unit entirely and builds the counterfactual from the treated unit's own pre-period dynamics, so it can do what the chapter 1 naive pre-post estimator cannot: allow a non-zero secular pre-trend and attribute only the *extra* break to the policy.
+- On Proposition 99, the linear growth-curve variant returns about $-28.3$ packs per capita per year while the ARIMA(1, 2, 0) returns about $+4.5$ — same data, same recipe, two answers more than 30 packs apart and on opposite sides of zero — and the disagreement *is* the lesson: nothing inside California can decide which extrapolation is correct.
+- In-sample residual diagnostics (Ljung-Box, ACF) tell you the ARIMA is not mis-specified on 1970–1988, but they say nothing about whether the out-of-sample forecast is sensible — and the wide 95 % prediction band by 2000 makes the model's *own* honesty about that uncertainty explicit.
+
+**Caveats:**
+
+- Single-unit ITS has no comparison group, so any contemporaneous shock — a federal tax change, a national advertising shift, a recession — is mechanically confounded with Proposition 99 and absorbed into the estimated effect.
+- Information-criterion model selection on a short pre-period (here just 19 years) is fragile: AICc rewards in-sample fit, and with $d = 2$ the ARIMA has no mean reversion, so the slope implied by the last three pre-period observations becomes the permanent slope of the forecast.
+- Because there is no within-California way to discriminate between the linear and the ARIMA counterfactuals, an ITS estimate should always be paired against a method that borrows information from outside the treated unit — DiD, synthetic control, or BSTS — before drawing causal conclusions.
 
 ## Further reading
 
