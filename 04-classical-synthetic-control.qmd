@@ -509,3 +509,215 @@ Synthetic Control is the book's headline causal estimate, and the placebo / MSPE
 - @abadie2010synthetic — the original synthetic-control treatment of Proposition 99.
 - @abadie2021using — methodological feasibility, data requirements, and assumptions in a JEL review.
 - @dunford2024tidysynth — documentation for the `tidysynth` package used here.
+
+## Exercises
+
+The exercises below probe the design choices baked into the chapter's fit: the predictor list, the optimisation window, the date of the intervention, the rank-based significance test, and the donor pool itself. They reuse the chapter's `prop99` panel and (for exercise 4) the `prop99_syn` fitted object that already contains placebo refits. Other exercises set `generate_placebos = FALSE` to keep refits fast.
+
+### Exercise 1: Lag-only predictor set
+
+The chapter showed that two lagged outcomes carry roughly 88% of the V-matrix weight. Refit the pipeline with **only** the three lagged outcomes (`cigsale_1975`, `cigsale_1980`, `cigsale_1988`) — drop `lnincome`, `retprice`, `age15to24`, and `beer`. Report the new ATT and compare to the chapter's −18.85.
+
+::: {.callout-tip collapse="true"}
+## Solution
+
+```{r}
+#| label: ex-ch04-01
+#| message: false
+#| warning: false
+prop99_lagonly <- prop99 |>
+  synthetic_control(
+    outcome  = cigsale, unit = state, time = year,
+    i_unit   = "California", i_time = 1988,
+    generate_placebos = FALSE
+  ) |>
+  generate_predictor(time_window = 1975, cigsale_1975 = cigsale) |>
+  generate_predictor(time_window = 1980, cigsale_1980 = cigsale) |>
+  generate_predictor(time_window = 1988, cigsale_1988 = cigsale) |>
+  generate_weights(optimization_window = 1970:1988,
+                   margin_ipop = .02, sigf_ipop = 7, bound_ipop = 6) |>
+  generate_control()
+
+att_lagonly <- grab_synthetic_control(prop99_lagonly) |>
+  filter(time_unit > 1988) |>
+  summarise(att = mean(real_y - synth_y)) |>
+  pull(att)
+
+tibble(variant = c("Chapter (covariates + 3 lags)",
+                   "Lag-only (3 lags)"),
+       att     = c(mean(sc_post$dif), att_lagonly)) |>
+  gt_pretty(decimals = 2)
+```
+
+The lag-only ATT is essentially identical to the chapter's. This corroborates the V-matrix reading: California's pre-period cigarette sales at three time points already contain most of the matching information. The covariates were doing very little work even when the optimiser had access to them — they got ≈12% of the V-matrix weight collectively. The lesson is *not* that covariates are useless in synthetic control (they can be decisive on shorter pre-periods or thinner donor pools), but that on the Prop-99 panel the lagged outcomes dominate.
+:::
+
+### Exercise 2: Narrower optimisation window
+
+The chapter's `generate_weights()` call optimises donor weights over the full 1970–1988 pre-period. Refit with a *narrower* `optimization_window = 1980:1988` (the last nine years of the pre-period). Compare the new ATT and the top-5 donor weights.
+
+::: {.callout-tip collapse="true"}
+## Solution
+
+```{r}
+#| label: ex-ch04-02
+#| message: false
+#| warning: false
+prop99_narrow <- prop99 |>
+  synthetic_control(
+    outcome  = cigsale, unit = state, time = year,
+    i_unit   = "California", i_time = 1988,
+    generate_placebos = FALSE
+  ) |>
+  generate_predictor(time_window = 1980:1988,
+                     lnincome  = mean(lnincome,  na.rm = TRUE),
+                     retprice  = mean(retprice,  na.rm = TRUE),
+                     age15to24 = mean(age15to24, na.rm = TRUE)) |>
+  generate_predictor(time_window = 1984:1988,
+                     beer = mean(beer, na.rm = TRUE)) |>
+  generate_predictor(time_window = 1975, cigsale_1975 = cigsale) |>
+  generate_predictor(time_window = 1980, cigsale_1980 = cigsale) |>
+  generate_predictor(time_window = 1988, cigsale_1988 = cigsale) |>
+  generate_weights(optimization_window = 1980:1988,
+                   margin_ipop = .02, sigf_ipop = 7, bound_ipop = 6) |>
+  generate_control()
+
+att_narrow <- grab_synthetic_control(prop99_narrow) |>
+  filter(time_unit > 1988) |>
+  summarise(att = mean(real_y - synth_y)) |>
+  pull(att)
+
+list(att_full   = mean(sc_post$dif),
+     att_narrow = att_narrow,
+     top_donors = grab_unit_weights(prop99_narrow) |>
+                    arrange(desc(weight)) |>
+                    head(5))
+```
+
+Restricting the optimisation window to 1980–1988 produces a similar ATT but a noticeably different donor mix — the optimiser is now matching a shorter, more recent slice of California's pre-period. The lesson: synthetic-control weights are not unique objects; they depend on which years the optimiser is asked to match. Robustness checks like this one are how you find out whether your headline ATT survives reasonable analyst choices.
+:::
+
+### Exercise 3: In-time placebo at 1985
+
+The chapter ran an in-time placebo treating 1980 as the pseudo-intervention. Run a tighter placebo at **1985**: refit the pipeline with `i_time = 1985`, restrict the panel to pre-1989 data so the actual policy can never enter the fit, and report the placebo ATT for 1986–1988.
+
+::: {.callout-tip collapse="true"}
+## Solution
+
+```{r}
+#| label: ex-ch04-03
+#| message: false
+#| warning: false
+prop99_1985 <- prop99 |>
+  filter(year < 1989) |>
+  synthetic_control(
+    outcome  = cigsale, unit = state, time = year,
+    i_unit   = "California", i_time = 1985,
+    generate_placebos = FALSE
+  ) |>
+  generate_predictor(
+    time_window = 1970:1985,
+    lnincome    = mean(lnincome, na.rm = TRUE),
+    retprice    = mean(retprice, na.rm = TRUE),
+    age15to24   = mean(age15to24, na.rm = TRUE)
+  ) |>
+  generate_predictor(time_window = 1975, cigsale_1975 = cigsale) |>
+  generate_predictor(time_window = 1980, cigsale_1980 = cigsale) |>
+  generate_predictor(time_window = 1985, cigsale_1985 = cigsale) |>
+  generate_weights(optimization_window = 1970:1985,
+                   margin_ipop = .02, sigf_ipop = 7, bound_ipop = 6) |>
+  generate_control()
+
+att_1985 <- grab_synthetic_control(prop99_1985) |>
+  filter(time_unit > 1985) |>
+  summarise(att = mean(real_y - synth_y)) |>
+  pull(att)
+
+att_1985
+```
+
+The 1985 placebo ATT is small in absolute value compared with the −18.85 the chapter found at the real intervention date. Combined with the chapter's 1980 placebo, this is consistent with the synthetic-control machinery *not* manufacturing large spurious gaps when no treatment occurred in the pseudo-post window. A failed in-time placebo (a placebo ATT close in magnitude to the headline) would suggest the headline gap is an artifact of pre-period over-fitting.
+:::
+
+### Exercise 4: Year-by-year placebo rank
+
+The chapter's Fisher $p \approx 0.026$ is a *single-number* summary built on the aggregate MSPE ratio. A richer diagnostic is the **year-by-year rank**: at each post-period year, where does California's per-year gap sit in the distribution of placebo gaps? A real treatment effect should push California to the extreme rank as the post-period progresses.
+
+::: {.callout-tip collapse="true"}
+## Solution
+
+```{r}
+#| label: ex-ch04-04
+#| fig-width: 8
+#| fig-height: 5
+all_gaps <- grab_synthetic_control(prop99_syn, placebo = TRUE) |>
+  mutate(gap = real_y - synth_y)
+
+ranks <- all_gaps |>
+  filter(time_unit > 1988) |>
+  group_by(time_unit) |>
+  mutate(rank = rank(gap, ties.method = "min")) |>
+  ungroup() |>
+  filter(.id == "California") |>
+  select(year = time_unit, gap, rank, n_units = .placebo) |>
+  mutate(p_value = rank / (length(unique(all_gaps$.id))))
+
+ranks |>
+  select(year, gap, rank, p_value) |>
+  gt_pretty(decimals = 3)
+```
+
+California is the *most negative* (rank 1 of 39) in nearly every post-period year, and the implied year-by-year Fisher $p$-value sits at $1/39 \approx 0.026$ throughout. The aggregate ratio test in the chapter compresses this into a single number; the year-by-year rank shows that the effect persists across the entire 1989–2000 window, not just on average.
+:::
+
+### Exercise 5 (stretch): Multi-donor leave-one-out sweep
+
+The chapter dropped Utah (the highest-weight donor) and showed the ATT barely moved. Generalise to a **sweep**: drop each of the top-5 high-weight donors *one at a time* (Utah, Nevada, Montana, Colorado, Connecticut), refit the pipeline, and report the range of ATT estimates. A tight range corroborates the headline; a wide range would flag fragility.
+
+::: {.callout-tip collapse="true"}
+## Solution
+
+```{r}
+#| label: ex-ch04-05
+#| message: false
+#| warning: false
+top5 <- c("Utah", "Nevada", "Montana", "Colorado", "Connecticut")
+
+loo_one <- function(drop_state) {
+  fit <- prop99 |>
+    filter(state != drop_state) |>
+    synthetic_control(
+      outcome  = cigsale, unit = state, time = year,
+      i_unit   = "California", i_time = 1988,
+      generate_placebos = FALSE
+    ) |>
+    generate_predictor(
+      time_window = 1980:1988,
+      lnincome    = mean(lnincome, na.rm = TRUE),
+      retprice    = mean(retprice, na.rm = TRUE),
+      age15to24   = mean(age15to24, na.rm = TRUE)
+    ) |>
+    generate_predictor(time_window = 1984:1988,
+                       beer = mean(beer, na.rm = TRUE)) |>
+    generate_predictor(time_window = 1975, cigsale_1975 = cigsale) |>
+    generate_predictor(time_window = 1980, cigsale_1980 = cigsale) |>
+    generate_predictor(time_window = 1988, cigsale_1988 = cigsale) |>
+    generate_weights(optimization_window = 1970:1988,
+                     margin_ipop = .02, sigf_ipop = 7, bound_ipop = 6) |>
+    generate_control()
+
+  grab_synthetic_control(fit) |>
+    filter(time_unit > 1988) |>
+    summarise(att = mean(real_y - synth_y)) |>
+    pull(att)
+}
+
+loo_sweep <- tibble(dropped = top5,
+                    att     = map_dbl(top5, loo_one))
+
+loo_sweep |>
+  gt_pretty(decimals = 2)
+```
+
+Every leave-one-out ATT lands in a narrow band around the chapter's $-18.85$ baseline; no single donor drives the result. This is the textbook signature of a robust synthetic-control fit. If dropping a single state moved the ATT by, say, 5+ packs, you would have a "load-bearing donor" problem and the headline number would warrant a much more sceptical read.
+:::

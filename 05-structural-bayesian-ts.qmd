@@ -354,3 +354,195 @@ The credible interval here is a Bayesian object — its width depends on the pri
 - @scott2014predicting — the BSTS package and its use of spike-and-slab regression for short-pre-period prediction.
 - @george1997approaches — the SSVS spike-and-slab variable-selection prior that underlies the regression component.
 - @vanbuuren2011mice — the `mice` package and the multiple-imputation-by-chained-equations framework, including why $m = 1$ is a shortcut and not the recommended default.
+
+## Exercises
+
+These exercises stretch the chapter's "what could move this credible interval?" question: change the MCMC budget, change the intervention date (placebo), interrogate the forecast-horizon uncertainty, derive the posterior probability of an effect from the raw posterior $p$, and finally run the *proper* multiple-imputation pipeline that the "Common pitfall" section warned against skipping. All exercises reuse `prop99`, `prop99_wide`, `impact_full`, `pre_idx`, and `post_idx` from the setup chunks above.
+
+### Exercise 1: MCMC iteration sensitivity
+
+The chapter's default fit uses `CausalImpact`'s default 1,000 MCMC iterations. Refit with `niter = 200` (deliberately under-sampled) and `niter = 2000` (a more honest setting), and compare the average-effect 95% credible-interval widths. How sensitive is the headline interval to MCMC budget?
+
+::: {.callout-tip collapse="true"}
+## Solution
+
+```{r}
+#| label: ex-ch05-01
+#| message: false
+#| warning: false
+ci_one <- function(n) {
+  CausalImpact(prop99_wide,
+               pre.period  = pre_idx,
+               post.period = post_idx,
+               model.args  = list(niter = n))
+}
+
+impact_short <- ci_one(200)
+impact_long  <- ci_one(2000)
+
+ci_width <- function(impact, label) {
+  s <- impact$summary["Average", ]
+  tibble(setting    = label,
+         abs_effect = s$AbsEffect,
+         lower      = s$AbsEffect.lower,
+         upper      = s$AbsEffect.upper,
+         width      = s$AbsEffect.upper - s$AbsEffect.lower)
+}
+
+bind_rows(
+  ci_width(impact_short, "niter = 200"),
+  ci_width(impact_full,  "niter = 1000 (chapter)"),
+  ci_width(impact_long,  "niter = 2000")
+) |>
+  gt_pretty(decimals = 2)
+```
+
+The point estimate barely moves across the three settings — the posterior mean is well-identified even by `niter = 200`. The *credible interval width* is more sensitive: with only 200 draws, the band can be slightly biased by the empirical quantile estimator's variance. The chapter's default of 1,000 is a reasonable tutorial setting; for a publishable headline number, 5,000–10,000 iterations with explicit Rhat/ESS checks is the prudent floor.
+:::
+
+### Exercise 2: In-time placebo at 1985
+
+Refit `CausalImpact` pretending the intervention was 1985 instead of 1989, with the panel restricted to pre-1989 data so the real policy can never enter the training window. The pseudo-post window is 1986–1988 (3 years). If BSTS is well calibrated, the placebo "ATT" should be small in absolute value.
+
+::: {.callout-tip collapse="true"}
+## Solution
+
+```{r}
+#| label: ex-ch05-02
+#| message: false
+#| warning: false
+# Restrict to pre-1989 data: keep rows 1-19 of the wide matrix.
+prop99_wide_pre89 <- prop99_wide[1:19, ]
+
+# Pretend the intervention was 1985, so:
+#   Row 1 = 1970, row 16 = 1985 (last pre-period).
+#   Row 17 = 1986, row 19 = 1988 (pseudo-post).
+impact_placebo <- CausalImpact(prop99_wide_pre89,
+                               pre.period  = c(1, 16),
+                               post.period = c(17, 19))
+
+impact_placebo$summary |>
+  tibble::rownames_to_column("Horizon") |>
+  dplyr::transmute(
+    Horizon,
+    Actual            = sprintf("%.1f", Actual),
+    Prediction        = sprintf("%.1f [%.1f, %.1f]",
+                                Pred, Pred.lower, Pred.upper),
+    `Absolute effect` = sprintf("%.1f [%.1f, %.1f]",
+                                AbsEffect, AbsEffect.lower, AbsEffect.upper),
+    `Posterior p`     = sprintf("%.3f", p)
+  ) |>
+  gt_pretty()
+```
+
+The placebo average effect is small in absolute value and its credible interval comfortably straddles zero; the posterior $p$ is far above the conventional 0.05 threshold. The synthetic-control machinery does not manufacture a meaningful effect when no policy was passed in the pseudo-post window. Compare with the chapter's real fit: $\widehat{\text{ATT}} \approx -13$ and $p \approx 0.08$.
+:::
+
+### Exercise 3: Pointwise credible-band width by post-year
+
+The 95% pointwise credible band on the counterfactual widens as the forecast horizon grows — a textbook property of state-space models. Extract the per-year band from `impact_full$series` and plot the band width by year. By 2000, how much wider is the band than in 1989?
+
+::: {.callout-tip collapse="true"}
+## Solution
+
+```{r}
+#| label: ex-ch05-03
+#| fig-width: 8
+#| fig-height: 4
+band_df <- impact_full$series |>
+  as.data.frame() |>
+  tibble::rownames_to_column("idx") |>
+  mutate(year     = 1970 + as.integer(idx) - 1,
+         width_95 = point.pred.upper - point.pred.lower) |>
+  filter(year >= 1989) |>
+  select(year, width_95)
+
+ggplot(band_df, aes(year, width_95)) +
+  geom_line(linewidth = 1.1, color = "#6a9bcc") +
+  geom_point(color = "#d97757", size = 2) +
+  labs(x = "Year", y = "Pointwise 95% credible band width")
+
+tibble(year       = c(1989, 2000),
+       band_width = c(band_df$width_95[band_df$year == 1989],
+                      band_df$width_95[band_df$year == 2000])) |>
+  gt_pretty(decimals = 2)
+```
+
+The band roughly doubles across the 12-year post-period: by 2000, the model is much less sure where the counterfactual would have been than in 1989. This is the price you pay for projecting a state-space model far from its training window, and it is the reason a *cumulative* effect plot (the bottom panel of the chapter's `plot(impact_full)`) compounds these widening pointwise bands into an even wider cumulative band.
+:::
+
+### Exercise 4: From posterior $p$ to "probability of any effect"
+
+The chapter quotes "posterior probability of any causal effect ≈ 92%." That number does not appear directly in the `impact_full$summary` table — it is $1 - p$, where `p` is the posterior probability that an effect *at least as extreme* as the observed one would arise under the null. Verify this by extracting `impact_full$summary$p` and computing $1 - p$ for both horizons.
+
+::: {.callout-tip collapse="true"}
+## Solution
+
+```{r}
+#| label: ex-ch05-04
+impact_full$summary |>
+  tibble::rownames_to_column("Horizon") |>
+  dplyr::transmute(Horizon,
+                   p                = p,
+                   `1 - p (chapter)` = 1 - p) |>
+  gt_pretty(decimals = 3)
+```
+
+`p` is around 0.08 for both the average and cumulative horizons; $1 - p \approx 0.92$ reproduces the chapter's "≈ 92%" headline. Two things are worth flagging: (1) `p` is a *posterior tail probability*, not a frequentist $p$-value — so calling it "p" is a CausalImpact convention rather than a frequentist tradition. (2) The same number appears for both rows because CausalImpact constructs the average and cumulative effects from the same posterior draws.
+:::
+
+### Exercise 5 (stretch): Proper multiple imputation with Rubin's-rules pooling
+
+The chapter's $m = 1$ fill is a shortcut that the "Common pitfall" section explicitly flags as anti-conservative. Run **proper** multiple imputation with $m = 5$ random-forest completions, fit `CausalImpact` on each, and pool the average-effect point estimate and 95% interval using **Rubin's rules**. Compare the pooled interval to the chapter's $m = 1$ interval.
+
+::: {.callout-tip collapse="true"}
+## Solution
+
+Pooling logic: with $m$ fits each giving a point estimate $\hat\theta_i$ and within-imputation SE $\sqrt{W_i}$, the pooled point estimate is $\bar\theta = \frac{1}{m}\sum \hat\theta_i$, the pooled variance is $T = \bar W + (1 + 1/m)\,B$ where $\bar W$ is the average within-variance and $B$ the between-imputation variance, and the pooled 95% interval is $\bar\theta \pm 1.96\sqrt{T}$ (the $t$-correction is small for $m=5$ and is dropped here for clarity).
+
+```{r}
+#| label: ex-ch05-05
+#| message: false
+#| warning: false
+set.seed(123)
+
+# 5 mice random-forest completions, each pivoted to wide.
+imp_long <- mice(prop99, m = 5, method = "rf", printFlag = FALSE)
+
+fit_one <- function(i) {
+  wide_i <- complete(imp_long, i) |>
+    as_tibble() |>
+    pivot_wider(names_from  = state,
+                values_from = c(cigsale, lnincome, beer, age15to24, retprice)) |>
+    relocate(cigsale_California) |>
+    select(-year)
+  ci <- CausalImpact(wide_i,
+                     pre.period  = pre_idx,
+                     post.period = post_idx)
+  s  <- ci$summary["Average", ]
+  tibble(theta   = s$AbsEffect,
+         se      = (s$AbsEffect.upper - s$AbsEffect.lower) / (2 * 1.96))
+}
+
+fits <- map_dfr(seq_len(5), fit_one)
+
+theta_bar <- mean(fits$theta)
+W_bar     <- mean(fits$se^2)
+B         <- var(fits$theta)
+T_pooled  <- W_bar + (1 + 1/5) * B
+se_pooled <- sqrt(T_pooled)
+
+tibble(estimator = c("m=1 (chapter)", "m=5 Rubin-pooled"),
+       point     = c(impact_full$summary$AbsEffect[1], theta_bar),
+       lower     = c(impact_full$summary$AbsEffect.lower[1],
+                     theta_bar - 1.96 * se_pooled),
+       upper     = c(impact_full$summary$AbsEffect.upper[1],
+                     theta_bar + 1.96 * se_pooled),
+       width     = c(impact_full$summary$AbsEffect.upper[1] -
+                     impact_full$summary$AbsEffect.lower[1],
+                     2 * 1.96 * se_pooled)) |>
+  gt_pretty(decimals = 2)
+```
+
+The point estimate barely moves but the pooled interval is moderately wider than the $m = 1$ interval, because Rubin's pooling adds the between-imputation variance $B$ to the within-imputation variance $\bar W$. This widening is what "Common pitfall — Example 2" anticipated. The $m=1$ shortcut is fine for tutorial pacing; it is not fine for a published causal estimate when meaningful covariate missingness is present.
+:::

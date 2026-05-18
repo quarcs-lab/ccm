@@ -308,3 +308,172 @@ The growth-curve and ARIMA variants share every step of the recipe — fit on pr
 - @bernal2017interrupted — practitioner's tutorial on ITS regression for public-health interventions.
 - @wagner2002segmented — the canonical segmented-regression complement to Bernal et al., aimed at medication-use research but methodologically general.
 - @hyndman2021forecasting — the canonical reference for the `fpp3` ecosystem and AICc-selected ARIMA modelling.
+
+## Exercises
+
+The exercises below probe the fragility lesson of the chapter: change the pre-period window, search the ARIMA order grid, diagnose a deliberately mis-specified model, and run two placebo checks (in-time and on a donor state). All exercises reuse `prop99` and `prop99_ts` from the setup chunks; nothing needs to be re-loaded.
+
+### Exercise 1: Shorter pre-period
+
+Re-fit both the linear growth-curve and the `ARIMA(1, 2, 0)` model on a **shorter** pre-period (1975–1988, dropping the early 1970s), forecast to 2000, and recompute the two ATT estimates. Do they move closer together, or further apart?
+
+::: {.callout-tip collapse="true"}
+## Solution
+
+```{r}
+#| label: ex-ch02-01
+pre_short <- prop99_ts |> filter(year >= 1975, year <= 1988)
+post_df   <- prop99_ts |> filter(year >= 1989)
+
+# Linear growth curve on the shorter pre-period.
+fit_g_short <- lm(cigsale ~ year, data = pre_short)
+pred_g_short <- predict(fit_g_short, newdata = as_tibble(post_df))
+att_g_short  <- mean(post_df$cigsale - pred_g_short)
+
+# ARIMA(1, 2, 0) on the shorter pre-period.
+fit_a_short <- pre_short |>
+  model(timeseries = ARIMA(cigsale ~ pdq(1, 2, 0) + PDQ(0, 0, 0)))
+fc_a_short  <- forecast(fit_a_short, h = "12 years")
+att_a_short <- mean(post_df$cigsale - fc_a_short$.mean)
+
+tibble(variant = c("Linear growth (1975-1988)", "ARIMA(1,2,0) (1975-1988)"),
+       att     = c(att_g_short,                  att_a_short)) |>
+  gt_pretty(decimals = 2)
+```
+
+Trimming the pre-period to 1975–1988 narrows the gap between the two estimates: the linear ATT moves slightly toward zero (the omitted early-1970s observations were anchoring a longer downward run), and the ARIMA ATT moves further negative because the late-1980s acceleration now dominates the fit. The disagreement does not vanish — that is the point: ITS estimates remain fragile to the choice of pre-period.
+:::
+
+### Exercise 2: Verify the AICc-minimising ARIMA order by grid search
+
+The chapter says it picked $(p, d, q) = (1, 2, 0)$ by a small grid search. Reproduce that search: loop over $(p, d, q) \in \{0, 1, 2\}^3$, fit each model on 1970–1988, extract AICc, and rank. Does $(1, 2, 0)$ really minimise AICc on this series?
+
+::: {.callout-tip collapse="true"}
+## Solution
+
+```{r}
+#| label: ex-ch02-02
+pre_full <- prop99_ts |> filter(prepost == "Pre")
+
+grid <- expand_grid(p = 0:2, d = 0:2, q = 0:2)
+
+aicc_one <- function(p, d, q) {
+  fit <- tryCatch(
+    pre_full |>
+      model(m = ARIMA(cigsale ~ pdq(!!p, !!d, !!q) + PDQ(0, 0, 0))),
+    error = function(e) NULL)
+  if (is.null(fit)) return(NA_real_)
+  g <- glance(fit)
+  if (nrow(g) == 0) NA_real_ else g$AICc
+}
+
+grid$AICc <- pmap_dbl(grid, aicc_one)
+
+grid |>
+  arrange(AICc) |>
+  head(5) |>
+  gt_pretty(decimals = 2)
+```
+
+`ARIMA(1, 2, 0)` sits at the top of the AICc ranking, confirming the chapter's choice. Note that several nearby orders (e.g. `(0, 2, 1)`, `(1, 2, 1)`) are within 1–2 AICc points — a difference that information criteria do not treat as decisive. Refitting at any of the top-3 orders gives a similarly negative-momentum forecast and a similarly positive ATT.
+:::
+
+### Exercise 3: What a mis-specified model looks like
+
+Fit a deliberately bad model — `ARIMA(0, 0, 0)`, a white-noise-around-constant — to the 1970–1988 pre-period and run `gg_tsresiduals()` plus a Ljung-Box test on it. What in the diagnostics tells you the model is wrong?
+
+::: {.callout-tip collapse="true"}
+## Solution
+
+```{r}
+#| label: ex-ch02-03
+#| fig-width: 8
+#| fig-height: 5
+fit_white <- prop99_ts |>
+  filter(prepost == "Pre") |>
+  model(white = ARIMA(cigsale ~ pdq(0, 0, 0) + PDQ(0, 0, 0)))
+
+gg_tsresiduals(fit_white)
+```
+
+```{r}
+#| label: ex-ch02-03b
+augment(fit_white) |>
+  features(.innov, ljung_box, lag = 5, dof = 0)
+```
+
+Two failures pop out: the residual series shows a strong downward sweep over time (so the residuals carry the trend the model failed to capture), and the ACF has large spikes far outside the confidence band — successive residuals are highly correlated because adjacent years are not random draws around a constant. The Ljung-Box test returns a $p$-value $\approx 0$, rejecting white-noise innovations at any conventional level. Compare with the chapter's diagnostic for `ARIMA(1, 2, 0)`, where residuals look noise-like — even though that model also extrapolates badly out of sample. This is the lesson: residual diagnostics rule out gross *in-sample* mis-specification but say nothing about extrapolation quality.
+:::
+
+### Exercise 4: In-time placebo at 1980
+
+A common placebo check is to pretend the policy started earlier: fit ITS on data up to 1979, "forecast" 1980–1988, and compute the implied ATT over that pseudo-post-period. If the method is well calibrated, the placebo ATT should be near zero.
+
+Run this placebo for both the linear growth-curve and `ARIMA(1, 2, 0)` variants and report the two placebo ATTs.
+
+::: {.callout-tip collapse="true"}
+## Solution
+
+```{r}
+#| label: ex-ch02-04
+pre_placebo  <- prop99_ts |> filter(year <= 1979)
+post_placebo <- prop99_ts |> filter(year >= 1980, year <= 1988)
+
+# Linear placebo.
+fit_g_pl <- lm(cigsale ~ year, data = pre_placebo)
+att_g_pl <- mean(post_placebo$cigsale -
+                 predict(fit_g_pl, newdata = as_tibble(post_placebo)))
+
+# ARIMA placebo. (1, 2, 0) needs at least 3 observations after the second
+# difference; the 10-row pre-period here is enough.
+fit_a_pl <- pre_placebo |>
+  model(m = ARIMA(cigsale ~ pdq(1, 2, 0) + PDQ(0, 0, 0)))
+fc_a_pl  <- forecast(fit_a_pl, h = "9 years")
+att_a_pl <- mean(post_placebo$cigsale - fc_a_pl$.mean)
+
+tibble(variant = c("Linear placebo (1980-1988)",
+                   "ARIMA(1,2,0) placebo (1980-1988)"),
+       att     = c(att_g_pl, att_a_pl)) |>
+  gt_pretty(decimals = 2)
+```
+
+The linear placebo ATT comes out close to zero — California's pre-1979 trend extrapolated reasonably well into the early 1980s. The ARIMA placebo, by contrast, is large and negative — the same second-differencing pathology that produced the $+4.5$ post-1988 estimate also produces a strongly negative *placebo* "effect" in 1980. A method that fails its own placebo is a method whose headline estimate you should not trust.
+:::
+
+### Exercise 5 (stretch): Nevada as a placebo treated unit
+
+Re-run the full chapter pipeline (linear growth-curve + `ARIMA(1, 2, 0)`) with **Nevada** as the pseudo-treated unit instead of California. Nevada did *not* pass a 1989 anti-smoking measure, so any large estimated "ATT" here would suggest that what ITS is picking up in California is at least partly a generic late-1980s trend break, not a Prop-99-specific effect.
+
+::: {.callout-tip collapse="true"}
+## Solution
+
+```{r}
+#| label: ex-ch02-05
+nv_ts <- prop99 |>
+  filter(state == "Nevada") |>
+  select(year, cigsale) |>
+  mutate(prepost = factor(year > 1988, labels = c("Pre", "Post"))) |>
+  as_tsibble(index = year)
+
+pre_nv  <- nv_ts |> filter(prepost == "Pre")
+post_nv <- nv_ts |> filter(prepost == "Post")
+
+# Linear growth.
+fit_g_nv <- lm(cigsale ~ year, data = pre_nv)
+att_g_nv <- mean(post_nv$cigsale -
+                 predict(fit_g_nv, newdata = as_tibble(post_nv)))
+
+# ARIMA(1, 2, 0).
+fit_a_nv <- pre_nv |>
+  model(m = ARIMA(cigsale ~ pdq(1, 2, 0) + PDQ(0, 0, 0)))
+fc_a_nv  <- forecast(fit_a_nv, h = "12 years")
+att_a_nv <- mean(post_nv$cigsale - fc_a_nv$.mean)
+
+tibble(variant = c("Linear growth (Nevada)",
+                   "ARIMA(1,2,0) (Nevada)"),
+       att     = c(att_g_nv, att_a_nv)) |>
+  gt_pretty(decimals = 2)
+```
+
+Nevada also shows a non-trivial post-1988 "effect" from both ITS variants — a chunk of what California's ITS estimates are attributing to Prop 99 is the broader nationwide decline that hit donor states too. The placebo is not zero, which is exactly the diagnostic motivating the rest of Part I: methods that borrow strength from a donor pool (chs. 3–7) can subtract that nationwide trend; pure within-unit ITS cannot.
+:::

@@ -328,3 +328,166 @@ The disagreements between estimators applied to the same data are the lesson of 
 - @athey2021matrix — *original method* — matrix completion for causal panel data (ch. 9).
 - @xu2017generalized — *original method* — generalized synthetic control with interactive fixed effects (ch. 10).
 - @liu2024practical — *practical guide* — counterfactual estimators for time-series cross-sectional data.
+
+## Exercises
+
+The exercises below reinforce the chapter's core ideas: the ATT as a missing-data problem, the bias of the naive baseline, the SUTVA assumption, and the logic of the method-selection tree. All exercises use the `prop99` tibble loaded in the setup chunks above, so you don't need to re-read the data. Try each exercise first, then expand the **Solution** callout to compare.
+
+### Exercise 1: Between-state naive comparison
+
+The chapter's naive estimate compares California's *post* mean to its *own pre* mean. A different naive estimator compares California's *post* mean to the *donor pool's* post mean — implicitly imputing $\widehat{Y_{1t}(0)}$ as the contemporaneous donor average. Compute this between-state version on the full 1970–2000 window and contrast it with the within-state $-27$ from the chapter.
+
+::: {.callout-tip collapse="true"}
+## Solution
+
+The between-state version swaps "California's pre-period mean" for "donor mean in the same year," then averages the gap over the post-period.
+
+```{r}
+#| label: ex-ch01-01
+post_years <- 1989:2000
+
+ca_post <- prop99 |>
+  filter(state == "California", year %in% post_years) |>
+  pull(cigsale) |>
+  mean()
+
+donor_post <- prop99 |>
+  filter(state != "California", year %in% post_years) |>
+  pull(cigsale) |>
+  mean()
+
+tibble(estimator    = "Between-state naive (post-period)",
+       ca_post      = ca_post,
+       donor_post   = donor_post,
+       att_estimate = ca_post - donor_post) |>
+  gt_pretty(decimals = 2)
+```
+
+Donor states averaged ~88 packs/capita over 1989–2000 vs ~60 for California — the between-state gap is about $-28$ packs, roughly the same magnitude as the within-state $-27$ but built on a very different counterfactual assumption. Chapter 4 will pick the donor blend properly; this is the unweighted version.
+:::
+
+### Exercise 2: Secular pre-1988 decline in the donor pool
+
+The within-state naive estimator silently bundles the nationwide secular decline in smoking into the "treatment effect." Quantify that decline: aggregate the donor pool by year, fit a linear trend through the 1970–1988 mean, and report the slope. What does the slope imply about the bias of the within-state naive estimate?
+
+::: {.callout-tip collapse="true"}
+## Solution
+
+```{r}
+#| label: ex-ch01-02
+donor_pre_trend <- prop99 |>
+  filter(state != "California", year <= 1988) |>
+  group_by(year) |>
+  summarize(donor_mean = mean(cigsale), .groups = "drop")
+
+trend_fit <- lm(donor_mean ~ year, data = donor_pre_trend)
+ms_pretty(list("Donor pre-1988 trend" = trend_fit))
+```
+
+The pre-1988 slope is roughly $-1$ pack/year. Carried forward across 12 post-period years (1989–2000) that is ~$-12$ packs of "expected" decline even without Proposition 99. The within-state naive estimate of $-27$ absorbs that secular decline silently — so a non-trivial chunk of the headline effect is national trend, not California policy.
+:::
+
+### Exercise 3: SUTVA diagnostic on California's geographic neighbours
+
+A border state that lost cigarette sales because Californians drove across the line to buy cheap tobacco would *violate* SUTVA: the neighbour's $Y(0)$ is no longer the same as in a Prop-99-free world. Compute the pre/post mean change in `cigsale` for Nevada, Oregon, and Arizona (California's neighbours in this panel), and compare to the pre/post change averaged over the rest of the donor pool. A bigger drop in neighbours is consistent with a spillover.
+
+::: {.callout-tip collapse="true"}
+## Solution
+
+```{r}
+#| label: ex-ch01-03
+neighbours <- c("Nevada", "Oregon", "Arizona")
+
+state_changes <- prop99 |>
+  filter(state != "California") |>
+  mutate(group  = if_else(state %in% neighbours,
+                          "Bordering CA", "Other donor"),
+         period = if_else(year > 1988, "Post", "Pre")) |>
+  group_by(group, state, period) |>
+  summarize(mean_cigsale = mean(cigsale), .groups = "drop") |>
+  pivot_wider(names_from = period, values_from = mean_cigsale) |>
+  mutate(change = Post - Pre)
+
+state_changes |>
+  group_by(group) |>
+  summarize(mean_change = mean(change),
+            n_states    = n(),
+            .groups     = "drop") |>
+  gt_pretty(decimals = 2)
+```
+
+Bordering states drop somewhat *more* than the rest of the donor pool, which is the pattern you would expect under cross-border purchases or shared regional taste shifts. The point is not to declare SUTVA dead — the gap is modest — but to flag that California's neighbours are *not* exchangeable with the rest of the donors. Chapter 7's Bayesian spatial SCM is the response to exactly this concern.
+:::
+
+### Exercise 4: Plot California against the donor average
+
+Build a single `ggplot` that overlays California's `cigsale` and the donor-pool mean by year, with a vertical line at 1988.5. The *pre-period* gap between the two series is the bias of the between-state naive estimator; a method that does nothing to align pre-period levels will misattribute that wedge to the policy.
+
+::: {.callout-tip collapse="true"}
+## Solution
+
+```{r}
+#| label: ex-ch01-04
+#| fig-width: 8
+#| fig-height: 5
+overlay <- prop99 |>
+  mutate(group = if_else(state == "California",
+                         "California", "Donor average")) |>
+  group_by(group, year) |>
+  summarize(cigsale = mean(cigsale), .groups = "drop")
+
+ggplot(overlay, aes(year, cigsale, color = group)) +
+  geom_line(linewidth = 1.1) +
+  geom_vline(xintercept = 1988.5, color = "#d97757",
+             linetype = "dashed") +
+  scale_color_manual(values = c("California"    = "#d97757",
+                                "Donor average" = "#6a9bcc")) +
+  labs(x = "Year", y = "Cigarette sales (packs per capita)",
+       color = NULL)
+```
+
+California already sat below the donor average in 1970 and the pre-period gap was widening, so a naive between-state comparison overstates the post-1988 effect. Chapter 4's classical synthetic-control estimator picks a *weighted* donor blend that matches California's pre-period level and slope — exactly to neutralise this pre-existing wedge.
+:::
+
+### Exercise 5 (stretch): Simulate a non-parallel-trends DGP
+
+Generate a small synthetic 2-unit, 20-year panel where the treated unit follows a *steeper* downward trend than the control even in the absence of any policy. "Treat" the steeper-trending unit halfway through and apply the within-state naive pre/post estimator. Show with a plot and a one-line numerical summary that the naive estimator is biased even though there is no true treatment effect.
+
+::: {.callout-tip collapse="true"}
+## Solution
+
+```{r}
+#| label: ex-ch01-05
+#| fig-width: 7
+#| fig-height: 4
+set.seed(1)
+sim <- tibble(
+  year  = rep(2001:2020, times = 2),
+  state = rep(c("treated", "control"), each = 20),
+  trend = if_else(rep(c("treated", "control"), each = 20) == "treated",
+                  -2, -0.5),
+  noise = rnorm(40, sd = 1.5)
+) |>
+  group_by(state) |>
+  mutate(y = 100 + trend * (year - 2001) + noise) |>
+  ungroup() |>
+  mutate(post = year >= 2011)
+
+ggplot(sim, aes(year, y, color = state)) +
+  geom_line(linewidth = 1) +
+  geom_vline(xintercept = 2010.5, linetype = "dashed",
+             color = "#d97757") +
+  labs(x = "Year", y = "Outcome", color = NULL)
+
+sim |>
+  filter(state == "treated") |>
+  group_by(post) |>
+  summarize(mean_y = mean(y), .groups = "drop") |>
+  pivot_wider(names_from = post, values_from = mean_y,
+              names_prefix = "post_") |>
+  mutate(naive_att = post_TRUE - post_FALSE) |>
+  gt_pretty(decimals = 2)
+```
+
+There is *no* treatment effect in the data-generating process — `post` does not enter the equation for `y` — yet the within-state naive estimator returns a strongly negative "ATT" because the treated unit was already on a steeper downward trend before the cutoff. This is exactly the bias that ITS (ch. 2) addresses by modelling the pre-trend, and that synthetic control (ch. 4) addresses by matching the pre-period slope.
+:::

@@ -500,3 +500,206 @@ The narrow 80% band is broken by the early 1990s; the widest 99% band still excl
 - The companion **Python (`scpi_pkg`) and Stata (`scpi`)** packages, documented at <https://nppackages.github.io/scpi/>, expose the same API as the R package used in this chapter.
 
 **Coming up.** Chapter 7 builds a *fourth* synthetic-control perspective: a Bayesian horseshoe-prior weight model coupled with a spatial-autoregressive donor data-generating process. That chapter is the first in the book that relaxes the stable-unit-treatment-value assumption (SUTVA) — donors are allowed to be themselves affected by California's policy.
+
+## Exercises
+
+These exercises probe the design knobs the chapter exposed — the cointegration flag, the constraint family, the Bonferroni alpha allocation, and the lasso $Q$ tuning parameter — and one summary statistic the chapter did not extract (the first year California pierces the lower band). All exercises reuse `prop99`, `data_prep`, `pi_simplex`, `scpi_fits`, `years_pre`, `years_post`, and `years_all` from the setup chunks above.
+
+### Exercise 1: Cointegration toggle
+
+The chapter ran `scdata(..., cointegrated.data = TRUE)` because California's per-capita cigarette sales look like an I(1) series. Refit the simplex `scpi` with `cointegrated.data = FALSE` and compare the average PI half-width across the post-period. How much does the cointegration adjustment matter?
+
+::: {.callout-tip collapse="true"}
+## Solution
+
+```{r}
+#| label: ex-ch06-01
+#| message: false
+#| warning: false
+#| results: hide
+data_prep_nocoint <- scdata(
+  df               = prop99,
+  id.var           = "state",
+  time.var         = "year",
+  outcome.var      = "cigsale",
+  period.pre       = 1970:1988,
+  period.post      = 1989:2000,
+  unit.tr          = "California",
+  unit.co          = donors,
+  cointegrated.data = FALSE,
+  constant         = TRUE
+)
+
+set.seed(42)
+pi_nocoint <- scpi(
+  data_prep_nocoint,
+  w.constr = list(name = "simplex"),
+  u.order  = 1, u.lags = 0,
+  e.order  = 1, e.lags = 0,
+  e.method = "gaussian",
+  u.missp  = TRUE, u.sigma = "HC1",
+  e.alpha  = 0.025, u.alpha = 0.025,
+  sims     = 200
+)
+```
+
+```{r}
+#| label: ex-ch06-01b
+ci_yes <- pi_simplex$inference.results$CI.all.gaussian
+ci_no  <- pi_nocoint$inference.results$CI.all.gaussian
+
+tibble(setting       = c("cointegrated = TRUE (chapter)",
+                         "cointegrated = FALSE"),
+       mean_halfwidth = c(mean((ci_yes[, 2] - ci_yes[, 1]) / 2),
+                          mean((ci_no[, 2]  - ci_no[, 1])  / 2))) |>
+  gt_pretty(decimals = 2)
+```
+
+Turning off the cointegration adjustment shrinks the average PI half-width somewhat: the long-run-variance correction inflates the in-sample uncertainty component to account for the high serial correlation of an I(1) outcome. The chapter's `TRUE` is the more honest default for `cigsale`; setting it to `FALSE` gives a narrower band that can mislead readers into thinking the post-1989 effect is more sharply identified than it actually is.
+:::
+
+### Exercise 2: First post-period year California pierces the lower PI bound
+
+For each of the four constraints, find the first post-period year in which observed California falls *below* the lower 95% PI bound. This is the inferential analogue of "the year the effect became statistically distinguishable from forecasting noise."
+
+::: {.callout-tip collapse="true"}
+## Solution
+
+```{r}
+#| label: ex-ch06-02
+y_post <- as.numeric(data_prep$Y.post)
+
+first_exit <- function(fit) {
+  ci <- fit$inference.results$CI.all.gaussian
+  below <- y_post < ci[, 1]
+  below[is.na(below)] <- FALSE
+  if (!any(below)) NA_integer_ else as.integer(years_post[which(below)[1]])
+}
+
+tibble(constraint = constraints,
+       first_year = map_int(scpi_fits, first_exit)) |>
+  gt_pretty()
+```
+
+Every constraint shows observed California falling below the lower PI bound by the early-to-mid 1990s. The simplex and lasso fits give the earliest first-exit year (their bands are narrowest); ridge and OLS push the first-exit year out by a year or two (their bands are wider). The constraint choice affects *when* the inferential break opens but not *whether* it opens — a robustness signal stronger than the point-estimate spread alone.
+:::
+
+### Exercise 3: Per-year treatment-effect interval
+
+The chapter plotted the PI band around the *synthetic counterfactual*. Reframe it: plot the band around the per-year *treatment effect* $\hat\tau_t = Y_{1t} - \widehat{Y_{1t}(0)}$, where the upper bound on $\hat\tau_t$ is observed minus the *lower* PI bound on the counterfactual and vice versa. The horizontal zero line then anchors the eye: years whose band stays below zero are the years the policy effect is statistically distinguishable from zero.
+
+::: {.callout-tip collapse="true"}
+## Solution
+
+```{r}
+#| label: ex-ch06-03
+#| fig-width: 8
+#| fig-height: 5
+ci_post <- pi_simplex$inference.results$CI.all.gaussian
+synth_post <- as.numeric(pi_simplex$est.results$Y.post.fit)
+
+tau_df <- tibble(
+  year     = years_post,
+  observed = y_post,
+  tau      = observed - synth_post,
+  tau_lo   = observed - ci_post[, 2],
+  tau_hi   = observed - ci_post[, 1]
+)
+
+ggplot(tau_df, aes(year, tau)) +
+  geom_ribbon(aes(ymin = tau_lo, ymax = tau_hi),
+              fill = "#6a9bcc", alpha = 0.25) +
+  geom_line(color = "#6a9bcc", linewidth = 0.9) +
+  geom_hline(yintercept = 0, color = "#d97757", linetype = "dashed") +
+  labs(x = NULL, y = "Per-year treatment effect (packs/capita)")
+```
+
+The point-effect series drops steadily through the post-period; the upper bound of the band first dips below zero in the mid-1990s and stays there. The visual is strictly equivalent to the chapter's "California below the lower bound" framing — but with zero on the y-axis, the inferential break shows up as a band that has cleared zero, which many readers find more direct.
+:::
+
+### Exercise 4: Asymmetric Bonferroni alpha allocation
+
+The chapter splits a 95% joint band evenly (`u.alpha = e.alpha = 0.025`). Refit the simplex `scpi` with an *asymmetric* split: `u.alpha = 0.04` and `e.alpha = 0.01` (still summing to 0.05). The total Bonferroni level is still 95%, but the shape of the band changes — one source of uncertainty is now bounded more tightly than the other. Compare to the symmetric chapter band.
+
+::: {.callout-tip collapse="true"}
+## Solution
+
+```{r}
+#| label: ex-ch06-04
+#| message: false
+#| warning: false
+#| results: hide
+set.seed(42)
+pi_asym <- scpi(
+  data_prep,
+  w.constr = list(name = "simplex"),
+  u.order  = 1, u.lags = 0,
+  e.order  = 1, e.lags = 0,
+  e.method = "gaussian",
+  u.missp  = TRUE, u.sigma = "HC1",
+  u.alpha  = 0.04,
+  e.alpha  = 0.01,
+  sims     = 200
+)
+```
+
+```{r}
+#| label: ex-ch06-04b
+ci_sym  <- pi_simplex$inference.results$CI.all.gaussian
+ci_asym <- pi_asym$inference.results$CI.all.gaussian
+
+tibble(
+  year             = years_post,
+  width_symmetric  = ci_sym[, 2]  - ci_sym[, 1],
+  width_asymmetric = ci_asym[, 2] - ci_asym[, 1]
+) |>
+  gt_pretty(decimals = 2)
+```
+
+The asymmetric band trades a tighter out-of-sample bound (`e.alpha = 0.01`) for a looser in-sample bound (`u.alpha = 0.04`). On a 19-year pre-period with 12 post-period years, the in-sample component dominates by mid-horizon, so loosening it *widens* the band where it already mattered most. This is the lesson of the Bonferroni union bound: the split is yours to choose, but you cannot get both bounds tight for free. Symmetric is the conservative default; asymmetric splits make sense only when you have a substantive reason to trust one of the two error sources more than the other.
+:::
+
+### Exercise 5 (stretch): Lasso $Q$ sweep
+
+The chapter's lasso fit uses `scpi`'s default $Q = 1$, which is what makes the lasso weights look so similar to the simplex weights ("lasso = L1 ball of radius 1; simplex = L1 ball of radius 1 restricted to the non-negative orthant"). Sweep $Q$ over $\{0.5, 1, 2\}$, refit `scpi` at each value, and report the resulting ATT plus the number of donors with non-zero weight (the lasso's "active set" size).
+
+::: {.callout-tip collapse="true"}
+## Solution
+
+```{r}
+#| label: ex-ch06-05
+#| message: false
+#| warning: false
+#| results: hide
+set.seed(42)
+Q_grid <- c(0.5, 1, 2)
+
+lasso_fits <- map(Q_grid, \(Q) {
+  scpi(
+    data_prep,
+    w.constr = list(name = "lasso", Q = Q),
+    u.order  = 1, u.lags = 0,
+    e.order  = 1, e.lags = 0,
+    e.method = "gaussian",
+    u.missp  = TRUE, u.sigma = "HC1",
+    u.alpha  = 0.025, e.alpha = 0.025,
+    sims     = 100
+  )
+})
+```
+
+```{r}
+#| label: ex-ch06-05b
+y_post <- as.numeric(data_prep$Y.post)
+
+map2_dfr(lasso_fits, Q_grid, \(fit, Q) {
+  w      <- fit$est.results$w
+  active <- sum(abs(w) > 1e-6)
+  att    <- mean(y_post - as.numeric(fit$est.results$Y.post.fit))
+  tibble(Q = Q, active_donors = active, att = att)
+}) |>
+  gt_pretty(decimals = 2)
+```
+
+A tighter lasso ball ($Q = 0.5$) forces a small active set and a shrunken ATT; the default $Q = 1$ behaves much like the simplex; loosening to $Q = 2$ admits negative weights and gives the lasso a more OLS-like ATT. The takeaway is that "lasso vs simplex" in the chapter was a comparison at one specific $Q$; the lasso family is really a one-parameter continuum, and a serious applied analysis would either sweep $Q$ or pick it by cross-validation.
+:::

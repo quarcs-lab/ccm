@@ -615,3 +615,158 @@ The headline survives because Proposition 99 is a *single-treated-unit* case wit
 - @lesage2009introduction — textbook treatment of SAR and spatial econometrics.
 - @abadie2010synthetic — the original synthetic-control treatment of Proposition 99, replicated in chapter 4.
 - @dunford2024tidysynth — `tidysynth` package documentation.
+
+## Exercises
+
+These exercises mine the chapter's already-fitted objects (`sc_classic`, `alpha_draws_hs`, `gap_draws_hs`, `fit_sar`, `paths_full`) for diagnostics the chapter narrative did not extract, plus one cheap in-time placebo on Stage 1. They deliberately avoid re-running the SAR MCMC — that would more than double the render time. Solutions reuse `Y0_pre`, `Y0_post`, `Yc_pre`, `Yc_post`, `years_pre`, `years_post`, `donors`, `panel_df`, and `TREAT_YEAR` from the setup chunks above.
+
+### Exercise 1: How does Utah's weight move between Stage 1 and Stage 2?
+
+In Stage 1, Utah was the largest donor by weight (the classical simplex placed roughly a third of the mass on it). In Stage 2, the horseshoe broadened the donor pool dramatically and only Nevada's credible interval excluded zero. Compute Utah's Stage 1 weight and its Stage 2 posterior mean + 95% credible interval. Does Utah remain a Stage 2 contributor?
+
+::: {.callout-tip collapse="true"}
+## Solution
+
+```{r}
+#| label: ex-ch07-01
+utah_classic <- grab_unit_weights(sc_classic) |>
+  filter(unit == "Utah") |>
+  pull(weight)
+
+utah_hs <- alpha_draws_hs[, "Utah"]
+
+tibble(stage = c("Stage 1 (classical, point)",
+                 "Stage 2 (horseshoe, posterior mean)",
+                 "Stage 2 lower 95%",
+                 "Stage 2 upper 95%"),
+       value = c(utah_classic,
+                 mean(utah_hs),
+                 quantile(utah_hs, 0.025),
+                 quantile(utah_hs, 0.975))) |>
+  gt_pretty(decimals = 3)
+```
+
+Utah's Stage-1 simplex weight is sizable, but its Stage-2 posterior interval comfortably brackets zero — the horseshoe is unwilling to commit. The chapter's headline is that *only Nevada's* posterior interval excludes zero in Stage 2; this exercise puts a number on the contrast for Utah specifically. Under the broader prior the data simply do not pin Utah's contribution down, even though the simplex optimiser had to assign it a large share to satisfy the sum-to-one constraint.
+:::
+
+### Exercise 2: Year-by-year posterior probability the effect is negative
+
+The chapter's Stage 2 credible interval covers the *average* ATT over 1988–2000. A finer-grained read is the posterior probability that the *per-year* gap is negative. Compute Pr$(\text{gap}_t < 0 \mid \text{data})$ for each post-period year from `gap_draws_hs` and plot.
+
+::: {.callout-tip collapse="true"}
+## Solution
+
+```{r}
+#| label: ex-ch07-02
+#| fig-width: 8
+#| fig-height: 4
+prob_neg <- tibble(
+  year      = years_post,
+  prob_neg  = rowMeans(gap_draws_hs < 0)
+)
+
+ggplot(prob_neg, aes(year, prob_neg)) +
+  geom_col(fill = "#6a9bcc") +
+  geom_hline(yintercept = 0.95, linetype = "dashed", color = "#d97757") +
+  labs(x = NULL, y = expression(paste("Pr(gap < 0 | data)"))) +
+  scale_y_continuous(limits = c(0, 1))
+```
+
+The posterior probability of a negative effect climbs above the conventional 95% threshold within a few post-period years and stays there. The chapter's interval was an average over the entire post-period; this year-by-year decomposition shows that the posterior negativity is not driven by a small subset of late years — it is sustained throughout 1989–2000.
+:::
+
+### Exercise 3: Distribution of active donor count across Stage 2 posterior draws
+
+The chapter said "about 23 donors carry posterior mean weight above 0.01." That is a *posterior-mean* statistic. The *posterior* statistic is the number of donors active *in each draw*. Plot the histogram of active-donor count (using the same 0.01 threshold) across all post-burn MCMC iterations.
+
+::: {.callout-tip collapse="true"}
+## Solution
+
+```{r}
+#| label: ex-ch07-03
+#| fig-width: 7
+#| fig-height: 4
+active_per_draw <- rowSums(alpha_draws_hs > 0.01)
+
+tibble(active = active_per_draw) |>
+  ggplot(aes(active)) +
+  geom_histogram(binwidth = 1, fill = "#6a9bcc", color = "white") +
+  labs(x = "Active donors (weight > 0.01) per posterior draw",
+       y = "Draws")
+
+summary(active_per_draw)
+```
+
+The per-draw active-donor count is concentrated in a relatively wide range — the model never settles on a single sparse subset of donors the way the simplex does. Each MCMC draw constructs a different sparse synthetic; the posterior-mean *summary* lights up 23 states only because different draws spread their weight across overlapping subsets. This is the horseshoe behaving as intended: model uncertainty is encoded in the posterior over which donors matter, not buried in a single point estimate.
+:::
+
+### Exercise 4: How concentrated is the Stage 3 spillover?
+
+The chapter showed Nevada dominates the SAR spillover by an order of magnitude. Quantify the concentration: what share of the *total absolute spillover* across donors lands on Nevada alone? On the top 3 donors? The closer either share is to 1, the more the SUTVA failure is a single-neighbour story rather than a diffuse spillover.
+
+::: {.callout-tip collapse="true"}
+## Solution
+
+```{r}
+#| label: ex-ch07-04
+spill_mat   <- fit_sar$effects$spill
+post_rows   <- which(as.numeric(rownames(spill_mat)) >= TREAT_YEAR)
+spill_post  <- spill_mat[post_rows, , drop = FALSE]
+avg_spill   <- colMeans(spill_post)
+abs_total   <- sum(abs(avg_spill))
+
+shares <- tibble(
+  state   = colnames(spill_mat),
+  abs_avg = abs(avg_spill)
+) |>
+  arrange(desc(abs_avg)) |>
+  mutate(share = abs_avg / abs_total)
+
+list(nevada_share    = shares$share[shares$state == "Nevada"],
+     top3_share      = sum(shares$share[1:3]),
+     top3_states     = shares$state[1:3])
+```
+
+Nevada absorbs the bulk of the total absolute spillover by itself; the top-3 share approaches 1, leaving the remaining 35 donors with essentially no policy-relevant spillover mass. SUTVA fails sharply on one neighbour, not diffusely across the donor pool. That is a much friendlier diagnosis than the alternative — a diffuse failure would make every donor a leaky control and would force a much wider re-examination of the chapter 4 / 6 estimates.
+:::
+
+### Exercise 5 (stretch): Stage 1 in-time placebo at 1980
+
+Run the Stage 1 classical pipeline pretending the intervention was 1980 instead of 1988, restricting the panel to pre-1988 data so the real policy can never enter the fit. The placebo "ATT" over 1981–1987 should be small in absolute value if the SCM machinery is well calibrated.
+
+::: {.callout-tip collapse="true"}
+## Solution
+
+```{r}
+#| label: ex-ch07-05
+#| message: false
+#| warning: false
+sc_placebo <- panel_df |>
+  filter(year < 1988) |>
+  synthetic_control(
+    outcome = cigsale, unit = state, time = year,
+    i_unit  = "California", i_time = 1980,
+    generate_placebos = FALSE
+  ) |>
+  generate_predictor(
+    time_window = 1970:1979,
+    cigsale_avg_pre = mean(cigsale, na.rm = TRUE),
+    retprice_avg    = mean(retprice, na.rm = TRUE)
+  ) |>
+  generate_predictor(time_window = 1975, cigsale_1975 = cigsale) |>
+  generate_predictor(time_window = 1979, cigsale_1979 = cigsale) |>
+  generate_weights(optimization_window = 1970:1979) |>
+  generate_control()
+
+att_placebo <- grab_synthetic_control(sc_placebo) |>
+  filter(time_unit > 1980) |>
+  summarise(att = mean(real_y - synth_y)) |>
+  pull(att)
+
+tibble(estimator = c("Stage 1 real (1988)", "Stage 1 placebo (1980)"),
+       att       = c(att_classic, att_placebo)) |>
+  gt_pretty(decimals = 2)
+```
+
+The placebo "ATT" is much smaller in absolute value than the real Stage-1 ATT of $\approx -18.5$. The classical SCM machinery is not manufacturing comparable gaps when no treatment occurred in the pseudo-post window — the real estimate is not a generic artefact of the pipeline. A placebo magnitude approaching the real ATT would have been a five-alarm signal; the small magnitude here corroborates Stage 1's headline.
+:::

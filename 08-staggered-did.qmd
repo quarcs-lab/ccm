@@ -519,16 +519,143 @@ the companion post at
 
 ## Exercises
 
-1. Re-estimate the overall ATT using `control_group = "notyettreated"`
-   instead of `"nevertreated"`. Does the answer change? Explain why
-   the standard error usually *shrinks* under this alternative, and
-   what assumption about not-yet-treated counties you are now relying
-   on to make their comparison valid.
-2. Use `did::aggte(attgt, type = "calendar")` to aggregate by
-   *calendar year* rather than event time. Which calendar year shows
-   the largest treatment effect, and what substantive story does that
-   suggest?
-3. Run `HonestDiD` with `type = "smoothness"` instead of
-   `"relative_magnitude"`, supplying `Mvec = seq(0, 0.05, by = 0.01)`.
-   What does the breakdown $M$ say about the credibility of the
-   parallel-trends assumption in this dataset?
+These exercises drill on the chapter's four central design choices: the comparison-group definition, the aggregation target, the conditional-trends covariate set, and the sensitivity-analysis bound. All reuse `data2`, `attgt`, `attO`, `attes`, and `cs_dr` from the setup chunks above.
+
+### Exercise 1: Not-yet-treated control group
+
+Re-estimate the overall ATT using `control_group = "notyettreated"` instead of `"nevertreated"`. The not-yet-treated cohort 2006 enters as a control for cohort 2004 in 2004–2005, then exits when it becomes treated. Compare the overall ATT and its SE to the chapter's never-treated baseline. Why does the SE usually shrink, and what assumption are you now relying on?
+
+::: {.callout-tip collapse="true"}
+## Solution
+
+```{r}
+#| label: ex-ch08-01
+attgt_nyt <- did::att_gt(yname = "lemp", idname = "id", gname = "G",
+                         tname = "year", data = data2,
+                         control_group = "notyettreated",
+                         base_period   = "universal")
+attO_nyt <- did::aggte(attgt_nyt, type = "group")
+
+tibble(
+  control_group = c("nevertreated (chapter)", "notyettreated"),
+  estimate      = c(attO$overall.att, attO_nyt$overall.att),
+  se            = c(attO$overall.se,  attO_nyt$overall.se)
+) |>
+  gt_pretty(decimals = 4)
+```
+
+The point estimate moves only slightly; the SE shrinks because the comparison pool is larger — cohort 2006 contributes (pre-treatment) variance to the cohort-2004 contrast, in addition to the never-treated counties. The trade-off is the identification assumption: not-yet-treated counties must be on parallel pre-trends with currently-treated counties, *not just* with never-treated counties. In a panel where cohort 2006 was already drifting downward before 2006 (as it was here), the not-yet-treated estimator buys you precision but exposes you to the cohort-2006 pre-trend the chapter flagged.
+:::
+
+### Exercise 2: Calendar-time aggregation
+
+Use `did::aggte(attgt, type = "calendar")` to aggregate $ATT(g, t)$ by *calendar year* rather than by event time. Which calendar year shows the largest treatment effect, and what substantive story does that suggest?
+
+::: {.callout-tip collapse="true"}
+## Solution
+
+```{r}
+#| label: ex-ch08-02
+attcal <- did::aggte(attgt, type = "calendar")
+
+tibble(
+  year   = attcal$egt,
+  att    = attcal$att.egt,
+  se     = attcal$se.egt,
+  lower  = attcal$att.egt - 1.96 * attcal$se.egt,
+  upper  = attcal$att.egt + 1.96 * attcal$se.egt
+) |>
+  gt_pretty(decimals = 4)
+```
+
+The most negative calendar-year effect is in 2007 — the only year both cohorts 2004 and 2006 are post-treatment, so the calendar aggregate combines a more-mature cohort-2004 effect with the on-impact cohort-2006 effect. The event-study aggregation in the chapter showed the same accumulation in *event time*; the calendar aggregation showed it in *wall-clock time*. Each is the right answer to a different policy question — "how big was the average post effect on a typical treated county?" (event time) vs "how big was the effect in year 2007 in this panel?" (calendar).
+:::
+
+### Exercise 3: Drop one covariate from the doubly-robust estimator
+
+Refit the doubly-robust estimator with `xformla = ~lpop` only — dropping log average pay. Compare the overall ATT and SE to the chapter's two-covariate doubly-robust estimate, and discuss whether the covariate adjustment is doing real work or just adding noise.
+
+::: {.callout-tip collapse="true"}
+## Solution
+
+```{r}
+#| label: ex-ch08-03
+#| message: false
+#| warning: false
+cs_dr_one <- did::att_gt(yname="lemp", tname="year", idname="id", gname="G",
+                         xformla = ~lpop,
+                         control_group = "nevertreated",
+                         base_period   = "universal",
+                         est_method    = "dr", data = data2)
+attO_dr_one <- did::aggte(cs_dr_one, type = "group")
+attO_dr_two <- did::aggte(cs_dr,     type = "group")
+
+tibble(
+  spec     = c("DR + lpop + lavg_pay (chapter)", "DR + lpop only"),
+  estimate = c(attO_dr_two$overall.att, attO_dr_one$overall.att),
+  se       = c(attO_dr_two$overall.se,  attO_dr_one$overall.se)
+) |>
+  gt_pretty(decimals = 4)
+```
+
+The estimate and SE move only modestly. Log average pay was carrying *some* conditional-trend signal — dropping it shifts the doubly-robust estimate toward the unconditional one — but the two-covariate adjustment was not load-bearing for the headline. The doubly-robust estimator is most worth running when at least one covariate has a credible mechanism for shaping trends; the SE comparison is the easiest way to see whether including it costs you precision without buying credibility.
+:::
+
+### Exercise 4: HonestDiD relative-magnitudes breakdown sweep
+
+The chapter showed the breakdown $\bar M$ for the on-impact effect lies somewhere in $(0, 0.5]$. Sweep $\bar M \in \{0.0, 0.05, 0.10, \dots, 1.5\}$ to find the breakdown point more precisely — the smallest $\bar M$ at which the robust 95% CI first contains zero.
+
+::: {.callout-tip collapse="true"}
+## Solution
+
+```{r}
+#| label: ex-ch08-04
+#| message: false
+#| warning: false
+hd_rm_fine <- honest_did(es      = attes,
+                         e       = 0,
+                         type    = "relative_magnitude",
+                         method  = "C-LF",
+                         Mbarvec = seq(0, 1.5, by = 0.05))
+
+breakdown <- hd_rm_fine |>
+  mutate(contains_zero = lb <= 0 & 0 <= ub) |>
+  filter(contains_zero) |>
+  slice_min(Mbar, n = 1)
+
+list(breakdown_Mbar = breakdown$Mbar,
+     ci_at_breakdown = c(lb = breakdown$lb, ub = breakdown$ub))
+```
+
+The robust CI first contains zero at a very small $\bar M$ — meaning even a tiny fraction of the largest observed pre-trend would be enough to overturn the on-impact effect's statistical significance. This is the precise version of the chapter's qualitative warning that "the on-impact effect does not survive even a fraction of the cohort-2006 pre-trend." A larger breakdown $\bar M$ — say above 1 — would have given the conclusion a comfortable safety margin; this is a sharp negative.
+:::
+
+### Exercise 5 (stretch): Cohort-2004-only 2×2 DiD
+
+Restrict to cohort-2004 counties and never-treated counties only, and fit a 2×2 DiD with `fixest::feols` using a treat × post interaction. The interaction coefficient should reconcile (up to standard-error differences) with $\widehat{ATT}(g=2004, t=2004)$ from the chapter's `attgt$att` vector. This is a sanity-check that the Callaway-Sant'Anna primitives are the same 2×2 DiDs we already know from chapter 3 — generalised, not replaced.
+
+::: {.callout-tip collapse="true"}
+## Solution
+
+```{r}
+#| label: ex-ch08-05
+data_2x2 <- data2 |>
+  filter(G %in% c(0, 2004)) |>
+  mutate(treat = as.integer(G == 2004),
+         post  = as.integer(year >= 2004))
+
+fit_2x2 <- fixest::feols(lemp ~ treat:post | id + year,
+                         data    = data_2x2,
+                         cluster = "id")
+
+attgt_2004_2004 <- attgt$att[attgt$group == 2004 & attgt$t == 2004]
+
+tibble(
+  estimator = c("Hand 2x2 DiD (treat x post)", "Callaway-Sant'Anna ATT(2004, 2004)"),
+  estimate  = c(coef(fit_2x2)[["treat:post"]], attgt_2004_2004)
+) |>
+  gt_pretty(decimals = 4)
+```
+
+The 2×2 DiD coefficient is within a small numerical tolerance of $\widehat{ATT}(2004, 2004)$. The Callaway-Sant'Anna machinery is *not* a different statistical idea than chapter 3's DiD — it is the same 2×2 contrast computed for every $(g, t)$ cell using only the cohort-$g$ and never-treated rows, and then aggregated in a way that protects against the staggered-adoption contamination problem.
+:::

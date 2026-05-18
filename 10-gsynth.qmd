@@ -573,23 +573,160 @@ two notations are aligned.
 
 ## Exercises
 
-1. Extend the factor grid to include $r = 2$ (and, if you're
-   patient, $r = 3, 4$). Look at the IC column and at the standard
-   error column side by side. At what $r$ does the SE become
-   uninformative, and what does the IC say about the effective
-   rank of this short panel?
-2. Drop the `lpop + lavg_pay` covariates from the formula. Does
-   the ATT move? What does that say about whether the factors
-   are already absorbing variation in population and pay
-   trajectories?
-3. Compare gsynth's overall ATT to the doubly-robust
-   Callaway-Sant'Anna estimate from chapter 8 ($-0.065$). Which
-   would you report as the headline, and what design feature of
-   the data drives your choice?
-4. Flip the pedagogical compute toggles to research-grade:
-   `nboots = 1000` and `parallel = TRUE`. Refit at $r = r^*$. By
-   how much does the 95% CI tighten, and is the change material
-   for any of the substantive claims the chapter makes? (The
-   `seed = 42` argument passed to `gsynth()` makes the bootstrap CIs
-   exactly reproducible across `nboots` levels, so your numbers
-   should match an independent re-run.)
+These exercises drill on the four design choices the chapter exposed: the factor count, the covariate set, the implicit donor weights, and the placebo check. All reuse `mw_df`, `out`, `fit_grid`, `ic_tbl`, `r_star`, and `W` (the implicit-weights matrix) from the setup chunks above.
+
+### Exercise 1: Extend the factor grid to $r = 2$
+
+The chapter capped the grid at $r \in \{0, 1\}$. Refit gsynth at $r = 2$, append the IC and SE to `ic_tbl`, and discuss where the IC trade-off lies. Does CV ever pick a rank above the chapter's $r^*$?
+
+::: {.callout-tip collapse="true"}
+## Solution
+
+```{r}
+#| label: ex-ch10-01
+#| message: false
+#| warning: false
+fit_r2 <- gsynth(lemp ~ treat + lpop + lavg_pay,
+                 data = mw_df,
+                 index = c("id", "year"),
+                 force = "two-way",
+                 CV = FALSE, r = 2,
+                 se = TRUE, inference = "nonparametric",
+                 nboots = 100, min.T0 = 3,
+                 parallel = FALSE, seed = 42)
+
+ic_extended <- bind_rows(
+  ic_tbl,
+  tibble(r = 2L,
+         ATT    = fit_r2$att.avg,
+         `S.E.` = fit_r2$est.avg[1, "S.E."],
+         IC     = fit_r2$IC,
+         sigma2 = fit_r2$sigma2)
+)
+
+gt_pretty(ic_extended, decimals = 4)
+```
+
+At $r = 2$ the SE on the ATT inflates noticeably — with only 3 pre-periods on cohort 2004, the second factor strains the projection. The IC penalises model complexity heavily on this short panel; the global minimum stays at $r = 0$ and the chapter's IC-with-$r\!\ge\!1$-floor pick of $r = 1$ remains the showcase. A real application with a longer pre-period would let CV credit more factors; here, the panel is the binding constraint.
+:::
+
+### Exercise 2: Drop the covariates
+
+Refit gsynth at $r = r^*$ without the `lpop + lavg_pay` covariates. Does the ATT move? What does that say about whether the latent factor is already absorbing variation that the covariates were carrying?
+
+::: {.callout-tip collapse="true"}
+## Solution
+
+```{r}
+#| label: ex-ch10-02
+#| message: false
+#| warning: false
+fit_nocov <- gsynth(lemp ~ treat,
+                    data = mw_df,
+                    index = c("id", "year"),
+                    force = "two-way",
+                    CV = FALSE, r = r_star,
+                    se = TRUE, inference = "nonparametric",
+                    nboots = 100, min.T0 = 3,
+                    parallel = FALSE, seed = 42)
+
+tibble(spec = c("gsynth + lpop + lavg_pay (chapter)",
+                "gsynth, treatment only"),
+       att  = c(out$att.avg, fit_nocov$att.avg),
+       se   = c(out$est.avg[1, "S.E."], fit_nocov$est.avg[1, "S.E."])) |>
+  gt_pretty(decimals = 4)
+```
+
+Dropping `lpop + lavg_pay` shifts the ATT only modestly. The latent factor was already absorbing most of the time-varying heterogeneity those covariates could supply — log population and log average pay co-move with the same broad economic shocks that the factor captures. Covariates in IFE are *partial* identification aids: they help when the latent factors miss something, and they are largely redundant when the factors already span the relevant time-varying confounders.
+:::
+
+### Exercise 3: Top control counties by aggregated implicit weight
+
+The chapter reported the top-5 implicit weights *for the five most-weighted treated counties*. Reframe: aggregate the absolute implicit weight across *all* treated columns and report the top-10 *control* counties — the donors gsynth leans on most across the entire treated cohort. Are they geographically or otherwise concentrated?
+
+::: {.callout-tip collapse="true"}
+## Solution
+
+```{r}
+#| label: ex-ch10-03
+total_weight <- tibble(
+  control_county = rownames(W),
+  total_abs_w    = rowSums(abs(W))
+) |>
+  arrange(desc(total_abs_w)) |>
+  head(10)
+
+gt_pretty(total_weight, decimals = 3)
+```
+
+The most-leveraged control counties carry total absolute weight that is small in absolute terms but concentrated relative to the median donor — gsynth's factor structure spreads weight across the entire never-treated pool, but a handful of counties consistently anchor the imputation. This is the diffuse-weights signature of a factor-based estimator: unlike chapter-4 classical SCM, no single donor dominates, but the donor pool is also not used uniformly. Whether the top-10 forms a geographically coherent cluster is worth a follow-up cross-reference with the FIPS code system the panel uses.
+:::
+
+### Exercise 4: Bootstrap reseed stability
+
+The chapter's CI depends on the bootstrap draws, which depend on the seed. Refit at $r = r^*$ with `seed = 7` (a different seed) and compare the 95% CI on the headline ATT. Is the inferential conclusion stable to the seed?
+
+::: {.callout-tip collapse="true"}
+## Solution
+
+```{r}
+#| label: ex-ch10-04
+#| message: false
+#| warning: false
+fit_reseed <- gsynth(lemp ~ treat + lpop + lavg_pay,
+                     data = mw_df,
+                     index = c("id", "year"),
+                     force = "two-way",
+                     CV = FALSE, r = r_star,
+                     se = TRUE, inference = "nonparametric",
+                     nboots = 100, min.T0 = 3,
+                     parallel = FALSE, seed = 7)
+
+tibble(seed = c(42, 7),
+       att      = c(out$att.avg, fit_reseed$att.avg),
+       se       = c(out$est.avg[1, "S.E."],     fit_reseed$est.avg[1, "S.E."]),
+       ci_lower = c(out$est.avg[1, "CI.lower"], fit_reseed$est.avg[1, "CI.lower"]),
+       ci_upper = c(out$est.avg[1, "CI.upper"], fit_reseed$est.avg[1, "CI.upper"])) |>
+  gt_pretty(decimals = 4)
+```
+
+The point estimate is identical across seeds (the IFE fit is deterministic given the data; only the bootstrap CI depends on the resampling draws). The SE and the CI bounds move modestly — at `nboots = 100` the Monte Carlo error on the percentile CI bounds is non-trivial, which is exactly why the chapter flagged that publication-grade work needs `nboots = 1000+`. A seed-to-seed CI gap that changes any substantive conclusion is a five-alarm signal that you have not bootstrapped enough.
+:::
+
+### Exercise 5 (stretch): In-time placebo by shifting treatment 2 years earlier
+
+Pretend cohort 2004 was actually treated in 2002 and cohort 2006 in 2004, restricting the panel to `year <= 2005` so the *real* policy never enters the placebo fit. The placebo ATT over the (pseudo) post-treatment periods should be small in absolute value if the gsynth machinery is well calibrated. Run the placebo and report.
+
+::: {.callout-tip collapse="true"}
+## Solution
+
+```{r}
+#| label: ex-ch10-05
+#| message: false
+#| warning: false
+mw_placebo <- mw_df |>
+  filter(year <= 2005) |>
+  mutate(G_placebo = case_when(G == 2004 ~ 2002L,
+                               G == 2006 ~ 2004L,
+                               TRUE      ~ 0L),
+         treat     = as.integer(year >= G_placebo & G_placebo != 0))
+
+fit_placebo <- gsynth(lemp ~ treat + lpop + lavg_pay,
+                      data = mw_placebo,
+                      index = c("id", "year"),
+                      force = "two-way",
+                      CV = FALSE, r = r_star,
+                      se = TRUE, inference = "nonparametric",
+                      nboots = 100, min.T0 = 2,
+                      parallel = FALSE, seed = 42)
+
+tibble(estimator = c("gsynth real (chapter)", "gsynth in-time placebo"),
+       att       = c(out$att.avg,                    fit_placebo$att.avg),
+       se        = c(out$est.avg[1, "S.E."],         fit_placebo$est.avg[1, "S.E."]),
+       ci_lower  = c(out$est.avg[1, "CI.lower"],     fit_placebo$est.avg[1, "CI.lower"]),
+       ci_upper  = c(out$est.avg[1, "CI.upper"],     fit_placebo$est.avg[1, "CI.upper"])) |>
+  gt_pretty(decimals = 4)
+```
+
+The placebo ATT is small in absolute value relative to the real headline, and its CI comfortably brackets zero — gsynth is not manufacturing a meaningful effect when no policy was passed in the pseudo-post window. A placebo magnitude approaching the real ATT would have suggested the factor model was over-fitting the pre-period; the modest placebo here corroborates the chapter's headline. Note that we lowered `min.T0` to 2 for the placebo because the pseudo-cohorts have fewer pre-periods after the shift — a real applied placebo would document the same trade-off transparently.
+:::

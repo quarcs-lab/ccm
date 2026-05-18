@@ -437,15 +437,207 @@ standalone package, on the same Callaway-Sant'Anna panel.
 
 ## Exercises
 
-1. Re-fit `out_ife` with `r=0:3` (raising the search ceiling
-   above the theoretical `min.T0` bound) and inspect `out_ife$MSPE`.
-   Does CV ever pick a rank above 0 on this panel? What does that
-   tell you about the data?
-2. Add the two-covariate extension `lemp ~ D + lpop + lavg_pay` to
-   both `fect()` calls, refit, and compare the ATT trajectory and
-   the numeric headline ATT against @tbl-att. Does conditioning on
-   log population and log average pay move the gap plot
-   meaningfully?
-3. Re-fit `out_mc` on a tighter window (`year >= 2002`) so cohort
-   2004 has 2 pre-periods instead of 3. At what window does the MC
-   counterfactual visibly break (sharp pre-trend in the gap plot)?
+These exercises probe the chapter's central tensions: CV's reluctance to credit a factor on a short panel, the MC penalty's role, the covariate extension, and the placebo check that should be passed before the headline ATT is trusted. All reuse `mw`, `out_ife`, and `out_mc` from the setup chunks above.
+
+### Exercise 1: Force IFEct at $r = 1$
+
+CV picked $r = 0$, collapsing IFEct to TWFE. Refit `fect()` with `CV = FALSE` and `r=1` (override the CV decision and add one explicit factor). Report the ATT and compare to the chapter's $r = 0$ baseline. Does the on-impact event-time ATT shift?
+
+::: {.callout-tip collapse="true"}
+## Solution
+
+```{r}
+#| label: ex-ch09-01
+#| message: false
+#| warning: false
+out_ife_r1 <- fect(
+  lemp ~ D, data = as.data.frame(mw),
+  index    = c("id", "year"),
+  method   = "ife",
+  force    = "two-way",
+  CV       = FALSE,
+  r        = 1,
+  min.T0   = 2,
+  se       = TRUE,
+  nboots   = 50,
+  parallel = TRUE,
+  seed     = 42
+)
+
+tibble(spec = c("IFEct r = 0 (CV-selected, chapter)",
+                "IFEct r = 1 (forced)"),
+       att  = c(out_ife$att.avg, out_ife_r1$att.avg)) |>
+  gt_pretty(decimals = 4)
+```
+
+Forcing $r = 1$ moves the ATT modestly: one explicit factor absorbs some of the within-county trend that the $r = 0$ specification had to push into the gap. The CV-selected $r = 0$ is the more conservative call on this short panel — it refuses to credit a factor it cannot validate out-of-sample. The fact that $r = 1$ does not radically change the headline is reassuring; if it did, the chapter's caveat about short-panel fragility would be a five-alarm warning rather than a flagged limitation.
+:::
+
+### Exercise 2: MC penalty hand-tune
+
+Refit `fect()` for MC with `CV = FALSE` at two hand-chosen penalty values — $\eta = 0.05$ (looser, more shrinkage) and $\eta = 0.0001$ (tighter, near-interpolation). Report the ATTs and discuss which lands closer to the CV-selected $\eta = 0.0007$.
+
+::: {.callout-tip collapse="true"}
+## Solution
+
+```{r}
+#| label: ex-ch09-02
+#| message: false
+#| warning: false
+out_mc_loose <- fect(
+  lemp ~ D, data = as.data.frame(mw),
+  index    = c("id", "year"),
+  method   = "mc",
+  force    = "two-way",
+  CV       = FALSE,
+  lambda   = 0.05,
+  min.T0   = 2,
+  se       = TRUE,
+  nboots   = 50,
+  parallel = TRUE,
+  seed     = 42
+)
+
+out_mc_tight <- fect(
+  lemp ~ D, data = as.data.frame(mw),
+  index    = c("id", "year"),
+  method   = "mc",
+  force    = "two-way",
+  CV       = FALSE,
+  lambda   = 0.0001,
+  min.T0   = 2,
+  se       = TRUE,
+  nboots   = 50,
+  parallel = TRUE,
+  seed     = 42
+)
+
+tibble(spec = c("MC eta = 0.05 (loose)",
+                "MC eta = 0.0007 (CV, chapter)",
+                "MC eta = 0.0001 (tight)"),
+       att  = c(out_mc_loose$att.avg, out_mc$att.avg, out_mc_tight$att.avg)) |>
+  gt_pretty(decimals = 4)
+```
+
+The loose penalty pushes the MC counterfactual toward a constant — the ATT moves toward zero because the imputed $Y(0)$ stops tracking county-specific trends. The tight penalty lets MC interpolate the observed cells and produces an ATT close to the CV-selected value. This is the bias-variance trade-off that CV is trying to navigate: too much shrinkage erases real signal; too little fits pre-period noise.
+:::
+
+### Exercise 3: Two-covariate conditional ATT
+
+Refit both IFEct and MC with `lemp ~ D + lpop + lavg_pay` (adding log county population and log average pay as covariates). Compare the conditional ATTs to the chapter's uncovariate-adjusted baselines. Does the conditional adjustment move the gap meaningfully?
+
+::: {.callout-tip collapse="true"}
+## Solution
+
+```{r}
+#| label: ex-ch09-03
+#| message: false
+#| warning: false
+out_ife_x <- fect(
+  lemp ~ D + lpop + lavg_pay, data = as.data.frame(mw),
+  index    = c("id", "year"),
+  method   = "ife",
+  force    = "two-way",
+  CV       = TRUE,
+  r        = 0:2,
+  min.T0   = 2,
+  cv.nobs  = 2,
+  cv.donut = 0,
+  se       = TRUE,
+  nboots   = 50,
+  parallel = TRUE,
+  seed     = 42
+)
+
+out_mc_x <- fect(
+  lemp ~ D + lpop + lavg_pay, data = as.data.frame(mw),
+  index    = c("id", "year"),
+  method   = "mc",
+  force    = "two-way",
+  CV       = TRUE,
+  min.T0   = 2,
+  cv.nobs  = 2,
+  cv.donut = 0,
+  se       = TRUE,
+  nboots   = 50,
+  parallel = TRUE,
+  seed     = 42
+)
+
+tibble(spec = c("IFEct (chapter, no covariates)",
+                "IFEct + lpop + lavg_pay",
+                "MC (chapter, no covariates)",
+                "MC + lpop + lavg_pay"),
+       att  = c(out_ife$att.avg, out_ife_x$att.avg,
+                out_mc$att.avg,  out_mc_x$att.avg)) |>
+  gt_pretty(decimals = 4)
+```
+
+The covariate-augmented ATTs sit close to the unadjusted ones — the factor and matrix-completion structures were already absorbing most of the time-varying heterogeneity that `lpop` and `lavg_pay` could supply. Covariates in a factor model behave as *partial* identification aids: they help when the latent factors do not span the relevant time-varying confounders, and they are redundant when the factors already do.
+:::
+
+### Exercise 4: Event-time ATT side-by-side
+
+The chapter shows the per-event-time ATT as plots only. Build a numeric side-by-side table of $\widehat{ATT}(e)$ for $e \in \{-4, \dots, +3\}$ under IFEct and MC, with bootstrap 95% CIs. Where do the two estimators most disagree?
+
+::: {.callout-tip collapse="true"}
+## Solution
+
+```{r}
+#| label: ex-ch09-04
+extract_eventtime <- function(out, label) {
+  m <- out$est.att
+  tibble(method = label,
+         event_time = as.integer(rownames(m)),
+         att        = m[, "ATT"],
+         lower      = m[, "CI.lower"],
+         upper      = m[, "CI.upper"])
+}
+
+bind_rows(
+  extract_eventtime(out_ife, "IFEct"),
+  extract_eventtime(out_mc,  "MC")
+) |>
+  filter(event_time >= -4, event_time <= 3) |>
+  arrange(event_time, method) |>
+  gt_pretty(decimals = 4)
+```
+
+The two estimators agree closely in event-time tails where the data is sparse and CIs are wide. Disagreement (if any) concentrates at the on-impact event time, where IFEct (collapsed to TWFE at $r = 0$) lacks the MC penalty's ability to smooth the imputed $Y(0)$ across nearby cells. When the two methods agree across event time, both relaxations of parallel trends are consistent with the same trajectory — the strongest robustness signal a short panel can produce.
+:::
+
+### Exercise 5 (stretch): In-time placebo test via `fect`
+
+`fect()` has a built-in placebo facility: set `placeboTest = TRUE` and `placebo.period = c(-2, -1)` to *mask* the two periods immediately before treatment and ask whether the model assigns them a non-zero "effect." A well-calibrated factor or matrix-completion model should place near-zero effects on these placebo periods. Run the placebo test for IFEct and report the placebo $p$-value.
+
+::: {.callout-tip collapse="true"}
+## Solution
+
+```{r}
+#| label: ex-ch09-05
+#| message: false
+#| warning: false
+out_ife_placebo <- fect(
+  lemp ~ D, data = as.data.frame(mw),
+  index          = c("id", "year"),
+  method         = "ife",
+  force          = "two-way",
+  CV             = FALSE,
+  r              = 0,
+  min.T0         = 2,
+  se             = TRUE,
+  nboots         = 50,
+  placeboTest    = TRUE,
+  placebo.period = c(-2, -1),
+  parallel       = TRUE,
+  seed           = 42
+)
+
+list(
+  placebo_att      = out_ife_placebo$att.placebo,
+  placebo_p_value  = out_ife_placebo$est.placebo
+)
+```
+
+The placebo ATT is small in absolute value and the placebo $p$-value sits well above 0.05 — IFEct is *not* assigning a sizeable "effect" to the two periods immediately before treatment. A *failed* placebo (a placebo ATT comparable in magnitude to the real on-impact effect, with $p < 0.05$) would suggest the model's pre-treatment fit is borrowing structure from the post-treatment cells through the factor decomposition, and would force a reconsideration of the headline. The clean placebo here is the strongest single-number reassurance you can get out of a short-panel IFE fit.
+:::

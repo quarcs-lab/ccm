@@ -211,3 +211,134 @@ This is the textbook DiD pitfall. A single control unit that itself is shifting 
 This chapter is the **canonical 2×2 / single-shock DiD**: one treated unit (California), one control unit (Nevada), one pre-period, one post-period. **Chapter 8 (Part II)** revisits DiD in the *staggered-adoption* setting — many treated units that switch at different dates — using the Callaway–Sant'Anna group-time ATT estimator [@callaway2021difference], the Sun–Abraham interaction-weighted estimator [@sun2021estimating], and the Rambachan–Roth honest-DiD sensitivity bounds [@rambachan2023more] on a Callaway-Sant'Anna minimum-wage county panel. The two chapters together cover the modern DiD toolkit.
 
 **Classical references.** @cardkrueger1994minimum is the textbook applied 2×2 DiD (New Jersey vs Pennsylvania minimum wage and fast-food employment). @bertrand2004how is the seminal warning that DiD standard errors are biased toward zero under residual autocorrelation — the reason this chapter's inference choice is non-trivial. @bernal2017interrupted is the practitioner reference for parallel-trends *visual* diagnostics. For modern multi-period DiD with staggered adoption, `did` (Callaway–Sant'Anna) and `fixest::feols` (two-way fixed effects with cluster-robust SEs — but **only when there are enough clusters**) are the standard R workhorses.
+
+## Exercises
+
+These exercises drill on the four ideas the chapter introduces: the 2×2 grid is *literally* what the OLS interaction computes; the choice of control state is a load-bearing analyst decision; the parallel-trends assumption is testable on the pre-window; and HAC inference is a compromise, not a fix, on a $G = 2$ panel. They reuse `prop99` and `prop99_did` from the setup chunks; nothing needs to be re-loaded.
+
+### Exercise 1: Recover the 2×2 grid by hand
+
+Compute the four cell means in the DiD grid (California × {Pre, Post} and Nevada × {Pre, Post}) directly with `group_by()` / `summarize()`. Take the difference of differences and verify it matches the `stateCalifornia:prepostPost` interaction coefficient from the chapter's `fit_did` regression.
+
+::: {.callout-tip collapse="true"}
+## Solution
+
+```{r}
+#| label: ex-ch03-01
+grid <- prop99_did |>
+  group_by(state, prepost) |>
+  summarize(mean_cigsale = mean(cigsale), .groups = "drop") |>
+  pivot_wider(names_from = prepost, values_from = mean_cigsale) |>
+  mutate(change = Post - Pre)
+
+did_by_hand <- grid$change[grid$state == "California"] -
+               grid$change[grid$state == "Nevada"]
+
+list(grid       = grid,
+     did_hand   = did_by_hand,
+     did_coef   = coef(fit_did)[["stateCalifornia:prepostPost"]])
+```
+
+The hand-computed difference-of-differences ($\approx -5.7$) is *identical* to the `fit_did` interaction coefficient. The interaction in `cigsale ~ state * prepost` does no statistical magic — it is the arithmetic of the 2×2 grid expressed in matrix form, with the bonus that the regression also gives us a standard error.
+:::
+
+### Exercise 2: Swap Nevada for Montana
+
+Refit the DiD with **Montana** as the single control state in place of Nevada (1984–1993 window). Report the new DiD ATT and HAC SE. Does the qualitative reading from the chapter — *"statistically indistinguishable from zero"* — survive a different control choice?
+
+::: {.callout-tip collapse="true"}
+## Solution
+
+```{r}
+#| label: ex-ch03-02
+prop99_did_mt <- prop99 |>
+  filter(state %in% c("California", "Montana"),
+         year > 1983, year < 1994) |>
+  mutate(prepost = factor(year > 1988, labels = c("Pre", "Post")),
+         state   = factor(state, levels = c("Montana", "California")))
+
+fit_did_mt <- lm(cigsale ~ state * prepost, data = prop99_did_mt)
+
+ms_pretty(list("California vs Montana DiD (1984-1993)" = fit_did_mt),
+          vcov     = sandwich::vcovHAC,
+          coef_map = c("(Intercept)"                  = "Montana · Pre",
+                       "stateCalifornia"              = "California main",
+                       "prepostPost"                  = "Post main",
+                       "stateCalifornia:prepostPost"  = "DiD interaction"))
+```
+
+The Montana-DiD ATT is markedly *more negative* than the Nevada-DiD ATT, because Montana's own post-period decline was smaller than Nevada's — Montana subtracts less of California's drop. The point estimate is now visually larger but the HAC SE on a 2×2 panel is still wide; the qualitative reading depends on the analyst's control choice. This is the chapter's "first pitfall" made operational: with $N = 2$ states, the entire estimate hangs on one human decision.
+:::
+
+### Exercise 3: Long-window parallel-trends test
+
+The chapter's pre-trend test uses only 1984–1988 (5 years). Re-run the slope-difference test on a wider 1980–1988 window (9 years) and compare the $p$-value. Does a longer pre-window strengthen or weaken the parallel-trends rejection?
+
+::: {.callout-tip collapse="true"}
+## Solution
+
+```{r}
+#| label: ex-ch03-03
+long_pre <- prop99 |>
+  filter(state %in% c("California", "Nevada"),
+         year >= 1980, year <= 1988) |>
+  mutate(state = factor(state, levels = c("Nevada", "California")))
+
+fit_pre_long <- lm(cigsale ~ state * year, data = long_pre)
+
+ms_pretty(list("Pre-trend test (1980-1988)" = fit_pre_long),
+          vcov     = sandwich::vcovHAC,
+          coef_map = c("(Intercept)"          = "Nevada baseline",
+                       "stateCalifornia"      = "California level shift",
+                       "year"                 = "Nevada slope",
+                       "stateCalifornia:year" = "Slope difference (CA - NV)"))
+```
+
+With nine years of pre-period data the slope-difference estimate stays negative and the standard error shrinks; the parallel-trends rejection therefore *strengthens*. The chapter's choice of 1984–1988 was not hiding a passable pre-trend — California and Nevada were already diverging at least as early as 1980. A reader who only saw the 1984–1988 test might wonder whether the rejection was a short-window artifact; this longer window rules that out.
+:::
+
+### Exercise 4: HAC vs classical OLS standard errors
+
+Refit the DiD and compare three standard-error choices for the DiD interaction: classical OLS, HAC via `sandwich::vcovHAC`, and HC1 ("White") via `sandwich::vcovHC`. Which is biggest, which is smallest, and why does the textbook fix (`cluster by state`) not appear in the comparison?
+
+::: {.callout-tip collapse="true"}
+## Solution
+
+```{r}
+#| label: ex-ch03-04
+ms_pretty(list("Classical OLS" = fit_did,
+               "HC1 (White)"   = fit_did,
+               "HAC (Newey-West)" = fit_did),
+          vcov     = list(NULL,
+                          sandwich::vcovHC,
+                          sandwich::vcovHAC),
+          coef_map = c("stateCalifornia:prepostPost" = "DiD interaction"))
+```
+
+Classical OLS underestimates the SE because it assumes within-state residuals are independent; HC1 is similar (it corrects for heteroskedasticity but not autocorrelation). HAC is the largest because it explicitly inflates the SE for serial correlation across the ten-year window. **Cluster-by-state is not in the comparison because $G = 2$**: the cluster-robust variance estimator's asymptotic theory needs the number of clusters to grow, and at two clusters it collapses to a single 2×2 outer product. Software will produce a number; the number has no statistical meaning. With only two units, accept the HAC compromise and let the point estimate carry the argument — or move to synthetic control (ch. 4), where placebo-based inference replaces classical SEs.
+:::
+
+### Exercise 5 (stretch): Pool three control states into a TWFE-like DiD
+
+Extend the 2×2 panel to **three control states** — Nevada, Montana, and Colorado — keeping California treated and the 1984–1993 window. Fit a two-way-fixed-effects-style regression `lm(cigsale ~ state + prepost + treat:prepost)` where `treat = (state == "California")`, and compare the DiD interaction to the Nevada-only and Montana-only versions above.
+
+::: {.callout-tip collapse="true"}
+## Solution
+
+```{r}
+#| label: ex-ch03-05
+pool4 <- prop99 |>
+  filter(state %in% c("California", "Nevada", "Montana", "Colorado"),
+         year > 1983, year < 1994) |>
+  mutate(prepost    = factor(year > 1988, labels = c("Pre", "Post")),
+         treat_post = as.integer(state == "California" & year > 1988))
+
+fit_pool <- lm(cigsale ~ state + prepost + treat_post, data = pool4)
+
+ms_pretty(list("Pooled 3-control DiD" = fit_pool),
+          vcov     = sandwich::vcovHAC,
+          coef_map = c("treat_post" = "DiD interaction"))
+```
+
+The pooled-controls DiD lands between the Nevada-only and Montana-only estimates from earlier exercises — pooling averages the implicit weight given to each control. The SE shrinks because we now have $G = 4$ effective units and $4 \times 10 = 40$ observations rather than 20. This is conceptually the bridge to synthetic control (ch. 4), which generalises the *uniform* averaging across donors here to an *optimised* weighted blend whose weights are pinned down by the pre-period match.
+:::
