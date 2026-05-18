@@ -461,21 +461,19 @@ window.Quarto = {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#learning-objectives" id="toc-learning-objectives" class="nav-link active" data-scroll-target="#learning-objectives"><span class="header-section-number">8.1</span> Learning objectives</a></li>
-  <li><a href="#when-twfe-breaks-under-staggered-adoption" id="toc-when-twfe-breaks-under-staggered-adoption" class="nav-link" data-scroll-target="#when-twfe-breaks-under-staggered-adoption"><span class="header-section-number">8.2</span> When TWFE breaks under staggered adoption</a></li>
-  <li><a href="#setup-and-data" id="toc-setup-and-data" class="nav-link" data-scroll-target="#setup-and-data"><span class="header-section-number">8.3</span> Setup and data</a></li>
-  <li><a href="#the-twfe-baseline" id="toc-the-twfe-baseline" class="nav-link" data-scroll-target="#the-twfe-baseline"><span class="header-section-number">8.4</span> The TWFE baseline</a></li>
-  <li><a href="#group-time-atts-the-callaway-santanna-approach" id="toc-group-time-atts-the-callaway-santanna-approach" class="nav-link" data-scroll-target="#group-time-atts-the-callaway-santanna-approach"><span class="header-section-number">8.5</span> Group-time ATTs: the Callaway-Sant’Anna approach</a>
+  <li><a href="#when-twfe-breaks-under-staggered-adoption" id="toc-when-twfe-breaks-under-staggered-adoption" class="nav-link active" data-scroll-target="#when-twfe-breaks-under-staggered-adoption"><span class="header-section-number">8.1</span> When TWFE breaks under staggered adoption</a></li>
+  <li><a href="#setup-and-data" id="toc-setup-and-data" class="nav-link" data-scroll-target="#setup-and-data"><span class="header-section-number">8.2</span> Setup and data</a></li>
+  <li><a href="#the-twfe-baseline" id="toc-the-twfe-baseline" class="nav-link" data-scroll-target="#the-twfe-baseline"><span class="header-section-number">8.3</span> The TWFE baseline</a></li>
+  <li><a href="#group-time-atts-the-callaway-santanna-approach" id="toc-group-time-atts-the-callaway-santanna-approach" class="nav-link" data-scroll-target="#group-time-atts-the-callaway-santanna-approach"><span class="header-section-number">8.4</span> Group-time ATTs: the Callaway-Sant’Anna approach</a>
   <ul class="collapse">
-  <li><a href="#aggregation-overall-att-and-event-study" id="toc-aggregation-overall-att-and-event-study" class="nav-link" data-scroll-target="#aggregation-overall-att-and-event-study"><span class="header-section-number">8.5.1</span> Aggregation: overall ATT and event study</a></li>
+  <li><a href="#aggregation-overall-att-and-event-study" id="toc-aggregation-overall-att-and-event-study" class="nav-link" data-scroll-target="#aggregation-overall-att-and-event-study"><span class="header-section-number">8.4.1</span> Aggregation: overall ATT and event study</a></li>
   </ul></li>
-  <li><a href="#conditional-parallel-trends" id="toc-conditional-parallel-trends" class="nav-link" data-scroll-target="#conditional-parallel-trends"><span class="header-section-number">8.6</span> Conditional parallel trends</a></li>
-  <li><a href="#sensitivity-to-parallel-trends-violations" id="toc-sensitivity-to-parallel-trends-violations" class="nav-link" data-scroll-target="#sensitivity-to-parallel-trends-violations"><span class="header-section-number">8.7</span> Sensitivity to parallel-trends violations</a></li>
-  <li><a href="#recap" id="toc-recap" class="nav-link" data-scroll-target="#recap"><span class="header-section-number">8.8</span> Recap</a></li>
-  <li><a href="#common-pitfall" id="toc-common-pitfall" class="nav-link" data-scroll-target="#common-pitfall"><span class="header-section-number">8.9</span> Common pitfall</a></li>
-  <li><a href="#further-reading" id="toc-further-reading" class="nav-link" data-scroll-target="#further-reading"><span class="header-section-number">8.10</span> Further reading</a></li>
-  <li><a href="#exercises" id="toc-exercises" class="nav-link" data-scroll-target="#exercises"><span class="header-section-number">8.11</span> Exercises</a></li>
-  <li><a href="#key-takeaways" id="toc-key-takeaways" class="nav-link" data-scroll-target="#key-takeaways">Key takeaways</a></li>
+  <li><a href="#conditional-parallel-trends" id="toc-conditional-parallel-trends" class="nav-link" data-scroll-target="#conditional-parallel-trends"><span class="header-section-number">8.5</span> Conditional parallel trends</a></li>
+  <li><a href="#sensitivity-to-parallel-trends-violations" id="toc-sensitivity-to-parallel-trends-violations" class="nav-link" data-scroll-target="#sensitivity-to-parallel-trends-violations"><span class="header-section-number">8.6</span> Sensitivity to parallel-trends violations</a></li>
+  <li><a href="#recap" id="toc-recap" class="nav-link" data-scroll-target="#recap"><span class="header-section-number">8.7</span> Recap</a></li>
+  <li><a href="#common-pitfall" id="toc-common-pitfall" class="nav-link" data-scroll-target="#common-pitfall"><span class="header-section-number">8.8</span> Common pitfall</a></li>
+  <li><a href="#further-reading" id="toc-further-reading" class="nav-link" data-scroll-target="#further-reading"><span class="header-section-number">8.9</span> Further reading</a></li>
+  <li><a href="#exercises" id="toc-exercises" class="nav-link" data-scroll-target="#exercises"><span class="header-section-number">8.10</span> Exercises</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/quarcs-lab/ccm/edit/main/08-staggered-did.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/quarcs-lab/ccm/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
@@ -502,17 +500,8 @@ window.Quarto = {
 </header>
 
 
-<section id="learning-objectives" class="level2" data-number="8.1">
-<h2 data-number="8.1" class="anchored" data-anchor-id="learning-objectives"><span class="header-section-number">8.1</span> Learning objectives</h2>
-<ol type="1">
-<li>Estimate group-time average treatment effects with <code>did::att_gt()</code> on a staggered-adoption panel. This is the workhorse of modern DiD — the estimator that replaced two-way fixed effects after the negative-weight critique.</li>
-<li>Aggregate group-time effects into event-study dynamics with <code>aggte(type = "dynamic")</code>. The aggregation step is what gives the reader a single defensible event-study plot without the contamination problems of a TWFE event study.</li>
-<li>Condition on covariates using regression, IPW, and doubly-robust estimators, and default to the doubly-robust choice. Doubly-robust estimation is consistent if <em>either</em> the outcome model or the propensity-score model is correctly specified, which is why it is the safe default — knowing all three lets the reader defend that choice against a referee.</li>
-<li>Run Rambachan-Roth relative-magnitudes sensitivity analysis with <code>HonestDiD</code> and report the smallest pre-trend violation that would overturn the post-treatment conclusion. This converts an unverifiable parallel-trends assumption into a falsifiable claim about how robust the headline result is.</li>
-</ol>
-</section>
-<section id="when-twfe-breaks-under-staggered-adoption" class="level2" data-number="8.2">
-<h2 data-number="8.2" class="anchored" data-anchor-id="when-twfe-breaks-under-staggered-adoption"><span class="header-section-number">8.2</span> When TWFE breaks under staggered adoption</h2>
+<section id="when-twfe-breaks-under-staggered-adoption" class="level2" data-number="8.1">
+<h2 data-number="8.1" class="anchored" data-anchor-id="when-twfe-breaks-under-staggered-adoption"><span class="header-section-number">8.1</span> When TWFE breaks under staggered adoption</h2>
 <p>Chapter 3 ran a textbook 2×2 DiD on Proposition 99, with California treated in 1989 and Nevada as the single hand-picked control. The estimate collapsed to roughly <span class="math inline">\(-5.7\)</span> packs per capita and could not be distinguished from zero. The diagnosis there was that Nevada is geographically and culturally adjacent to California and absorbs the same secular forces — so its post-1988 decline soaks up most of what we wanted to attribute to the policy.</p>
 <p>There is a deeper structural problem too. Real policy data rarely has just one treated unit and one clean control unit, both treated at the same instant. States and counties <strong>adopt at different times</strong> — some in 2004, others in 2006, still others never. The natural extension of the chapter 3 model to that setting is <em>two-way fixed effects (TWFE)</em> regression:</p>
 <p><span class="math display">\[Y_{it} = \alpha_i + \gamma_t + \beta \cdot \text{post}_{it} + \varepsilon_{it}.\]</span></p>
@@ -521,11 +510,11 @@ window.Quarto = {
 <p>The dataset is no longer Proposition 99. Staggered DiD requires <strong>variation in treatment timing</strong>, which a single-treated-state panel cannot provide. We switch to the Callaway-Sant’Anna minimum-wage panel: 1,745 US counties × 2003–2007, with cohorts <span class="math inline">\(G \in \{0, 2004,
 2006\}\)</span> (after dropping a small late-2007 cohort; see Setup) indexing the year the county’s state first raised its minimum wage above the federal $5.15/h floor. The outcome is log teen employment.</p>
 </section>
-<section id="setup-and-data" class="level2" data-number="8.3">
-<h2 data-number="8.3" class="anchored" data-anchor-id="setup-and-data"><span class="header-section-number">8.3</span> Setup and data</h2>
+<section id="setup-and-data" class="level2" data-number="8.2">
+<h2 data-number="8.2" class="anchored" data-anchor-id="setup-and-data"><span class="header-section-number">8.2</span> Setup and data</h2>
 <div class="cell">
 <details class="code-fold">
-<summary>Code</summary>
+<summary>Code: Load packages, source helpers, and set the ggplot theme.</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(did)</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(fixest)</span>
@@ -556,7 +545,7 @@ window.Quarto = {
 \{0, 2004, 2006, 2007\}\)</span>, dropping the Northeast region (<code>region == "1"</code>) for comparability, and then carving out a clean working panel without the late-2007 cohort and starting in 2003.</p>
 <div class="cell">
 <details class="code-fold">
-<summary>Code</summary>
+<summary>Code: Load the minimum-wage panel and build the working sample.</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>mw_raw <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">"data/cs_minwage.rds"</span>) <span class="sc">|&gt;</span> <span class="fu">as_tibble</span>()</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Step 1: drop Northeast and keep cohorts of interest.</span></span>
@@ -576,7 +565,7 @@ window.Quarto = {
 <p>The working panel has 8725 rows = 1745 counties × 5 years, balanced across the 2003–2007 window.</p>
 <div class="cell">
 <details class="code-fold">
-<summary>Code</summary>
+<summary>Code: Tabulate county counts by treatment cohort.</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>data2 <span class="sc">|&gt;</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(year <span class="sc">==</span> <span class="dv">2003</span>) <span class="sc">|&gt;</span></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(G, <span class="at">name =</span> <span class="st">"counties"</span>) <span class="sc">|&gt;</span></span>
@@ -1070,12 +1059,12 @@ Table&nbsp;8.1: Cohort sizes in the working sample. G = 0 is the never-treated c
 </div>
 </div>
 </section>
-<section id="the-twfe-baseline" class="level2" data-number="8.4">
-<h2 data-number="8.4" class="anchored" data-anchor-id="the-twfe-baseline"><span class="header-section-number">8.4</span> The TWFE baseline</h2>
+<section id="the-twfe-baseline" class="level2" data-number="8.3">
+<h2 data-number="8.3" class="anchored" data-anchor-id="the-twfe-baseline"><span class="header-section-number">8.3</span> The TWFE baseline</h2>
 <p>The natural first move is the TWFE regression. The variable <code>post</code> in the dataset is 1 in periods where the county’s state has already raised its minimum wage (i.e., <code>year &gt;= G &amp; G != 0</code>), and 0 otherwise.</p>
 <div class="cell">
 <details class="code-fold">
-<summary>Code</summary>
+<summary>Code: Estimate the TWFE baseline regression with clustered SEs.</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>twfe_res <span class="ot">&lt;-</span> fixest<span class="sc">::</span><span class="fu">feols</span>(lemp <span class="sc">~</span> post <span class="sc">|</span> id <span class="sc">+</span> year,</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>                          <span class="at">data =</span> data2, <span class="at">cluster =</span> <span class="st">"id"</span>)</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ms_pretty</span>(<span class="fu">list</span>(<span class="st">"TWFE (county + year FE)"</span> <span class="ot">=</span> twfe_res),</span>
@@ -1586,15 +1575,15 @@ Table&nbsp;8.2: Two-way fixed-effects regression. The point estimate suggests mi
 </div>
 <p>The TWFE coefficient is roughly <span class="math inline">\(-0.038\)</span>. Read literally, the policy reduced teen employment by 3.8 percent. The next section estimates the same effect with an aggregator that is unbiased under staggered adoption — and gets a substantially larger magnitude. The gap between the two is the contamination problem made concrete.</p>
 </section>
-<section id="group-time-atts-the-callaway-santanna-approach" class="level2" data-number="8.5">
-<h2 data-number="8.5" class="anchored" data-anchor-id="group-time-atts-the-callaway-santanna-approach"><span class="header-section-number">8.5</span> Group-time ATTs: the Callaway-Sant’Anna approach</h2>
+<section id="group-time-atts-the-callaway-santanna-approach" class="level2" data-number="8.4">
+<h2 data-number="8.4" class="anchored" data-anchor-id="group-time-atts-the-callaway-santanna-approach"><span class="header-section-number">8.4</span> Group-time ATTs: the Callaway-Sant’Anna approach</h2>
 <p>The fix is to estimate the <em>primitive</em> objects directly. For each cohort <span class="math inline">\(g\)</span> (a year a group of counties was first treated) and each calendar year <span class="math inline">\(t\)</span>, define</p>
 <p><span class="math display">\[ATT(g, t) = \mathbb{E}\!\left[Y_{it}(g) - Y_{it}(\infty) \mid G_i = g\right],\]</span></p>
 <p>the average effect on cohort <span class="math inline">\(g\)</span> in year <span class="math inline">\(t\)</span> relative to its own never-treated potential outcome <span class="math inline">\(Y_{it}(\infty)\)</span> (equivalent to <span class="math inline">\(Y_{it}(0)\)</span> used in Part I — Callaway-Sant’Anna write <span class="math inline">\(\infty\)</span> to emphasise that the unit is <em>never</em> treated, not merely <em>not-yet</em> treated).</p>
 <p>Identification relies on <strong>parallel trends</strong>: conditional on <span class="math inline">\(G_i = g\)</span>, the never-treated potential outcome <span class="math inline">\(E[Y_{it}(\infty)]\)</span> trends the same way for the treated cohort and the never-treated pool. Under that assumption, <code>did::att_gt()</code> estimates each <span class="math inline">\(ATT(g, t)\)</span> from a clean 2×2 DiD using only cohort <span class="math inline">\(g\)</span> and an appropriate comparison group (here, the never-treated <span class="math inline">\(G = 0\)</span>), so no contamination from already-treated units sneaks in.</p>
 <div class="cell">
 <details class="code-fold">
-<summary>Code</summary>
+<summary>Code: Estimate group-time ATTs with the did package.</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>attgt <span class="ot">&lt;-</span> did<span class="sc">::</span><span class="fu">att_gt</span>(<span class="at">yname =</span> <span class="st">"lemp"</span>, <span class="at">idname =</span> <span class="st">"id"</span>, <span class="at">gname =</span> <span class="st">"G"</span>,</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>                     <span class="at">tname =</span> <span class="st">"year"</span>, <span class="at">data =</span> data2,</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>                     <span class="at">control_group =</span> <span class="st">"nevertreated"</span>,</span>
@@ -2160,13 +2149,13 @@ Table&nbsp;8.3: Group-time average treatment effects <span class="math inline">\
 </div>
 <p>Cohort 2006 carries a visible pre-trend: <span class="math inline">\(ATT(2006, 2003) \approx
 -0.034\)</span> with SE <span class="math inline">\(\approx 0.013\)</span> (so <span class="math inline">\(t \approx -2.7\)</span>). The 2006 counties were already on a downward log-employment path relative to the never-treated pool three years <em>before</em> their state raised the minimum wage. That pre-treatment violation is roughly the same magnitude as the on-impact effect we will estimate below — which is exactly what motivates the formal sensitivity analysis at the end of the chapter. Naming the pre-trend now keeps the rest of the story honest.</p>
-<section id="aggregation-overall-att-and-event-study" class="level3" data-number="8.5.1">
-<h3 data-number="8.5.1" class="anchored" data-anchor-id="aggregation-overall-att-and-event-study"><span class="header-section-number">8.5.1</span> Aggregation: overall ATT and event study</h3>
+<section id="aggregation-overall-att-and-event-study" class="level3" data-number="8.4.1">
+<h3 data-number="8.4.1" class="anchored" data-anchor-id="aggregation-overall-att-and-event-study"><span class="header-section-number">8.4.1</span> Aggregation: overall ATT and event study</h3>
 <p>The 8 cells in <a href="#tbl-attgt" class="quarto-xref">Table&nbsp;<span>8.3</span></a> are the primitives. They are not the headline. Aggregating them produces summaries that are valid in the presence of staggered adoption.</p>
 <p>The <strong>overall ATT</strong> first averages each cohort’s post-treatment <span class="math inline">\(ATT(g, t)\)</span> values into a single cohort-specific summary, then averages those summaries across cohorts weighted by cohort size. It answers: <em>across treated cohorts, what is the average post-treatment effect on a typical treated county?</em> This is the <span class="citation" data-cites="callaway2021difference">Callaway &amp; Sant’Anna (<a href="references.html#ref-callaway2021difference" role="doc-biblioref">2021</a>)</span> recommended summary; it differs from a plain mean of post-treatment cells (<code>type = "simple"</code>) when cohorts have different post-treatment horizons — as they do here (cohort 2004 has 4 post cells, cohort 2006 has 2).</p>
 <div class="cell">
 <details class="code-fold">
-<summary>Code</summary>
+<summary>Code: Aggregate group-time ATTs into the overall ATT summary.</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>attO <span class="ot">&lt;-</span> did<span class="sc">::</span><span class="fu">aggte</span>(attgt, <span class="at">type =</span> <span class="st">"group"</span>)</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="fu">tibble</span>(</span>
@@ -2665,7 +2654,7 @@ Table&nbsp;8.4: Callaway-Sant’Anna overall ATT (sample-weighted aggregation ac
 <p>The <strong>event-study aggregation</strong> averages <span class="math inline">\(ATT(g, t)\)</span> within each event time <span class="math inline">\(e = t - g\)</span>, giving a curve of dynamic effects since treatment.</p>
 <div class="cell">
 <details class="code-fold">
-<summary>Code</summary>
+<summary>Code: Aggregate ATTs into the dynamic event-study table.</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>attes <span class="ot">&lt;-</span> did<span class="sc">::</span><span class="fu">aggte</span>(attgt, <span class="at">type =</span> <span class="st">"dynamic"</span>)</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="fu">tibble</span>(</span>
@@ -3204,7 +3193,7 @@ Table&nbsp;8.5: Callaway-Sant’Anna event-study aggregation. Event time -1 is t
 </div>
 <div class="cell">
 <details class="code-fold">
-<summary>Code</summary>
+<summary>Code: Plot the event-study estimates with 95 percent CIs.</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>cs_es_df <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">egt   =</span> attes<span class="sc">$</span>egt,</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">est   =</span> attes<span class="sc">$</span>att.egt,</span>
@@ -3238,13 +3227,13 @@ Figure&nbsp;8.1: Callaway-Sant’Anna event study. The on-impact effect is small
 </div>
 </section>
 </section>
-<section id="conditional-parallel-trends" class="level2" data-number="8.6">
-<h2 data-number="8.6" class="anchored" data-anchor-id="conditional-parallel-trends"><span class="header-section-number">8.6</span> Conditional parallel trends</h2>
+<section id="conditional-parallel-trends" class="level2" data-number="8.5">
+<h2 data-number="8.5" class="anchored" data-anchor-id="conditional-parallel-trends"><span class="header-section-number">8.5</span> Conditional parallel trends</h2>
 <p>Plain DiD assumes parallel trends <em>unconditionally</em>. Conditional DiD allows trends to be parallel only after adjusting for observed covariates that shape the trajectory. In this dataset, log county population and log average county pay are obvious candidates: counties with bigger populations or higher-paying jobs may move on different underlying trajectories whether or not they raise the minimum wage.</p>
 <p><code>did::att_gt()</code> accepts <code>xformla = ~lpop + lavg_pay</code> plus a choice of estimator: <strong>regression adjustment</strong> (impute the counterfactual mean from the never-treated), <strong>inverse probability weighting</strong> (reweight never-treated counties to look like treated ones), or <strong>doubly robust</strong> (the <span class="citation" data-cites="callaway2021difference">Callaway &amp; Sant’Anna (<a href="references.html#ref-callaway2021difference" role="doc-biblioref">2021</a>)</span> default, which is consistent if either the outcome model <em>or</em> the propensity score is correctly specified).</p>
 <div class="cell">
 <details class="code-fold">
-<summary>Code</summary>
+<summary>Code: Compare overall ATT under regression, IPW, and doubly-robust adjustments.</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>cs_reg <span class="ot">&lt;-</span> did<span class="sc">::</span><span class="fu">att_gt</span>(<span class="at">yname=</span><span class="st">"lemp"</span>, <span class="at">tname=</span><span class="st">"year"</span>, <span class="at">idname=</span><span class="st">"id"</span>, <span class="at">gname=</span><span class="st">"G"</span>,</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>                      <span class="at">xformla =</span> <span class="sc">~</span>lpop <span class="sc">+</span> lavg_pay,</span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>                      <span class="at">control_group =</span> <span class="st">"nevertreated"</span>,</span>
@@ -3774,13 +3763,13 @@ Table&nbsp;8.6: Overall ATT under four identification assumptions: unconditional
 </div>
 <p>The doubly-robust estimate is the most reliable in practice — it recovers a correct ATT if either the trend model or the selection model is right, where the other two require their respective model to be correctly specified.</p>
 </section>
-<section id="sensitivity-to-parallel-trends-violations" class="level2" data-number="8.7">
-<h2 data-number="8.7" class="anchored" data-anchor-id="sensitivity-to-parallel-trends-violations"><span class="header-section-number">8.7</span> Sensitivity to parallel-trends violations</h2>
+<section id="sensitivity-to-parallel-trends-violations" class="level2" data-number="8.6">
+<h2 data-number="8.6" class="anchored" data-anchor-id="sensitivity-to-parallel-trends-violations"><span class="header-section-number">8.6</span> Sensitivity to parallel-trends violations</h2>
 <p>The robustness table only varies <em>design</em> choices; it does not quantify <em>how much</em> parallel trends would have to be violated to overturn the conclusion. <span class="citation" data-cites="rambachan2023more">Rambachan &amp; Roth (<a href="references.html#ref-rambachan2023more" role="doc-biblioref">2023</a>)</span> provide exactly that quantification. The <code>HonestDiD</code> package, paired with a small bridge function in <code>R/honest_did.R</code>, lets us bound the post-treatment effect under explicit assumptions about how an unobserved post-treatment violation could relate to the visible pre-trend.</p>
 <p><code>HonestDiD</code> ships two restrictions on the post-treatment violation. The <strong>smoothness</strong> bound <span class="math inline">\(\Delta^{SD}(M)\)</span> requires the post-treatment violation to be a smooth continuation of the pre-trend (it caps the <em>second differences</em> of the trend), which is the natural choice when pre-trends look like near-linear drift. The <strong>relative-magnitudes</strong> bound <span class="math inline">\(\Delta^{RM}(\bar M)\)</span> requires the post-treatment violation to be at most <span class="math inline">\(\bar M\)</span> times the <em>largest</em> pre-treatment violation; this is the natural choice when the pre-trend is visibly non-linear, as in cohort 2006 above. We use the relative-magnitudes bound below.</p>
 <div class="cell">
 <details class="code-fold">
-<summary>Code</summary>
+<summary>Code: Run HonestDiD relative-magnitude sensitivity on the on-impact ATT.</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>hd_rm <span class="ot">&lt;-</span> <span class="fu">honest_did</span>(<span class="at">es      =</span> attes,</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>                    <span class="at">e       =</span> <span class="dv">0</span>,</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>                    <span class="at">type    =</span> <span class="st">"relative_magnitude"</span>,</span>
@@ -4302,7 +4291,7 @@ Table&nbsp;8.7: Robust confidence intervals for the on-impact effect <span class
 </div>
 <div class="cell">
 <details class="code-fold">
-<summary>Code</summary>
+<summary>Code: Plot the robust CI band against the relative-magnitude bound.</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(hd_rm, <span class="fu">aes</span>(<span class="at">x =</span> Mbar)) <span class="sc">+</span></span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>, <span class="at">color =</span> <span class="st">"#94a3b8"</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>) <span class="sc">+</span></span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_ribbon</span>(<span class="fu">aes</span>(<span class="at">ymin =</span> lb, <span class="at">ymax =</span> ub),</span>
@@ -4328,8 +4317,8 @@ Figure&nbsp;8.2: HonestDiD sensitivity: as <span class="math inline">\(\bar M\)<
 <p>The breakdown point lies somewhere in <span class="math inline">\((0, 0.5]\)</span> — meaning the robust CI first crosses zero at an <span class="math inline">\(\bar M\)</span> less than half the <em>largest observed pre-trend in the data</em>. The on-impact effect of <span class="math inline">\(\approx -0.024\)</span> does <strong>not</strong> survive even a fraction of the cohort-2006 pre-trend we already flagged: that pre-trend, at <span class="math inline">\(-0.034\)</span>, is itself larger in magnitude than the on-impact effect, so it would be surprising if the conclusion held up under a relative-magnitudes assumption that allowed unobserved post-trend violations of comparable size.</p>
 <p>This is not a failure of the method — it is the method working as intended. HonestDiD is the bridge from “the Callaway-Sant’Anna point estimate looks negative” to “here is precisely the parallel-trends violation under which that conclusion would flip.” The right reading is that the on-impact effect is <strong>fragile to parallel-trends violations</strong>, even though the <em>cumulative</em> event-study trajectory (<span class="math inline">\(-0.13\)</span> by <span class="math inline">\(e = +3\)</span>) is large enough that a similar exercise on the later horizons would tolerate a much larger <span class="math inline">\(\bar M\)</span>.</p>
 </section>
-<section id="recap" class="level2" data-number="8.8">
-<h2 data-number="8.8" class="anchored" data-anchor-id="recap"><span class="header-section-number">8.8</span> Recap</h2>
+<section id="recap" class="level2" data-number="8.7">
+<h2 data-number="8.7" class="anchored" data-anchor-id="recap"><span class="header-section-number">8.7</span> Recap</h2>
 <div class="callout callout-style-simple callout-note">
 <div class="callout-body d-flex">
 <div class="callout-icon-container">
@@ -4345,34 +4334,22 @@ Figure&nbsp;8.2: HonestDiD sensitivity: as <span class="math inline">\(\bar M\)<
 </div>
 </div>
 </section>
-<section id="common-pitfall" class="level2" data-number="8.9">
-<h2 data-number="8.9" class="anchored" data-anchor-id="common-pitfall"><span class="header-section-number">8.9</span> Common pitfall</h2>
+<section id="common-pitfall" class="level2" data-number="8.8">
+<h2 data-number="8.8" class="anchored" data-anchor-id="common-pitfall"><span class="header-section-number">8.8</span> Common pitfall</h2>
 <p>Running TWFE on staggered data and reporting the coefficient as if it were a clean ATT. The bias is mechanical — already-treated units get used as controls for later-treated units, and treatment-effect heterogeneity over time then leaks into the coefficient with unintended signs. <strong>What to do instead.</strong> Estimate the <span class="math inline">\(\{ATT(g, t)\}\)</span> primitives directly with <code>did::att_gt()</code>, look at the cells, and only then aggregate with <code>aggte()</code> using a target that matches the question you actually want to answer. If you must run TWFE for a referee, also report the Callaway-Sant’Anna overall ATT for comparison so the magnitude of the contamination is visible.</p>
 </section>
-<section id="further-reading" class="level2" data-number="8.10">
-<h2 data-number="8.10" class="anchored" data-anchor-id="further-reading"><span class="header-section-number">8.10</span> Further reading</h2>
+<section id="further-reading" class="level2" data-number="8.9">
+<h2 data-number="8.9" class="anchored" data-anchor-id="further-reading"><span class="header-section-number">8.9</span> Further reading</h2>
 <p>The Callaway-Sant’Anna framework, the Goodman-Bacon decomposition, and the Sun-Abraham interaction-weighted estimator are the three modern reference points for staggered DiD <span class="citation" data-cites="callaway2021difference goodmanbacon2021difference sun2021estimating">(<a href="references.html#ref-callaway2021difference" role="doc-biblioref">Callaway &amp; Sant’Anna, 2021</a>; <a href="references.html#ref-goodmanbacon2021difference" role="doc-biblioref">Goodman-Bacon, 2021</a>; <a href="references.html#ref-sun2021estimating" role="doc-biblioref">Sun &amp; Abraham, 2021</a>)</span>. The <code>did</code> package vignettes (<a href="https://bcallaway11.github.io/did/" class="uri">https://bcallaway11.github.io/did/</a>) are the canonical implementation reference. For sensitivity analysis, the <span class="citation" data-cites="rambachan2023more">Rambachan &amp; Roth (<a href="references.html#ref-rambachan2023more" role="doc-biblioref">2023</a>)</span> paper plus the <code>HonestDiD</code> package documentation cover both the smoothness and relative-magnitude bounds. <span class="citation" data-cites="dechaisemartin2020twoway">Chaisemartin &amp; D’Haultfœuille (<a href="references.html#ref-dechaisemartin2020twoway" role="doc-biblioref">2020</a>)</span> is the parallel critique of TWFE from the <code>DIDmultiplegt</code> perspective. <span class="citation" data-cites="callaway2022handbook">Callaway (<a href="references.html#ref-callaway2022handbook" role="doc-biblioref">2022</a>)</span> is a textbook-level synthesis, and <span class="citation" data-cites="roth2023whats">Roth et al. (<a href="references.html#ref-roth2023whats" role="doc-biblioref">2023</a>)</span> is a recent review-style synthesis covering staggered DiD, event studies, sensitivity analysis, and the relationships between them.</p>
 <p>For a longer R walkthrough that this chapter is adapted from, see the companion post at <a href="https://cmg777.github.io/post/r_did/" class="uri">https://cmg777.github.io/post/r_did/</a>.</p>
 </section>
-<section id="exercises" class="level2" data-number="8.11">
-<h2 data-number="8.11" class="anchored" data-anchor-id="exercises"><span class="header-section-number">8.11</span> Exercises</h2>
+<section id="exercises" class="level2" data-number="8.10">
+<h2 data-number="8.10" class="anchored" data-anchor-id="exercises"><span class="header-section-number">8.10</span> Exercises</h2>
 <ol type="1">
 <li>Re-estimate the overall ATT using <code>control_group = "notyettreated"</code> instead of <code>"nevertreated"</code>. Does the answer change? Explain why the standard error usually <em>shrinks</em> under this alternative, and what assumption about not-yet-treated counties you are now relying on to make their comparison valid.</li>
 <li>Use <code>did::aggte(attgt, type = "calendar")</code> to aggregate by <em>calendar year</em> rather than event time. Which calendar year shows the largest treatment effect, and what substantive story does that suggest?</li>
 <li>Run <code>HonestDiD</code> with <code>type = "smoothness"</code> instead of <code>"relative_magnitude"</code>, supplying <code>Mvec = seq(0, 0.05, by = 0.01)</code>. What does the breakdown <span class="math inline">\(M\)</span> say about the credibility of the parallel-trends assumption in this dataset?</li>
 </ol>
-</section>
-<section id="key-takeaways" class="level2 unnumbered">
-<h2 class="unnumbered anchored" data-anchor-id="key-takeaways">Key takeaways</h2>
-<ul>
-<li><strong>Method:</strong> <em>Recap, in one line, what the method does and what it estimates.</em></li>
-<li><strong>Method:</strong> <em>Note the key identifying assumption or estimand-specific nuance.</em></li>
-<li><strong>Lesson:</strong> <em>State the main empirical lesson from this chapter’s case study.</em></li>
-<li><strong>Lesson:</strong> <em>State a second lesson — e.g., what changed vs.&nbsp;the prior chapter’s method.</em></li>
-<li><strong>Lesson:</strong> <em>Optional third lesson — diagnostics, sensitivity, or interpretation tip.</em></li>
-<li><strong>Caveat:</strong> <em>Flag the leading limitation (data, assumption, or inference).</em></li>
-<li><strong>Caveat:</strong> <em>Flag a secondary caveat or scope condition.</em></li>
-</ul>
 
 
 <!-- -->
@@ -4890,249 +4867,249 @@ Sun, L., &amp; Abraham, S. (2021). Estimating dynamic treatment effects in event
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Staggered Differences-in-Differences"</span></span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
 <span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="fu">## Learning objectives</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="fu">## When TWFE breaks under staggered adoption</span></span>
 <span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Estimate group-time average treatment effects with <span class="in">`did::att_gt()`</span> on a staggered-adoption panel. This is the workhorse of modern DiD — the estimator that replaced two-way fixed effects after the negative-weight critique.</span>
-<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>Aggregate group-time effects into event-study dynamics with <span class="in">`aggte(type = "dynamic")`</span>. The aggregation step is what gives the reader a single defensible event-study plot without the contamination problems of a TWFE event study.</span>
-<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>Condition on covariates using regression, IPW, and doubly-robust estimators, and default to the doubly-robust choice. Doubly-robust estimation is consistent if *either* the outcome model or the propensity-score model is correctly specified, which is why it is the safe default — knowing all three lets the reader defend that choice against a referee.</span>
-<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>Run Rambachan-Roth relative-magnitudes sensitivity analysis with <span class="in">`HonestDiD`</span> and report the smallest pre-trend violation that would overturn the post-treatment conclusion. This converts an unverifiable parallel-trends assumption into a falsifiable claim about how robust the headline result is.</span>
-<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a><span class="fu">## When TWFE breaks under staggered adoption</span></span>
-<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>Chapter 3 ran a textbook 2×2 DiD on Proposition 99, with California</span>
-<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a>treated in 1989 and Nevada as the single hand-picked control. The</span>
-<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a>estimate collapsed to roughly $-5.7$ packs per capita and could not</span>
-<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a>be distinguished from zero. The diagnosis there was that Nevada is</span>
-<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a>geographically and culturally adjacent to California and absorbs the</span>
-<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a>same secular forces — so its post-1988 decline soaks up most of what</span>
-<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a>we wanted to attribute to the policy.</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>Chapter 3 ran a textbook 2×2 DiD on Proposition 99, with California</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>treated in 1989 and Nevada as the single hand-picked control. The</span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>estimate collapsed to roughly $-5.7$ packs per capita and could not</span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>be distinguished from zero. The diagnosis there was that Nevada is</span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>geographically and culturally adjacent to California and absorbs the</span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>same secular forces — so its post-1988 decline soaks up most of what</span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>we wanted to attribute to the policy.</span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a>There is a deeper structural problem too. Real policy data rarely</span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a>has just one treated unit and one clean control unit, both treated</span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a>at the same instant. States and counties **adopt at different times**</span>
+<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a>— some in 2004, others in 2006, still others never. The natural</span>
+<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a>extension of the chapter 3 model to that setting is *two-way fixed</span>
+<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a>effects (TWFE)* regression:</span>
 <span id="cb13-21"><a href="#cb13-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-22"><a href="#cb13-22" aria-hidden="true" tabindex="-1"></a>There is a deeper structural problem too. Real policy data rarely</span>
-<span id="cb13-23"><a href="#cb13-23" aria-hidden="true" tabindex="-1"></a>has just one treated unit and one clean control unit, both treated</span>
-<span id="cb13-24"><a href="#cb13-24" aria-hidden="true" tabindex="-1"></a>at the same instant. States and counties **adopt at different times**</span>
-<span id="cb13-25"><a href="#cb13-25" aria-hidden="true" tabindex="-1"></a>— some in 2004, others in 2006, still others never. The natural</span>
-<span id="cb13-26"><a href="#cb13-26" aria-hidden="true" tabindex="-1"></a>extension of the chapter 3 model to that setting is *two-way fixed</span>
-<span id="cb13-27"><a href="#cb13-27" aria-hidden="true" tabindex="-1"></a>effects (TWFE)* regression:</span>
-<span id="cb13-28"><a href="#cb13-28" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-29"><a href="#cb13-29" aria-hidden="true" tabindex="-1"></a>$$Y_{it} = \alpha_i + \gamma_t + \beta \cdot \text{post}_{it} + \varepsilon_{it}.$$</span>
-<span id="cb13-30"><a href="#cb13-30" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-31"><a href="#cb13-31" aria-hidden="true" tabindex="-1"></a>For two decades this was the default. We now know it is biased in the</span>
-<span id="cb13-32"><a href="#cb13-32" aria-hidden="true" tabindex="-1"></a>presence of staggered adoption: already-treated units silently act as</span>
-<span id="cb13-33"><a href="#cb13-33" aria-hidden="true" tabindex="-1"></a>*controls* for later-treated units, contaminating the contrast. The</span>
-<span id="cb13-34"><a href="#cb13-34" aria-hidden="true" tabindex="-1"></a>@goodmanbacon2021difference decomposition shows that $\hat\beta$ is a</span>
-<span id="cb13-35"><a href="#cb13-35" aria-hidden="true" tabindex="-1"></a>weighted average of 2×2 DiDs in which already-treated units serve as</span>
-<span id="cb13-36"><a href="#cb13-36" aria-hidden="true" tabindex="-1"></a>controls for later-treated units — the *forbidden comparison*.</span>
-<span id="cb13-37"><a href="#cb13-37" aria-hidden="true" tabindex="-1"></a>@dechaisemartin2020twoway further prove that under treatment-effect</span>
-<span id="cb13-38"><a href="#cb13-38" aria-hidden="true" tabindex="-1"></a>heterogeneity some of those implicit weights can be **strictly</span>
-<span id="cb13-39"><a href="#cb13-39" aria-hidden="true" tabindex="-1"></a>negative**, so $\hat\beta$ need not even be a convex average of the</span>
-<span id="cb13-40"><a href="#cb13-40" aria-hidden="true" tabindex="-1"></a>underlying $ATT$s. Either way, when treatment effects grow over time —</span>
-<span id="cb13-41"><a href="#cb13-41" aria-hidden="true" tabindex="-1"></a>the textbook policy story — the sign of $\hat\beta$ is no longer a</span>
-<span id="cb13-42"><a href="#cb13-42" aria-hidden="true" tabindex="-1"></a>reliable summary.</span>
-<span id="cb13-43"><a href="#cb13-43" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-44"><a href="#cb13-44" aria-hidden="true" tabindex="-1"></a>This chapter walks through the modern toolkit for repairing that</span>
-<span id="cb13-45"><a href="#cb13-45" aria-hidden="true" tabindex="-1"></a>damage. The methods build on @callaway2021difference: estimate</span>
-<span id="cb13-46"><a href="#cb13-46" aria-hidden="true" tabindex="-1"></a>**group-time average treatment effects** $ATT(g, t)$ directly, then</span>
-<span id="cb13-47"><a href="#cb13-47" aria-hidden="true" tabindex="-1"></a>aggregate them with weights you can defend. Along the way we look at</span>
-<span id="cb13-48"><a href="#cb13-48" aria-hidden="true" tabindex="-1"></a>two companion ideas: the doubly-robust DiD estimator from</span>
-<span id="cb13-49"><a href="#cb13-49" aria-hidden="true" tabindex="-1"></a>@callaway2021difference, and the Rambachan-Roth sensitivity analysis</span>
-<span id="cb13-50"><a href="#cb13-50" aria-hidden="true" tabindex="-1"></a>that quantifies how much parallel-trends violation it would take to</span>
-<span id="cb13-51"><a href="#cb13-51" aria-hidden="true" tabindex="-1"></a>overturn the conclusion <span class="co">[</span><span class="ot">@rambachan2023more</span><span class="co">]</span>. The Sun-Abraham</span>
-<span id="cb13-52"><a href="#cb13-52" aria-hidden="true" tabindex="-1"></a>interaction-weighted event study <span class="co">[</span><span class="ot">@sun2021estimating</span><span class="co">]</span> is an equivalent</span>
-<span id="cb13-53"><a href="#cb13-53" aria-hidden="true" tabindex="-1"></a>estimator built on a different regression-based decomposition; see</span>
-<span id="cb13-54"><a href="#cb13-54" aria-hidden="true" tabindex="-1"></a>@roth2023whats for a side-by-side review.</span>
-<span id="cb13-55"><a href="#cb13-55" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-56"><a href="#cb13-56" aria-hidden="true" tabindex="-1"></a>The dataset is no longer Proposition 99. Staggered DiD requires</span>
-<span id="cb13-57"><a href="#cb13-57" aria-hidden="true" tabindex="-1"></a>**variation in treatment timing**, which a single-treated-state panel</span>
-<span id="cb13-58"><a href="#cb13-58" aria-hidden="true" tabindex="-1"></a>cannot provide. We switch to the Callaway-Sant'Anna minimum-wage</span>
-<span id="cb13-59"><a href="#cb13-59" aria-hidden="true" tabindex="-1"></a>panel: 1,745 US counties × 2003–2007, with cohorts $G \in <span class="sc">\{</span>0, 2004,</span>
-<span id="cb13-60"><a href="#cb13-60" aria-hidden="true" tabindex="-1"></a>2006<span class="sc">\}</span>$ (after dropping a small late-2007 cohort; see Setup)</span>
-<span id="cb13-61"><a href="#cb13-61" aria-hidden="true" tabindex="-1"></a>indexing the year the county's state first raised its minimum</span>
-<span id="cb13-62"><a href="#cb13-62" aria-hidden="true" tabindex="-1"></a>wage above the federal $5.15/h floor. The outcome is log teen</span>
-<span id="cb13-63"><a href="#cb13-63" aria-hidden="true" tabindex="-1"></a>employment.</span>
-<span id="cb13-64"><a href="#cb13-64" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-65"><a href="#cb13-65" aria-hidden="true" tabindex="-1"></a><span class="fu">## Setup and data</span></span>
-<span id="cb13-66"><a href="#cb13-66" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-69"><a href="#cb13-69" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb13-70"><a href="#cb13-70" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: setup</span></span>
-<span id="cb13-71"><a href="#cb13-71" aria-hidden="true" tabindex="-1"></a><span class="co">#| message: false</span></span>
-<span id="cb13-72"><a href="#cb13-72" aria-hidden="true" tabindex="-1"></a><span class="co">#| warning: false</span></span>
-<span id="cb13-73"><a href="#cb13-73" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
-<span id="cb13-74"><a href="#cb13-74" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(did)</span>
-<span id="cb13-75"><a href="#cb13-75" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(fixest)</span>
-<span id="cb13-76"><a href="#cb13-76" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(HonestDiD)</span>
-<span id="cb13-77"><a href="#cb13-77" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"R/table_helpers.R"</span>)</span>
-<span id="cb13-78"><a href="#cb13-78" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"R/honest_did.R"</span>)</span>
-<span id="cb13-79"><a href="#cb13-79" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-80"><a href="#cb13-80" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)  <span class="co"># all chunks below are analytically deterministic; this is just hygiene</span></span>
-<span id="cb13-81"><a href="#cb13-81" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-82"><a href="#cb13-82" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span>opts_chunk<span class="sc">$</span><span class="fu">set</span>(<span class="at">dev.args =</span> <span class="fu">list</span>(<span class="at">bg =</span> <span class="st">"transparent"</span>))</span>
-<span id="cb13-83"><a href="#cb13-83" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-84"><a href="#cb13-84" aria-hidden="true" tabindex="-1"></a><span class="fu">theme_set</span>(</span>
-<span id="cb13-85"><a href="#cb13-85" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">12</span>) <span class="sc">+</span></span>
-<span id="cb13-86"><a href="#cb13-86" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(</span>
-<span id="cb13-87"><a href="#cb13-87" aria-hidden="true" tabindex="-1"></a>      <span class="at">plot.background  =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">"transparent"</span>, <span class="at">color =</span> <span class="cn">NA</span>),</span>
-<span id="cb13-88"><a href="#cb13-88" aria-hidden="true" tabindex="-1"></a>      <span class="at">panel.background =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">"transparent"</span>, <span class="at">color =</span> <span class="cn">NA</span>),</span>
-<span id="cb13-89"><a href="#cb13-89" aria-hidden="true" tabindex="-1"></a>      <span class="at">panel.grid.major =</span> <span class="fu">element_line</span>(<span class="at">color =</span> <span class="st">"#94a3b8"</span>, <span class="at">linewidth =</span> <span class="fl">0.25</span>),</span>
-<span id="cb13-90"><a href="#cb13-90" aria-hidden="true" tabindex="-1"></a>      <span class="at">panel.grid.minor =</span> <span class="fu">element_line</span>(<span class="at">color =</span> <span class="st">"#94a3b8"</span>, <span class="at">linewidth =</span> <span class="fl">0.15</span>),</span>
-<span id="cb13-91"><a href="#cb13-91" aria-hidden="true" tabindex="-1"></a>      <span class="at">text             =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"#94a3b8"</span>),</span>
-<span id="cb13-92"><a href="#cb13-92" aria-hidden="true" tabindex="-1"></a>      <span class="at">axis.text        =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"#94a3b8"</span>),</span>
-<span id="cb13-93"><a href="#cb13-93" aria-hidden="true" tabindex="-1"></a>      <span class="at">strip.text       =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"#94a3b8"</span>),</span>
-<span id="cb13-94"><a href="#cb13-94" aria-hidden="true" tabindex="-1"></a>      <span class="at">legend.text      =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"#94a3b8"</span>)</span>
-<span id="cb13-95"><a href="#cb13-95" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb13-96"><a href="#cb13-96" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb13-97"><a href="#cb13-97" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb13-22"><a href="#cb13-22" aria-hidden="true" tabindex="-1"></a>$$Y_{it} = \alpha_i + \gamma_t + \beta \cdot \text{post}_{it} + \varepsilon_{it}.$$</span>
+<span id="cb13-23"><a href="#cb13-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-24"><a href="#cb13-24" aria-hidden="true" tabindex="-1"></a>For two decades this was the default. We now know it is biased in the</span>
+<span id="cb13-25"><a href="#cb13-25" aria-hidden="true" tabindex="-1"></a>presence of staggered adoption: already-treated units silently act as</span>
+<span id="cb13-26"><a href="#cb13-26" aria-hidden="true" tabindex="-1"></a>*controls* for later-treated units, contaminating the contrast. The</span>
+<span id="cb13-27"><a href="#cb13-27" aria-hidden="true" tabindex="-1"></a>@goodmanbacon2021difference decomposition shows that $\hat\beta$ is a</span>
+<span id="cb13-28"><a href="#cb13-28" aria-hidden="true" tabindex="-1"></a>weighted average of 2×2 DiDs in which already-treated units serve as</span>
+<span id="cb13-29"><a href="#cb13-29" aria-hidden="true" tabindex="-1"></a>controls for later-treated units — the *forbidden comparison*.</span>
+<span id="cb13-30"><a href="#cb13-30" aria-hidden="true" tabindex="-1"></a>@dechaisemartin2020twoway further prove that under treatment-effect</span>
+<span id="cb13-31"><a href="#cb13-31" aria-hidden="true" tabindex="-1"></a>heterogeneity some of those implicit weights can be **strictly</span>
+<span id="cb13-32"><a href="#cb13-32" aria-hidden="true" tabindex="-1"></a>negative**, so $\hat\beta$ need not even be a convex average of the</span>
+<span id="cb13-33"><a href="#cb13-33" aria-hidden="true" tabindex="-1"></a>underlying $ATT$s. Either way, when treatment effects grow over time —</span>
+<span id="cb13-34"><a href="#cb13-34" aria-hidden="true" tabindex="-1"></a>the textbook policy story — the sign of $\hat\beta$ is no longer a</span>
+<span id="cb13-35"><a href="#cb13-35" aria-hidden="true" tabindex="-1"></a>reliable summary.</span>
+<span id="cb13-36"><a href="#cb13-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-37"><a href="#cb13-37" aria-hidden="true" tabindex="-1"></a>This chapter walks through the modern toolkit for repairing that</span>
+<span id="cb13-38"><a href="#cb13-38" aria-hidden="true" tabindex="-1"></a>damage. The methods build on @callaway2021difference: estimate</span>
+<span id="cb13-39"><a href="#cb13-39" aria-hidden="true" tabindex="-1"></a>**group-time average treatment effects** $ATT(g, t)$ directly, then</span>
+<span id="cb13-40"><a href="#cb13-40" aria-hidden="true" tabindex="-1"></a>aggregate them with weights you can defend. Along the way we look at</span>
+<span id="cb13-41"><a href="#cb13-41" aria-hidden="true" tabindex="-1"></a>two companion ideas: the doubly-robust DiD estimator from</span>
+<span id="cb13-42"><a href="#cb13-42" aria-hidden="true" tabindex="-1"></a>@callaway2021difference, and the Rambachan-Roth sensitivity analysis</span>
+<span id="cb13-43"><a href="#cb13-43" aria-hidden="true" tabindex="-1"></a>that quantifies how much parallel-trends violation it would take to</span>
+<span id="cb13-44"><a href="#cb13-44" aria-hidden="true" tabindex="-1"></a>overturn the conclusion <span class="co">[</span><span class="ot">@rambachan2023more</span><span class="co">]</span>. The Sun-Abraham</span>
+<span id="cb13-45"><a href="#cb13-45" aria-hidden="true" tabindex="-1"></a>interaction-weighted event study <span class="co">[</span><span class="ot">@sun2021estimating</span><span class="co">]</span> is an equivalent</span>
+<span id="cb13-46"><a href="#cb13-46" aria-hidden="true" tabindex="-1"></a>estimator built on a different regression-based decomposition; see</span>
+<span id="cb13-47"><a href="#cb13-47" aria-hidden="true" tabindex="-1"></a>@roth2023whats for a side-by-side review.</span>
+<span id="cb13-48"><a href="#cb13-48" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-49"><a href="#cb13-49" aria-hidden="true" tabindex="-1"></a>The dataset is no longer Proposition 99. Staggered DiD requires</span>
+<span id="cb13-50"><a href="#cb13-50" aria-hidden="true" tabindex="-1"></a>**variation in treatment timing**, which a single-treated-state panel</span>
+<span id="cb13-51"><a href="#cb13-51" aria-hidden="true" tabindex="-1"></a>cannot provide. We switch to the Callaway-Sant'Anna minimum-wage</span>
+<span id="cb13-52"><a href="#cb13-52" aria-hidden="true" tabindex="-1"></a>panel: 1,745 US counties × 2003–2007, with cohorts $G \in <span class="sc">\{</span>0, 2004,</span>
+<span id="cb13-53"><a href="#cb13-53" aria-hidden="true" tabindex="-1"></a>2006<span class="sc">\}</span>$ (after dropping a small late-2007 cohort; see Setup)</span>
+<span id="cb13-54"><a href="#cb13-54" aria-hidden="true" tabindex="-1"></a>indexing the year the county's state first raised its minimum</span>
+<span id="cb13-55"><a href="#cb13-55" aria-hidden="true" tabindex="-1"></a>wage above the federal $5.15/h floor. The outcome is log teen</span>
+<span id="cb13-56"><a href="#cb13-56" aria-hidden="true" tabindex="-1"></a>employment.</span>
+<span id="cb13-57"><a href="#cb13-57" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-58"><a href="#cb13-58" aria-hidden="true" tabindex="-1"></a><span class="fu">## Setup and data</span></span>
+<span id="cb13-59"><a href="#cb13-59" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-62"><a href="#cb13-62" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb13-63"><a href="#cb13-63" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: setup</span></span>
+<span id="cb13-64"><a href="#cb13-64" aria-hidden="true" tabindex="-1"></a><span class="co">#| message: false</span></span>
+<span id="cb13-65"><a href="#cb13-65" aria-hidden="true" tabindex="-1"></a><span class="co">#| warning: false</span></span>
+<span id="cb13-66"><a href="#cb13-66" aria-hidden="true" tabindex="-1"></a><span class="co">#| code-summary: "Code: Load packages, source helpers, and set the ggplot theme."</span></span>
+<span id="cb13-67"><a href="#cb13-67" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb13-68"><a href="#cb13-68" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(did)</span>
+<span id="cb13-69"><a href="#cb13-69" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(fixest)</span>
+<span id="cb13-70"><a href="#cb13-70" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(HonestDiD)</span>
+<span id="cb13-71"><a href="#cb13-71" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"R/table_helpers.R"</span>)</span>
+<span id="cb13-72"><a href="#cb13-72" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"R/honest_did.R"</span>)</span>
+<span id="cb13-73"><a href="#cb13-73" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-74"><a href="#cb13-74" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)  <span class="co"># all chunks below are analytically deterministic; this is just hygiene</span></span>
+<span id="cb13-75"><a href="#cb13-75" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-76"><a href="#cb13-76" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span>opts_chunk<span class="sc">$</span><span class="fu">set</span>(<span class="at">dev.args =</span> <span class="fu">list</span>(<span class="at">bg =</span> <span class="st">"transparent"</span>))</span>
+<span id="cb13-77"><a href="#cb13-77" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-78"><a href="#cb13-78" aria-hidden="true" tabindex="-1"></a><span class="fu">theme_set</span>(</span>
+<span id="cb13-79"><a href="#cb13-79" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">12</span>) <span class="sc">+</span></span>
+<span id="cb13-80"><a href="#cb13-80" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(</span>
+<span id="cb13-81"><a href="#cb13-81" aria-hidden="true" tabindex="-1"></a>      <span class="at">plot.background  =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">"transparent"</span>, <span class="at">color =</span> <span class="cn">NA</span>),</span>
+<span id="cb13-82"><a href="#cb13-82" aria-hidden="true" tabindex="-1"></a>      <span class="at">panel.background =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">"transparent"</span>, <span class="at">color =</span> <span class="cn">NA</span>),</span>
+<span id="cb13-83"><a href="#cb13-83" aria-hidden="true" tabindex="-1"></a>      <span class="at">panel.grid.major =</span> <span class="fu">element_line</span>(<span class="at">color =</span> <span class="st">"#94a3b8"</span>, <span class="at">linewidth =</span> <span class="fl">0.25</span>),</span>
+<span id="cb13-84"><a href="#cb13-84" aria-hidden="true" tabindex="-1"></a>      <span class="at">panel.grid.minor =</span> <span class="fu">element_line</span>(<span class="at">color =</span> <span class="st">"#94a3b8"</span>, <span class="at">linewidth =</span> <span class="fl">0.15</span>),</span>
+<span id="cb13-85"><a href="#cb13-85" aria-hidden="true" tabindex="-1"></a>      <span class="at">text             =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"#94a3b8"</span>),</span>
+<span id="cb13-86"><a href="#cb13-86" aria-hidden="true" tabindex="-1"></a>      <span class="at">axis.text        =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"#94a3b8"</span>),</span>
+<span id="cb13-87"><a href="#cb13-87" aria-hidden="true" tabindex="-1"></a>      <span class="at">strip.text       =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"#94a3b8"</span>),</span>
+<span id="cb13-88"><a href="#cb13-88" aria-hidden="true" tabindex="-1"></a>      <span class="at">legend.text      =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"#94a3b8"</span>)</span>
+<span id="cb13-89"><a href="#cb13-89" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb13-90"><a href="#cb13-90" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb13-91"><a href="#cb13-91" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb13-92"><a href="#cb13-92" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-93"><a href="#cb13-93" aria-hidden="true" tabindex="-1"></a>The dataset ships as <span class="in">`data/cs_minwage.rds`</span> in the chapter bundle. We</span>
+<span id="cb13-94"><a href="#cb13-94" aria-hidden="true" tabindex="-1"></a>follow the source-post convention of restricting to cohorts $G \in</span>
+<span id="cb13-95"><a href="#cb13-95" aria-hidden="true" tabindex="-1"></a><span class="sc">\{</span>0, 2004, 2006, 2007<span class="sc">\}</span>$, dropping the Northeast region (`region ==</span>
+<span id="cb13-96"><a href="#cb13-96" aria-hidden="true" tabindex="-1"></a>"1"`) for comparability, and then carving out a clean working panel</span>
+<span id="cb13-97"><a href="#cb13-97" aria-hidden="true" tabindex="-1"></a>without the late-2007 cohort and starting in 2003.</span>
 <span id="cb13-98"><a href="#cb13-98" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-99"><a href="#cb13-99" aria-hidden="true" tabindex="-1"></a>The dataset ships as <span class="in">`data/cs_minwage.rds`</span> in the chapter bundle. We</span>
-<span id="cb13-100"><a href="#cb13-100" aria-hidden="true" tabindex="-1"></a>follow the source-post convention of restricting to cohorts $G \in</span>
-<span id="cb13-101"><a href="#cb13-101" aria-hidden="true" tabindex="-1"></a><span class="sc">\{</span>0, 2004, 2006, 2007<span class="sc">\}</span>$, dropping the Northeast region (`region ==</span>
-<span id="cb13-102"><a href="#cb13-102" aria-hidden="true" tabindex="-1"></a>"1"`) for comparability, and then carving out a clean working panel</span>
-<span id="cb13-103"><a href="#cb13-103" aria-hidden="true" tabindex="-1"></a>without the late-2007 cohort and starting in 2003.</span>
-<span id="cb13-104"><a href="#cb13-104" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-107"><a href="#cb13-107" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb13-108"><a href="#cb13-108" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: data-load</span></span>
-<span id="cb13-109"><a href="#cb13-109" aria-hidden="true" tabindex="-1"></a>mw_raw <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">"data/cs_minwage.rds"</span>) <span class="sc">|&gt;</span> <span class="fu">as_tibble</span>()</span>
-<span id="cb13-110"><a href="#cb13-110" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-111"><a href="#cb13-111" aria-hidden="true" tabindex="-1"></a><span class="co"># Step 1: drop Northeast and keep cohorts of interest.</span></span>
-<span id="cb13-112"><a href="#cb13-112" aria-hidden="true" tabindex="-1"></a>mw <span class="ot">&lt;-</span> mw_raw <span class="sc">|&gt;</span></span>
-<span id="cb13-113"><a href="#cb13-113" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(G <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">2004</span>, <span class="dv">2006</span>, <span class="dv">2007</span>), region <span class="sc">!=</span> <span class="st">"1"</span>)</span>
-<span id="cb13-114"><a href="#cb13-114" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-115"><a href="#cb13-115" aria-hidden="true" tabindex="-1"></a><span class="co"># Step 2: working sample for the main analysis.</span></span>
-<span id="cb13-116"><a href="#cb13-116" aria-hidden="true" tabindex="-1"></a>data2 <span class="ot">&lt;-</span> mw <span class="sc">|&gt;</span></span>
-<span id="cb13-117"><a href="#cb13-117" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(G <span class="sc">!=</span> <span class="dv">2007</span>, year <span class="sc">&gt;=</span> <span class="dv">2003</span>)</span>
-<span id="cb13-118"><a href="#cb13-118" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-119"><a href="#cb13-119" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(data2)</span>
-<span id="cb13-120"><a href="#cb13-120" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb13-121"><a href="#cb13-121" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-122"><a href="#cb13-122" aria-hidden="true" tabindex="-1"></a>The working panel has <span class="in">`r nrow(data2)`</span> rows =</span>
-<span id="cb13-123"><a href="#cb13-123" aria-hidden="true" tabindex="-1"></a><span class="in">`r length(unique(data2$id))`</span> counties × 5 years, balanced across the</span>
-<span id="cb13-124"><a href="#cb13-124" aria-hidden="true" tabindex="-1"></a>2003–2007 window.</span>
-<span id="cb13-125"><a href="#cb13-125" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-128"><a href="#cb13-128" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb13-129"><a href="#cb13-129" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: tbl-cohort-counts</span></span>
-<span id="cb13-130"><a href="#cb13-130" aria-hidden="true" tabindex="-1"></a><span class="co">#| tbl-cap: "Cohort sizes in the working sample. G = 0 is the never-treated control pool; cohorts 2004 and 2006 are the staggered treated groups."</span></span>
-<span id="cb13-131"><a href="#cb13-131" aria-hidden="true" tabindex="-1"></a>data2 <span class="sc">|&gt;</span></span>
-<span id="cb13-132"><a href="#cb13-132" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(year <span class="sc">==</span> <span class="dv">2003</span>) <span class="sc">|&gt;</span></span>
-<span id="cb13-133"><a href="#cb13-133" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(G, <span class="at">name =</span> <span class="st">"counties"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb13-134"><a href="#cb13-134" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="st">`</span><span class="at">Treatment cohort (G)</span><span class="st">`</span> <span class="ot">=</span> G) <span class="sc">|&gt;</span></span>
-<span id="cb13-135"><a href="#cb13-135" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gt_pretty</span>()</span>
-<span id="cb13-136"><a href="#cb13-136" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb13-137"><a href="#cb13-137" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-138"><a href="#cb13-138" aria-hidden="true" tabindex="-1"></a><span class="fu">## The TWFE baseline</span></span>
+<span id="cb13-101"><a href="#cb13-101" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb13-102"><a href="#cb13-102" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: data-load</span></span>
+<span id="cb13-103"><a href="#cb13-103" aria-hidden="true" tabindex="-1"></a><span class="co">#| code-summary: "Code: Load the minimum-wage panel and build the working sample."</span></span>
+<span id="cb13-104"><a href="#cb13-104" aria-hidden="true" tabindex="-1"></a>mw_raw <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">"data/cs_minwage.rds"</span>) <span class="sc">|&gt;</span> <span class="fu">as_tibble</span>()</span>
+<span id="cb13-105"><a href="#cb13-105" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-106"><a href="#cb13-106" aria-hidden="true" tabindex="-1"></a><span class="co"># Step 1: drop Northeast and keep cohorts of interest.</span></span>
+<span id="cb13-107"><a href="#cb13-107" aria-hidden="true" tabindex="-1"></a>mw <span class="ot">&lt;-</span> mw_raw <span class="sc">|&gt;</span></span>
+<span id="cb13-108"><a href="#cb13-108" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(G <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">2004</span>, <span class="dv">2006</span>, <span class="dv">2007</span>), region <span class="sc">!=</span> <span class="st">"1"</span>)</span>
+<span id="cb13-109"><a href="#cb13-109" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-110"><a href="#cb13-110" aria-hidden="true" tabindex="-1"></a><span class="co"># Step 2: working sample for the main analysis.</span></span>
+<span id="cb13-111"><a href="#cb13-111" aria-hidden="true" tabindex="-1"></a>data2 <span class="ot">&lt;-</span> mw <span class="sc">|&gt;</span></span>
+<span id="cb13-112"><a href="#cb13-112" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(G <span class="sc">!=</span> <span class="dv">2007</span>, year <span class="sc">&gt;=</span> <span class="dv">2003</span>)</span>
+<span id="cb13-113"><a href="#cb13-113" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-114"><a href="#cb13-114" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(data2)</span>
+<span id="cb13-115"><a href="#cb13-115" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb13-116"><a href="#cb13-116" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-117"><a href="#cb13-117" aria-hidden="true" tabindex="-1"></a>The working panel has <span class="in">`r nrow(data2)`</span> rows =</span>
+<span id="cb13-118"><a href="#cb13-118" aria-hidden="true" tabindex="-1"></a><span class="in">`r length(unique(data2$id))`</span> counties × 5 years, balanced across the</span>
+<span id="cb13-119"><a href="#cb13-119" aria-hidden="true" tabindex="-1"></a>2003–2007 window.</span>
+<span id="cb13-120"><a href="#cb13-120" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-123"><a href="#cb13-123" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb13-124"><a href="#cb13-124" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: tbl-cohort-counts</span></span>
+<span id="cb13-125"><a href="#cb13-125" aria-hidden="true" tabindex="-1"></a><span class="co">#| tbl-cap: "Cohort sizes in the working sample. G = 0 is the never-treated control pool; cohorts 2004 and 2006 are the staggered treated groups."</span></span>
+<span id="cb13-126"><a href="#cb13-126" aria-hidden="true" tabindex="-1"></a><span class="co">#| code-summary: "Code: Tabulate county counts by treatment cohort."</span></span>
+<span id="cb13-127"><a href="#cb13-127" aria-hidden="true" tabindex="-1"></a>data2 <span class="sc">|&gt;</span></span>
+<span id="cb13-128"><a href="#cb13-128" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(year <span class="sc">==</span> <span class="dv">2003</span>) <span class="sc">|&gt;</span></span>
+<span id="cb13-129"><a href="#cb13-129" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(G, <span class="at">name =</span> <span class="st">"counties"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb13-130"><a href="#cb13-130" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="st">`</span><span class="at">Treatment cohort (G)</span><span class="st">`</span> <span class="ot">=</span> G) <span class="sc">|&gt;</span></span>
+<span id="cb13-131"><a href="#cb13-131" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gt_pretty</span>()</span>
+<span id="cb13-132"><a href="#cb13-132" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb13-133"><a href="#cb13-133" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-134"><a href="#cb13-134" aria-hidden="true" tabindex="-1"></a><span class="fu">## The TWFE baseline</span></span>
+<span id="cb13-135"><a href="#cb13-135" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-136"><a href="#cb13-136" aria-hidden="true" tabindex="-1"></a>The natural first move is the TWFE regression. The variable <span class="in">`post`</span> in</span>
+<span id="cb13-137"><a href="#cb13-137" aria-hidden="true" tabindex="-1"></a>the dataset is 1 in periods where the county's state has already</span>
+<span id="cb13-138"><a href="#cb13-138" aria-hidden="true" tabindex="-1"></a>raised its minimum wage (i.e., <span class="in">`year &gt;= G &amp; G != 0`</span>), and 0 otherwise.</span>
 <span id="cb13-139"><a href="#cb13-139" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-140"><a href="#cb13-140" aria-hidden="true" tabindex="-1"></a>The natural first move is the TWFE regression. The variable <span class="in">`post`</span> in</span>
-<span id="cb13-141"><a href="#cb13-141" aria-hidden="true" tabindex="-1"></a>the dataset is 1 in periods where the county's state has already</span>
-<span id="cb13-142"><a href="#cb13-142" aria-hidden="true" tabindex="-1"></a>raised its minimum wage (i.e., <span class="in">`year &gt;= G &amp; G != 0`</span>), and 0 otherwise.</span>
-<span id="cb13-143"><a href="#cb13-143" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-146"><a href="#cb13-146" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb13-147"><a href="#cb13-147" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: tbl-twfe</span></span>
-<span id="cb13-148"><a href="#cb13-148" aria-hidden="true" tabindex="-1"></a><span class="co">#| tbl-cap: "Two-way fixed-effects regression. The point estimate suggests minimum-wage increases cut log teen employment by roughly 3.8 percent — but see the discussion below."</span></span>
-<span id="cb13-149"><a href="#cb13-149" aria-hidden="true" tabindex="-1"></a>twfe_res <span class="ot">&lt;-</span> fixest<span class="sc">::</span><span class="fu">feols</span>(lemp <span class="sc">~</span> post <span class="sc">|</span> id <span class="sc">+</span> year,</span>
-<span id="cb13-150"><a href="#cb13-150" aria-hidden="true" tabindex="-1"></a>                          <span class="at">data =</span> data2, <span class="at">cluster =</span> <span class="st">"id"</span>)</span>
-<span id="cb13-151"><a href="#cb13-151" aria-hidden="true" tabindex="-1"></a><span class="fu">ms_pretty</span>(<span class="fu">list</span>(<span class="st">"TWFE (county + year FE)"</span> <span class="ot">=</span> twfe_res),</span>
-<span id="cb13-152"><a href="#cb13-152" aria-hidden="true" tabindex="-1"></a>          <span class="at">coef_map =</span> <span class="fu">c</span>(<span class="st">"post"</span> <span class="ot">=</span> <span class="st">"Post (any cohort)"</span>),</span>
-<span id="cb13-153"><a href="#cb13-153" aria-hidden="true" tabindex="-1"></a>          <span class="at">notes    =</span> <span class="st">"SEs clustered at the county level."</span>)</span>
-<span id="cb13-154"><a href="#cb13-154" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb13-155"><a href="#cb13-155" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-156"><a href="#cb13-156" aria-hidden="true" tabindex="-1"></a>The TWFE coefficient is roughly $-0.038$. Read literally, the policy</span>
-<span id="cb13-157"><a href="#cb13-157" aria-hidden="true" tabindex="-1"></a>reduced teen employment by 3.8 percent. The next section estimates</span>
-<span id="cb13-158"><a href="#cb13-158" aria-hidden="true" tabindex="-1"></a>the same effect with an aggregator that is unbiased under staggered</span>
-<span id="cb13-159"><a href="#cb13-159" aria-hidden="true" tabindex="-1"></a>adoption — and gets a substantially larger magnitude. The gap between</span>
-<span id="cb13-160"><a href="#cb13-160" aria-hidden="true" tabindex="-1"></a>the two is the contamination problem made concrete.</span>
-<span id="cb13-161"><a href="#cb13-161" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-162"><a href="#cb13-162" aria-hidden="true" tabindex="-1"></a><span class="fu">## Group-time ATTs: the Callaway-Sant'Anna approach</span></span>
-<span id="cb13-163"><a href="#cb13-163" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-164"><a href="#cb13-164" aria-hidden="true" tabindex="-1"></a>The fix is to estimate the *primitive* objects directly. For each</span>
-<span id="cb13-165"><a href="#cb13-165" aria-hidden="true" tabindex="-1"></a>cohort $g$ (a year a group of counties was first treated) and each</span>
-<span id="cb13-166"><a href="#cb13-166" aria-hidden="true" tabindex="-1"></a>calendar year $t$, define</span>
-<span id="cb13-167"><a href="#cb13-167" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-168"><a href="#cb13-168" aria-hidden="true" tabindex="-1"></a>$$ATT(g, t) = \mathbb{E}<span class="sc">\!</span>\left<span class="co">[</span><span class="ot">Y_{it}(g) - Y_{it}(\infty) \mid G_i = g\right</span><span class="co">]</span>,$$</span>
-<span id="cb13-169"><a href="#cb13-169" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-170"><a href="#cb13-170" aria-hidden="true" tabindex="-1"></a>the average effect on cohort $g$ in year $t$ relative to its own</span>
-<span id="cb13-171"><a href="#cb13-171" aria-hidden="true" tabindex="-1"></a>never-treated potential outcome $Y_{it}(\infty)$ (equivalent to</span>
-<span id="cb13-172"><a href="#cb13-172" aria-hidden="true" tabindex="-1"></a>$Y_{it}(0)$ used in Part I — Callaway-Sant'Anna write $\infty$ to</span>
-<span id="cb13-173"><a href="#cb13-173" aria-hidden="true" tabindex="-1"></a>emphasise that the unit is *never* treated, not merely *not-yet*</span>
-<span id="cb13-174"><a href="#cb13-174" aria-hidden="true" tabindex="-1"></a>treated).</span>
-<span id="cb13-175"><a href="#cb13-175" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-176"><a href="#cb13-176" aria-hidden="true" tabindex="-1"></a>Identification relies on **parallel trends**: conditional on</span>
-<span id="cb13-177"><a href="#cb13-177" aria-hidden="true" tabindex="-1"></a>$G_i = g$, the never-treated potential outcome</span>
-<span id="cb13-178"><a href="#cb13-178" aria-hidden="true" tabindex="-1"></a>$E<span class="co">[</span><span class="ot">Y_{it}(\infty)</span><span class="co">]</span>$ trends the same way for the treated cohort and</span>
-<span id="cb13-179"><a href="#cb13-179" aria-hidden="true" tabindex="-1"></a>the never-treated pool. Under that assumption, <span class="in">`did::att_gt()`</span></span>
-<span id="cb13-180"><a href="#cb13-180" aria-hidden="true" tabindex="-1"></a>estimates each $ATT(g, t)$ from a clean 2×2 DiD using only cohort</span>
-<span id="cb13-181"><a href="#cb13-181" aria-hidden="true" tabindex="-1"></a>$g$ and an appropriate comparison group (here, the never-treated</span>
-<span id="cb13-182"><a href="#cb13-182" aria-hidden="true" tabindex="-1"></a>$G = 0$), so no contamination from already-treated units sneaks in.</span>
-<span id="cb13-183"><a href="#cb13-183" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-186"><a href="#cb13-186" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb13-187"><a href="#cb13-187" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: tbl-attgt</span></span>
-<span id="cb13-188"><a href="#cb13-188" aria-hidden="true" tabindex="-1"></a><span class="co">#| tbl-cap: "Group-time average treatment effects $ATT(g, t)$ for the minimum-wage panel. Cohorts 2004 and 2006, each year 2003 through 2007. Pre-treatment cells should hover near zero if parallel trends holds; post-treatment cells are the effects we want."</span></span>
-<span id="cb13-189"><a href="#cb13-189" aria-hidden="true" tabindex="-1"></a>attgt <span class="ot">&lt;-</span> did<span class="sc">::</span><span class="fu">att_gt</span>(<span class="at">yname =</span> <span class="st">"lemp"</span>, <span class="at">idname =</span> <span class="st">"id"</span>, <span class="at">gname =</span> <span class="st">"G"</span>,</span>
-<span id="cb13-190"><a href="#cb13-190" aria-hidden="true" tabindex="-1"></a>                     <span class="at">tname =</span> <span class="st">"year"</span>, <span class="at">data =</span> data2,</span>
-<span id="cb13-191"><a href="#cb13-191" aria-hidden="true" tabindex="-1"></a>                     <span class="at">control_group =</span> <span class="st">"nevertreated"</span>,</span>
-<span id="cb13-192"><a href="#cb13-192" aria-hidden="true" tabindex="-1"></a>                     <span class="at">base_period =</span> <span class="st">"universal"</span>)</span>
-<span id="cb13-193"><a href="#cb13-193" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-194"><a href="#cb13-194" aria-hidden="true" tabindex="-1"></a>attgt_df <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
-<span id="cb13-195"><a href="#cb13-195" aria-hidden="true" tabindex="-1"></a>  <span class="at">Cohort       =</span> attgt<span class="sc">$</span>group,</span>
-<span id="cb13-196"><a href="#cb13-196" aria-hidden="true" tabindex="-1"></a>  <span class="at">Year         =</span> attgt<span class="sc">$</span>t,</span>
-<span id="cb13-197"><a href="#cb13-197" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">ATT(g,t)</span><span class="st">`</span>   <span class="ot">=</span> attgt<span class="sc">$</span>att,</span>
-<span id="cb13-198"><a href="#cb13-198" aria-hidden="true" tabindex="-1"></a>  <span class="at">SE           =</span> <span class="fu">as.numeric</span>(attgt<span class="sc">$</span>se)</span>
-<span id="cb13-199"><a href="#cb13-199" aria-hidden="true" tabindex="-1"></a>) <span class="sc">|&gt;</span></span>
-<span id="cb13-200"><a href="#cb13-200" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="st">`</span><span class="at">Treated?</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">ifelse</span>(Year <span class="sc">&gt;=</span> Cohort, <span class="st">"post"</span>, <span class="st">"pre"</span>)) <span class="sc">|&gt;</span></span>
-<span id="cb13-201"><a href="#cb13-201" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(Cohort, Year)</span>
-<span id="cb13-202"><a href="#cb13-202" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-203"><a href="#cb13-203" aria-hidden="true" tabindex="-1"></a><span class="fu">gt_pretty</span>(attgt_df, <span class="at">decimals =</span> <span class="dv">4</span>)</span>
-<span id="cb13-204"><a href="#cb13-204" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb13-205"><a href="#cb13-205" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-206"><a href="#cb13-206" aria-hidden="true" tabindex="-1"></a>Cohort 2006 carries a visible pre-trend: $ATT(2006, 2003) \approx</span>
-<span id="cb13-207"><a href="#cb13-207" aria-hidden="true" tabindex="-1"></a>-0.034$ with SE $\approx 0.013$ (so $t \approx -2.7$). The 2006</span>
-<span id="cb13-208"><a href="#cb13-208" aria-hidden="true" tabindex="-1"></a>counties were already on a downward log-employment path relative to</span>
-<span id="cb13-209"><a href="#cb13-209" aria-hidden="true" tabindex="-1"></a>the never-treated pool three years *before* their state raised the</span>
-<span id="cb13-210"><a href="#cb13-210" aria-hidden="true" tabindex="-1"></a>minimum wage. That pre-treatment violation is roughly the same</span>
-<span id="cb13-211"><a href="#cb13-211" aria-hidden="true" tabindex="-1"></a>magnitude as the on-impact effect we will estimate below — which is</span>
-<span id="cb13-212"><a href="#cb13-212" aria-hidden="true" tabindex="-1"></a>exactly what motivates the formal sensitivity analysis at the end of</span>
-<span id="cb13-213"><a href="#cb13-213" aria-hidden="true" tabindex="-1"></a>the chapter. Naming the pre-trend now keeps the rest of the story</span>
-<span id="cb13-214"><a href="#cb13-214" aria-hidden="true" tabindex="-1"></a>honest.</span>
+<span id="cb13-142"><a href="#cb13-142" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb13-143"><a href="#cb13-143" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: tbl-twfe</span></span>
+<span id="cb13-144"><a href="#cb13-144" aria-hidden="true" tabindex="-1"></a><span class="co">#| tbl-cap: "Two-way fixed-effects regression. The point estimate suggests minimum-wage increases cut log teen employment by roughly 3.8 percent — but see the discussion below."</span></span>
+<span id="cb13-145"><a href="#cb13-145" aria-hidden="true" tabindex="-1"></a><span class="co">#| code-summary: "Code: Estimate the TWFE baseline regression with clustered SEs."</span></span>
+<span id="cb13-146"><a href="#cb13-146" aria-hidden="true" tabindex="-1"></a>twfe_res <span class="ot">&lt;-</span> fixest<span class="sc">::</span><span class="fu">feols</span>(lemp <span class="sc">~</span> post <span class="sc">|</span> id <span class="sc">+</span> year,</span>
+<span id="cb13-147"><a href="#cb13-147" aria-hidden="true" tabindex="-1"></a>                          <span class="at">data =</span> data2, <span class="at">cluster =</span> <span class="st">"id"</span>)</span>
+<span id="cb13-148"><a href="#cb13-148" aria-hidden="true" tabindex="-1"></a><span class="fu">ms_pretty</span>(<span class="fu">list</span>(<span class="st">"TWFE (county + year FE)"</span> <span class="ot">=</span> twfe_res),</span>
+<span id="cb13-149"><a href="#cb13-149" aria-hidden="true" tabindex="-1"></a>          <span class="at">coef_map =</span> <span class="fu">c</span>(<span class="st">"post"</span> <span class="ot">=</span> <span class="st">"Post (any cohort)"</span>),</span>
+<span id="cb13-150"><a href="#cb13-150" aria-hidden="true" tabindex="-1"></a>          <span class="at">notes    =</span> <span class="st">"SEs clustered at the county level."</span>)</span>
+<span id="cb13-151"><a href="#cb13-151" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb13-152"><a href="#cb13-152" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-153"><a href="#cb13-153" aria-hidden="true" tabindex="-1"></a>The TWFE coefficient is roughly $-0.038$. Read literally, the policy</span>
+<span id="cb13-154"><a href="#cb13-154" aria-hidden="true" tabindex="-1"></a>reduced teen employment by 3.8 percent. The next section estimates</span>
+<span id="cb13-155"><a href="#cb13-155" aria-hidden="true" tabindex="-1"></a>the same effect with an aggregator that is unbiased under staggered</span>
+<span id="cb13-156"><a href="#cb13-156" aria-hidden="true" tabindex="-1"></a>adoption — and gets a substantially larger magnitude. The gap between</span>
+<span id="cb13-157"><a href="#cb13-157" aria-hidden="true" tabindex="-1"></a>the two is the contamination problem made concrete.</span>
+<span id="cb13-158"><a href="#cb13-158" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-159"><a href="#cb13-159" aria-hidden="true" tabindex="-1"></a><span class="fu">## Group-time ATTs: the Callaway-Sant'Anna approach</span></span>
+<span id="cb13-160"><a href="#cb13-160" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-161"><a href="#cb13-161" aria-hidden="true" tabindex="-1"></a>The fix is to estimate the *primitive* objects directly. For each</span>
+<span id="cb13-162"><a href="#cb13-162" aria-hidden="true" tabindex="-1"></a>cohort $g$ (a year a group of counties was first treated) and each</span>
+<span id="cb13-163"><a href="#cb13-163" aria-hidden="true" tabindex="-1"></a>calendar year $t$, define</span>
+<span id="cb13-164"><a href="#cb13-164" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-165"><a href="#cb13-165" aria-hidden="true" tabindex="-1"></a>$$ATT(g, t) = \mathbb{E}<span class="sc">\!</span>\left<span class="co">[</span><span class="ot">Y_{it}(g) - Y_{it}(\infty) \mid G_i = g\right</span><span class="co">]</span>,$$</span>
+<span id="cb13-166"><a href="#cb13-166" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-167"><a href="#cb13-167" aria-hidden="true" tabindex="-1"></a>the average effect on cohort $g$ in year $t$ relative to its own</span>
+<span id="cb13-168"><a href="#cb13-168" aria-hidden="true" tabindex="-1"></a>never-treated potential outcome $Y_{it}(\infty)$ (equivalent to</span>
+<span id="cb13-169"><a href="#cb13-169" aria-hidden="true" tabindex="-1"></a>$Y_{it}(0)$ used in Part I — Callaway-Sant'Anna write $\infty$ to</span>
+<span id="cb13-170"><a href="#cb13-170" aria-hidden="true" tabindex="-1"></a>emphasise that the unit is *never* treated, not merely *not-yet*</span>
+<span id="cb13-171"><a href="#cb13-171" aria-hidden="true" tabindex="-1"></a>treated).</span>
+<span id="cb13-172"><a href="#cb13-172" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-173"><a href="#cb13-173" aria-hidden="true" tabindex="-1"></a>Identification relies on **parallel trends**: conditional on</span>
+<span id="cb13-174"><a href="#cb13-174" aria-hidden="true" tabindex="-1"></a>$G_i = g$, the never-treated potential outcome</span>
+<span id="cb13-175"><a href="#cb13-175" aria-hidden="true" tabindex="-1"></a>$E<span class="co">[</span><span class="ot">Y_{it}(\infty)</span><span class="co">]</span>$ trends the same way for the treated cohort and</span>
+<span id="cb13-176"><a href="#cb13-176" aria-hidden="true" tabindex="-1"></a>the never-treated pool. Under that assumption, <span class="in">`did::att_gt()`</span></span>
+<span id="cb13-177"><a href="#cb13-177" aria-hidden="true" tabindex="-1"></a>estimates each $ATT(g, t)$ from a clean 2×2 DiD using only cohort</span>
+<span id="cb13-178"><a href="#cb13-178" aria-hidden="true" tabindex="-1"></a>$g$ and an appropriate comparison group (here, the never-treated</span>
+<span id="cb13-179"><a href="#cb13-179" aria-hidden="true" tabindex="-1"></a>$G = 0$), so no contamination from already-treated units sneaks in.</span>
+<span id="cb13-180"><a href="#cb13-180" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-183"><a href="#cb13-183" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb13-184"><a href="#cb13-184" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: tbl-attgt</span></span>
+<span id="cb13-185"><a href="#cb13-185" aria-hidden="true" tabindex="-1"></a><span class="co">#| tbl-cap: "Group-time average treatment effects $ATT(g, t)$ for the minimum-wage panel. Cohorts 2004 and 2006, each year 2003 through 2007. Pre-treatment cells should hover near zero if parallel trends holds; post-treatment cells are the effects we want."</span></span>
+<span id="cb13-186"><a href="#cb13-186" aria-hidden="true" tabindex="-1"></a><span class="co">#| code-summary: "Code: Estimate group-time ATTs with the did package."</span></span>
+<span id="cb13-187"><a href="#cb13-187" aria-hidden="true" tabindex="-1"></a>attgt <span class="ot">&lt;-</span> did<span class="sc">::</span><span class="fu">att_gt</span>(<span class="at">yname =</span> <span class="st">"lemp"</span>, <span class="at">idname =</span> <span class="st">"id"</span>, <span class="at">gname =</span> <span class="st">"G"</span>,</span>
+<span id="cb13-188"><a href="#cb13-188" aria-hidden="true" tabindex="-1"></a>                     <span class="at">tname =</span> <span class="st">"year"</span>, <span class="at">data =</span> data2,</span>
+<span id="cb13-189"><a href="#cb13-189" aria-hidden="true" tabindex="-1"></a>                     <span class="at">control_group =</span> <span class="st">"nevertreated"</span>,</span>
+<span id="cb13-190"><a href="#cb13-190" aria-hidden="true" tabindex="-1"></a>                     <span class="at">base_period =</span> <span class="st">"universal"</span>)</span>
+<span id="cb13-191"><a href="#cb13-191" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-192"><a href="#cb13-192" aria-hidden="true" tabindex="-1"></a>attgt_df <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb13-193"><a href="#cb13-193" aria-hidden="true" tabindex="-1"></a>  <span class="at">Cohort       =</span> attgt<span class="sc">$</span>group,</span>
+<span id="cb13-194"><a href="#cb13-194" aria-hidden="true" tabindex="-1"></a>  <span class="at">Year         =</span> attgt<span class="sc">$</span>t,</span>
+<span id="cb13-195"><a href="#cb13-195" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">ATT(g,t)</span><span class="st">`</span>   <span class="ot">=</span> attgt<span class="sc">$</span>att,</span>
+<span id="cb13-196"><a href="#cb13-196" aria-hidden="true" tabindex="-1"></a>  <span class="at">SE           =</span> <span class="fu">as.numeric</span>(attgt<span class="sc">$</span>se)</span>
+<span id="cb13-197"><a href="#cb13-197" aria-hidden="true" tabindex="-1"></a>) <span class="sc">|&gt;</span></span>
+<span id="cb13-198"><a href="#cb13-198" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="st">`</span><span class="at">Treated?</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">ifelse</span>(Year <span class="sc">&gt;=</span> Cohort, <span class="st">"post"</span>, <span class="st">"pre"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb13-199"><a href="#cb13-199" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(Cohort, Year)</span>
+<span id="cb13-200"><a href="#cb13-200" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-201"><a href="#cb13-201" aria-hidden="true" tabindex="-1"></a><span class="fu">gt_pretty</span>(attgt_df, <span class="at">decimals =</span> <span class="dv">4</span>)</span>
+<span id="cb13-202"><a href="#cb13-202" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb13-203"><a href="#cb13-203" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-204"><a href="#cb13-204" aria-hidden="true" tabindex="-1"></a>Cohort 2006 carries a visible pre-trend: $ATT(2006, 2003) \approx</span>
+<span id="cb13-205"><a href="#cb13-205" aria-hidden="true" tabindex="-1"></a>-0.034$ with SE $\approx 0.013$ (so $t \approx -2.7$). The 2006</span>
+<span id="cb13-206"><a href="#cb13-206" aria-hidden="true" tabindex="-1"></a>counties were already on a downward log-employment path relative to</span>
+<span id="cb13-207"><a href="#cb13-207" aria-hidden="true" tabindex="-1"></a>the never-treated pool three years *before* their state raised the</span>
+<span id="cb13-208"><a href="#cb13-208" aria-hidden="true" tabindex="-1"></a>minimum wage. That pre-treatment violation is roughly the same</span>
+<span id="cb13-209"><a href="#cb13-209" aria-hidden="true" tabindex="-1"></a>magnitude as the on-impact effect we will estimate below — which is</span>
+<span id="cb13-210"><a href="#cb13-210" aria-hidden="true" tabindex="-1"></a>exactly what motivates the formal sensitivity analysis at the end of</span>
+<span id="cb13-211"><a href="#cb13-211" aria-hidden="true" tabindex="-1"></a>the chapter. Naming the pre-trend now keeps the rest of the story</span>
+<span id="cb13-212"><a href="#cb13-212" aria-hidden="true" tabindex="-1"></a>honest.</span>
+<span id="cb13-213"><a href="#cb13-213" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-214"><a href="#cb13-214" aria-hidden="true" tabindex="-1"></a><span class="fu">### Aggregation: overall ATT and event study</span></span>
 <span id="cb13-215"><a href="#cb13-215" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-216"><a href="#cb13-216" aria-hidden="true" tabindex="-1"></a><span class="fu">### Aggregation: overall ATT and event study</span></span>
-<span id="cb13-217"><a href="#cb13-217" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-218"><a href="#cb13-218" aria-hidden="true" tabindex="-1"></a>The 8 cells in @tbl-attgt are the primitives. They are not the</span>
-<span id="cb13-219"><a href="#cb13-219" aria-hidden="true" tabindex="-1"></a>headline. Aggregating them produces summaries that are valid in the</span>
-<span id="cb13-220"><a href="#cb13-220" aria-hidden="true" tabindex="-1"></a>presence of staggered adoption.</span>
-<span id="cb13-221"><a href="#cb13-221" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-222"><a href="#cb13-222" aria-hidden="true" tabindex="-1"></a>The **overall ATT** first averages each cohort's post-treatment</span>
-<span id="cb13-223"><a href="#cb13-223" aria-hidden="true" tabindex="-1"></a>$ATT(g, t)$ values into a single cohort-specific summary, then</span>
-<span id="cb13-224"><a href="#cb13-224" aria-hidden="true" tabindex="-1"></a>averages those summaries across cohorts weighted by cohort size. It</span>
-<span id="cb13-225"><a href="#cb13-225" aria-hidden="true" tabindex="-1"></a>answers: *across treated cohorts, what is the average post-treatment</span>
-<span id="cb13-226"><a href="#cb13-226" aria-hidden="true" tabindex="-1"></a>effect on a typical treated county?* This is the</span>
-<span id="cb13-227"><a href="#cb13-227" aria-hidden="true" tabindex="-1"></a>@callaway2021difference recommended summary; it differs from a plain</span>
-<span id="cb13-228"><a href="#cb13-228" aria-hidden="true" tabindex="-1"></a>mean of post-treatment cells (<span class="in">`type = "simple"`</span>) when cohorts have</span>
-<span id="cb13-229"><a href="#cb13-229" aria-hidden="true" tabindex="-1"></a>different post-treatment horizons — as they do here (cohort 2004 has</span>
-<span id="cb13-230"><a href="#cb13-230" aria-hidden="true" tabindex="-1"></a>4 post cells, cohort 2006 has 2).</span>
-<span id="cb13-231"><a href="#cb13-231" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-234"><a href="#cb13-234" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb13-235"><a href="#cb13-235" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: tbl-cs-overall</span></span>
-<span id="cb13-236"><a href="#cb13-236" aria-hidden="true" tabindex="-1"></a><span class="co">#| tbl-cap: "Callaway-Sant'Anna overall ATT (sample-weighted aggregation across cohorts). This is the staggered-DiD analogue of chapter 3's single DiD coefficient."</span></span>
-<span id="cb13-237"><a href="#cb13-237" aria-hidden="true" tabindex="-1"></a>attO <span class="ot">&lt;-</span> did<span class="sc">::</span><span class="fu">aggte</span>(attgt, <span class="at">type =</span> <span class="st">"group"</span>)</span>
-<span id="cb13-238"><a href="#cb13-238" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-239"><a href="#cb13-239" aria-hidden="true" tabindex="-1"></a><span class="fu">tibble</span>(</span>
-<span id="cb13-240"><a href="#cb13-240" aria-hidden="true" tabindex="-1"></a>  <span class="at">Estimator             =</span> <span class="st">"Callaway-Sant'Anna overall ATT"</span>,</span>
-<span id="cb13-241"><a href="#cb13-241" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">Estimate</span><span class="st">`</span>            <span class="ot">=</span> attO<span class="sc">$</span>overall.att,</span>
-<span id="cb13-242"><a href="#cb13-242" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">SE</span><span class="st">`</span>                  <span class="ot">=</span> attO<span class="sc">$</span>overall.se,</span>
-<span id="cb13-243"><a href="#cb13-243" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">CI lower</span><span class="st">`</span>            <span class="ot">=</span> attO<span class="sc">$</span>overall.att <span class="sc">-</span> <span class="fl">1.96</span> <span class="sc">*</span> attO<span class="sc">$</span>overall.se,</span>
-<span id="cb13-244"><a href="#cb13-244" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">CI upper</span><span class="st">`</span>            <span class="ot">=</span> attO<span class="sc">$</span>overall.att <span class="sc">+</span> <span class="fl">1.96</span> <span class="sc">*</span> attO<span class="sc">$</span>overall.se</span>
-<span id="cb13-245"><a href="#cb13-245" aria-hidden="true" tabindex="-1"></a>) <span class="sc">|&gt;</span> <span class="fu">gt_pretty</span>(<span class="at">decimals =</span> <span class="dv">4</span>)</span>
-<span id="cb13-246"><a href="#cb13-246" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb13-247"><a href="#cb13-247" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-248"><a href="#cb13-248" aria-hidden="true" tabindex="-1"></a>The overall ATT is roughly $-0.057$ — almost 50 percent larger in</span>
-<span id="cb13-249"><a href="#cb13-249" aria-hidden="true" tabindex="-1"></a>magnitude than the TWFE coefficient. The two estimands answer</span>
-<span id="cb13-250"><a href="#cb13-250" aria-hidden="true" tabindex="-1"></a>different questions, but the size of the gap is exactly the</span>
-<span id="cb13-251"><a href="#cb13-251" aria-hidden="true" tabindex="-1"></a>contamination problem in operation.</span>
-<span id="cb13-252"><a href="#cb13-252" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-253"><a href="#cb13-253" aria-hidden="true" tabindex="-1"></a>The **event-study aggregation** averages $ATT(g, t)$ within each</span>
-<span id="cb13-254"><a href="#cb13-254" aria-hidden="true" tabindex="-1"></a>event time $e = t - g$, giving a curve of dynamic effects since</span>
-<span id="cb13-255"><a href="#cb13-255" aria-hidden="true" tabindex="-1"></a>treatment.</span>
-<span id="cb13-256"><a href="#cb13-256" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-259"><a href="#cb13-259" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb13-260"><a href="#cb13-260" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: tbl-cs-event</span></span>
-<span id="cb13-261"><a href="#cb13-261" aria-hidden="true" tabindex="-1"></a><span class="co">#| tbl-cap: "Callaway-Sant'Anna event-study aggregation. Event time -1 is the omitted reference period under the universal base."</span></span>
+<span id="cb13-216"><a href="#cb13-216" aria-hidden="true" tabindex="-1"></a>The 8 cells in @tbl-attgt are the primitives. They are not the</span>
+<span id="cb13-217"><a href="#cb13-217" aria-hidden="true" tabindex="-1"></a>headline. Aggregating them produces summaries that are valid in the</span>
+<span id="cb13-218"><a href="#cb13-218" aria-hidden="true" tabindex="-1"></a>presence of staggered adoption.</span>
+<span id="cb13-219"><a href="#cb13-219" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-220"><a href="#cb13-220" aria-hidden="true" tabindex="-1"></a>The **overall ATT** first averages each cohort's post-treatment</span>
+<span id="cb13-221"><a href="#cb13-221" aria-hidden="true" tabindex="-1"></a>$ATT(g, t)$ values into a single cohort-specific summary, then</span>
+<span id="cb13-222"><a href="#cb13-222" aria-hidden="true" tabindex="-1"></a>averages those summaries across cohorts weighted by cohort size. It</span>
+<span id="cb13-223"><a href="#cb13-223" aria-hidden="true" tabindex="-1"></a>answers: *across treated cohorts, what is the average post-treatment</span>
+<span id="cb13-224"><a href="#cb13-224" aria-hidden="true" tabindex="-1"></a>effect on a typical treated county?* This is the</span>
+<span id="cb13-225"><a href="#cb13-225" aria-hidden="true" tabindex="-1"></a>@callaway2021difference recommended summary; it differs from a plain</span>
+<span id="cb13-226"><a href="#cb13-226" aria-hidden="true" tabindex="-1"></a>mean of post-treatment cells (<span class="in">`type = "simple"`</span>) when cohorts have</span>
+<span id="cb13-227"><a href="#cb13-227" aria-hidden="true" tabindex="-1"></a>different post-treatment horizons — as they do here (cohort 2004 has</span>
+<span id="cb13-228"><a href="#cb13-228" aria-hidden="true" tabindex="-1"></a>4 post cells, cohort 2006 has 2).</span>
+<span id="cb13-229"><a href="#cb13-229" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-232"><a href="#cb13-232" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb13-233"><a href="#cb13-233" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: tbl-cs-overall</span></span>
+<span id="cb13-234"><a href="#cb13-234" aria-hidden="true" tabindex="-1"></a><span class="co">#| tbl-cap: "Callaway-Sant'Anna overall ATT (sample-weighted aggregation across cohorts). This is the staggered-DiD analogue of chapter 3's single DiD coefficient."</span></span>
+<span id="cb13-235"><a href="#cb13-235" aria-hidden="true" tabindex="-1"></a><span class="co">#| code-summary: "Code: Aggregate group-time ATTs into the overall ATT summary."</span></span>
+<span id="cb13-236"><a href="#cb13-236" aria-hidden="true" tabindex="-1"></a>attO <span class="ot">&lt;-</span> did<span class="sc">::</span><span class="fu">aggte</span>(attgt, <span class="at">type =</span> <span class="st">"group"</span>)</span>
+<span id="cb13-237"><a href="#cb13-237" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-238"><a href="#cb13-238" aria-hidden="true" tabindex="-1"></a><span class="fu">tibble</span>(</span>
+<span id="cb13-239"><a href="#cb13-239" aria-hidden="true" tabindex="-1"></a>  <span class="at">Estimator             =</span> <span class="st">"Callaway-Sant'Anna overall ATT"</span>,</span>
+<span id="cb13-240"><a href="#cb13-240" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">Estimate</span><span class="st">`</span>            <span class="ot">=</span> attO<span class="sc">$</span>overall.att,</span>
+<span id="cb13-241"><a href="#cb13-241" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">SE</span><span class="st">`</span>                  <span class="ot">=</span> attO<span class="sc">$</span>overall.se,</span>
+<span id="cb13-242"><a href="#cb13-242" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">CI lower</span><span class="st">`</span>            <span class="ot">=</span> attO<span class="sc">$</span>overall.att <span class="sc">-</span> <span class="fl">1.96</span> <span class="sc">*</span> attO<span class="sc">$</span>overall.se,</span>
+<span id="cb13-243"><a href="#cb13-243" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">CI upper</span><span class="st">`</span>            <span class="ot">=</span> attO<span class="sc">$</span>overall.att <span class="sc">+</span> <span class="fl">1.96</span> <span class="sc">*</span> attO<span class="sc">$</span>overall.se</span>
+<span id="cb13-244"><a href="#cb13-244" aria-hidden="true" tabindex="-1"></a>) <span class="sc">|&gt;</span> <span class="fu">gt_pretty</span>(<span class="at">decimals =</span> <span class="dv">4</span>)</span>
+<span id="cb13-245"><a href="#cb13-245" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb13-246"><a href="#cb13-246" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-247"><a href="#cb13-247" aria-hidden="true" tabindex="-1"></a>The overall ATT is roughly $-0.057$ — almost 50 percent larger in</span>
+<span id="cb13-248"><a href="#cb13-248" aria-hidden="true" tabindex="-1"></a>magnitude than the TWFE coefficient. The two estimands answer</span>
+<span id="cb13-249"><a href="#cb13-249" aria-hidden="true" tabindex="-1"></a>different questions, but the size of the gap is exactly the</span>
+<span id="cb13-250"><a href="#cb13-250" aria-hidden="true" tabindex="-1"></a>contamination problem in operation.</span>
+<span id="cb13-251"><a href="#cb13-251" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-252"><a href="#cb13-252" aria-hidden="true" tabindex="-1"></a>The **event-study aggregation** averages $ATT(g, t)$ within each</span>
+<span id="cb13-253"><a href="#cb13-253" aria-hidden="true" tabindex="-1"></a>event time $e = t - g$, giving a curve of dynamic effects since</span>
+<span id="cb13-254"><a href="#cb13-254" aria-hidden="true" tabindex="-1"></a>treatment.</span>
+<span id="cb13-255"><a href="#cb13-255" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-258"><a href="#cb13-258" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb13-259"><a href="#cb13-259" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: tbl-cs-event</span></span>
+<span id="cb13-260"><a href="#cb13-260" aria-hidden="true" tabindex="-1"></a><span class="co">#| tbl-cap: "Callaway-Sant'Anna event-study aggregation. Event time -1 is the omitted reference period under the universal base."</span></span>
+<span id="cb13-261"><a href="#cb13-261" aria-hidden="true" tabindex="-1"></a><span class="co">#| code-summary: "Code: Aggregate ATTs into the dynamic event-study table."</span></span>
 <span id="cb13-262"><a href="#cb13-262" aria-hidden="true" tabindex="-1"></a>attes <span class="ot">&lt;-</span> did<span class="sc">::</span><span class="fu">aggte</span>(attgt, <span class="at">type =</span> <span class="st">"dynamic"</span>)</span>
 <span id="cb13-263"><a href="#cb13-263" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb13-264"><a href="#cb13-264" aria-hidden="true" tabindex="-1"></a><span class="fu">tibble</span>(</span>
@@ -5149,256 +5126,250 @@ Sun, L., &amp; Abraham, S. (2021). Estimating dynamic treatment effects in event
 <span id="cb13-277"><a href="#cb13-277" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Callaway-Sant'Anna event study. The on-impact effect is small; effects accumulate to roughly -0.13 log points by event-time +3 (three years post-treatment)."</span></span>
 <span id="cb13-278"><a href="#cb13-278" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-width: 8</span></span>
 <span id="cb13-279"><a href="#cb13-279" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-height: 4.5</span></span>
-<span id="cb13-280"><a href="#cb13-280" aria-hidden="true" tabindex="-1"></a>cs_es_df <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
-<span id="cb13-281"><a href="#cb13-281" aria-hidden="true" tabindex="-1"></a>  <span class="at">egt   =</span> attes<span class="sc">$</span>egt,</span>
-<span id="cb13-282"><a href="#cb13-282" aria-hidden="true" tabindex="-1"></a>  <span class="at">est   =</span> attes<span class="sc">$</span>att.egt,</span>
-<span id="cb13-283"><a href="#cb13-283" aria-hidden="true" tabindex="-1"></a>  <span class="at">se    =</span> attes<span class="sc">$</span>se.egt,</span>
-<span id="cb13-284"><a href="#cb13-284" aria-hidden="true" tabindex="-1"></a>  <span class="at">phase =</span> <span class="fu">ifelse</span>(attes<span class="sc">$</span>egt <span class="sc">&lt;</span> <span class="dv">0</span>, <span class="st">"Pre"</span>, <span class="st">"Post"</span>)</span>
-<span id="cb13-285"><a href="#cb13-285" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb13-286"><a href="#cb13-286" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-287"><a href="#cb13-287" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(cs_es_df, <span class="fu">aes</span>(<span class="at">x =</span> egt, <span class="at">y =</span> est, <span class="at">color =</span> phase)) <span class="sc">+</span></span>
-<span id="cb13-288"><a href="#cb13-288" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>, <span class="at">color =</span> <span class="st">"#94a3b8"</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>) <span class="sc">+</span></span>
-<span id="cb13-289"><a href="#cb13-289" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="sc">-</span><span class="fl">0.5</span>, <span class="at">color =</span> <span class="st">"#94a3b8"</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>) <span class="sc">+</span></span>
-<span id="cb13-290"><a href="#cb13-290" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="fl">2.8</span>) <span class="sc">+</span></span>
-<span id="cb13-291"><a href="#cb13-291" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_errorbar</span>(<span class="fu">aes</span>(<span class="at">ymin =</span> est <span class="sc">-</span> <span class="fl">1.96</span> <span class="sc">*</span> se, <span class="at">ymax =</span> est <span class="sc">+</span> <span class="fl">1.96</span> <span class="sc">*</span> se),</span>
-<span id="cb13-292"><a href="#cb13-292" aria-hidden="true" tabindex="-1"></a>                <span class="at">width =</span> <span class="fl">0.15</span>) <span class="sc">+</span></span>
-<span id="cb13-293"><a href="#cb13-293" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"Pre"</span>  <span class="ot">=</span> <span class="st">"#e2e8f0"</span>,</span>
-<span id="cb13-294"><a href="#cb13-294" aria-hidden="true" tabindex="-1"></a>                                <span class="st">"Post"</span> <span class="ot">=</span> <span class="st">"#22d3ee"</span>)) <span class="sc">+</span></span>
-<span id="cb13-295"><a href="#cb13-295" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Event time (years from first minimum-wage increase)"</span>,</span>
-<span id="cb13-296"><a href="#cb13-296" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Effect on log teen employment"</span>, <span class="at">color =</span> <span class="cn">NULL</span>)</span>
-<span id="cb13-297"><a href="#cb13-297" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb13-298"><a href="#cb13-298" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-299"><a href="#cb13-299" aria-hidden="true" tabindex="-1"></a><span class="fu">## Conditional parallel trends</span></span>
-<span id="cb13-300"><a href="#cb13-300" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-301"><a href="#cb13-301" aria-hidden="true" tabindex="-1"></a>Plain DiD assumes parallel trends *unconditionally*. Conditional DiD</span>
-<span id="cb13-302"><a href="#cb13-302" aria-hidden="true" tabindex="-1"></a>allows trends to be parallel only after adjusting for observed</span>
-<span id="cb13-303"><a href="#cb13-303" aria-hidden="true" tabindex="-1"></a>covariates that shape the trajectory. In this dataset, log county</span>
-<span id="cb13-304"><a href="#cb13-304" aria-hidden="true" tabindex="-1"></a>population and log average county pay are obvious candidates: counties</span>
-<span id="cb13-305"><a href="#cb13-305" aria-hidden="true" tabindex="-1"></a>with bigger populations or higher-paying jobs may move on different</span>
-<span id="cb13-306"><a href="#cb13-306" aria-hidden="true" tabindex="-1"></a>underlying trajectories whether or not they raise the minimum wage.</span>
-<span id="cb13-307"><a href="#cb13-307" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-308"><a href="#cb13-308" aria-hidden="true" tabindex="-1"></a><span class="in">`did::att_gt()`</span> accepts <span class="in">`xformla = ~lpop + lavg_pay`</span> plus a choice of</span>
-<span id="cb13-309"><a href="#cb13-309" aria-hidden="true" tabindex="-1"></a>estimator: **regression adjustment** (impute the counterfactual mean</span>
-<span id="cb13-310"><a href="#cb13-310" aria-hidden="true" tabindex="-1"></a>from the never-treated), **inverse probability weighting** (reweight</span>
-<span id="cb13-311"><a href="#cb13-311" aria-hidden="true" tabindex="-1"></a>never-treated counties to look like treated ones), or **doubly</span>
-<span id="cb13-312"><a href="#cb13-312" aria-hidden="true" tabindex="-1"></a>robust** (the @callaway2021difference default, which is consistent</span>
-<span id="cb13-313"><a href="#cb13-313" aria-hidden="true" tabindex="-1"></a>if either the outcome model *or* the propensity score is correctly</span>
-<span id="cb13-314"><a href="#cb13-314" aria-hidden="true" tabindex="-1"></a>specified).</span>
-<span id="cb13-315"><a href="#cb13-315" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-318"><a href="#cb13-318" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb13-319"><a href="#cb13-319" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: tbl-conditional</span></span>
-<span id="cb13-320"><a href="#cb13-320" aria-hidden="true" tabindex="-1"></a><span class="co">#| tbl-cap: "Overall ATT under four identification assumptions: unconditional parallel trends, regression adjustment, inverse probability weighting, and doubly robust. The four point estimates land within roughly one SE of each other, which is reassuring."</span></span>
-<span id="cb13-321"><a href="#cb13-321" aria-hidden="true" tabindex="-1"></a><span class="co">#| message: false</span></span>
-<span id="cb13-322"><a href="#cb13-322" aria-hidden="true" tabindex="-1"></a><span class="co">#| warning: false</span></span>
-<span id="cb13-323"><a href="#cb13-323" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-324"><a href="#cb13-324" aria-hidden="true" tabindex="-1"></a>cs_reg <span class="ot">&lt;-</span> did<span class="sc">::</span><span class="fu">att_gt</span>(<span class="at">yname=</span><span class="st">"lemp"</span>, <span class="at">tname=</span><span class="st">"year"</span>, <span class="at">idname=</span><span class="st">"id"</span>, <span class="at">gname=</span><span class="st">"G"</span>,</span>
-<span id="cb13-325"><a href="#cb13-325" aria-hidden="true" tabindex="-1"></a>                      <span class="at">xformla =</span> <span class="sc">~</span>lpop <span class="sc">+</span> lavg_pay,</span>
-<span id="cb13-326"><a href="#cb13-326" aria-hidden="true" tabindex="-1"></a>                      <span class="at">control_group =</span> <span class="st">"nevertreated"</span>,</span>
-<span id="cb13-327"><a href="#cb13-327" aria-hidden="true" tabindex="-1"></a>                      <span class="at">base_period =</span> <span class="st">"universal"</span>,</span>
-<span id="cb13-328"><a href="#cb13-328" aria-hidden="true" tabindex="-1"></a>                      <span class="at">est_method =</span> <span class="st">"reg"</span>, <span class="at">data =</span> data2)</span>
-<span id="cb13-329"><a href="#cb13-329" aria-hidden="true" tabindex="-1"></a>attO_reg <span class="ot">&lt;-</span> did<span class="sc">::</span><span class="fu">aggte</span>(cs_reg, <span class="at">type =</span> <span class="st">"group"</span>)</span>
-<span id="cb13-330"><a href="#cb13-330" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-331"><a href="#cb13-331" aria-hidden="true" tabindex="-1"></a>cs_ipw <span class="ot">&lt;-</span> did<span class="sc">::</span><span class="fu">att_gt</span>(<span class="at">yname=</span><span class="st">"lemp"</span>, <span class="at">tname=</span><span class="st">"year"</span>, <span class="at">idname=</span><span class="st">"id"</span>, <span class="at">gname=</span><span class="st">"G"</span>,</span>
-<span id="cb13-332"><a href="#cb13-332" aria-hidden="true" tabindex="-1"></a>                      <span class="at">xformla =</span> <span class="sc">~</span>lpop <span class="sc">+</span> lavg_pay,</span>
-<span id="cb13-333"><a href="#cb13-333" aria-hidden="true" tabindex="-1"></a>                      <span class="at">control_group =</span> <span class="st">"nevertreated"</span>,</span>
-<span id="cb13-334"><a href="#cb13-334" aria-hidden="true" tabindex="-1"></a>                      <span class="at">base_period =</span> <span class="st">"universal"</span>,</span>
-<span id="cb13-335"><a href="#cb13-335" aria-hidden="true" tabindex="-1"></a>                      <span class="at">est_method =</span> <span class="st">"ipw"</span>, <span class="at">data =</span> data2)</span>
-<span id="cb13-336"><a href="#cb13-336" aria-hidden="true" tabindex="-1"></a>attO_ipw <span class="ot">&lt;-</span> did<span class="sc">::</span><span class="fu">aggte</span>(cs_ipw, <span class="at">type =</span> <span class="st">"group"</span>)</span>
-<span id="cb13-337"><a href="#cb13-337" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-338"><a href="#cb13-338" aria-hidden="true" tabindex="-1"></a>cs_dr  <span class="ot">&lt;-</span> did<span class="sc">::</span><span class="fu">att_gt</span>(<span class="at">yname=</span><span class="st">"lemp"</span>, <span class="at">tname=</span><span class="st">"year"</span>, <span class="at">idname=</span><span class="st">"id"</span>, <span class="at">gname=</span><span class="st">"G"</span>,</span>
-<span id="cb13-339"><a href="#cb13-339" aria-hidden="true" tabindex="-1"></a>                      <span class="at">xformla =</span> <span class="sc">~</span>lpop <span class="sc">+</span> lavg_pay,</span>
-<span id="cb13-340"><a href="#cb13-340" aria-hidden="true" tabindex="-1"></a>                      <span class="at">control_group =</span> <span class="st">"nevertreated"</span>,</span>
-<span id="cb13-341"><a href="#cb13-341" aria-hidden="true" tabindex="-1"></a>                      <span class="at">base_period =</span> <span class="st">"universal"</span>,</span>
-<span id="cb13-342"><a href="#cb13-342" aria-hidden="true" tabindex="-1"></a>                      <span class="at">est_method =</span> <span class="st">"dr"</span>, <span class="at">data =</span> data2)</span>
-<span id="cb13-343"><a href="#cb13-343" aria-hidden="true" tabindex="-1"></a>attO_dr  <span class="ot">&lt;-</span> did<span class="sc">::</span><span class="fu">aggte</span>(cs_dr, <span class="at">type =</span> <span class="st">"group"</span>)</span>
-<span id="cb13-344"><a href="#cb13-344" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-345"><a href="#cb13-345" aria-hidden="true" tabindex="-1"></a><span class="fu">tibble</span>(</span>
-<span id="cb13-346"><a href="#cb13-346" aria-hidden="true" tabindex="-1"></a>  <span class="at">Identification =</span> <span class="fu">c</span>(<span class="st">"Unconditional parallel trends"</span>,</span>
-<span id="cb13-347"><a href="#cb13-347" aria-hidden="true" tabindex="-1"></a>                     <span class="st">"Conditional · regression adjustment"</span>,</span>
-<span id="cb13-348"><a href="#cb13-348" aria-hidden="true" tabindex="-1"></a>                     <span class="st">"Conditional · IPW"</span>,</span>
-<span id="cb13-349"><a href="#cb13-349" aria-hidden="true" tabindex="-1"></a>                     <span class="st">"Conditional · doubly robust"</span>),</span>
-<span id="cb13-350"><a href="#cb13-350" aria-hidden="true" tabindex="-1"></a>  <span class="at">Estimate =</span> <span class="fu">c</span>(attO<span class="sc">$</span>overall.att, attO_reg<span class="sc">$</span>overall.att,</span>
-<span id="cb13-351"><a href="#cb13-351" aria-hidden="true" tabindex="-1"></a>               attO_ipw<span class="sc">$</span>overall.att, attO_dr<span class="sc">$</span>overall.att),</span>
-<span id="cb13-352"><a href="#cb13-352" aria-hidden="true" tabindex="-1"></a>  <span class="at">SE       =</span> <span class="fu">c</span>(attO<span class="sc">$</span>overall.se,  attO_reg<span class="sc">$</span>overall.se,</span>
-<span id="cb13-353"><a href="#cb13-353" aria-hidden="true" tabindex="-1"></a>               attO_ipw<span class="sc">$</span>overall.se,  attO_dr<span class="sc">$</span>overall.se)</span>
-<span id="cb13-354"><a href="#cb13-354" aria-hidden="true" tabindex="-1"></a>) <span class="sc">|&gt;</span> <span class="fu">gt_pretty</span>(<span class="at">decimals =</span> <span class="dv">4</span>)</span>
-<span id="cb13-355"><a href="#cb13-355" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb13-356"><a href="#cb13-356" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-357"><a href="#cb13-357" aria-hidden="true" tabindex="-1"></a>The doubly-robust estimate is the most reliable in practice — it</span>
-<span id="cb13-358"><a href="#cb13-358" aria-hidden="true" tabindex="-1"></a>recovers a correct ATT if either the trend model or the selection</span>
-<span id="cb13-359"><a href="#cb13-359" aria-hidden="true" tabindex="-1"></a>model is right, where the other two require their respective model</span>
-<span id="cb13-360"><a href="#cb13-360" aria-hidden="true" tabindex="-1"></a>to be correctly specified.</span>
-<span id="cb13-361"><a href="#cb13-361" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-362"><a href="#cb13-362" aria-hidden="true" tabindex="-1"></a><span class="fu">## Sensitivity to parallel-trends violations</span></span>
+<span id="cb13-280"><a href="#cb13-280" aria-hidden="true" tabindex="-1"></a><span class="co">#| code-summary: "Code: Plot the event-study estimates with 95 percent CIs."</span></span>
+<span id="cb13-281"><a href="#cb13-281" aria-hidden="true" tabindex="-1"></a>cs_es_df <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb13-282"><a href="#cb13-282" aria-hidden="true" tabindex="-1"></a>  <span class="at">egt   =</span> attes<span class="sc">$</span>egt,</span>
+<span id="cb13-283"><a href="#cb13-283" aria-hidden="true" tabindex="-1"></a>  <span class="at">est   =</span> attes<span class="sc">$</span>att.egt,</span>
+<span id="cb13-284"><a href="#cb13-284" aria-hidden="true" tabindex="-1"></a>  <span class="at">se    =</span> attes<span class="sc">$</span>se.egt,</span>
+<span id="cb13-285"><a href="#cb13-285" aria-hidden="true" tabindex="-1"></a>  <span class="at">phase =</span> <span class="fu">ifelse</span>(attes<span class="sc">$</span>egt <span class="sc">&lt;</span> <span class="dv">0</span>, <span class="st">"Pre"</span>, <span class="st">"Post"</span>)</span>
+<span id="cb13-286"><a href="#cb13-286" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb13-287"><a href="#cb13-287" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-288"><a href="#cb13-288" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(cs_es_df, <span class="fu">aes</span>(<span class="at">x =</span> egt, <span class="at">y =</span> est, <span class="at">color =</span> phase)) <span class="sc">+</span></span>
+<span id="cb13-289"><a href="#cb13-289" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>, <span class="at">color =</span> <span class="st">"#94a3b8"</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>) <span class="sc">+</span></span>
+<span id="cb13-290"><a href="#cb13-290" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="sc">-</span><span class="fl">0.5</span>, <span class="at">color =</span> <span class="st">"#94a3b8"</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>) <span class="sc">+</span></span>
+<span id="cb13-291"><a href="#cb13-291" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="fl">2.8</span>) <span class="sc">+</span></span>
+<span id="cb13-292"><a href="#cb13-292" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_errorbar</span>(<span class="fu">aes</span>(<span class="at">ymin =</span> est <span class="sc">-</span> <span class="fl">1.96</span> <span class="sc">*</span> se, <span class="at">ymax =</span> est <span class="sc">+</span> <span class="fl">1.96</span> <span class="sc">*</span> se),</span>
+<span id="cb13-293"><a href="#cb13-293" aria-hidden="true" tabindex="-1"></a>                <span class="at">width =</span> <span class="fl">0.15</span>) <span class="sc">+</span></span>
+<span id="cb13-294"><a href="#cb13-294" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"Pre"</span>  <span class="ot">=</span> <span class="st">"#e2e8f0"</span>,</span>
+<span id="cb13-295"><a href="#cb13-295" aria-hidden="true" tabindex="-1"></a>                                <span class="st">"Post"</span> <span class="ot">=</span> <span class="st">"#22d3ee"</span>)) <span class="sc">+</span></span>
+<span id="cb13-296"><a href="#cb13-296" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Event time (years from first minimum-wage increase)"</span>,</span>
+<span id="cb13-297"><a href="#cb13-297" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Effect on log teen employment"</span>, <span class="at">color =</span> <span class="cn">NULL</span>)</span>
+<span id="cb13-298"><a href="#cb13-298" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb13-299"><a href="#cb13-299" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-300"><a href="#cb13-300" aria-hidden="true" tabindex="-1"></a><span class="fu">## Conditional parallel trends</span></span>
+<span id="cb13-301"><a href="#cb13-301" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-302"><a href="#cb13-302" aria-hidden="true" tabindex="-1"></a>Plain DiD assumes parallel trends *unconditionally*. Conditional DiD</span>
+<span id="cb13-303"><a href="#cb13-303" aria-hidden="true" tabindex="-1"></a>allows trends to be parallel only after adjusting for observed</span>
+<span id="cb13-304"><a href="#cb13-304" aria-hidden="true" tabindex="-1"></a>covariates that shape the trajectory. In this dataset, log county</span>
+<span id="cb13-305"><a href="#cb13-305" aria-hidden="true" tabindex="-1"></a>population and log average county pay are obvious candidates: counties</span>
+<span id="cb13-306"><a href="#cb13-306" aria-hidden="true" tabindex="-1"></a>with bigger populations or higher-paying jobs may move on different</span>
+<span id="cb13-307"><a href="#cb13-307" aria-hidden="true" tabindex="-1"></a>underlying trajectories whether or not they raise the minimum wage.</span>
+<span id="cb13-308"><a href="#cb13-308" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-309"><a href="#cb13-309" aria-hidden="true" tabindex="-1"></a><span class="in">`did::att_gt()`</span> accepts <span class="in">`xformla = ~lpop + lavg_pay`</span> plus a choice of</span>
+<span id="cb13-310"><a href="#cb13-310" aria-hidden="true" tabindex="-1"></a>estimator: **regression adjustment** (impute the counterfactual mean</span>
+<span id="cb13-311"><a href="#cb13-311" aria-hidden="true" tabindex="-1"></a>from the never-treated), **inverse probability weighting** (reweight</span>
+<span id="cb13-312"><a href="#cb13-312" aria-hidden="true" tabindex="-1"></a>never-treated counties to look like treated ones), or **doubly</span>
+<span id="cb13-313"><a href="#cb13-313" aria-hidden="true" tabindex="-1"></a>robust** (the @callaway2021difference default, which is consistent</span>
+<span id="cb13-314"><a href="#cb13-314" aria-hidden="true" tabindex="-1"></a>if either the outcome model *or* the propensity score is correctly</span>
+<span id="cb13-315"><a href="#cb13-315" aria-hidden="true" tabindex="-1"></a>specified).</span>
+<span id="cb13-316"><a href="#cb13-316" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-319"><a href="#cb13-319" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb13-320"><a href="#cb13-320" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: tbl-conditional</span></span>
+<span id="cb13-321"><a href="#cb13-321" aria-hidden="true" tabindex="-1"></a><span class="co">#| tbl-cap: "Overall ATT under four identification assumptions: unconditional parallel trends, regression adjustment, inverse probability weighting, and doubly robust. The four point estimates land within roughly one SE of each other, which is reassuring."</span></span>
+<span id="cb13-322"><a href="#cb13-322" aria-hidden="true" tabindex="-1"></a><span class="co">#| message: false</span></span>
+<span id="cb13-323"><a href="#cb13-323" aria-hidden="true" tabindex="-1"></a><span class="co">#| warning: false</span></span>
+<span id="cb13-324"><a href="#cb13-324" aria-hidden="true" tabindex="-1"></a><span class="co">#| code-summary: "Code: Compare overall ATT under regression, IPW, and doubly-robust adjustments."</span></span>
+<span id="cb13-325"><a href="#cb13-325" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-326"><a href="#cb13-326" aria-hidden="true" tabindex="-1"></a>cs_reg <span class="ot">&lt;-</span> did<span class="sc">::</span><span class="fu">att_gt</span>(<span class="at">yname=</span><span class="st">"lemp"</span>, <span class="at">tname=</span><span class="st">"year"</span>, <span class="at">idname=</span><span class="st">"id"</span>, <span class="at">gname=</span><span class="st">"G"</span>,</span>
+<span id="cb13-327"><a href="#cb13-327" aria-hidden="true" tabindex="-1"></a>                      <span class="at">xformla =</span> <span class="sc">~</span>lpop <span class="sc">+</span> lavg_pay,</span>
+<span id="cb13-328"><a href="#cb13-328" aria-hidden="true" tabindex="-1"></a>                      <span class="at">control_group =</span> <span class="st">"nevertreated"</span>,</span>
+<span id="cb13-329"><a href="#cb13-329" aria-hidden="true" tabindex="-1"></a>                      <span class="at">base_period =</span> <span class="st">"universal"</span>,</span>
+<span id="cb13-330"><a href="#cb13-330" aria-hidden="true" tabindex="-1"></a>                      <span class="at">est_method =</span> <span class="st">"reg"</span>, <span class="at">data =</span> data2)</span>
+<span id="cb13-331"><a href="#cb13-331" aria-hidden="true" tabindex="-1"></a>attO_reg <span class="ot">&lt;-</span> did<span class="sc">::</span><span class="fu">aggte</span>(cs_reg, <span class="at">type =</span> <span class="st">"group"</span>)</span>
+<span id="cb13-332"><a href="#cb13-332" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-333"><a href="#cb13-333" aria-hidden="true" tabindex="-1"></a>cs_ipw <span class="ot">&lt;-</span> did<span class="sc">::</span><span class="fu">att_gt</span>(<span class="at">yname=</span><span class="st">"lemp"</span>, <span class="at">tname=</span><span class="st">"year"</span>, <span class="at">idname=</span><span class="st">"id"</span>, <span class="at">gname=</span><span class="st">"G"</span>,</span>
+<span id="cb13-334"><a href="#cb13-334" aria-hidden="true" tabindex="-1"></a>                      <span class="at">xformla =</span> <span class="sc">~</span>lpop <span class="sc">+</span> lavg_pay,</span>
+<span id="cb13-335"><a href="#cb13-335" aria-hidden="true" tabindex="-1"></a>                      <span class="at">control_group =</span> <span class="st">"nevertreated"</span>,</span>
+<span id="cb13-336"><a href="#cb13-336" aria-hidden="true" tabindex="-1"></a>                      <span class="at">base_period =</span> <span class="st">"universal"</span>,</span>
+<span id="cb13-337"><a href="#cb13-337" aria-hidden="true" tabindex="-1"></a>                      <span class="at">est_method =</span> <span class="st">"ipw"</span>, <span class="at">data =</span> data2)</span>
+<span id="cb13-338"><a href="#cb13-338" aria-hidden="true" tabindex="-1"></a>attO_ipw <span class="ot">&lt;-</span> did<span class="sc">::</span><span class="fu">aggte</span>(cs_ipw, <span class="at">type =</span> <span class="st">"group"</span>)</span>
+<span id="cb13-339"><a href="#cb13-339" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-340"><a href="#cb13-340" aria-hidden="true" tabindex="-1"></a>cs_dr  <span class="ot">&lt;-</span> did<span class="sc">::</span><span class="fu">att_gt</span>(<span class="at">yname=</span><span class="st">"lemp"</span>, <span class="at">tname=</span><span class="st">"year"</span>, <span class="at">idname=</span><span class="st">"id"</span>, <span class="at">gname=</span><span class="st">"G"</span>,</span>
+<span id="cb13-341"><a href="#cb13-341" aria-hidden="true" tabindex="-1"></a>                      <span class="at">xformla =</span> <span class="sc">~</span>lpop <span class="sc">+</span> lavg_pay,</span>
+<span id="cb13-342"><a href="#cb13-342" aria-hidden="true" tabindex="-1"></a>                      <span class="at">control_group =</span> <span class="st">"nevertreated"</span>,</span>
+<span id="cb13-343"><a href="#cb13-343" aria-hidden="true" tabindex="-1"></a>                      <span class="at">base_period =</span> <span class="st">"universal"</span>,</span>
+<span id="cb13-344"><a href="#cb13-344" aria-hidden="true" tabindex="-1"></a>                      <span class="at">est_method =</span> <span class="st">"dr"</span>, <span class="at">data =</span> data2)</span>
+<span id="cb13-345"><a href="#cb13-345" aria-hidden="true" tabindex="-1"></a>attO_dr  <span class="ot">&lt;-</span> did<span class="sc">::</span><span class="fu">aggte</span>(cs_dr, <span class="at">type =</span> <span class="st">"group"</span>)</span>
+<span id="cb13-346"><a href="#cb13-346" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-347"><a href="#cb13-347" aria-hidden="true" tabindex="-1"></a><span class="fu">tibble</span>(</span>
+<span id="cb13-348"><a href="#cb13-348" aria-hidden="true" tabindex="-1"></a>  <span class="at">Identification =</span> <span class="fu">c</span>(<span class="st">"Unconditional parallel trends"</span>,</span>
+<span id="cb13-349"><a href="#cb13-349" aria-hidden="true" tabindex="-1"></a>                     <span class="st">"Conditional · regression adjustment"</span>,</span>
+<span id="cb13-350"><a href="#cb13-350" aria-hidden="true" tabindex="-1"></a>                     <span class="st">"Conditional · IPW"</span>,</span>
+<span id="cb13-351"><a href="#cb13-351" aria-hidden="true" tabindex="-1"></a>                     <span class="st">"Conditional · doubly robust"</span>),</span>
+<span id="cb13-352"><a href="#cb13-352" aria-hidden="true" tabindex="-1"></a>  <span class="at">Estimate =</span> <span class="fu">c</span>(attO<span class="sc">$</span>overall.att, attO_reg<span class="sc">$</span>overall.att,</span>
+<span id="cb13-353"><a href="#cb13-353" aria-hidden="true" tabindex="-1"></a>               attO_ipw<span class="sc">$</span>overall.att, attO_dr<span class="sc">$</span>overall.att),</span>
+<span id="cb13-354"><a href="#cb13-354" aria-hidden="true" tabindex="-1"></a>  <span class="at">SE       =</span> <span class="fu">c</span>(attO<span class="sc">$</span>overall.se,  attO_reg<span class="sc">$</span>overall.se,</span>
+<span id="cb13-355"><a href="#cb13-355" aria-hidden="true" tabindex="-1"></a>               attO_ipw<span class="sc">$</span>overall.se,  attO_dr<span class="sc">$</span>overall.se)</span>
+<span id="cb13-356"><a href="#cb13-356" aria-hidden="true" tabindex="-1"></a>) <span class="sc">|&gt;</span> <span class="fu">gt_pretty</span>(<span class="at">decimals =</span> <span class="dv">4</span>)</span>
+<span id="cb13-357"><a href="#cb13-357" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb13-358"><a href="#cb13-358" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-359"><a href="#cb13-359" aria-hidden="true" tabindex="-1"></a>The doubly-robust estimate is the most reliable in practice — it</span>
+<span id="cb13-360"><a href="#cb13-360" aria-hidden="true" tabindex="-1"></a>recovers a correct ATT if either the trend model or the selection</span>
+<span id="cb13-361"><a href="#cb13-361" aria-hidden="true" tabindex="-1"></a>model is right, where the other two require their respective model</span>
+<span id="cb13-362"><a href="#cb13-362" aria-hidden="true" tabindex="-1"></a>to be correctly specified.</span>
 <span id="cb13-363"><a href="#cb13-363" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-364"><a href="#cb13-364" aria-hidden="true" tabindex="-1"></a>The robustness table only varies *design* choices; it does not</span>
-<span id="cb13-365"><a href="#cb13-365" aria-hidden="true" tabindex="-1"></a>quantify *how much* parallel trends would have to be violated to</span>
-<span id="cb13-366"><a href="#cb13-366" aria-hidden="true" tabindex="-1"></a>overturn the conclusion. @rambachan2023more provide exactly that</span>
-<span id="cb13-367"><a href="#cb13-367" aria-hidden="true" tabindex="-1"></a>quantification. The <span class="in">`HonestDiD`</span> package, paired with a small bridge</span>
-<span id="cb13-368"><a href="#cb13-368" aria-hidden="true" tabindex="-1"></a>function in <span class="in">`R/honest_did.R`</span>, lets us bound the post-treatment effect</span>
-<span id="cb13-369"><a href="#cb13-369" aria-hidden="true" tabindex="-1"></a>under explicit assumptions about how an unobserved post-treatment</span>
-<span id="cb13-370"><a href="#cb13-370" aria-hidden="true" tabindex="-1"></a>violation could relate to the visible pre-trend.</span>
-<span id="cb13-371"><a href="#cb13-371" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-372"><a href="#cb13-372" aria-hidden="true" tabindex="-1"></a><span class="in">`HonestDiD`</span> ships two restrictions on the post-treatment violation.</span>
-<span id="cb13-373"><a href="#cb13-373" aria-hidden="true" tabindex="-1"></a>The **smoothness** bound $\Delta^{SD}(M)$ requires the post-treatment</span>
-<span id="cb13-374"><a href="#cb13-374" aria-hidden="true" tabindex="-1"></a>violation to be a smooth continuation of the pre-trend (it caps the</span>
-<span id="cb13-375"><a href="#cb13-375" aria-hidden="true" tabindex="-1"></a>*second differences* of the trend), which is the natural choice when</span>
-<span id="cb13-376"><a href="#cb13-376" aria-hidden="true" tabindex="-1"></a>pre-trends look like near-linear drift. The **relative-magnitudes**</span>
-<span id="cb13-377"><a href="#cb13-377" aria-hidden="true" tabindex="-1"></a>bound $\Delta^{RM}(\bar M)$ requires the post-treatment violation to</span>
-<span id="cb13-378"><a href="#cb13-378" aria-hidden="true" tabindex="-1"></a>be at most $\bar M$ times the *largest* pre-treatment violation; this</span>
-<span id="cb13-379"><a href="#cb13-379" aria-hidden="true" tabindex="-1"></a>is the natural choice when the pre-trend is visibly non-linear, as in</span>
-<span id="cb13-380"><a href="#cb13-380" aria-hidden="true" tabindex="-1"></a>cohort 2006 above. We use the relative-magnitudes bound below.</span>
-<span id="cb13-381"><a href="#cb13-381" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-384"><a href="#cb13-384" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb13-385"><a href="#cb13-385" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: tbl-honest</span></span>
-<span id="cb13-386"><a href="#cb13-386" aria-hidden="true" tabindex="-1"></a><span class="co">#| tbl-cap: "Robust confidence intervals for the on-impact effect $ATT(e = 0)$ under the relative-magnitude restriction. As $\\bar M$ grows, the CI widens; we report the breakdown point — the $\\bar M$ at which the CI first contains zero."</span></span>
-<span id="cb13-387"><a href="#cb13-387" aria-hidden="true" tabindex="-1"></a><span class="co">#| message: false</span></span>
-<span id="cb13-388"><a href="#cb13-388" aria-hidden="true" tabindex="-1"></a><span class="co">#| warning: false</span></span>
-<span id="cb13-389"><a href="#cb13-389" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-390"><a href="#cb13-390" aria-hidden="true" tabindex="-1"></a>hd_rm <span class="ot">&lt;-</span> <span class="fu">honest_did</span>(<span class="at">es      =</span> attes,</span>
-<span id="cb13-391"><a href="#cb13-391" aria-hidden="true" tabindex="-1"></a>                    <span class="at">e       =</span> <span class="dv">0</span>,</span>
-<span id="cb13-392"><a href="#cb13-392" aria-hidden="true" tabindex="-1"></a>                    <span class="at">type    =</span> <span class="st">"relative_magnitude"</span>,</span>
-<span id="cb13-393"><a href="#cb13-393" aria-hidden="true" tabindex="-1"></a>                    <span class="at">method  =</span> <span class="st">"C-LF"</span>,</span>
-<span id="cb13-394"><a href="#cb13-394" aria-hidden="true" tabindex="-1"></a>                    <span class="at">Mbarvec =</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">2</span>, <span class="at">by =</span> <span class="fl">0.5</span>))</span>
-<span id="cb13-395"><a href="#cb13-395" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-396"><a href="#cb13-396" aria-hidden="true" tabindex="-1"></a>hd_rm <span class="sc">|&gt;</span></span>
-<span id="cb13-397"><a href="#cb13-397" aria-hidden="true" tabindex="-1"></a>  <span class="fu">transmute</span>(<span class="st">`</span><span class="at">$</span><span class="sc">\\</span><span class="at">bar M$</span><span class="st">`</span> <span class="ot">=</span> Mbar,</span>
-<span id="cb13-398"><a href="#cb13-398" aria-hidden="true" tabindex="-1"></a>            <span class="st">`</span><span class="at">CI lower</span><span class="st">`</span>  <span class="ot">=</span> lb,</span>
-<span id="cb13-399"><a href="#cb13-399" aria-hidden="true" tabindex="-1"></a>            <span class="st">`</span><span class="at">CI upper</span><span class="st">`</span>  <span class="ot">=</span> ub,</span>
-<span id="cb13-400"><a href="#cb13-400" aria-hidden="true" tabindex="-1"></a>            <span class="st">`</span><span class="at">Contains 0?</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">ifelse</span>(lb <span class="sc">&lt;=</span> <span class="dv">0</span> <span class="sc">&amp;</span> <span class="dv">0</span> <span class="sc">&lt;=</span> ub, <span class="st">"yes"</span>, <span class="st">"no"</span>)) <span class="sc">|&gt;</span></span>
-<span id="cb13-401"><a href="#cb13-401" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gt_pretty</span>(<span class="at">decimals =</span> <span class="dv">4</span>)</span>
-<span id="cb13-402"><a href="#cb13-402" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb13-403"><a href="#cb13-403" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-406"><a href="#cb13-406" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb13-407"><a href="#cb13-407" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-honest</span></span>
-<span id="cb13-408"><a href="#cb13-408" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "HonestDiD sensitivity: as $\\bar M$ grows, the robust 95 percent CI on the on-impact effect widens until it crosses zero. The breakdown $\\bar M$ — the value at which the CI first contains zero — is below 0.5, reflecting the visible pre-trend in cohort 2006."</span></span>
-<span id="cb13-409"><a href="#cb13-409" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-width: 7.5</span></span>
-<span id="cb13-410"><a href="#cb13-410" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-height: 4.5</span></span>
-<span id="cb13-411"><a href="#cb13-411" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(hd_rm, <span class="fu">aes</span>(<span class="at">x =</span> Mbar)) <span class="sc">+</span></span>
-<span id="cb13-412"><a href="#cb13-412" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>, <span class="at">color =</span> <span class="st">"#94a3b8"</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>) <span class="sc">+</span></span>
-<span id="cb13-413"><a href="#cb13-413" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_ribbon</span>(<span class="fu">aes</span>(<span class="at">ymin =</span> lb, <span class="at">ymax =</span> ub),</span>
-<span id="cb13-414"><a href="#cb13-414" aria-hidden="true" tabindex="-1"></a>              <span class="at">fill =</span> <span class="st">"#22d3ee"</span>, <span class="at">alpha =</span> <span class="fl">0.2</span>) <span class="sc">+</span></span>
-<span id="cb13-415"><a href="#cb13-415" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> lb), <span class="at">color =</span> <span class="st">"#22d3ee"</span>, <span class="at">linewidth =</span> <span class="fl">0.9</span>) <span class="sc">+</span></span>
-<span id="cb13-416"><a href="#cb13-416" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> ub), <span class="at">color =</span> <span class="st">"#22d3ee"</span>, <span class="at">linewidth =</span> <span class="fl">0.9</span>) <span class="sc">+</span></span>
-<span id="cb13-417"><a href="#cb13-417" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="fu">expression</span>(<span class="fu">bar</span>(M)),</span>
-<span id="cb13-418"><a href="#cb13-418" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Robust 95% CI on ATT(e = 0)"</span>)</span>
-<span id="cb13-419"><a href="#cb13-419" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb13-420"><a href="#cb13-420" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-421"><a href="#cb13-421" aria-hidden="true" tabindex="-1"></a>The breakdown point lies somewhere in $(0, 0.5]$ — meaning the</span>
-<span id="cb13-422"><a href="#cb13-422" aria-hidden="true" tabindex="-1"></a>robust CI first crosses zero at an $\bar M$ less than half the</span>
-<span id="cb13-423"><a href="#cb13-423" aria-hidden="true" tabindex="-1"></a>*largest observed pre-trend in the data*. The on-impact effect of</span>
-<span id="cb13-424"><a href="#cb13-424" aria-hidden="true" tabindex="-1"></a>$\approx -0.024$ does **not** survive even a fraction of the</span>
-<span id="cb13-425"><a href="#cb13-425" aria-hidden="true" tabindex="-1"></a>cohort-2006 pre-trend we already flagged: that pre-trend, at</span>
-<span id="cb13-426"><a href="#cb13-426" aria-hidden="true" tabindex="-1"></a>$-0.034$, is itself larger in magnitude than the on-impact effect,</span>
-<span id="cb13-427"><a href="#cb13-427" aria-hidden="true" tabindex="-1"></a>so it would be surprising if the conclusion held up under a</span>
-<span id="cb13-428"><a href="#cb13-428" aria-hidden="true" tabindex="-1"></a>relative-magnitudes assumption that allowed unobserved post-trend</span>
-<span id="cb13-429"><a href="#cb13-429" aria-hidden="true" tabindex="-1"></a>violations of comparable size.</span>
-<span id="cb13-430"><a href="#cb13-430" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-431"><a href="#cb13-431" aria-hidden="true" tabindex="-1"></a>This is not a failure of the method — it is the method working as</span>
-<span id="cb13-432"><a href="#cb13-432" aria-hidden="true" tabindex="-1"></a>intended. HonestDiD is the bridge from "the Callaway-Sant'Anna point</span>
-<span id="cb13-433"><a href="#cb13-433" aria-hidden="true" tabindex="-1"></a>estimate looks negative" to "here is precisely the parallel-trends</span>
-<span id="cb13-434"><a href="#cb13-434" aria-hidden="true" tabindex="-1"></a>violation under which that conclusion would flip." The right reading</span>
-<span id="cb13-435"><a href="#cb13-435" aria-hidden="true" tabindex="-1"></a>is that the on-impact effect is **fragile to parallel-trends</span>
-<span id="cb13-436"><a href="#cb13-436" aria-hidden="true" tabindex="-1"></a>violations**, even though the *cumulative* event-study trajectory</span>
-<span id="cb13-437"><a href="#cb13-437" aria-hidden="true" tabindex="-1"></a>($-0.13$ by $e = +3$) is large enough that a similar exercise on the</span>
-<span id="cb13-438"><a href="#cb13-438" aria-hidden="true" tabindex="-1"></a>later horizons would tolerate a much larger $\bar M$.</span>
-<span id="cb13-439"><a href="#cb13-439" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-440"><a href="#cb13-440" aria-hidden="true" tabindex="-1"></a><span class="fu">## Recap</span></span>
-<span id="cb13-441"><a href="#cb13-441" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-442"><a href="#cb13-442" aria-hidden="true" tabindex="-1"></a>::: {.callout-note appearance="simple"}</span>
-<span id="cb13-443"><a href="#cb13-443" aria-hidden="true" tabindex="-1"></a>**The methods reconciled.** TWFE on this dataset returned</span>
-<span id="cb13-444"><a href="#cb13-444" aria-hidden="true" tabindex="-1"></a>$\hat\beta = -0.038$. The Callaway-Sant'Anna overall ATT is</span>
-<span id="cb13-445"><a href="#cb13-445" aria-hidden="true" tabindex="-1"></a>$-0.057$. The doubly-robust conditional ATT is $-0.065$. The</span>
-<span id="cb13-446"><a href="#cb13-446" aria-hidden="true" tabindex="-1"></a>event-study trajectory is $\approx -0.024$ on impact, dropping to</span>
-<span id="cb13-447"><a href="#cb13-447" aria-hidden="true" tabindex="-1"></a>$\approx -0.13$ by event-time $+3$. HonestDiD sensitivity is</span>
-<span id="cb13-448"><a href="#cb13-448" aria-hidden="true" tabindex="-1"></a>*fragile*: the relative-magnitudes breakdown $\bar M$ for the</span>
-<span id="cb13-449"><a href="#cb13-449" aria-hidden="true" tabindex="-1"></a>on-impact effect is **below 0.5**, reflecting the visible</span>
-<span id="cb13-450"><a href="#cb13-450" aria-hidden="true" tabindex="-1"></a>cohort-2006 pre-trend. Four estimators agree on point estimate and</span>
-<span id="cb13-451"><a href="#cb13-451" aria-hidden="true" tabindex="-1"></a>sign — *minimum-wage increases reduced teen employment in these</span>
-<span id="cb13-452"><a href="#cb13-452" aria-hidden="true" tabindex="-1"></a>counties, and the effect grew over time* — but parallel trends does</span>
-<span id="cb13-453"><a href="#cb13-453" aria-hidden="true" tabindex="-1"></a>not hold cleanly, and the on-impact effect would not survive even</span>
-<span id="cb13-454"><a href="#cb13-454" aria-hidden="true" tabindex="-1"></a>half the observed pre-trend violation.</span>
-<span id="cb13-455"><a href="#cb13-455" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-456"><a href="#cb13-456" aria-hidden="true" tabindex="-1"></a>The gap between the TWFE estimate and the modern aggregators is the</span>
-<span id="cb13-457"><a href="#cb13-457" aria-hidden="true" tabindex="-1"></a>contamination problem of @goodmanbacon2021difference made concrete:</span>
-<span id="cb13-458"><a href="#cb13-458" aria-hidden="true" tabindex="-1"></a>TWFE silently uses already-treated units as controls for later-treated</span>
-<span id="cb13-459"><a href="#cb13-459" aria-hidden="true" tabindex="-1"></a>units, and treatment-effect heterogeneity over time leaks into the</span>
-<span id="cb13-460"><a href="#cb13-460" aria-hidden="true" tabindex="-1"></a>coefficient with unintended signs. The Callaway-Sant'Anna aggregator</span>
-<span id="cb13-461"><a href="#cb13-461" aria-hidden="true" tabindex="-1"></a>avoids that by estimating the $ATT(g, t)$ primitives directly and</span>
-<span id="cb13-462"><a href="#cb13-462" aria-hidden="true" tabindex="-1"></a>weighting them in a defensible way.</span>
-<span id="cb13-463"><a href="#cb13-463" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-464"><a href="#cb13-464" aria-hidden="true" tabindex="-1"></a>Every method in this chapter — TWFE, $ATT(g, t)$, conditional DiD,</span>
-<span id="cb13-465"><a href="#cb13-465" aria-hidden="true" tabindex="-1"></a>even HonestDiD's bounds — leans on **parallel trends** as the</span>
-<span id="cb13-466"><a href="#cb13-466" aria-hidden="true" tabindex="-1"></a>identifying assumption. The next chapter relaxes that assumption by</span>
-<span id="cb13-467"><a href="#cb13-467" aria-hidden="true" tabindex="-1"></a>modelling $Y_{it}(0)$ with an *interactive fixed-effects* factor</span>
-<span id="cb13-468"><a href="#cb13-468" aria-hidden="true" tabindex="-1"></a>structure:</span>
-<span id="cb13-469"><a href="#cb13-469" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-470"><a href="#cb13-470" aria-hidden="true" tabindex="-1"></a>$$Y_{it}(0) = \alpha_i + \xi_t + \lambda_i' f_t + \varepsilon_{it}.$$</span>
-<span id="cb13-471"><a href="#cb13-471" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-472"><a href="#cb13-472" aria-hidden="true" tabindex="-1"></a>Two estimators — matrix completion and IFEct — implement that idea on</span>
-<span id="cb13-473"><a href="#cb13-473" aria-hidden="true" tabindex="-1"></a>the same minimum-wage panel and provide a second, assumption-distinct</span>
-<span id="cb13-474"><a href="#cb13-474" aria-hidden="true" tabindex="-1"></a>read on the same substantive question.</span>
-<span id="cb13-475"><a href="#cb13-475" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb13-476"><a href="#cb13-476" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-477"><a href="#cb13-477" aria-hidden="true" tabindex="-1"></a><span class="fu">## Common pitfall</span></span>
-<span id="cb13-478"><a href="#cb13-478" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-479"><a href="#cb13-479" aria-hidden="true" tabindex="-1"></a>Running TWFE on staggered data and reporting the coefficient as if</span>
-<span id="cb13-480"><a href="#cb13-480" aria-hidden="true" tabindex="-1"></a>it were a clean ATT. The bias is mechanical — already-treated units</span>
-<span id="cb13-481"><a href="#cb13-481" aria-hidden="true" tabindex="-1"></a>get used as controls for later-treated units, and treatment-effect</span>
-<span id="cb13-482"><a href="#cb13-482" aria-hidden="true" tabindex="-1"></a>heterogeneity over time then leaks into the coefficient with</span>
-<span id="cb13-483"><a href="#cb13-483" aria-hidden="true" tabindex="-1"></a>unintended signs. **What to do instead.** Estimate the</span>
-<span id="cb13-484"><a href="#cb13-484" aria-hidden="true" tabindex="-1"></a>$<span class="sc">\{</span>ATT(g, t)<span class="sc">\}</span>$ primitives directly with <span class="in">`did::att_gt()`</span>, look at</span>
-<span id="cb13-485"><a href="#cb13-485" aria-hidden="true" tabindex="-1"></a>the cells, and only then aggregate with <span class="in">`aggte()`</span> using a target</span>
-<span id="cb13-486"><a href="#cb13-486" aria-hidden="true" tabindex="-1"></a>that matches the question you actually want to answer. If you must</span>
-<span id="cb13-487"><a href="#cb13-487" aria-hidden="true" tabindex="-1"></a>run TWFE for a referee, also report the Callaway-Sant'Anna overall</span>
-<span id="cb13-488"><a href="#cb13-488" aria-hidden="true" tabindex="-1"></a>ATT for comparison so the magnitude of the contamination is visible.</span>
-<span id="cb13-489"><a href="#cb13-489" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-490"><a href="#cb13-490" aria-hidden="true" tabindex="-1"></a><span class="fu">## Further reading</span></span>
-<span id="cb13-491"><a href="#cb13-491" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-492"><a href="#cb13-492" aria-hidden="true" tabindex="-1"></a>The Callaway-Sant'Anna framework, the Goodman-Bacon decomposition,</span>
-<span id="cb13-493"><a href="#cb13-493" aria-hidden="true" tabindex="-1"></a>and the Sun-Abraham interaction-weighted estimator are the three</span>
-<span id="cb13-494"><a href="#cb13-494" aria-hidden="true" tabindex="-1"></a>modern reference points for staggered DiD</span>
-<span id="cb13-495"><a href="#cb13-495" aria-hidden="true" tabindex="-1"></a>[@callaway2021difference; @goodmanbacon2021difference;</span>
-<span id="cb13-496"><a href="#cb13-496" aria-hidden="true" tabindex="-1"></a>@sun2021estimating]. The <span class="in">`did`</span> package vignettes</span>
-<span id="cb13-497"><a href="#cb13-497" aria-hidden="true" tabindex="-1"></a>(<span class="ot">&lt;https://bcallaway11.github.io/did/&gt;</span>) are the canonical</span>
-<span id="cb13-498"><a href="#cb13-498" aria-hidden="true" tabindex="-1"></a>implementation reference. For sensitivity analysis, the</span>
-<span id="cb13-499"><a href="#cb13-499" aria-hidden="true" tabindex="-1"></a>@rambachan2023more paper plus the <span class="in">`HonestDiD`</span> package documentation</span>
-<span id="cb13-500"><a href="#cb13-500" aria-hidden="true" tabindex="-1"></a>cover both the smoothness and relative-magnitude bounds.</span>
-<span id="cb13-501"><a href="#cb13-501" aria-hidden="true" tabindex="-1"></a>@dechaisemartin2020twoway is the parallel critique of TWFE from the</span>
-<span id="cb13-502"><a href="#cb13-502" aria-hidden="true" tabindex="-1"></a><span class="in">`DIDmultiplegt`</span> perspective. @callaway2022handbook is a textbook-level</span>
-<span id="cb13-503"><a href="#cb13-503" aria-hidden="true" tabindex="-1"></a>synthesis, and @roth2023whats is a recent review-style synthesis</span>
-<span id="cb13-504"><a href="#cb13-504" aria-hidden="true" tabindex="-1"></a>covering staggered DiD, event studies, sensitivity analysis, and the</span>
-<span id="cb13-505"><a href="#cb13-505" aria-hidden="true" tabindex="-1"></a>relationships between them.</span>
-<span id="cb13-506"><a href="#cb13-506" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-507"><a href="#cb13-507" aria-hidden="true" tabindex="-1"></a>For a longer R walkthrough that this chapter is adapted from, see</span>
-<span id="cb13-508"><a href="#cb13-508" aria-hidden="true" tabindex="-1"></a>the companion post at</span>
-<span id="cb13-509"><a href="#cb13-509" aria-hidden="true" tabindex="-1"></a><span class="ot">&lt;https://cmg777.github.io/post/r_did/&gt;</span>.</span>
+<span id="cb13-364"><a href="#cb13-364" aria-hidden="true" tabindex="-1"></a><span class="fu">## Sensitivity to parallel-trends violations</span></span>
+<span id="cb13-365"><a href="#cb13-365" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-366"><a href="#cb13-366" aria-hidden="true" tabindex="-1"></a>The robustness table only varies *design* choices; it does not</span>
+<span id="cb13-367"><a href="#cb13-367" aria-hidden="true" tabindex="-1"></a>quantify *how much* parallel trends would have to be violated to</span>
+<span id="cb13-368"><a href="#cb13-368" aria-hidden="true" tabindex="-1"></a>overturn the conclusion. @rambachan2023more provide exactly that</span>
+<span id="cb13-369"><a href="#cb13-369" aria-hidden="true" tabindex="-1"></a>quantification. The <span class="in">`HonestDiD`</span> package, paired with a small bridge</span>
+<span id="cb13-370"><a href="#cb13-370" aria-hidden="true" tabindex="-1"></a>function in <span class="in">`R/honest_did.R`</span>, lets us bound the post-treatment effect</span>
+<span id="cb13-371"><a href="#cb13-371" aria-hidden="true" tabindex="-1"></a>under explicit assumptions about how an unobserved post-treatment</span>
+<span id="cb13-372"><a href="#cb13-372" aria-hidden="true" tabindex="-1"></a>violation could relate to the visible pre-trend.</span>
+<span id="cb13-373"><a href="#cb13-373" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-374"><a href="#cb13-374" aria-hidden="true" tabindex="-1"></a><span class="in">`HonestDiD`</span> ships two restrictions on the post-treatment violation.</span>
+<span id="cb13-375"><a href="#cb13-375" aria-hidden="true" tabindex="-1"></a>The **smoothness** bound $\Delta^{SD}(M)$ requires the post-treatment</span>
+<span id="cb13-376"><a href="#cb13-376" aria-hidden="true" tabindex="-1"></a>violation to be a smooth continuation of the pre-trend (it caps the</span>
+<span id="cb13-377"><a href="#cb13-377" aria-hidden="true" tabindex="-1"></a>*second differences* of the trend), which is the natural choice when</span>
+<span id="cb13-378"><a href="#cb13-378" aria-hidden="true" tabindex="-1"></a>pre-trends look like near-linear drift. The **relative-magnitudes**</span>
+<span id="cb13-379"><a href="#cb13-379" aria-hidden="true" tabindex="-1"></a>bound $\Delta^{RM}(\bar M)$ requires the post-treatment violation to</span>
+<span id="cb13-380"><a href="#cb13-380" aria-hidden="true" tabindex="-1"></a>be at most $\bar M$ times the *largest* pre-treatment violation; this</span>
+<span id="cb13-381"><a href="#cb13-381" aria-hidden="true" tabindex="-1"></a>is the natural choice when the pre-trend is visibly non-linear, as in</span>
+<span id="cb13-382"><a href="#cb13-382" aria-hidden="true" tabindex="-1"></a>cohort 2006 above. We use the relative-magnitudes bound below.</span>
+<span id="cb13-383"><a href="#cb13-383" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-386"><a href="#cb13-386" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb13-387"><a href="#cb13-387" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: tbl-honest</span></span>
+<span id="cb13-388"><a href="#cb13-388" aria-hidden="true" tabindex="-1"></a><span class="co">#| tbl-cap: "Robust confidence intervals for the on-impact effect $ATT(e = 0)$ under the relative-magnitude restriction. As $\\bar M$ grows, the CI widens; we report the breakdown point — the $\\bar M$ at which the CI first contains zero."</span></span>
+<span id="cb13-389"><a href="#cb13-389" aria-hidden="true" tabindex="-1"></a><span class="co">#| message: false</span></span>
+<span id="cb13-390"><a href="#cb13-390" aria-hidden="true" tabindex="-1"></a><span class="co">#| warning: false</span></span>
+<span id="cb13-391"><a href="#cb13-391" aria-hidden="true" tabindex="-1"></a><span class="co">#| code-summary: "Code: Run HonestDiD relative-magnitude sensitivity on the on-impact ATT."</span></span>
+<span id="cb13-392"><a href="#cb13-392" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-393"><a href="#cb13-393" aria-hidden="true" tabindex="-1"></a>hd_rm <span class="ot">&lt;-</span> <span class="fu">honest_did</span>(<span class="at">es      =</span> attes,</span>
+<span id="cb13-394"><a href="#cb13-394" aria-hidden="true" tabindex="-1"></a>                    <span class="at">e       =</span> <span class="dv">0</span>,</span>
+<span id="cb13-395"><a href="#cb13-395" aria-hidden="true" tabindex="-1"></a>                    <span class="at">type    =</span> <span class="st">"relative_magnitude"</span>,</span>
+<span id="cb13-396"><a href="#cb13-396" aria-hidden="true" tabindex="-1"></a>                    <span class="at">method  =</span> <span class="st">"C-LF"</span>,</span>
+<span id="cb13-397"><a href="#cb13-397" aria-hidden="true" tabindex="-1"></a>                    <span class="at">Mbarvec =</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">2</span>, <span class="at">by =</span> <span class="fl">0.5</span>))</span>
+<span id="cb13-398"><a href="#cb13-398" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-399"><a href="#cb13-399" aria-hidden="true" tabindex="-1"></a>hd_rm <span class="sc">|&gt;</span></span>
+<span id="cb13-400"><a href="#cb13-400" aria-hidden="true" tabindex="-1"></a>  <span class="fu">transmute</span>(<span class="st">`</span><span class="at">$</span><span class="sc">\\</span><span class="at">bar M$</span><span class="st">`</span> <span class="ot">=</span> Mbar,</span>
+<span id="cb13-401"><a href="#cb13-401" aria-hidden="true" tabindex="-1"></a>            <span class="st">`</span><span class="at">CI lower</span><span class="st">`</span>  <span class="ot">=</span> lb,</span>
+<span id="cb13-402"><a href="#cb13-402" aria-hidden="true" tabindex="-1"></a>            <span class="st">`</span><span class="at">CI upper</span><span class="st">`</span>  <span class="ot">=</span> ub,</span>
+<span id="cb13-403"><a href="#cb13-403" aria-hidden="true" tabindex="-1"></a>            <span class="st">`</span><span class="at">Contains 0?</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">ifelse</span>(lb <span class="sc">&lt;=</span> <span class="dv">0</span> <span class="sc">&amp;</span> <span class="dv">0</span> <span class="sc">&lt;=</span> ub, <span class="st">"yes"</span>, <span class="st">"no"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb13-404"><a href="#cb13-404" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gt_pretty</span>(<span class="at">decimals =</span> <span class="dv">4</span>)</span>
+<span id="cb13-405"><a href="#cb13-405" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb13-406"><a href="#cb13-406" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-409"><a href="#cb13-409" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb13-410"><a href="#cb13-410" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-honest</span></span>
+<span id="cb13-411"><a href="#cb13-411" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "HonestDiD sensitivity: as $\\bar M$ grows, the robust 95 percent CI on the on-impact effect widens until it crosses zero. The breakdown $\\bar M$ — the value at which the CI first contains zero — is below 0.5, reflecting the visible pre-trend in cohort 2006."</span></span>
+<span id="cb13-412"><a href="#cb13-412" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-width: 7.5</span></span>
+<span id="cb13-413"><a href="#cb13-413" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-height: 4.5</span></span>
+<span id="cb13-414"><a href="#cb13-414" aria-hidden="true" tabindex="-1"></a><span class="co">#| code-summary: "Code: Plot the robust CI band against the relative-magnitude bound."</span></span>
+<span id="cb13-415"><a href="#cb13-415" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(hd_rm, <span class="fu">aes</span>(<span class="at">x =</span> Mbar)) <span class="sc">+</span></span>
+<span id="cb13-416"><a href="#cb13-416" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>, <span class="at">color =</span> <span class="st">"#94a3b8"</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>) <span class="sc">+</span></span>
+<span id="cb13-417"><a href="#cb13-417" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_ribbon</span>(<span class="fu">aes</span>(<span class="at">ymin =</span> lb, <span class="at">ymax =</span> ub),</span>
+<span id="cb13-418"><a href="#cb13-418" aria-hidden="true" tabindex="-1"></a>              <span class="at">fill =</span> <span class="st">"#22d3ee"</span>, <span class="at">alpha =</span> <span class="fl">0.2</span>) <span class="sc">+</span></span>
+<span id="cb13-419"><a href="#cb13-419" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> lb), <span class="at">color =</span> <span class="st">"#22d3ee"</span>, <span class="at">linewidth =</span> <span class="fl">0.9</span>) <span class="sc">+</span></span>
+<span id="cb13-420"><a href="#cb13-420" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> ub), <span class="at">color =</span> <span class="st">"#22d3ee"</span>, <span class="at">linewidth =</span> <span class="fl">0.9</span>) <span class="sc">+</span></span>
+<span id="cb13-421"><a href="#cb13-421" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="fu">expression</span>(<span class="fu">bar</span>(M)),</span>
+<span id="cb13-422"><a href="#cb13-422" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Robust 95% CI on ATT(e = 0)"</span>)</span>
+<span id="cb13-423"><a href="#cb13-423" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb13-424"><a href="#cb13-424" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-425"><a href="#cb13-425" aria-hidden="true" tabindex="-1"></a>The breakdown point lies somewhere in $(0, 0.5]$ — meaning the</span>
+<span id="cb13-426"><a href="#cb13-426" aria-hidden="true" tabindex="-1"></a>robust CI first crosses zero at an $\bar M$ less than half the</span>
+<span id="cb13-427"><a href="#cb13-427" aria-hidden="true" tabindex="-1"></a>*largest observed pre-trend in the data*. The on-impact effect of</span>
+<span id="cb13-428"><a href="#cb13-428" aria-hidden="true" tabindex="-1"></a>$\approx -0.024$ does **not** survive even a fraction of the</span>
+<span id="cb13-429"><a href="#cb13-429" aria-hidden="true" tabindex="-1"></a>cohort-2006 pre-trend we already flagged: that pre-trend, at</span>
+<span id="cb13-430"><a href="#cb13-430" aria-hidden="true" tabindex="-1"></a>$-0.034$, is itself larger in magnitude than the on-impact effect,</span>
+<span id="cb13-431"><a href="#cb13-431" aria-hidden="true" tabindex="-1"></a>so it would be surprising if the conclusion held up under a</span>
+<span id="cb13-432"><a href="#cb13-432" aria-hidden="true" tabindex="-1"></a>relative-magnitudes assumption that allowed unobserved post-trend</span>
+<span id="cb13-433"><a href="#cb13-433" aria-hidden="true" tabindex="-1"></a>violations of comparable size.</span>
+<span id="cb13-434"><a href="#cb13-434" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-435"><a href="#cb13-435" aria-hidden="true" tabindex="-1"></a>This is not a failure of the method — it is the method working as</span>
+<span id="cb13-436"><a href="#cb13-436" aria-hidden="true" tabindex="-1"></a>intended. HonestDiD is the bridge from "the Callaway-Sant'Anna point</span>
+<span id="cb13-437"><a href="#cb13-437" aria-hidden="true" tabindex="-1"></a>estimate looks negative" to "here is precisely the parallel-trends</span>
+<span id="cb13-438"><a href="#cb13-438" aria-hidden="true" tabindex="-1"></a>violation under which that conclusion would flip." The right reading</span>
+<span id="cb13-439"><a href="#cb13-439" aria-hidden="true" tabindex="-1"></a>is that the on-impact effect is **fragile to parallel-trends</span>
+<span id="cb13-440"><a href="#cb13-440" aria-hidden="true" tabindex="-1"></a>violations**, even though the *cumulative* event-study trajectory</span>
+<span id="cb13-441"><a href="#cb13-441" aria-hidden="true" tabindex="-1"></a>($-0.13$ by $e = +3$) is large enough that a similar exercise on the</span>
+<span id="cb13-442"><a href="#cb13-442" aria-hidden="true" tabindex="-1"></a>later horizons would tolerate a much larger $\bar M$.</span>
+<span id="cb13-443"><a href="#cb13-443" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-444"><a href="#cb13-444" aria-hidden="true" tabindex="-1"></a><span class="fu">## Recap</span></span>
+<span id="cb13-445"><a href="#cb13-445" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-446"><a href="#cb13-446" aria-hidden="true" tabindex="-1"></a>::: {.callout-note appearance="simple"}</span>
+<span id="cb13-447"><a href="#cb13-447" aria-hidden="true" tabindex="-1"></a>**The methods reconciled.** TWFE on this dataset returned</span>
+<span id="cb13-448"><a href="#cb13-448" aria-hidden="true" tabindex="-1"></a>$\hat\beta = -0.038$. The Callaway-Sant'Anna overall ATT is</span>
+<span id="cb13-449"><a href="#cb13-449" aria-hidden="true" tabindex="-1"></a>$-0.057$. The doubly-robust conditional ATT is $-0.065$. The</span>
+<span id="cb13-450"><a href="#cb13-450" aria-hidden="true" tabindex="-1"></a>event-study trajectory is $\approx -0.024$ on impact, dropping to</span>
+<span id="cb13-451"><a href="#cb13-451" aria-hidden="true" tabindex="-1"></a>$\approx -0.13$ by event-time $+3$. HonestDiD sensitivity is</span>
+<span id="cb13-452"><a href="#cb13-452" aria-hidden="true" tabindex="-1"></a>*fragile*: the relative-magnitudes breakdown $\bar M$ for the</span>
+<span id="cb13-453"><a href="#cb13-453" aria-hidden="true" tabindex="-1"></a>on-impact effect is **below 0.5**, reflecting the visible</span>
+<span id="cb13-454"><a href="#cb13-454" aria-hidden="true" tabindex="-1"></a>cohort-2006 pre-trend. Four estimators agree on point estimate and</span>
+<span id="cb13-455"><a href="#cb13-455" aria-hidden="true" tabindex="-1"></a>sign — *minimum-wage increases reduced teen employment in these</span>
+<span id="cb13-456"><a href="#cb13-456" aria-hidden="true" tabindex="-1"></a>counties, and the effect grew over time* — but parallel trends does</span>
+<span id="cb13-457"><a href="#cb13-457" aria-hidden="true" tabindex="-1"></a>not hold cleanly, and the on-impact effect would not survive even</span>
+<span id="cb13-458"><a href="#cb13-458" aria-hidden="true" tabindex="-1"></a>half the observed pre-trend violation.</span>
+<span id="cb13-459"><a href="#cb13-459" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-460"><a href="#cb13-460" aria-hidden="true" tabindex="-1"></a>The gap between the TWFE estimate and the modern aggregators is the</span>
+<span id="cb13-461"><a href="#cb13-461" aria-hidden="true" tabindex="-1"></a>contamination problem of @goodmanbacon2021difference made concrete:</span>
+<span id="cb13-462"><a href="#cb13-462" aria-hidden="true" tabindex="-1"></a>TWFE silently uses already-treated units as controls for later-treated</span>
+<span id="cb13-463"><a href="#cb13-463" aria-hidden="true" tabindex="-1"></a>units, and treatment-effect heterogeneity over time leaks into the</span>
+<span id="cb13-464"><a href="#cb13-464" aria-hidden="true" tabindex="-1"></a>coefficient with unintended signs. The Callaway-Sant'Anna aggregator</span>
+<span id="cb13-465"><a href="#cb13-465" aria-hidden="true" tabindex="-1"></a>avoids that by estimating the $ATT(g, t)$ primitives directly and</span>
+<span id="cb13-466"><a href="#cb13-466" aria-hidden="true" tabindex="-1"></a>weighting them in a defensible way.</span>
+<span id="cb13-467"><a href="#cb13-467" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-468"><a href="#cb13-468" aria-hidden="true" tabindex="-1"></a>Every method in this chapter — TWFE, $ATT(g, t)$, conditional DiD,</span>
+<span id="cb13-469"><a href="#cb13-469" aria-hidden="true" tabindex="-1"></a>even HonestDiD's bounds — leans on **parallel trends** as the</span>
+<span id="cb13-470"><a href="#cb13-470" aria-hidden="true" tabindex="-1"></a>identifying assumption. The next chapter relaxes that assumption by</span>
+<span id="cb13-471"><a href="#cb13-471" aria-hidden="true" tabindex="-1"></a>modelling $Y_{it}(0)$ with an *interactive fixed-effects* factor</span>
+<span id="cb13-472"><a href="#cb13-472" aria-hidden="true" tabindex="-1"></a>structure:</span>
+<span id="cb13-473"><a href="#cb13-473" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-474"><a href="#cb13-474" aria-hidden="true" tabindex="-1"></a>$$Y_{it}(0) = \alpha_i + \xi_t + \lambda_i' f_t + \varepsilon_{it}.$$</span>
+<span id="cb13-475"><a href="#cb13-475" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-476"><a href="#cb13-476" aria-hidden="true" tabindex="-1"></a>Two estimators — matrix completion and IFEct — implement that idea on</span>
+<span id="cb13-477"><a href="#cb13-477" aria-hidden="true" tabindex="-1"></a>the same minimum-wage panel and provide a second, assumption-distinct</span>
+<span id="cb13-478"><a href="#cb13-478" aria-hidden="true" tabindex="-1"></a>read on the same substantive question.</span>
+<span id="cb13-479"><a href="#cb13-479" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb13-480"><a href="#cb13-480" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-481"><a href="#cb13-481" aria-hidden="true" tabindex="-1"></a><span class="fu">## Common pitfall</span></span>
+<span id="cb13-482"><a href="#cb13-482" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-483"><a href="#cb13-483" aria-hidden="true" tabindex="-1"></a>Running TWFE on staggered data and reporting the coefficient as if</span>
+<span id="cb13-484"><a href="#cb13-484" aria-hidden="true" tabindex="-1"></a>it were a clean ATT. The bias is mechanical — already-treated units</span>
+<span id="cb13-485"><a href="#cb13-485" aria-hidden="true" tabindex="-1"></a>get used as controls for later-treated units, and treatment-effect</span>
+<span id="cb13-486"><a href="#cb13-486" aria-hidden="true" tabindex="-1"></a>heterogeneity over time then leaks into the coefficient with</span>
+<span id="cb13-487"><a href="#cb13-487" aria-hidden="true" tabindex="-1"></a>unintended signs. **What to do instead.** Estimate the</span>
+<span id="cb13-488"><a href="#cb13-488" aria-hidden="true" tabindex="-1"></a>$<span class="sc">\{</span>ATT(g, t)<span class="sc">\}</span>$ primitives directly with <span class="in">`did::att_gt()`</span>, look at</span>
+<span id="cb13-489"><a href="#cb13-489" aria-hidden="true" tabindex="-1"></a>the cells, and only then aggregate with <span class="in">`aggte()`</span> using a target</span>
+<span id="cb13-490"><a href="#cb13-490" aria-hidden="true" tabindex="-1"></a>that matches the question you actually want to answer. If you must</span>
+<span id="cb13-491"><a href="#cb13-491" aria-hidden="true" tabindex="-1"></a>run TWFE for a referee, also report the Callaway-Sant'Anna overall</span>
+<span id="cb13-492"><a href="#cb13-492" aria-hidden="true" tabindex="-1"></a>ATT for comparison so the magnitude of the contamination is visible.</span>
+<span id="cb13-493"><a href="#cb13-493" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-494"><a href="#cb13-494" aria-hidden="true" tabindex="-1"></a><span class="fu">## Further reading</span></span>
+<span id="cb13-495"><a href="#cb13-495" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-496"><a href="#cb13-496" aria-hidden="true" tabindex="-1"></a>The Callaway-Sant'Anna framework, the Goodman-Bacon decomposition,</span>
+<span id="cb13-497"><a href="#cb13-497" aria-hidden="true" tabindex="-1"></a>and the Sun-Abraham interaction-weighted estimator are the three</span>
+<span id="cb13-498"><a href="#cb13-498" aria-hidden="true" tabindex="-1"></a>modern reference points for staggered DiD</span>
+<span id="cb13-499"><a href="#cb13-499" aria-hidden="true" tabindex="-1"></a>[@callaway2021difference; @goodmanbacon2021difference;</span>
+<span id="cb13-500"><a href="#cb13-500" aria-hidden="true" tabindex="-1"></a>@sun2021estimating]. The <span class="in">`did`</span> package vignettes</span>
+<span id="cb13-501"><a href="#cb13-501" aria-hidden="true" tabindex="-1"></a>(<span class="ot">&lt;https://bcallaway11.github.io/did/&gt;</span>) are the canonical</span>
+<span id="cb13-502"><a href="#cb13-502" aria-hidden="true" tabindex="-1"></a>implementation reference. For sensitivity analysis, the</span>
+<span id="cb13-503"><a href="#cb13-503" aria-hidden="true" tabindex="-1"></a>@rambachan2023more paper plus the <span class="in">`HonestDiD`</span> package documentation</span>
+<span id="cb13-504"><a href="#cb13-504" aria-hidden="true" tabindex="-1"></a>cover both the smoothness and relative-magnitude bounds.</span>
+<span id="cb13-505"><a href="#cb13-505" aria-hidden="true" tabindex="-1"></a>@dechaisemartin2020twoway is the parallel critique of TWFE from the</span>
+<span id="cb13-506"><a href="#cb13-506" aria-hidden="true" tabindex="-1"></a><span class="in">`DIDmultiplegt`</span> perspective. @callaway2022handbook is a textbook-level</span>
+<span id="cb13-507"><a href="#cb13-507" aria-hidden="true" tabindex="-1"></a>synthesis, and @roth2023whats is a recent review-style synthesis</span>
+<span id="cb13-508"><a href="#cb13-508" aria-hidden="true" tabindex="-1"></a>covering staggered DiD, event studies, sensitivity analysis, and the</span>
+<span id="cb13-509"><a href="#cb13-509" aria-hidden="true" tabindex="-1"></a>relationships between them.</span>
 <span id="cb13-510"><a href="#cb13-510" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-511"><a href="#cb13-511" aria-hidden="true" tabindex="-1"></a><span class="fu">## Exercises</span></span>
-<span id="cb13-512"><a href="#cb13-512" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-513"><a href="#cb13-513" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Re-estimate the overall ATT using <span class="in">`control_group = "notyettreated"`</span></span>
-<span id="cb13-514"><a href="#cb13-514" aria-hidden="true" tabindex="-1"></a>   instead of <span class="in">`"nevertreated"`</span>. Does the answer change? Explain why</span>
-<span id="cb13-515"><a href="#cb13-515" aria-hidden="true" tabindex="-1"></a>   the standard error usually *shrinks* under this alternative, and</span>
-<span id="cb13-516"><a href="#cb13-516" aria-hidden="true" tabindex="-1"></a>   what assumption about not-yet-treated counties you are now relying</span>
-<span id="cb13-517"><a href="#cb13-517" aria-hidden="true" tabindex="-1"></a>   on to make their comparison valid.</span>
-<span id="cb13-518"><a href="#cb13-518" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>Use <span class="in">`did::aggte(attgt, type = "calendar")`</span> to aggregate by</span>
-<span id="cb13-519"><a href="#cb13-519" aria-hidden="true" tabindex="-1"></a>   *calendar year* rather than event time. Which calendar year shows</span>
-<span id="cb13-520"><a href="#cb13-520" aria-hidden="true" tabindex="-1"></a>   the largest treatment effect, and what substantive story does that</span>
-<span id="cb13-521"><a href="#cb13-521" aria-hidden="true" tabindex="-1"></a>   suggest?</span>
-<span id="cb13-522"><a href="#cb13-522" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>Run <span class="in">`HonestDiD`</span> with <span class="in">`type = "smoothness"`</span> instead of</span>
-<span id="cb13-523"><a href="#cb13-523" aria-hidden="true" tabindex="-1"></a>   <span class="in">`"relative_magnitude"`</span>, supplying <span class="in">`Mvec = seq(0, 0.05, by = 0.01)`</span>.</span>
-<span id="cb13-524"><a href="#cb13-524" aria-hidden="true" tabindex="-1"></a>   What does the breakdown $M$ say about the credibility of the</span>
-<span id="cb13-525"><a href="#cb13-525" aria-hidden="true" tabindex="-1"></a>   parallel-trends assumption in this dataset?</span>
-<span id="cb13-526"><a href="#cb13-526" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-527"><a href="#cb13-527" aria-hidden="true" tabindex="-1"></a><span class="fu">## Key takeaways {.unnumbered}</span></span>
-<span id="cb13-528"><a href="#cb13-528" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-529"><a href="#cb13-529" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Method:** _Recap, in one line, what the method does and what it estimates._</span>
-<span id="cb13-530"><a href="#cb13-530" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Method:** _Note the key identifying assumption or estimand-specific nuance._</span>
-<span id="cb13-531"><a href="#cb13-531" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Lesson:** _State the main empirical lesson from this chapter's case study._</span>
-<span id="cb13-532"><a href="#cb13-532" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Lesson:** _State a second lesson — e.g., what changed vs. the prior chapter's method._</span>
-<span id="cb13-533"><a href="#cb13-533" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Lesson:** _Optional third lesson — diagnostics, sensitivity, or interpretation tip._</span>
-<span id="cb13-534"><a href="#cb13-534" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Caveat:** _Flag the leading limitation (data, assumption, or inference)._</span>
-<span id="cb13-535"><a href="#cb13-535" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Caveat:** _Flag a secondary caveat or scope condition._</span>
+<span id="cb13-511"><a href="#cb13-511" aria-hidden="true" tabindex="-1"></a>For a longer R walkthrough that this chapter is adapted from, see</span>
+<span id="cb13-512"><a href="#cb13-512" aria-hidden="true" tabindex="-1"></a>the companion post at</span>
+<span id="cb13-513"><a href="#cb13-513" aria-hidden="true" tabindex="-1"></a><span class="ot">&lt;https://cmg777.github.io/post/r_did/&gt;</span>.</span>
+<span id="cb13-514"><a href="#cb13-514" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-515"><a href="#cb13-515" aria-hidden="true" tabindex="-1"></a><span class="fu">## Exercises</span></span>
+<span id="cb13-516"><a href="#cb13-516" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-517"><a href="#cb13-517" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Re-estimate the overall ATT using <span class="in">`control_group = "notyettreated"`</span></span>
+<span id="cb13-518"><a href="#cb13-518" aria-hidden="true" tabindex="-1"></a>   instead of <span class="in">`"nevertreated"`</span>. Does the answer change? Explain why</span>
+<span id="cb13-519"><a href="#cb13-519" aria-hidden="true" tabindex="-1"></a>   the standard error usually *shrinks* under this alternative, and</span>
+<span id="cb13-520"><a href="#cb13-520" aria-hidden="true" tabindex="-1"></a>   what assumption about not-yet-treated counties you are now relying</span>
+<span id="cb13-521"><a href="#cb13-521" aria-hidden="true" tabindex="-1"></a>   on to make their comparison valid.</span>
+<span id="cb13-522"><a href="#cb13-522" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>Use <span class="in">`did::aggte(attgt, type = "calendar")`</span> to aggregate by</span>
+<span id="cb13-523"><a href="#cb13-523" aria-hidden="true" tabindex="-1"></a>   *calendar year* rather than event time. Which calendar year shows</span>
+<span id="cb13-524"><a href="#cb13-524" aria-hidden="true" tabindex="-1"></a>   the largest treatment effect, and what substantive story does that</span>
+<span id="cb13-525"><a href="#cb13-525" aria-hidden="true" tabindex="-1"></a>   suggest?</span>
+<span id="cb13-526"><a href="#cb13-526" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>Run <span class="in">`HonestDiD`</span> with <span class="in">`type = "smoothness"`</span> instead of</span>
+<span id="cb13-527"><a href="#cb13-527" aria-hidden="true" tabindex="-1"></a>   <span class="in">`"relative_magnitude"`</span>, supplying <span class="in">`Mvec = seq(0, 0.05, by = 0.01)`</span>.</span>
+<span id="cb13-528"><a href="#cb13-528" aria-hidden="true" tabindex="-1"></a>   What does the breakdown $M$ say about the credibility of the</span>
+<span id="cb13-529"><a href="#cb13-529" aria-hidden="true" tabindex="-1"></a>   parallel-trends assumption in this dataset?</span>
 </code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
