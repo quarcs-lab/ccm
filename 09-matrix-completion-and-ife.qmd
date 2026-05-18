@@ -402,6 +402,17 @@ treated cells, because it has fitted noise into the loadings.
 Trust the CV-selected rank; the MC analogue is choosing $\eta$
 too small. Both are over-fitting masquerading as identification.
 
+## Key takeaways
+
+- **Method:** *Interactive fixed effects* (IFEct) writes the untreated potential outcome as $Y_{it}(0) = \alpha_i + \xi_t + \lambda_i' f_t + \varepsilon_{it}$, where $\lambda_i' f_t$ is a low-rank product of $r$ latent factors $f_t$ and unit loadings $\lambda_i$ that absorbs time-varying unobserved heterogeneity no fixed effect can net out. Fitting $(\alpha, \xi, \Lambda, F)$ on never-treated cells and imputing $\widehat{Y_{it}(0)}$ on treated cells turns the ATT into an outcome-imputation problem; the rank $r$ is chosen by holding out blocks of control cells and minimising out-of-sample MSPE.
+- **Method:** *Matrix completion* (MC) drops the explicit factor decomposition and only assumes the implicit $Y(0)$ matrix is approximately low-rank, then fills its masked treated entries by minimising $\|Y_{\mathrm{obs}} - \widehat{Y(0)}\|_F^2 + \eta\,\|\widehat{Y(0)}\|_*$. The *nuclear norm* $\|\cdot\|_*$ — the sum of singular values — is the convex relaxation of "low rank" in the same way that the $\ell_1$ norm relaxes "sparse", and the penalty weight $\eta$ (returned by `fect` as `lambda.cv`) is again chosen by cross-validation.
+- **Lesson:** Both estimators *relax* parallel trends rather than replacing it: TWFE is the $r = 0$ corner of IFEct and the $\eta \to \infty$ limit of MC, so any non-zero CV pick is the data telling you parallel trends was insufficient on its own.
+- **Lesson:** The signature FECT diagnostic is the **counterfactual-path overlay**: plot the observed average outcome on treated units against the model-implied $Y(0)$, and read off the event-study ATT as the gap. A flat pre-treatment overlay is the visual quality check — the analogue of a pre-trend test for parallel-trends DiD.
+- **Lesson:** On the 2001-2007 minimum-wage panel CV picks $r = 0$ for IFEct (it collapses to two-way fixed effects) but a small non-zero $\eta = 0.0007$ for MC; the two estimators nevertheless land in the same neighbourhood, and that agreement is the strongest robustness check a short panel can produce — qualitatively the same answer under two different relaxations of parallel trends.
+- **Caveat:** Factor models are data-hungry: identifying $r$ factors on a treated unit requires at least $r + 1$ pre-treatment periods, so short panels ($T \le 5$) cap the recoverable rank near zero and IFEct degenerates to TWFE. The chapter widens the chapter-8 window to 2001-2007 precisely to give the 2004 cohort three pre-periods; on genuinely short panels the honest move is to not run IFEct or MC at all rather than hand-pick a rank.
+- **Caveat:** CV-selected hyperparameters are not directly comparable across the two methods — an integer rank $r$ and a continuous penalty $\eta$ live on different scales — so cross-method validation has to run through the *counterfactual paths*, the *event-study gap plot*, and the *numeric ATT*, not through the tuning parameters themselves.
+- **Caveat:** The reported confidence intervals come from a bootstrap whose width depends on `nboots`; the chapter uses `nboots = 50` for fast rendering, which is fine for point estimates and CV selection but under-resolves the tails — research use should bump it to 500-1000.
+
 ## Further reading
 
 The factor-model formulation traces to @bai2009panel and the IFEct /
