@@ -56,6 +56,7 @@ flowchart TB
 #| label: setup
 #| message: false
 #| warning: false
+#| code-summary: "Code: Load packages, source table helpers, and set the transparent ggplot theme."
 library(tidyverse)
 library(sandwich)
 library(lmtest)
@@ -84,6 +85,7 @@ theme_set(
 
 ```{r}
 #| label: data-load
+#| code-summary: "Code: Load Prop 99 data and subset to California and Nevada in 1984-1993 with a Pre/Post factor."
 prop99 <- read_rds("data/proposition99.rds") |> as_tibble()
 
 # Keep only California and Nevada in the 1984-1993 window and add the
@@ -107,6 +109,7 @@ The resulting `prop99_did` tibble has 20 rows (2 states × 10 years) and four co
 ```{r}
 #| label: tbl-fit-did
 #| tbl-cap: "Basic DiD fit (HAC-robust SEs)."
+#| code-summary: "Code: Fit the two-way interacted DiD regression and report HAC-robust standard errors."
 # Two-way interacted regression: state main effect + Pre/Post main effect
 # + (state x Pre/Post) interaction. The interaction is the DiD estimate.
 fit_did <- lm(cigsale ~ state * prepost, data = prop99_did)
@@ -132,6 +135,7 @@ ms_pretty(list("Two-way interacted OLS, HAC SEs" = fit_did),
 #| fig-cap: "California vs Nevada, 1970–2000 cigarette sales per capita. Pre-policy years are to the left of the dashed line."
 #| fig-width: 8
 #| fig-height: 5
+#| code-summary: "Code: Plot California vs Nevada cigarette sales over 1970-2000 with a 1988.5 policy cutoff."
 two_states <- prop99 |>
   filter(state %in% c("California", "Nevada"))
 
@@ -150,6 +154,7 @@ ggplot(two_states, aes(x = year, y = cigsale, color = state)) +
 ```{r}
 #| label: tbl-pretrend
 #| tbl-cap: "Formal pre-trends test: California × year slope difference on the 1984–1988 pre-window (HAC SEs). Under parallel trends the slope difference should be ≈ 0."
+#| code-summary: "Code: Test parallel pre-trends by regressing cigsale on state-by-year over 1984-1988."
 pre_window <- prop99_did |> filter(prepost == "Pre")
 fit_pre <- lm(cigsale ~ state * year, data = pre_window)
 

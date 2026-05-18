@@ -61,6 +61,7 @@ employment.
 #| label: setup
 #| message: false
 #| warning: false
+#| code-summary: "Code: Load packages, source helpers, and set the ggplot theme."
 library(tidyverse)
 library(did)
 library(fixest)
@@ -95,6 +96,7 @@ without the late-2007 cohort and starting in 2003.
 
 ```{r}
 #| label: data-load
+#| code-summary: "Code: Load the minimum-wage panel and build the working sample."
 mw_raw <- readRDS("data/cs_minwage.rds") |> as_tibble()
 
 # Step 1: drop Northeast and keep cohorts of interest.
@@ -115,6 +117,7 @@ The working panel has `r nrow(data2)` rows =
 ```{r}
 #| label: tbl-cohort-counts
 #| tbl-cap: "Cohort sizes in the working sample. G = 0 is the never-treated control pool; cohorts 2004 and 2006 are the staggered treated groups."
+#| code-summary: "Code: Tabulate county counts by treatment cohort."
 data2 |>
   filter(year == 2003) |>
   count(G, name = "counties") |>
@@ -131,6 +134,7 @@ raised its minimum wage (i.e., `year >= G & G != 0`), and 0 otherwise.
 ```{r}
 #| label: tbl-twfe
 #| tbl-cap: "Two-way fixed-effects regression. The point estimate suggests minimum-wage increases cut log teen employment by roughly 3.8 percent — but see the discussion below."
+#| code-summary: "Code: Estimate the TWFE baseline regression with clustered SEs."
 twfe_res <- fixest::feols(lemp ~ post | id + year,
                           data = data2, cluster = "id")
 ms_pretty(list("TWFE (county + year FE)" = twfe_res),
@@ -169,6 +173,7 @@ $G = 0$), so no contamination from already-treated units sneaks in.
 ```{r}
 #| label: tbl-attgt
 #| tbl-cap: "Group-time average treatment effects $ATT(g, t)$ for the minimum-wage panel. Cohorts 2004 and 2006, each year 2003 through 2007. Pre-treatment cells should hover near zero if parallel trends holds; post-treatment cells are the effects we want."
+#| code-summary: "Code: Estimate group-time ATTs with the did package."
 attgt <- did::att_gt(yname = "lemp", idname = "id", gname = "G",
                      tname = "year", data = data2,
                      control_group = "nevertreated",
@@ -215,6 +220,7 @@ different post-treatment horizons — as they do here (cohort 2004 has
 ```{r}
 #| label: tbl-cs-overall
 #| tbl-cap: "Callaway-Sant'Anna overall ATT (sample-weighted aggregation across cohorts). This is the staggered-DiD analogue of chapter 3's single DiD coefficient."
+#| code-summary: "Code: Aggregate group-time ATTs into the overall ATT summary."
 attO <- did::aggte(attgt, type = "group")
 
 tibble(
@@ -238,6 +244,7 @@ treatment.
 ```{r}
 #| label: tbl-cs-event
 #| tbl-cap: "Callaway-Sant'Anna event-study aggregation. Event time -1 is the omitted reference period under the universal base."
+#| code-summary: "Code: Aggregate ATTs into the dynamic event-study table."
 attes <- did::aggte(attgt, type = "dynamic")
 
 tibble(
@@ -254,6 +261,7 @@ tibble(
 #| fig-cap: "Callaway-Sant'Anna event study. The on-impact effect is small; effects accumulate to roughly -0.13 log points by event-time +3 (three years post-treatment)."
 #| fig-width: 8
 #| fig-height: 4.5
+#| code-summary: "Code: Plot the event-study estimates with 95 percent CIs."
 cs_es_df <- tibble(
   egt   = attes$egt,
   est   = attes$att.egt,
@@ -295,6 +303,7 @@ specified).
 #| tbl-cap: "Overall ATT under four identification assumptions: unconditional parallel trends, regression adjustment, inverse probability weighting, and doubly robust. The four point estimates land within roughly one SE of each other, which is reassuring."
 #| message: false
 #| warning: false
+#| code-summary: "Code: Compare overall ATT under regression, IPW, and doubly-robust adjustments."
 
 cs_reg <- did::att_gt(yname="lemp", tname="year", idname="id", gname="G",
                       xformla = ~lpop + lavg_pay,
@@ -359,6 +368,7 @@ cohort 2006 above. We use the relative-magnitudes bound below.
 #| tbl-cap: "Robust confidence intervals for the on-impact effect $ATT(e = 0)$ under the relative-magnitude restriction. As $\\bar M$ grows, the CI widens; we report the breakdown point — the $\\bar M$ at which the CI first contains zero."
 #| message: false
 #| warning: false
+#| code-summary: "Code: Run HonestDiD relative-magnitude sensitivity on the on-impact ATT."
 
 hd_rm <- honest_did(es      = attes,
                     e       = 0,
@@ -379,6 +389,7 @@ hd_rm |>
 #| fig-cap: "HonestDiD sensitivity: as $\\bar M$ grows, the robust 95 percent CI on the on-impact effect widens until it crosses zero. The breakdown $\\bar M$ — the value at which the CI first contains zero — is below 0.5, reflecting the visible pre-trend in cohort 2006."
 #| fig-width: 7.5
 #| fig-height: 4.5
+#| code-summary: "Code: Plot the robust CI band against the relative-magnitude bound."
 ggplot(hd_rm, aes(x = Mbar)) +
   geom_hline(yintercept = 0, color = "#94a3b8", linetype = "dashed") +
   geom_ribbon(aes(ymin = lb, ymax = ub),

@@ -25,6 +25,7 @@ ITS in this chapter is a `fable` workflow: fit on a `tsibble`-filtered pre-perio
 #| label: setup
 #| message: false
 #| warning: false
+#| code-summary: "Code: Load packages, source table helpers, and set transparent ggplot theme."
 library(tidyverse)
 library(fpp3)       # loads tsibble, fable, feasts
 library(sandwich)   # vcovHAC for the pre-trend regression
@@ -49,6 +50,7 @@ theme_set(
 
 ```{r}
 #| label: data-load
+#| code-summary: "Code: Load Proposition 99 panel and build a California-only tsibble with Pre/Post factor."
 prop99 <- read_rds("data/proposition99.rds") |> as_tibble()
 
 # California-only time series with a Pre/Post factor. The tsibble class
@@ -83,6 +85,7 @@ In words: a single straight line, fit on 1970–1988 cigarette sales in Californ
 ```{r}
 #| label: tbl-fit-growth
 #| tbl-cap: "Linear growth-curve ITS — pre-period fit (HAC-robust SEs)."
+#| code-summary: "Code: Fit pre-period linear trend and tabulate it with HAC-robust standard errors."
 # Fit a linear pre-period trend (cigsale on year, 1970-1988 only). HAC
 # standard errors are computed via sandwich::vcovHAC for parity with
 # chapter 3 — a 19-year time series has substantial autocorrelation
@@ -99,6 +102,7 @@ The pre-period linear trend is about $-1.78$ packs per capita per year (statisti
 
 ```{r}
 #| label: its-growth-estimate
+#| code-summary: "Code: Extrapolate the pre-period line into 1989-2000 and average the per-year gap as the ATT."
 # Subset to the 1989-2000 rows and extrapolate the fitted line forward.
 post_df <- prop99_ts |> filter(prepost == "Post")
 pred_growth <- predict(fit_growth, newdata = as_tibble(post_df))
@@ -115,6 +119,7 @@ Plotting the observed series against the extrapolated line makes the size of the
 #| fig-cap: "ITS counterfactual from a linear pre-period growth curve. Solid blue: in-sample fit (1970–1988). Dashed blue: extrapolation into the post-period (1989–2000)."
 #| fig-width: 8
 #| fig-height: 5
+#| code-summary: "Code: Plot observed series against the in-sample fit and dashed post-period extrapolation."
 its_growth_plot <- prop99_ts |>
   as_tibble() |>
   mutate(fitted_line = predict(fit_growth, newdata = as_tibble(prop99_ts))) |>
@@ -162,6 +167,7 @@ In words: same recipe as the growth-curve version — fit on pre-period, project
 ```{r}
 #| label: fit-arima
 #| message: false
+#| code-summary: "Code: Fit an explicit ARIMA(1, 2, 0) on the pre-period and report its coefficients."
 # Fit an ARIMA(1, 2, 0) explicitly on the 1970-1988 California series.
 # This is the AICc-minimising non-seasonal order on this pre-period;
 # we set PDQ(0, 0, 0) to disable the seasonal search (annual data has
@@ -184,11 +190,13 @@ The fitted model is `ARIMA(1, 2, 0)`: one autoregressive lag and *two* rounds of
 #| fig-cap: "Residual diagnostics for the pre-period ARIMA(1, 2, 0) fit. Residual series (top), ACF (bottom-left), histogram (bottom-right)."
 #| fig-width: 8
 #| fig-height: 5
+#| code-summary: "Code: Draw three-panel residual diagnostics for the ARIMA(1, 2, 0) fit."
 gg_tsresiduals(fit_arima)
 ```
 
 ```{r}
 #| label: arima-ljung-box
+#| code-summary: "Code: Run a Ljung-Box white-noise test on the ARIMA innovations."
 # Ljung-Box test on the model innovations. dof = 1 because the model
 # has 1 estimated coefficient (the AR(1) term); lag = 5 is a small-
 # sample-friendly choice with 19 pre-period observations.
@@ -200,6 +208,7 @@ The Ljung-Box $p$-value sits well above the conventional 0.05 threshold, so we c
 
 ```{r}
 #| label: its-arima-estimate
+#| code-summary: "Code: Forecast the ARIMA 12 years out and average the observed-minus-forecast gap."
 # Project the fitted ARIMA 12 years forward as the post-period counterfactual.
 # fcasts has a distributional column `cigsale` (the forecast distribution
 # at each horizon) and a point-forecast column `.mean`.
@@ -217,6 +226,7 @@ Plotting the forecast against the observed post-period series shows where the mo
 #| fig-cap: "ITS counterfactual from the pre-period ARIMA(1, 2, 0), forecast to 2000. The point forecast (dashed) is surrounded by 80 % and 95 % prediction bands derived from the model's own forecast distribution."
 #| fig-width: 8
 #| fig-height: 5
+#| code-summary: "Code: Plot observed series with ARIMA point forecast and 80/95 percent prediction bands."
 # Unpack the 80% and 95% prediction intervals from the distribution.
 fcast_bands <- fcasts |>
   hilo(level = c(80, 95)) |>

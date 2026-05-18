@@ -90,6 +90,7 @@ flip the toggles back to research grade and compare.
 #| label: setup
 #| message: false
 #| warning: false
+#| code-summary: "Code: Load packages, source table helpers, and set the transparent ggplot theme."
 library(tidyverse)
 library(gsynth)
 library(panelView)
@@ -123,6 +124,7 @@ tibble silently breaks its internal indexing — so we cast with
 
 ```{r}
 #| label: data-load
+#| code-summary: "Code: Load the minimum-wage panel, restrict cohorts and region, and build the treat indicator."
 mw_raw <- readRDS("data/cs_minwage.rds") |> as_tibble()
 
 mw <- mw_raw |>
@@ -143,6 +145,7 @@ the same as chapter 8's.
 ```{r}
 #| label: tbl-cohort-counts
 #| tbl-cap: "Cohort sizes after restriction. G = 0 is the never-treated control pool; cohorts 2004 and 2006 are the staggered treated groups, with 3 and 5 pre-treatment years respectively."
+#| code-summary: "Code: Tabulate county counts and pre-treatment years by treatment cohort."
 mw_df |>
   filter(year == 2001) |>
   count(G, name = "counties") |>
@@ -165,6 +168,7 @@ together expose anything weird in the data before estimation.
 #| fig-height: 5
 #| message: false
 #| warning: false
+#| code-summary: "Code: Plot the treatment-status heatmap with panelView grouped by cohort."
 panelview(lemp ~ treat, data = mw_df,
           index = c("id", "year"),
           pre.post = TRUE,
@@ -181,6 +185,7 @@ panelview(lemp ~ treat, data = mw_df,
 #| fig-height: 4.5
 #| message: false
 #| warning: false
+#| code-summary: "Code: Plot outcome trajectories by cohort with panelView."
 panelview(lemp ~ treat, data = mw_df,
           index = c("id", "year"),
           type = "outcome",
@@ -214,6 +219,7 @@ criterion sidesteps the cohort loss.
 #| message: false
 #| warning: false
 #| cache: true
+#| code-summary: "Code: Fit gsynth across the factor grid r = 0 and r = 1 with two-way fixed effects."
 fit_grid <- map(0:1, function(r_val) {
   gsynth(lemp ~ treat + lpop + lavg_pay,
          data = mw_df,
@@ -233,6 +239,7 @@ names(fit_grid) <- paste0("r=", 0:1)
 ```{r}
 #| label: tbl-ic-grid
 #| tbl-cap: "Information criterion and ATT for the two candidate factor counts. The IC [@bai2003inferential] trades in-sample fit against complexity. Across this short panel parsimony wins on absolute IC, but the gain from one factor is exactly the move we want gsynth to make to differentiate itself from TWFE. Exercise 1 asks you to extend the grid to $r = 2$ and watch the standard error explode."
+#| code-summary: "Code: Collect ATT, standard error, IC, and sigma-squared across factor counts into a table."
 ic_tbl <- map_dfr(seq_along(fit_grid), function(i) {
   o <- fit_grid[[i]]
   tibble(
@@ -249,6 +256,7 @@ gt_pretty(ic_tbl, decimals = 4)
 
 ```{r}
 #| label: select-best
+#| code-summary: "Code: Select the IC-minimising factor count with an r >= 1 floor for pedagogy."
 candidate <- ic_tbl |> filter(r >= 1)
 r_star    <- candidate$r[ which.min(candidate$IC) ]
 out       <- fit_grid[[ paste0("r=", r_star) ]]
@@ -286,6 +294,7 @@ options cover the diagnostic menu the source tutorial demonstrates.
 #| fig-height: 4.5
 #| message: false
 #| warning: false
+#| code-summary: "Code: Plot the period-by-period ATT gap with bootstrap confidence bands."
 plot(out, type = "gap",
      xlab = "Event time (years since treatment)",
      ylab = "ATT (log teen employment)",
@@ -301,6 +310,7 @@ plot(out, type = "gap",
 #| fig-height: 4.5
 #| message: false
 #| warning: false
+#| code-summary: "Code: Plot observed treated outcomes against the gsynth-imputed counterfactual."
 plot(out, type = "counterfactual", raw = "none",
      main = NULL,
      xlab = "Event time (years since treatment)",
@@ -316,6 +326,7 @@ plot(out, type = "counterfactual", raw = "none",
 #| fig-height: 4.5
 #| message: false
 #| warning: false
+#| code-summary: "Code: Plot the estimated latent factors over time when r* >= 1."
 if (r_star >= 1) {
   plot(out, type = "factors", main = NULL, xlab = "Year")
 } else {
@@ -332,6 +343,7 @@ if (r_star >= 1) {
 #| fig-height: 5.5
 #| message: false
 #| warning: false
+#| code-summary: "Code: Plot the factor loadings for treated and control counties."
 if (r_star >= 1) {
   plot(out, type = "loadings", main = NULL)
 } else {
@@ -353,6 +365,7 @@ the abstract factor model in something concrete.
 ```{r}
 #| label: tbl-implied-weights
 #| tbl-cap: "Top-5 implicit donor counties for the five most-positively-weighted treated counties. Each cell is an entry of the implicit-weights matrix $\\Omega$: the share of weight gsynth assigns to that control county when constructing the treated unit's counterfactual."
+#| code-summary: "Code: Extract the implicit donor-weights matrix and tabulate top-5 controls per treated unit."
 W <- out$wgt.implied
 # gsynth 1.4.0 (a shim over fect 2.x) returns wgt.implied with NULL row/col
 # names. Recover them from the index vectors the fit stores: fit$id is the
@@ -398,6 +411,7 @@ applications report.
 ```{r}
 #| label: tbl-cumulative
 #| tbl-cap: "Period-by-period and cumulative ATT, indexed by event time (years since each unit's own treatment onset). Pre-treatment event times are excluded from the cumulation because they are reference periods, not treatment periods. gsynth 1.4.0 returns `est.att` with event-time rownames (e.g., \"-4\", ..., \"4\"), not calendar years — so cumulation must be done on event time."
+#| code-summary: "Code: Compute cumulative ATT and normal-approximation CIs over post-treatment event time."
 est_att <- as.data.frame(out$est.att)
 est_att$event_time <- as.integer(rownames(est_att))
 
@@ -425,6 +439,7 @@ gt_pretty(cumu_df, decimals = 4)
 #| fig-cap: "Cumulative ATT trajectory. The x-axis is event time (years since treatment onset); the slope of the line at any event time is the per-period effect; the line itself is the running total of treatment effect since treatment onset (event time 0). A roughly monotonically deepening shape is consistent with chapter 8's event-study finding that effects accumulate over time."
 #| fig-width: 7.5
 #| fig-height: 4.5
+#| code-summary: "Code: Plot the cumulative ATT trajectory with a normal-approximation confidence ribbon."
 ggplot(cumu_df, aes(x = `Event time`, y = `Cumulative ATT`)) +
   geom_hline(yintercept = 0, color = "#94a3b8", linetype = "dashed") +
   geom_ribbon(aes(ymin = `CI lower`, ymax = `CI upper`),

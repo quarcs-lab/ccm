@@ -37,6 +37,7 @@ flowchart LR
 #| label: setup
 #| message: false
 #| warning: false
+#| code-summary: "Code: Load packages, set MCMC constants, seed, and ggplot theme."
 library(tidyverse)
 library(tidysynth)
 library(Rcpp)
@@ -76,6 +77,7 @@ R's default `Makeconf` on macOS expects the CRAN gfortran toolchain at `/opt/gfo
 #| label: vendor-load
 #| message: false
 #| warning: false
+#| code-summary: "Code: Patch FLIBS on macOS, source scspill helpers, and compile Rcpp kernels."
 if (Sys.info()[["sysname"]] == "Darwin" && !dir.exists("/opt/gfortran")) {
   brew_libs <- c(
     Sys.glob("/usr/local/Cellar/gcc/*/lib/gcc/*"),    # Intel Homebrew
@@ -105,6 +107,7 @@ Rcpp::sourceCpp("R/scspill/40_geweke_latest.cpp")
 
 ```{r}
 #| label: data-load
+#| code-summary: "Code: Load the California smoking panel and extract w, W spatial structures."
 load("data/california_smoking.rda")
 
 panel_df <- california_smoking$panel_df |>
@@ -117,6 +120,7 @@ rownames(W) <- colnames(W) <- california_smoking$W$state
 
 ```{r}
 #| label: panel-summary
+#| code-summary: "Code: Print a one-line summary of the panel dimensions and treatment window."
 glue(
   "Panel: {nrow(panel_df)} rows | {length(unique(panel_df$state))} states | ",
   "years {min(panel_df$year)}-{max(panel_df$year)}\n",
@@ -141,6 +145,7 @@ We use `tidysynth` with a small set of predictors (the mean of `cigsale` and `re
 #| label: stage1-fit
 #| message: false
 #| warning: false
+#| code-summary: "Code: Fit the classical simplex SCM with tidysynth and compute the post-period ATT."
 sc_classic <- panel_df |>
   synthetic_control(
     outcome = cigsale, unit = state, time = year,
@@ -169,6 +174,7 @@ att_classic <- mean(traj_classic$gap[traj_classic$period == "post"])
 ```{r}
 #| label: tbl-stage1-weights
 #| tbl-cap: "Stage 1 — top-5 donor weights from the classical simplex optimiser."
+#| code-summary: "Code: Tabulate the top-5 donor weights from the Stage 1 simplex fit."
 grab_unit_weights(sc_classic) |>
   rename(state = unit) |>
   arrange(desc(weight)) |>
@@ -182,6 +188,7 @@ grab_unit_weights(sc_classic) |>
 #| fig-cap: "Stage 1 — California (observed, orange) vs the classical-SCM synthetic (steel blue). Pre-1988 the two paths are nearly indistinguishable; post-1988 California falls visibly below."
 #| fig-width: 8
 #| fig-height: 5
+#| code-summary: "Code: Plot the observed and Stage 1 synthetic cigarette-sales paths."
 ggplot(traj_classic, aes(x = year)) +
   geom_line(aes(y = synthetic), color = "#6a9bcc", linewidth = 0.9) +
   geom_line(aes(y = observed),  color = "#d97757", linewidth = 0.9) +
@@ -191,6 +198,7 @@ ggplot(traj_classic, aes(x = year)) +
 
 ```{r}
 #| label: stage1-att-print
+#| code-summary: "Code: Print the Stage 1 classical-SCM ATT estimate."
 glue("Stage 1 ATT (Classical SCM): {format(round(att_classic, 2), nsmall = 2)} packs/capita")
 ```
 
@@ -208,6 +216,7 @@ The package's C++ Gibbs sampler `hs_alpha_gibbs_cpp()` returns post-burn draws o
 
 ```{r}
 #| label: stage2-fit
+#| code-summary: "Code: Build pre/post matrices and run the horseshoe Gibbs sampler for donor weights."
 years_pre  <- sort(unique(panel_df$year[panel_df$year <  TREAT_YEAR]))
 years_post <- sort(unique(panel_df$year[panel_df$year >= TREAT_YEAR]))
 donors     <- setdiff(sort(unique(panel_df$state)), "California")
@@ -239,6 +248,7 @@ We then propagate uncertainty through the gap series.
 
 ```{r}
 #| label: stage2-att
+#| code-summary: "Code: Compute Stage 2 ATT posterior mean and 95% credible interval from gap draws."
 gap_draws_hs <- Y0_post - Yc_post %*% t(alpha_draws_hs)   # T1 x M_draws
 att_hs_draws <- colMeans(gap_draws_hs)
 att_hs       <- mean(att_hs_draws)
@@ -254,6 +264,7 @@ glue(
 ```{r}
 #| label: tbl-stage2-weights
 #| tbl-cap: "Stage 2 — top-5 donor weights from the horseshoe posterior. Only Nevada's 95% credible interval excludes zero."
+#| code-summary: "Code: Summarise horseshoe posterior weights and tabulate the top 5 donors."
 alpha_summary <- tibble(
   state = donors,
   mean  = colMeans(alpha_draws_hs),
@@ -276,6 +287,7 @@ n_active <- sum(alpha_summary$mean > 0.01)
 #| fig-cap: "Stage 2 — posterior mean donor weights with 95% credible intervals, sorted by mean. Most donors hug zero; Nevada is the only top weight whose interval excludes zero."
 #| fig-width: 8
 #| fig-height: 6
+#| code-summary: "Code: Plot posterior mean donor weights with 95% credible intervals."
 alpha_summary |>
   mutate(state = fct_reorder(state, mean)) |>
   ggplot(aes(x = mean, y = state)) +
@@ -290,6 +302,7 @@ alpha_summary |>
 #| fig-cap: "Stage 2 — California (orange) vs the horseshoe-posterior-mean synthetic (steel blue), with a 95% credible band on the post-period gap."
 #| fig-width: 8
 #| fig-height: 5
+#| code-summary: "Code: Plot Stage 2 observed and posterior-mean synthetic paths with a 95% credible band."
 synth_mean_pre  <- Yc_pre  %*% colMeans(alpha_draws_hs)
 synth_mean_post <- Yc_post %*% colMeans(alpha_draws_hs)
 post_gap_lo <- apply(gap_draws_hs, 1, quantile, probs = 0.025)
@@ -333,6 +346,7 @@ The package's `sc_spillover()` runs the two MCMC samplers sequentially — first
 ```{r}
 #| label: stage3-fit
 #| message: false
+#| code-summary: "Code: Run the SAR spillover sampler and extract rho, ESS, and ATT summaries."
 fit_sar <- sc_spillover(
   data            = panel_df,
   treated_unit    = "California",
@@ -355,6 +369,7 @@ att_sar_ci <- fit_sar$effects$ate_ci95
 
 ```{r}
 #| label: stage3-print
+#| code-summary: "Code: Print posterior mean rho, ESS, and the Stage 3 ATT with credible interval."
 glue(
   "Posterior mean rho: {format(round(rho_hat, 3), nsmall = 3)} | ",
   "ESS(rho) = {format(round(ess_rho, 1), nsmall = 1)}\n",
@@ -379,6 +394,7 @@ The single most important MCMC diagnostic is the traceplot: it lets a reader see
 #| fig-cap: "Traceplot of rho over the 2,500 post-burn iterations. At this 5,000-iteration run the chain visibly fails to mix — the visual diagnosis behind ESS = 2.9. A healthy chain would look like white-noise oscillation around a stationary mean; this one drifts in long, slow excursions."
 #| fig-width: 8
 #| fig-height: 3
+#| code-summary: "Code: Plot the post-burn traceplot of rho to diagnose chain mixing."
 tibble(iter = seq_along(fit_sar$rho_draws), rho = fit_sar$rho_draws) |>
   ggplot(aes(iter, rho)) +
   geom_line(color = "#6a9bcc", linewidth = 0.4) +
@@ -390,6 +406,7 @@ tibble(iter = seq_along(fit_sar$rho_draws), rho = fit_sar$rho_draws) |>
 #| fig-cap: "Stage 3 — California (orange) vs the SAR-spillover-corrected synthetic (teal). The treatment effect widens roughly linearly post-1988."
 #| fig-width: 8
 #| fig-height: 5
+#| code-summary: "Code: Plot the Stage 3 SAR-corrected synthetic against the observed California path."
 ycf_post <- Y0_post - fit_sar$effects$te_point
 paths_sar <- tibble(
   year      = years_post,
@@ -420,6 +437,7 @@ where $A = W + w\, w^{\top}$ (the same matrix from the SAR likelihood) and $Y_0$
 ```{r}
 #| label: tbl-spillover-top8
 #| tbl-cap: "Top-8 donor states by absolute post-1988 mean spillover. Nevada absorbs roughly 16x the next state."
+#| code-summary: "Code: Rank donors by mean post-1988 spillover and tabulate the top 8."
 spill_mat   <- fit_sar$effects$spill
 post_idx    <- which(as.numeric(rownames(spill_mat)) >= TREAT_YEAR)
 spill_post  <- spill_mat[post_idx, , drop = FALSE]
@@ -438,6 +456,7 @@ spill_top8 |>
 #| fig-cap: "Top-8 donor states by absolute spillover. Nevada dominates by an order of magnitude — the empirical signature of SUTVA failure for this case study."
 #| fig-width: 8
 #| fig-height: 4.5
+#| code-summary: "Code: Plot top-8 donor spillovers as a horizontal bar chart."
 spill_top8 |>
   mutate(state = fct_reorder(state, avg_spillover)) |>
   ggplot(aes(x = avg_spillover, y = state)) +
@@ -456,6 +475,7 @@ We focus on four summary statistics: **donor mean** (the level of the simulated 
 
 ```{r}
 #| label: prior-predictive
+#| code-summary: "Code: Draw prior predictive samples and compare summary stats to observed values."
 Xc_pre_arr <- panel_df |>
   filter(state != "California", year < TREAT_YEAR) |>
   pivot_wider(id_cols = year, names_from = state, values_from = retprice) |>
@@ -481,6 +501,7 @@ ppc <- prior_predictive(
 #| fig-cap: "Prior predictive check on four summary statistics. Histograms are R = 1,000 simulated prior draws; the orange line is the observed value. All four observed lines land inside the simulated prior cloud — the prior is compatible with the data, not overwhelming it."
 #| fig-width: 9
 #| fig-height: 6
+#| code-summary: "Code: Plot prior predictive histograms of four summary statistics with observed lines."
 stats_show <- c("yc\\_mean", "spatial\\_quadratic", "ac1", "pve\\_pc1")
 pretty <- c("Donor mean", "Spatial y'Wy", "Lag-1 autocorrelation", "PC1 variance share")
 
@@ -511,6 +532,7 @@ Stacking the three estimators makes the pedagogical arc visible.
 ```{r}
 #| label: tbl-cross-stage
 #| tbl-cap: "Cross-stage comparison of ATT estimates. The active-donor count jumps from 4 to 23 between Stage 1 and Stage 2 and then stays at 23 in Stage 3, because Stage 3 conditions on Stage 2's w-hat (plug-in approximation). The Stage 3 CrI is artificially narrow because ESS(rho) is in single digits at the 5,000-iteration scale."
+#| code-summary: "Code: Tabulate cross-stage ATT estimates, intervals, active donors, and ESS(rho)."
 tibble(
   Stage          = c("Classical SCM (tidysynth)",
                      "Bayesian HS (no spillovers)",

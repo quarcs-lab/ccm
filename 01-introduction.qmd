@@ -141,6 +141,7 @@ We load the packages we need with `library()` calls. Every package below is pinn
 #| label: setup
 #| message: false
 #| warning: false
+#| code-summary: "Code: Load packages, source table helpers, and set the ggplot theme."
 library(tidyverse)
 library(sandwich)
 library(lmtest)
@@ -167,6 +168,7 @@ The dataset is cached in the repository at `data/proposition99.rds`. It is a pan
 
 ```{r}
 #| label: data-load
+#| code-summary: "Code: Load the Proposition 99 panel and tag California by Pre/Post period."
 prop99 <- read_rds("data/proposition99.rds") |> as_tibble()
 
 # Subset to California and add a Pre/Post factor based on the policy date.
@@ -180,6 +182,7 @@ With California isolated and tagged by period, the first thing to look at is the
 ```{r}
 #| label: tbl-prepost-means
 #| tbl-cap: "Pre vs post means in California (Proposition 99)."
+#| code-summary: "Code: Summarize California's pre- and post-1988 cigarette sales as a table."
 prop99_cali |>
   group_by(prepost) |>
   summarize(n            = n(),
@@ -202,6 +205,7 @@ Before any modelling, it helps to see all 39 series at once.
 #| fig-cap: "Per-capita cigarette sales for all 39 states 1970–2000, with California highlighted."
 #| fig-width: 8
 #| fig-height: 5
+#| code-summary: "Code: Plot per-capita cigarette sales for all 39 states with California highlighted."
 eda_data <- prop99 |>
   mutate(unit_type = if_else(state == "California",
                              "California (treated)", "Donor state"))
@@ -241,6 +245,7 @@ We follow the convention of the [ODISSEI workshop](https://causalpolicy.nl/) [@o
 ```{r}
 #| label: tbl-naive-prepost
 #| tbl-cap: "Naive pre/post OLS regression of California's per-capita cigarette sales on a Pre/Post indicator, 1984–1993 window. Standard errors are HAC-robust (Newey-West)."
+#| code-summary: "Code: Fit the naive pre/post OLS on 1984-1993 with Newey-West HAC standard errors."
 # OLS of California's cigsale on a Pre/Post dummy, restricted to the
 # workshop's 1984-1993 window.
 fit_prepost <- lm(cigsale ~ prepost,

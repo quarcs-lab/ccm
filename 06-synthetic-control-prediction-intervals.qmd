@@ -32,6 +32,7 @@ The substantive interpretation matters: a prediction interval (PI) bounds the *s
 #| label: setup
 #| message: false
 #| warning: false
+#| code-summary: "Code: Load packages, source table helpers, set seed, and configure ggplot theme."
 library(tidyverse)
 library(scpi)
 source("R/table_helpers.R")
@@ -59,6 +60,7 @@ This is an intentional departure from chapter 4, which used `lnincome`, `beer`, 
 
 ```{r}
 #| label: data-load
+#| code-summary: "Code: Load the Proposition 99 panel and build the donor state list."
 prop99 <- read_rds("data/proposition99.rds") |>
   as_tibble() |>
   mutate(state = as.character(state))
@@ -74,6 +76,7 @@ donors <- setdiff(sort(unique(prop99$state)), "California")
 #| label: scdata-prep
 #| message: false
 #| warning: false
+#| code-summary: "Code: Reshape the panel into scpi matrices via scdata() for California vs donor states."
 data_prep <- scdata(
   df               = prop99,
   id.var           = "state",
@@ -98,6 +101,7 @@ data_prep <- scdata(
 #| label: scest-four
 #| message: false
 #| warning: false
+#| code-summary: "Code: Fit scest point estimates under simplex, lasso, ridge, and OLS constraints."
 constraints <- c("simplex", "lasso", "ridge", "ols")
 
 scest_fits <- map(constraints, \(name) {
@@ -113,6 +117,7 @@ The four constraint sets correspond to four classical optimisation problems on $
 ```{r}
 #| label: tbl-weights-side-by-side
 #| tbl-cap: "Donor weights from each of the four scpi weight-constraint families, for the 12 donors with largest maximum absolute weight across the four constraints."
+#| code-summary: "Code: Tabulate the top-12 donor weights side-by-side across the four constraints."
 weight_long <- map_dfr(constraints, \(name) {
   w <- scest_fits[[name]]$est.results$w
   tibble(
@@ -148,6 +153,7 @@ Three readings emerge.
 #| fig-cap: "Donor weights across the four scpi constraints, displayed as a heatmap, for the 12 donors with largest maximum absolute weight across constraints. Rows are donors; columns are constraints. Red = negative weight, blue = positive."
 #| fig-width: 8
 #| fig-height: 6
+#| code-summary: "Code: Plot a heatmap of donor weights across constraints for the top-12 donors."
 top_states <- weight_wide |>
   mutate(rank_score = pmax(abs(simplex), abs(lasso), abs(ridge), abs(ols))) |>
   arrange(desc(rank_score)) |>
@@ -180,6 +186,7 @@ The point of the weight comparison is not aesthetics — it is to ask whether th
 #| fig-cap: "Observed California (orange) and the four scpi synthetic counterfactuals (one per constraint). Pre-1989 the four synthetics are nearly indistinguishable; post-1989 they fan out but all sit visibly above observed California."
 #| fig-width: 9
 #| fig-height: 5.5
+#| code-summary: "Code: Overlay observed California against the four synthetic counterfactual series."
 years_pre  <- 1970:1988
 years_post <- 1989:2000
 years_all  <- c(years_pre, years_post)
@@ -225,6 +232,7 @@ The pre-period overlap is near-perfect — every constraint can fit 19 years of 
 ```{r}
 #| label: tbl-att-by-constraint
 #| tbl-cap: "Average post-period gap (ATT) by weight constraint."
+#| code-summary: "Code: Summarise the average, minimum, and maximum post-period gap per constraint."
 att_by_constraint <- imap_dfr(scest_fits, \(fit, name) {
   gap <- as.numeric(data_prep$Y.post) - as.numeric(fit$est.results$Y.post.fit)
   tibble(constraint = name, ATT = mean(gap),
@@ -252,6 +260,7 @@ A reader paging back from chapter 4 will notice that the simplex ATT here (≈ $
 #| message: false
 #| warning: false
 #| results: hide
+#| code-summary: "Code: Fit scpi with the simplex constraint and a 95% joint Gaussian prediction interval."
 set.seed(42)
 pi_simplex <- scpi(
   data_prep,
@@ -275,6 +284,7 @@ The simplex `scpi` object carries the same point-estimate slots as `scest_fits$s
 #| fig-width: 8.5
 #| fig-height: 5
 #| warning: false
+#| code-summary: "Code: Plot the simplex synthetic, observed California, and the 95% joint PI band."
 ci_post <- pi_simplex$inference.results$CI.all.gaussian
 synth_pre  <- as.numeric(pi_simplex$est.results$Y.pre.fit)
 synth_post <- as.numeric(pi_simplex$est.results$Y.post.fit)
@@ -308,6 +318,7 @@ The substantive question — is the effect robust across constraints — also ha
 #| message: false
 #| warning: false
 #| results: hide
+#| code-summary: "Code: Fit scpi with prediction intervals under all four weight constraints."
 set.seed(42)
 scpi_fits <- map(constraints, \(name) {
   scpi(
@@ -331,6 +342,7 @@ scpi_fits <- map(constraints, \(name) {
 #| fig-width: 10
 #| fig-height: 7
 #| warning: false
+#| code-summary: "Code: Facet the synthetic fit and 95% PI band across all four constraints."
 pi_all <- imap_dfr(scpi_fits, \(fit, name) {
   ci <- fit$inference.results$CI.all.gaussian
   tibble(
@@ -367,6 +379,7 @@ The 95% band is a convention. A second robustness check is to sweep the joint co
 #| message: false
 #| warning: false
 #| results: hide
+#| code-summary: "Code: Refit simplex scpi across joint confidence levels of 80, 90, 95, and 99 percent."
 set.seed(42)
 alpha_levels <- c(0.20, 0.10, 0.05, 0.01)
 
@@ -391,6 +404,7 @@ sens_fits <- map(alpha_levels, \(a) {
 #| fig-cap: "Sensitivity to the joint confidence level (simplex constraint). Nested bands at 80%, 90%, 95%, and 99%. Observed California (orange) sits below the lower bound at every level by the late 1990s."
 #| fig-width: 8.5
 #| fig-height: 5.5
+#| code-summary: "Code: Plot the nested PI bands at 80, 90, 95, and 99 percent confidence levels."
 sens_df <- imap_dfr(sens_fits, \(fit, lvl) {
   ci <- fit$inference.results$CI.all.gaussian
   tibble(

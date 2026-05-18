@@ -51,6 +51,7 @@ The trend $\mu_t$ absorbs the dynamics that no control series can explain; the r
 #| label: setup
 #| message: false
 #| warning: false
+#| code-summary: "Code: Load packages, set seed, and configure transparent ggplot theme."
 library(tidyverse)
 library(CausalImpact)
 library(mice)
@@ -77,6 +78,7 @@ theme_set(
 
 ```{r}
 #| label: data-load
+#| code-summary: "Code: Load the Proposition 99 panel from the bundled RDS file."
 prop99 <- read_rds("data/proposition99.rds") |> as_tibble()
 ```
 
@@ -90,6 +92,7 @@ CausalImpact wants a *wide* dataset with the treated outcome in column 1 and eve
 #| label: impute-and-pivot
 #| message: false
 #| warning: false
+#| code-summary: "Code: Impute missing covariates with random forests and pivot panel to wide form."
 # Fill in missing covariate values with one round of random-forest
 # multiple imputation (m = 1, method = "rf"). printFlag suppresses
 # console chatter.
@@ -121,6 +124,7 @@ The reported `dim()` confirms the reshape: `prop99_wide` is **31 rows × 195 col
 #| tbl-cap: "CausalImpact posterior summary; brackets are 95% credible intervals."
 #| message: false
 #| warning: false
+#| code-summary: "Code: Fit CausalImpact on the full donor matrix and format posterior summary table."
 # CausalImpact takes integer row indices, not years.
 # Row 1 = 1970, row 19 = 1988 (last pre-period year).
 # Row 20 = 1989, row 31 = 2000 (last observed year).
@@ -169,6 +173,7 @@ With 194 candidate regressors and an `expected.model.size = 3` prior, most coeff
 #| fig-cap: "Posterior inclusion probabilities for the donor regressors. Bars are the share of MCMC iterations in which each donor's coefficient was non-zero; longer bars are the donors the spike-and-slab prior kept in the model. The colour indicates the posterior-mean sign of the coefficient when it is included."
 #| fig-width: 7
 #| fig-height: 5
+#| code-summary: "Code: Plot spike-and-slab posterior inclusion probabilities for donor regressors."
 plot(impact_full$model$bsts.model, "coefficients")
 ```
 
@@ -184,6 +189,7 @@ With only 1,000 iterations (the default) and 19 pre-period observations, it's wo
 #| fig-width: 7
 #| fig-height: 6
 #| dev.args: !expr 'list(bg = "white")'
+#| code-summary: "Code: Plot BSTS state-space components (trend and regression contribution)."
 plot(impact_full$model$bsts.model, "components")
 ```
 
@@ -192,6 +198,7 @@ plot(impact_full$model$bsts.model, "components")
 #| tbl-cap: "Convergence diagnostics for the donor regressors with the highest posterior inclusion probability. Rhat near 1.0 and ESS well above 100 are the standard rules of thumb; values far from these warrant a longer chain via `model.args = list(niter = 10000)`."
 #| message: false
 #| warning: false
+#| code-summary: "Code: Compute Rhat and ESS diagnostics for top-included donor coefficients."
 # Extract the post-burn-in coefficient draws (iterations x donors)
 beta_draws <- impact_full$model$bsts.model$coefficients
 burn       <- max(1L, floor(0.1 * nrow(beta_draws)))
@@ -249,6 +256,7 @@ The covariate columns are heavily imputed (`beer` was 55% missing). A natural ro
 #| tbl-cap: "CausalImpact fit with only donor `cigsale` columns (no imputed covariates)."
 #| message: false
 #| warning: false
+#| code-summary: "Code: Refit CausalImpact using only donor cigsale columns as a covariate-free robustness check."
 prop99_nocov <- prop99 |>
   dplyr::select(year, state, cigsale) |>
   tidyr::pivot_wider(names_from = state, values_from = cigsale) |>
@@ -288,6 +296,7 @@ Without covariates the donor matrix collapses to 38 columns (one `cigsale` per d
 #| fig-cap: "CausalImpact two-panel: pointwise observed vs Bayesian counterfactual, and cumulative effect over time."
 #| fig-width: 8
 #| fig-height: 7
+#| code-summary: "Code: Render the CausalImpact two-panel pointwise and cumulative effect plot."
 plot(impact_full)
 ```
 

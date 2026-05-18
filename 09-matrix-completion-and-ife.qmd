@@ -58,6 +58,7 @@ using the same panel.
 #| label: setup
 #| message: false
 #| warning: false
+#| code-summary: "Code: Load packages, source table helpers, and set the ggplot theme."
 library(tidyverse)
 library(fect)
 library(panelView)
@@ -102,6 +103,7 @@ to chapter 8.
 
 ```{r}
 #| label: data-load
+#| code-summary: "Code: Load the minimum-wage panel and restrict to the 2001-2007 working window."
 mw_raw <- readRDS("data/cs_minwage.rds") |> as_tibble()
 
 mw <- mw_raw |>
@@ -115,6 +117,7 @@ dim(mw)
 ```{r}
 #| label: tbl-cohorts
 #| tbl-cap: "Cohorts in the 2001-2007 working panel. $G = 0$ is the never-treated control pool; the two treated cohorts have 3 and 5 pre-treatment years respectively."
+#| code-summary: "Code: Summarize county counts and pre-treatment periods by cohort."
 mw |>
   filter(year == 2001) |>
   count(G, name = "counties") |>
@@ -146,6 +149,7 @@ is immediate.
 #| fig-height: 6
 #| message: false
 #| warning: false
+#| code-summary: "Code: Visualize the staggered treatment status across counties with panelView."
 panelview(data = as.data.frame(mw), formula = lemp ~ D,
           index = c("id", "year"),
           xlab = "Year", ylab = "County",
@@ -231,6 +235,7 @@ properly resolved.
 #| label: fit-ife
 #| message: false
 #| warning: false
+#| code-summary: "Code: Fit the interactive fixed effects estimator with fect and CV-selected rank."
 out_ife <- fect(
   lemp ~ D, data = as.data.frame(mw),
   index    = c("id", "year"),
@@ -252,6 +257,7 @@ out_ife <- fect(
 #| label: fit-mc
 #| message: false
 #| warning: false
+#| code-summary: "Code: Fit the matrix-completion estimator with fect and CV-selected nuclear-norm penalty."
 out_mc <- fect(
   lemp ~ D, data = as.data.frame(mw),
   index    = c("id", "year"),
@@ -271,6 +277,7 @@ out_mc <- fect(
 ```{r}
 #| label: tbl-cv
 #| tbl-cap: "Hyperparameters selected by cross-validation. IFEct picks the number of latent factors $r$; MC picks the nuclear-norm penalty weight $\\eta$ (returned by `fect` as `lambda.cv`)."
+#| code-summary: "Code: Report the CV-selected rank for IFEct and nuclear-norm penalty for MC."
 tibble(
   Method            = c("IFEct", "MC"),
   `CV-selected`     = c(paste0("r = ", unname(out_ife$r.cv)),
@@ -292,6 +299,7 @@ after.
 #| fig-cap: "Counterfactual trajectories and event-study ATT. Top row: IFEct. Bottom row: MC. Left panels overlay observed average outcome on treated units (solid) with model-implied $Y(0)$ (dashed). Right panels show the implied ATT by event time relative to a county's adoption year, with bootstrap 95% CIs."
 #| fig-width: 9
 #| fig-height: 7
+#| code-summary: "Code: Plot counterfactual paths and event-study ATT for IFEct and MC side by side."
 
 p_ife_ct <- plot(out_ife, type = "counterfactual",
                  main = "IFEct: observed vs counterfactual",
@@ -317,6 +325,7 @@ job.
 ```{r}
 #| label: tbl-att
 #| tbl-cap: "Average post-treatment ATT under IFEct and MC, with bootstrap standard errors and 95% CIs. The two methods reach the same neighbourhood; CIs are wide because $T = 7$ and `nboots = 50`."
+#| code-summary: "Code: Tabulate the average post-treatment ATT with bootstrap standard errors and CIs."
 tibble(
   Method   = c("IFEct", "MC"),
   ATT      = c(out_ife$att.avg, out_mc$att.avg),

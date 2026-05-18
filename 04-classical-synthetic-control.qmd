@@ -52,6 +52,7 @@ and the ATT over 1989–2000 is the mean post-period gap between observed Califo
 #| label: setup
 #| message: false
 #| warning: false
+#| code-summary: "Code: Load packages, source table helpers, and set the ggplot theme."
 library(tidyverse)
 library(tidysynth)
 source("R/table_helpers.R")
@@ -81,6 +82,7 @@ theme_set(
 
 ```{r}
 #| label: data-load
+#| code-summary: "Code: Load the Proposition 99 panel from the RDS file."
 prop99 <- read_rds("data/proposition99.rds") |> as_tibble()
 ```
 
@@ -94,6 +96,7 @@ The loaded `prop99` is a 1,209-row × 7-column tibble (39 states × 31 years per
 #| label: fit-syn
 #| message: false
 #| warning: false
+#| code-summary: "Code: Run the four-stage tidysynth pipeline to build synthetic California."
 prop99_syn <- prop99 |>
   # 1. Declare the panel structure: outcome, unit, time, treated unit
   #    ("California"), and the last full pre-period year (1988).
@@ -138,6 +141,7 @@ The optimisation produces two weight vectors that drive the entire fit. Both are
 ```{r}
 #| label: tbl-donor-weights
 #| tbl-cap: "Donor unit weights (top 8 states; only the top 5 carry meaningful weight)."
+#| code-summary: "Code: Extract the top 8 donor unit weights into a gt table."
 # We display 8 rows for full transparency, but only the top 5 (Utah,
 # Nevada, Montana, Colorado, Connecticut) absorb essentially all the
 # donor-weight mass - the bottom three rows are effectively zero.
@@ -153,6 +157,7 @@ Donor weights answer the question *which states mimic California*. The companion
 ```{r}
 #| label: tbl-predictor-weights
 #| tbl-cap: "Predictor (V-matrix) weights."
+#| code-summary: "Code: Extract the V-matrix predictor weights into a gt table."
 grab_predictor_weights(prop99_syn) |>
   arrange(desc(weight)) |>
   gt_pretty(decimals = 3) |>
@@ -171,6 +176,7 @@ For a one-line visual of both weight vectors, tidysynth ships a `plot_weights()`
 #| fig-cap: "Donor unit weights (left) and predictor V-matrix weights (right) from tidysynth."
 #| fig-width: 9
 #| fig-height: 5
+#| code-summary: "Code: Plot donor and predictor weights via tidysynth helper."
 plot_weights(prop99_syn)
 ```
 
@@ -183,6 +189,7 @@ The combined `plot_weights()` view is convenient, but the V matrix deserves a st
 #| fig-cap: "V matrix: cigsale_1975 and cigsale_1980 dominate; behavioural covariates get nearly zero weight."
 #| fig-width: 8
 #| fig-height: 4
+#| code-summary: "Code: Build a custom bar chart of V-matrix predictor weights."
 predw_df <- grab_predictor_weights(prop99_syn) |>
   mutate(variable = fct_reorder(variable, weight))
 
@@ -212,6 +219,7 @@ Two readings of the same picture, one practical and one cautionary.
 
 ```{r}
 #| label: sc-att
+#| code-summary: "Code: Compute the 1989-2000 ATT as the mean post-period gap."
 # grab_synthetic_control() returns a tidy tibble with observed (real_y)
 # and synthetic (synth_y) cigsale for every year. We restrict to the
 # post-period and compute the per-year gap.
@@ -231,6 +239,7 @@ The Synthetic Control ATT is approximately **`r sprintf("%.2f", mean(sc_post$dif
 #| fig-width: 8
 #| fig-height: 5
 #| warning: false
+#| code-summary: "Code: Plot observed vs synthetic California trends with plot_trends."
 plot_trends(prop99_syn)
 ```
 
@@ -243,6 +252,7 @@ The pre-period fit is excellent — the synthetic and observed series are nearly
 ```{r}
 #| label: tbl-sc-balance
 #| tbl-cap: "Predictor balance: California vs synthetic California vs donor average."
+#| code-summary: "Code: Display the predictor balance table side by side."
 grab_balance_table(prop99_syn) |>
   gt_pretty(decimals = 2)
 ```
@@ -259,6 +269,7 @@ On every variable, *synthetic California* is far closer to California than the u
 #| fig-width: 8
 #| fig-height: 5
 #| warning: false
+#| code-summary: "Code: Plot the per-year treatment gap with plot_differences."
 plot_differences(prop99_syn)
 ```
 
@@ -275,6 +286,7 @@ A "standard error" computed as cross-year SD divided by $\sqrt{N}$ is *not* a re
 #| fig-cap: "Placebo permutation: California in orange, donor placebos in grey (badly pre-fit donors pruned by default)."
 #| fig-width: 8
 #| fig-height: 5
+#| code-summary: "Code: Plot the placebo permutation with default pruning."
 plot_placebos(prop99_syn)
 ```
 
@@ -287,6 +299,7 @@ The unpruned variant keeps every donor for full transparency:
 #| fig-cap: "Same placebo plot with every donor retained — including badly pre-fit ones — to show the full pool of placebo trajectories."
 #| fig-width: 8
 #| fig-height: 5
+#| code-summary: "Code: Plot the placebo permutation without pruning bad-fit donors."
 plot_placebos(prop99_syn, prune = FALSE)
 ```
 
@@ -299,6 +312,7 @@ A sharper version of the same test is the **MSPE ratio** — the ratio of post-p
 ```{r}
 #| label: tbl-sc-significance
 #| tbl-cap: "MSPE ratios — top 5 units."
+#| code-summary: "Code: Tabulate the top 5 MSPE ratios and Fisher p-values."
 # grab_significance() returns one row per unit (treated + every placebo)
 # with pre_mspe, post_mspe, the post/pre ratio, the unit's rank in that
 # ratio, and the Fisher-style p-value (rank / n_units).
@@ -318,6 +332,7 @@ The same ratio plotted as a bar chart makes the rank-1 gap visible at a glance.
 #| fig-width: 8
 #| fig-height: 5
 #| warning: false
+#| code-summary: "Code: Plot the MSPE-ratio bar chart across all units."
 plot_mspe_ratio(prop99_syn)
 ```
 
@@ -335,6 +350,7 @@ Refit the entire pipeline pretending the intervention was 1980 (eight years befo
 #| label: fit-syn-intime-placebo
 #| message: false
 #| warning: false
+#| code-summary: "Code: Refit the pipeline with a 1980 placebo intervention date."
 prop99_intime <- prop99 |>
   filter(year < 1989) |>
   synthetic_control(
@@ -372,6 +388,7 @@ Utah carries the largest donor weight (≈0.34). If the ATT is driven by Utah-sp
 #| label: fit-syn-loo-utah
 #| message: false
 #| warning: false
+#| code-summary: "Code: Refit the pipeline with Utah dropped for a leave-one-out check."
 prop99_loo <- prop99 |>
   filter(state != "Utah") |>
   synthetic_control(
@@ -412,6 +429,7 @@ The leave-one-out ATT (Utah dropped) is approximately `r round(loo_att, 2)` pack
 
 ```{r}
 #| label: sc-nested
+#| code-summary: "Code: Print the nested tidysynth tibble to expose its list-columns."
 prop99_syn
 ```
 
@@ -420,6 +438,7 @@ Each list-column can be flattened with `tidyr::unnest()` for custom downstream w
 ```{r}
 #| label: tbl-sc-unnest
 #| tbl-cap: "Unnested `.outcome` (first 8 rows)."
+#| code-summary: "Code: Unnest the .outcome list-column and preview California's series."
 # Flatten .outcome into a wide table: one row per (unit, year).
 # The actual cigarette-sales column is named after each unit, so we
 # select metadata + California's series for a clean preview.
@@ -435,6 +454,7 @@ For the tidy *observed-vs-synthetic* table (which is what most analyses want), t
 ```{r}
 #| label: tbl-sc-unnest-tidy
 #| tbl-cap: "`grab_synthetic_control()` — observed vs synthetic (first 8 rows)."
+#| code-summary: "Code: Preview the tidy observed vs synthetic table from grab_synthetic_control."
 grab_synthetic_control(prop99_syn) |>
   head(8) |>
   gt_pretty(decimals = 2)
