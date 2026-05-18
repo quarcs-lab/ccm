@@ -9,22 +9,31 @@ title: "Staggered Differences-in-Differences"
 3. Condition on covariates using regression, IPW, and doubly-robust estimators, and default to the doubly-robust choice. Doubly-robust estimation is consistent if *either* the outcome model or the propensity-score model is correctly specified, which is why it is the safe default — knowing all three lets the reader defend that choice against a referee.
 4. Run Rambachan-Roth relative-magnitudes sensitivity analysis with `HonestDiD` and report the smallest pre-trend violation that would overturn the post-treatment conclusion. This converts an unverifiable parallel-trends assumption into a falsifiable claim about how robust the headline result is.
 
+::: {.callout-note appearance="simple"}
+**Part II begins here.** Chapters 2–7 held the dataset fixed
+(Proposition 99) and varied the estimator. From this chapter forward
+we switch datasets too: a 1,745-county minimum-wage panel with
+*staggered* adoption replaces California's single-shock setting, and
+the toolkit shifts to estimators built for that structure.
+:::
+
 ## When TWFE breaks under staggered adoption
 
-Chapter 3 ran a textbook 2×2 DiD on Proposition 99, with California
-treated in 1989 and Nevada as the single hand-picked control. The
-estimate collapsed to roughly $-5.7$ packs per capita and could not
-be distinguished from zero. The diagnosis there was that Nevada is
-geographically and culturally adjacent to California and absorbs the
-same secular forces — so its post-1988 decline soaks up most of what
-we wanted to attribute to the policy.
+Chapter 3 ran a textbook 2×2 DiD on Proposition 99: California
+treated in 1989, Nevada as the single hand-picked control. That
+design squeezed the entire causal contrast into one interaction
+coefficient — $\widehat{\tau}_{\text{DiD}} \approx -5.7$ packs per
+capita, statistically indistinguishable from zero. The diagnosis
+there was twofold: Nevada inherits California's secular forces (so
+its own post-1988 decline soaks up most of the policy signal), *and*
+parallel trends was rejected on the pre-window itself.
 
-There is a deeper structural problem too. Real policy data rarely
-has just one treated unit and one clean control unit, both treated
+That design has a deeper structural limit. Real policy data rarely
+has just one treated unit and one clean control unit, both switching
 at the same instant. States and counties **adopt at different times**
 — some in 2004, others in 2006, still others never. The natural
-extension of the chapter 3 model to that setting is *two-way fixed
-effects (TWFE)* regression:
+extension of the chapter-3 regression to that setting is the
+*two-way fixed-effects (TWFE)* specification:
 
 $$Y_{it} = \alpha_i + \gamma_t + \beta \cdot \text{post}_{it} + \varepsilon_{it}.$$
 
@@ -37,15 +46,19 @@ controls for later-treated units — the *forbidden comparison*.
 @dechaisemartin2020twoway further prove that under treatment-effect
 heterogeneity some of those implicit weights can be **strictly
 negative**, so $\hat\beta$ need not even be a convex average of the
-underlying $ATT$s. Either way, when treatment effects grow over time —
-the textbook policy story — the sign of $\hat\beta$ is no longer a
-reliable summary.
+underlying $ATT(g, t)$s. Either way, when treatment effects grow over
+time — the textbook policy story — the sign of $\hat\beta$ is no
+longer a reliable summary.
 
 This chapter walks through the modern toolkit for repairing that
 damage. The methods build on @callaway2021difference: estimate
 **group-time average treatment effects** $ATT(g, t)$ directly, then
-aggregate them with weights you can defend. Along the way we look at
-two companion ideas: the doubly-robust DiD estimator from
+aggregate them with weights you can defend. We will use the shorthand
+$\widehat{\tau}_{\text{CS}}$ for the Callaway-Sant'Anna estimator,
+distinguishing $\widehat{\tau}_{\text{CS, overall}}$ (the
+cohort-size-weighted summary) from $\widehat{\tau}_{\text{CS, dyn}}(e)$
+(the event-study aggregation at event time $e = t - g$). Along the way
+we look at two companion ideas: the doubly-robust DiD estimator from
 @callaway2021difference, and the Rambachan-Roth sensitivity analysis
 that quantifies how much parallel-trends violation it would take to
 overturn the conclusion [@rambachan2023more]. The Sun-Abraham
@@ -59,7 +72,7 @@ cannot provide. We switch to the Callaway-Sant'Anna minimum-wage
 panel: 1,745 US counties × 2003–2007, with cohorts $G \in \{0, 2004,
 2006\}$ (after dropping a small late-2007 cohort; see Setup)
 indexing the year the county's state first raised its minimum
-wage above the federal $5.15/h floor. The outcome is log teen
+wage above the federal \$5.15/h floor. The outcome is log teen
 employment.
 
 ## Setup and data
@@ -136,11 +149,12 @@ data2 |>
 
 The natural first move is the TWFE regression. The variable `post` in
 the dataset is 1 in periods where the county's state has already
-raised its minimum wage (i.e., `year >= G & G != 0`), and 0 otherwise.
+raised its minimum wage (i.e., $t \ge g$ and $g \ne 0$), and 0
+otherwise.
 
 ```{r}
 #| label: tbl-twfe
-#| tbl-cap: "Two-way fixed-effects regression. The point estimate suggests minimum-wage increases cut log teen employment by roughly 3.8 percent — but see the discussion below."
+#| tbl-cap: "Two-way fixed-effects regression. The point estimate suggests minimum-wage increases cut log teen employment by a few percent — but see the discussion below."
 #| code-summary: "Code: Estimate the TWFE baseline regression with clustered SEs."
 twfe_res <- fixest::feols(lemp ~ post | id + year,
                           data = data2, cluster = "id")
@@ -149,11 +163,18 @@ ms_pretty(list("TWFE (county + year FE)" = twfe_res),
           notes    = "SEs clustered at the county level.")
 ```
 
-The TWFE coefficient is roughly $-0.038$. Read literally, the policy
-reduced teen employment by 3.8 percent. The next section estimates
-the same effect with an aggregator that is unbiased under staggered
-adoption — and gets a substantially larger magnitude. The gap between
-the two is the contamination problem made concrete.
+```{r}
+#| label: twfe-stats
+#| echo: false
+twfe_coef <- unname(coef(twfe_res)[["post"]])
+```
+
+The TWFE coefficient is roughly `r sprintf("%+.3f", twfe_coef)`. Read
+literally, the policy cut teen employment by about
+`r sprintf("%.1f", 100 * abs(twfe_coef))` percent. The next section
+re-estimates this effect with an aggregator that is unbiased under
+staggered adoption — and gets a substantially larger magnitude. The
+gap between the two is the contamination problem made concrete.
 
 ## Group-time ATTs: the Callaway-Sant'Anna approach
 
@@ -161,21 +182,23 @@ The fix is to estimate the *primitive* objects directly. For each
 cohort $g$ (a year a group of counties was first treated) and each
 calendar year $t$, define
 
-$$ATT(g, t) = \mathbb{E}\!\left[Y_{it}(g) - Y_{it}(\infty) \mid G_i = g\right],$$
+$$ATT(g, t) = \mathbb{E}\!\left[Y_{it}(1) - Y_{it}(\infty) \mid G_i = g\right],$$
 
 the average effect on cohort $g$ in year $t$ relative to its own
-never-treated potential outcome $Y_{it}(\infty)$ (equivalent to
-$Y_{it}(0)$ used in Part I — Callaway-Sant'Anna write $\infty$ to
-emphasise that the unit is *never* treated, not merely *not-yet*
-treated).
+never-treated potential outcome $Y_{it}(\infty)$. We use the
+$\infty$ subscript that @callaway2021difference adopt to emphasise
+*never* treated (as opposed to *not-yet* treated); it is the same
+object as Part I's $Y_{it}(0)$, just notation that survives the
+distinction between cohorts.
 
 Identification relies on **parallel trends**: conditional on
 $G_i = g$, the never-treated potential outcome
-$E[Y_{it}(\infty)]$ trends the same way for the treated cohort and
-the never-treated pool. Under that assumption, `did::att_gt()`
-estimates each $ATT(g, t)$ from a clean 2×2 DiD using only cohort
-$g$ and an appropriate comparison group (here, the never-treated
-$G = 0$), so no contamination from already-treated units sneaks in.
+$\mathbb{E}[Y_{it}(\infty)]$ trends the same way for the treated
+cohort and the never-treated pool. Under that assumption,
+`did::att_gt()` estimates each $ATT(g, t)$ from a clean 2×2 DiD using
+only cohort $g$ and an appropriate comparison group (here, the
+never-treated $G = 0$), so no contamination from already-treated
+units sneaks in.
 
 ```{r}
 #| label: tbl-attgt
@@ -192,16 +215,28 @@ attgt_df <- tibble(
   `ATT(g,t)`   = attgt$att,
   SE           = as.numeric(attgt$se)
 ) |>
-  mutate(`Treated?` = ifelse(Year >= Cohort, "post", "pre")) |>
+  mutate(Phase = ifelse(Year >= Cohort, "post (t ≥ g)", "pre (t < g)")) |>
   arrange(Cohort, Year)
 
 gt_pretty(attgt_df, decimals = 4)
 ```
 
-Cohort 2006 carries a visible pre-trend: $ATT(2006, 2003) \approx
--0.034$ with SE $\approx 0.013$ (so $t \approx -2.7$). The 2006
-counties were already on a downward log-employment path relative to
-the never-treated pool three years *before* their state raised the
+```{r}
+#| label: attgt-stats
+#| echo: false
+i_2006_2003 <- which(attgt$group == 2006 & attgt$t == 2003)
+att_2006_2003 <- attgt$att[i_2006_2003]
+se_2006_2003  <- as.numeric(attgt$se)[i_2006_2003]
+t_2006_2003   <- att_2006_2003 / se_2006_2003
+```
+
+Cohort 2006 carries a visible pre-trend:
+$\widehat{ATT}(2006, 2003) \approx$
+`r sprintf("%+.3f", att_2006_2003)` with SE $\approx$
+`r sprintf("%.3f", se_2006_2003)` (so
+$t \approx$ `r sprintf("%.1f", t_2006_2003)`). The 2006 counties were
+already on a downward log-employment path relative to the
+never-treated pool three years *before* their state raised the
 minimum wage. That pre-treatment violation is roughly the same
 magnitude as the on-impact effect we will estimate below — which is
 exactly what motivates the formal sensitivity analysis at the end of
@@ -239,14 +274,25 @@ tibble(
 ) |> gt_pretty(decimals = 4)
 ```
 
-The overall ATT is roughly $-0.057$ — almost 50 percent larger in
-magnitude than the TWFE coefficient. The two estimands answer
-different questions, but the size of the gap is exactly the
-contamination problem in operation.
+```{r}
+#| label: cs-overall-stats
+#| echo: false
+cs_overall    <- attO$overall.att
+cs_overall_se <- attO$overall.se
+gap_pct       <- 100 * (abs(cs_overall) - abs(twfe_coef)) / abs(twfe_coef)
+```
+
+The Callaway-Sant'Anna overall estimate
+$\widehat{\tau}_{\text{CS, overall}} \approx$
+`r sprintf("%+.3f", cs_overall)` is roughly
+`r sprintf("%.0f", gap_pct)` percent larger in magnitude than the
+TWFE coefficient (`r sprintf("%+.3f", twfe_coef)`). The two
+estimands answer different questions, but the size of the gap is
+exactly the contamination problem in operation.
 
 The **event-study aggregation** averages $ATT(g, t)$ within each
 event time $e = t - g$, giving a curve of dynamic effects since
-treatment.
+treatment. We write the result as $\widehat{\tau}_{\text{CS, dyn}}(e)$.
 
 ```{r}
 #| label: tbl-cs-event
@@ -264,8 +310,33 @@ tibble(
 ```
 
 ```{r}
+#| label: cs-event-stats
+#| echo: false
+get_dyn <- function(e_target) {
+  i <- which(attes$egt == e_target)
+  list(est = attes$att.egt[i], se = attes$se.egt[i])
+}
+dyn0 <- get_dyn(0)
+dyn1 <- get_dyn(1)
+dyn2 <- get_dyn(2)
+dyn3 <- get_dyn(3)
+```
+
+The on-impact effect $\widehat{\tau}_{\text{CS, dyn}}(0) \approx$
+`r sprintf("%+.3f", dyn0$est)` is modest, but the trajectory deepens
+quickly: $\widehat{\tau}_{\text{CS, dyn}}(1) \approx$
+`r sprintf("%+.3f", dyn1$est)`,
+$\widehat{\tau}_{\text{CS, dyn}}(2) \approx$
+`r sprintf("%+.3f", dyn2$est)`, and
+$\widehat{\tau}_{\text{CS, dyn}}(3) \approx$
+`r sprintf("%+.3f", dyn3$est)` — three years after a state first
+raised its minimum wage, treated counties' log teen employment is
+roughly `r sprintf("%.1f", 100 * abs(dyn3$est))` log points below
+the never-treated counterfactual.
+
+```{r}
 #| label: fig-cs-event
-#| fig-cap: "Callaway-Sant'Anna event study. The on-impact effect is small; effects accumulate to roughly -0.13 log points by event-time +3 (three years post-treatment)."
+#| fig-cap: "Callaway-Sant'Anna event study. The on-impact effect is small; effects accumulate over event time and reach the magnitudes reported in @tbl-cs-event."
 #| fig-width: 8
 #| fig-height: 4.5
 #| code-summary: "Code: Plot the event-study estimates with 95 percent CIs."
@@ -298,12 +369,20 @@ with bigger populations or higher-paying jobs may move on different
 underlying trajectories whether or not they raise the minimum wage.
 
 `did::att_gt()` accepts `xformla = ~lpop + lavg_pay` plus a choice of
-estimator: **regression adjustment** (impute the counterfactual mean
-from the never-treated), **inverse probability weighting** (reweight
-never-treated counties to look like treated ones), or **doubly
-robust** (the @callaway2021difference default, which is consistent
-if either the outcome model *or* the propensity score is correctly
-specified).
+estimator passed through `est_method =`:
+
+- **Regression adjustment** (`est_method = "reg"`) fits an outcome
+  model on the never-treated and uses its predicted change as the
+  counterfactual change for the treated cohort. Consistent if the
+  outcome regression is correctly specified.
+- **Inverse probability weighting** (`est_method = "ipw"`) fits a
+  propensity score for cohort membership and reweights never-treated
+  counties to look like treated ones before taking the DiD.
+  Consistent if the propensity-score model is correctly specified.
+- **Doubly robust** (`est_method = "dr"`, the
+  @callaway2021difference default) combines both models in a way that
+  is consistent if *either* one is correctly specified — the safe
+  choice when neither model is obviously right.
 
 ```{r}
 #| label: tbl-conditional
@@ -372,10 +451,10 @@ cohort 2006 above. We use the relative-magnitudes bound below.
 
 ```{r}
 #| label: tbl-honest
-#| tbl-cap: "Robust confidence intervals for the on-impact effect $ATT(e = 0)$ under the relative-magnitude restriction. As $\\bar M$ grows, the CI widens; we report the breakdown point — the $\\bar M$ at which the CI first contains zero."
+#| tbl-cap: "Robust confidence intervals for the on-impact effect $\\widehat{\\tau}_{\\text{CS, dyn}}(0)$ under the relative-magnitudes restriction $\\Delta^{RM}(\\bar M)$. As $\\bar M$ grows, the CI widens; we report the *breakdown* $\\bar M$ at which the CI first contains zero as a fragility metric."
 #| message: false
 #| warning: false
-#| code-summary: "Code: Run HonestDiD relative-magnitude sensitivity on the on-impact ATT."
+#| code-summary: "Code: Run HonestDiD relative-magnitudes sensitivity on the on-impact ATT."
 
 hd_rm <- honest_did(es      = attes,
                     e       = 0,
@@ -392,8 +471,21 @@ hd_rm |>
 ```
 
 ```{r}
+#| label: honest-stats
+#| echo: false
+hd_contains_zero <- hd_rm |>
+  dplyr::mutate(contains_zero = lb <= 0 & 0 <= ub) |>
+  dplyr::filter(contains_zero)
+breakdown_mbar <- if (nrow(hd_contains_zero) > 0) {
+  min(hd_contains_zero$Mbar)
+} else {
+  NA_real_
+}
+```
+
+```{r}
 #| label: fig-honest
-#| fig-cap: "HonestDiD sensitivity: as $\\bar M$ grows, the robust 95 percent CI on the on-impact effect widens until it crosses zero. The breakdown $\\bar M$ — the value at which the CI first contains zero — is below 0.5, reflecting the visible pre-trend in cohort 2006."
+#| fig-cap: "HonestDiD sensitivity: as $\\bar M$ grows, the robust 95 percent CI on the on-impact effect widens until it crosses zero. The breakdown $\\bar M$ — the value at which the CI first contains zero — is small in this panel, reflecting the visible pre-trend in cohort 2006."
 #| fig-width: 7.5
 #| fig-height: 4.5
 #| code-summary: "Code: Plot the robust CI band against the relative-magnitude bound."
@@ -407,40 +499,53 @@ ggplot(hd_rm, aes(x = Mbar)) +
        y = "Robust 95% CI on ATT(e = 0)")
 ```
 
-The breakdown point lies somewhere in $(0, 0.5]$ — meaning the
-robust CI first crosses zero at an $\bar M$ less than half the
-*largest observed pre-trend in the data*. The on-impact effect of
-$\approx -0.024$ does **not** survive even a fraction of the
-cohort-2006 pre-trend we already flagged: that pre-trend, at
-$-0.034$, is itself larger in magnitude than the on-impact effect,
-so it would be surprising if the conclusion held up under a
-relative-magnitudes assumption that allowed unobserved post-trend
-violations of comparable size.
+The breakdown point on the coarse grid is
+$\bar M \le$ `r sprintf("%.2f", breakdown_mbar)` — i.e. the robust
+CI first crosses zero at an $\bar M$ less than half the *largest
+observed pre-trend in the data* (exercise 4 sweeps a finer grid to
+pin the breakdown more precisely). The on-impact effect of
+$\widehat{\tau}_{\text{CS, dyn}}(0) \approx$
+`r sprintf("%+.3f", dyn0$est)` does **not** survive even a fraction
+of the cohort-2006 pre-trend we already flagged: that pre-trend, at
+$\widehat{ATT}(2006, 2003) \approx$
+`r sprintf("%+.3f", att_2006_2003)`, is itself larger in magnitude
+than the on-impact effect, so it would be surprising if the
+conclusion held up under a relative-magnitudes assumption that
+allowed unobserved post-trend violations of comparable size.
 
 This is not a failure of the method — it is the method working as
-intended. HonestDiD is the bridge from "the Callaway-Sant'Anna point
-estimate looks negative" to "here is precisely the parallel-trends
-violation under which that conclusion would flip." The right reading
-is that the on-impact effect is **fragile to parallel-trends
-violations**, even though the *cumulative* event-study trajectory
-($-0.13$ by $e = +3$) is large enough that a similar exercise on the
-later horizons would tolerate a much larger $\bar M$.
+intended. HonestDiD turns "the Callaway-Sant'Anna point estimate
+looks negative" into "here is precisely the parallel-trends violation
+under which that conclusion would flip." The breakdown $\bar M$ is a
+**fragility metric**, not a pass/fail verdict: a number near zero
+flags fragility, a number above one flags robustness. The on-impact
+effect here is fragile, but the *cumulative* event-study trajectory
+($\widehat{\tau}_{\text{CS, dyn}}(3) \approx$
+`r sprintf("%+.3f", dyn3$est)`) is large enough that a similar
+exercise on the later horizons would tolerate a much larger $\bar M$.
 
 ## Recap
 
 ::: {.callout-note appearance="simple"}
 **The methods reconciled.** TWFE on this dataset returned
-$\hat\beta = -0.038$. The Callaway-Sant'Anna overall ATT is
-$-0.057$. The doubly-robust conditional ATT is $-0.065$. The
-event-study trajectory is $\approx -0.024$ on impact, dropping to
-$\approx -0.13$ by event-time $+3$. HonestDiD sensitivity is
-*fragile*: the relative-magnitudes breakdown $\bar M$ for the
-on-impact effect is **below 0.5**, reflecting the visible
-cohort-2006 pre-trend. Four estimators agree on point estimate and
-sign — *minimum-wage increases reduced teen employment in these
-counties, and the effect grew over time* — but parallel trends does
-not hold cleanly, and the on-impact effect would not survive even
-half the observed pre-trend violation.
+$\hat\beta \approx$ `r sprintf("%+.3f", twfe_coef)`. The
+Callaway-Sant'Anna overall ATT is
+$\widehat{\tau}_{\text{CS, overall}} \approx$
+`r sprintf("%+.3f", cs_overall)`. The doubly-robust conditional
+overall ATT is `r sprintf("%+.3f", attO_dr$overall.att)`. The
+event-study trajectory runs from
+$\widehat{\tau}_{\text{CS, dyn}}(0) \approx$
+`r sprintf("%+.3f", dyn0$est)` on impact to
+$\widehat{\tau}_{\text{CS, dyn}}(3) \approx$
+`r sprintf("%+.3f", dyn3$est)` by event-time $+3$. HonestDiD
+sensitivity is *fragile*: the relative-magnitudes breakdown $\bar M$
+for the on-impact effect is at most
+`r sprintf("%.2f", breakdown_mbar)` on the coarse grid, reflecting
+the visible cohort-2006 pre-trend. Four estimators agree on point
+estimate and sign — *minimum-wage increases reduced teen employment
+in these counties, and the effect grew over time* — but parallel
+trends does not hold cleanly, and the on-impact effect would not
+survive even a fraction of the observed pre-trend violation.
 
 The gap between the TWFE estimate and the modern aggregators is the
 contamination problem of @goodmanbacon2021difference made concrete:
@@ -453,14 +558,16 @@ weighting them in a defensible way.
 Every method in this chapter — TWFE, $ATT(g, t)$, conditional DiD,
 even HonestDiD's bounds — leans on **parallel trends** as the
 identifying assumption. The next chapter relaxes that assumption by
-modelling $Y_{it}(0)$ with an *interactive fixed-effects* factor
+modelling $Y_{it}(\infty)$ with an *interactive fixed-effects* factor
 structure:
 
-$$Y_{it}(0) = \alpha_i + \xi_t + \lambda_i' f_t + \varepsilon_{it}.$$
+$$Y_{it}(\infty) = \alpha_i + \xi_t + \lambda_i' f_t + \varepsilon_{it}.$$
 
-Two estimators — matrix completion and IFEct — implement that idea on
-the same minimum-wage panel and provide a second, assumption-distinct
-read on the same substantive question.
+The $\lambda_i' f_t$ term absorbs time-varying unobserved
+heterogeneity that no county or year fixed effect can net out.
+Chapter 9 fits this model with matrix completion and interactive
+fixed effects on the same minimum-wage panel and provides a second,
+assumption-distinct read on the same substantive question.
 :::
 
 ## Common pitfall
@@ -501,20 +608,20 @@ the companion post at
 
 **Methods:**
 
-- Staggered DiD targets the group-time average treatment effect $ATT(g, t) = \mathbb{E}[Y_{it}(g) - Y_{it}(\infty) \mid G_i = g]$ — the effect on cohort $g$ at calendar year $t$ relative to its own never-treated potential outcome — identified under parallel trends *conditional on cohort* between the treated cohort and an explicitly chosen comparison set of never-treated (or not-yet-treated) units.
-- The Callaway-Sant'Anna procedure estimates each $ATT(g, t)$ from a clean 2×2 DiD, then aggregates the cells into the overall ATT (cohort-size-weighted across cohort-specific post-treatment averages) or an event-study curve indexed by $e = t - g$; the doubly-robust variant remains consistent if either the outcome model or the propensity score for cohort membership is correctly specified.
-- The Rambachan-Roth `HonestDiD` sensitivity analysis bounds post-treatment parallel-trends violations by tying them to the observed pre-trend — either as a smooth continuation ($\Delta^{SD}(M)$, capping second differences) or as at most $\bar M$ times the largest pre-treatment violation ($\Delta^{RM}(\bar M)$) — and reports the breakdown value at which the robust CI first contains zero.
+- Staggered DiD targets the group-time average treatment effect $ATT(g, t) = \mathbb{E}[Y_{it}(1) - Y_{it}(\infty) \mid G_i = g]$ — the effect on cohort $g$ at calendar year $t$ relative to its own never-treated potential outcome — identified under parallel trends *conditional on cohort* between the treated cohort and an explicitly chosen comparison set of never-treated ($G = 0$) or not-yet-treated ($G > t$) units.
+- The Callaway-Sant'Anna procedure estimates each $ATT(g, t)$ from a clean 2×2 DiD, then aggregates the cells into the overall summary $\widehat{\tau}_{\text{CS, overall}}$ (cohort-size-weighted across cohort-specific post-treatment averages) or an event-study curve $\widehat{\tau}_{\text{CS, dyn}}(e)$ indexed by $e = t - g$; conditional on covariates the estimator splits into regression, IPW, and doubly-robust variants, with the DR version consistent if *either* the outcome model or the propensity score for cohort membership is correctly specified.
+- The Rambachan-Roth `HonestDiD` sensitivity analysis bounds post-treatment parallel-trends violations by tying them to the observed pre-trend — either as a smooth continuation ($\Delta^{SD}(M)$, capping second differences) or as at most $\bar M$ times the largest pre-treatment violation ($\Delta^{RM}(\bar M)$) — and reports the *breakdown* $\bar M$ at which the robust CI first contains zero as a fragility metric, not a pass/fail verdict.
 
 **Lessons:**
 
 - Differences-in-differences (DiD) compares the pre-to-post change in a treated group to the pre-to-post change in a control group; two-way fixed-effects (TWFE) regression $Y_{it} = \alpha_i + \gamma_t + \beta\,\text{post}_{it} + \varepsilon_{it}$ is the natural generalization to many units and many periods, but it is not a clean ATT estimator when treatment is staggered.
-- Under staggered adoption with heterogeneous, time-varying effects, TWFE silently uses already-treated units as controls for later-treated units — the *forbidden comparison* of Goodman-Bacon — and some implicit weights can be strictly negative (de Chaisemartin-D'Haultfœuille), so $\hat\beta$ is not even a convex average of the underlying $ATT(g, t)$s; on this minimum-wage panel TWFE returns $-0.038$ while the Callaway-Sant'Anna overall ATT is $-0.057$, a 50 percent gap that *is* the contamination problem made concrete.
-- Always inspect the pre-treatment $ATT(g, t)$ cells before aggregating — here cohort 2006 carries $ATT(2006, 2003) \approx -0.034$ ($t \approx -2.7$), a pre-trend roughly as large in magnitude as the on-impact effect, which is precisely the warning sign that motivates running the formal sensitivity analysis rather than reading the headline number at face value.
+- Under staggered adoption with heterogeneous, time-varying effects, TWFE silently uses already-treated units as controls for later-treated units — the *forbidden comparison* of Goodman-Bacon — and some implicit weights can be strictly negative (de Chaisemartin-D'Haultfœuille), so $\hat\beta$ is not even a convex average of the underlying $ATT(g, t)$s; on this minimum-wage panel TWFE returns `r sprintf("%+.3f", twfe_coef)` while the Callaway-Sant'Anna overall ATT is `r sprintf("%+.3f", cs_overall)`, a `r sprintf("%.0f", gap_pct)`-percent gap that *is* the contamination problem made concrete.
+- Always inspect the pre-treatment $ATT(g, t)$ cells before aggregating — here cohort 2006 carries $\widehat{ATT}(2006, 2003) \approx$ `r sprintf("%+.3f", att_2006_2003)` ($t \approx$ `r sprintf("%.1f", t_2006_2003)`), a pre-trend roughly as large in magnitude as the on-impact effect, which is precisely the warning sign that motivates running the formal sensitivity analysis rather than reading the headline number at face value.
 - The Rambachan-Roth idea, in plain language: *if* the worst unobserved post-treatment violation of parallel trends is no larger than $\bar M$ times the worst pre-treatment violation you can see in the data, *then* the true effect lies in a wider, "honest" confidence interval — and the breakdown $\bar M$ tells you how much pre-trend-like noise the conclusion can absorb before it flips.
 
 **Caveats:**
 
-- Every estimator in the chapter — TWFE, $ATT(g, t)$, conditional DiD, even the HonestDiD bounds — still leans on a parallel-trends-style identifying assumption; the on-impact effect here is *fragile*, with a relative-magnitudes breakdown $\bar M$ below 0.5, so under fairly mild parallel-trends violations the on-impact conclusion does not survive (though the cumulative $\approx -0.13$ effect by $e = +3$ is more robust).
+- Every estimator in the chapter — TWFE, $ATT(g, t)$, conditional DiD, even the HonestDiD bounds — still leans on a parallel-trends-style identifying assumption; the on-impact effect here is *fragile*, with a relative-magnitudes breakdown $\bar M \le$ `r sprintf("%.2f", breakdown_mbar)` on the coarse grid, so under mild parallel-trends violations the on-impact conclusion does not survive (though the cumulative `r sprintf("%+.3f", dyn3$est)` effect by $e = +3$ is more robust). Chapter 9 relaxes parallel trends in a different way — by modelling $Y_{it}(\infty)$ as a factor structure.
 - Cohort sizes here are modest (especially cohort 2006), the panel is short (2003–2007), and the never-treated pool is the comparison group of choice — switching to not-yet-treated controls trades a larger comparison pool for the stronger assumption that future-treated counties are valid controls for already-treated ones in the interim; the choice should be defended, not defaulted to.
 
 ## Exercises
@@ -603,7 +710,12 @@ The estimate and SE move only modestly. Log average pay was carrying *some* cond
 
 ### Exercise 4: HonestDiD relative-magnitudes breakdown sweep
 
-The chapter showed the breakdown $\bar M$ for the on-impact effect lies somewhere in $(0, 0.5]$. Sweep $\bar M \in \{0.0, 0.05, 0.10, \dots, 1.5\}$ to find the breakdown point more precisely — the smallest $\bar M$ at which the robust 95% CI first contains zero.
+The chapter reported the coarse-grid breakdown
+$\bar M \le$ `r sprintf("%.2f", breakdown_mbar)`. Sweep $\bar M \in
+\{0.0, 0.05, 0.10, \dots, 1.5\}$ to pin the breakdown point more
+precisely — the smallest $\bar M$ at which the robust 95% CI first
+contains zero — and contrast it with a parallel sweep on the
+$e = +3$ horizon (where the trajectory has matured).
 
 ::: {.callout-tip collapse="true"}
 ## Solution
@@ -612,22 +724,26 @@ The chapter showed the breakdown $\bar M$ for the on-impact effect lies somewher
 #| label: ex-ch08-04
 #| message: false
 #| warning: false
-hd_rm_fine <- honest_did(es      = attes,
-                         e       = 0,
-                         type    = "relative_magnitude",
-                         method  = "C-LF",
-                         Mbarvec = seq(0, 1.5, by = 0.05))
+sweep_mbar <- function(e_target, grid = seq(0, 1.5, by = 0.05)) {
+  hd <- honest_did(es      = attes,
+                   e       = e_target,
+                   type    = "relative_magnitude",
+                   method  = "C-LF",
+                   Mbarvec = grid)
+  contains <- hd |>
+    mutate(contains_zero = lb <= 0 & 0 <= ub) |>
+    filter(contains_zero)
+  if (nrow(contains) == 0) NA_real_ else min(contains$Mbar)
+}
 
-breakdown <- hd_rm_fine |>
-  mutate(contains_zero = lb <= 0 & 0 <= ub) |>
-  filter(contains_zero) |>
-  slice_min(Mbar, n = 1)
-
-list(breakdown_Mbar = breakdown$Mbar,
-     ci_at_breakdown = c(lb = breakdown$lb, ub = breakdown$ub))
+tibble(
+  horizon         = c("On impact (e = 0)", "Three years post (e = 3)"),
+  breakdown_Mbar  = c(sweep_mbar(0), sweep_mbar(3))
+) |>
+  gt_pretty(decimals = 3)
 ```
 
-The robust CI first contains zero at a very small $\bar M$ — meaning even a tiny fraction of the largest observed pre-trend would be enough to overturn the on-impact effect's statistical significance. This is the precise version of the chapter's qualitative warning that "the on-impact effect does not survive even a fraction of the cohort-2006 pre-trend." A larger breakdown $\bar M$ — say above 1 — would have given the conclusion a comfortable safety margin; this is a sharp negative.
+On impact, the robust CI first contains zero at a very small $\bar M$ — meaning a tiny fraction of the largest observed pre-trend is enough to overturn statistical significance. At $e = +3$ the breakdown $\bar M$ is much larger, because the underlying point estimate is several times bigger than on impact. This is the precise version of the chapter's qualitative warning: the on-impact conclusion is fragile, while the cumulative three-year effect carries a comfortable safety margin.
 :::
 
 ### Exercise 5 (stretch): Cohort-2004-only 2×2 DiD

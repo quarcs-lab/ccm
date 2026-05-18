@@ -1,4 +1,4 @@
-# Preface {.unnumbered}
+# Welcome {.unnumbered}
 
 ![](images/cover1wide.jpg){fig-alt="Comparative Causal Metrics cover image" .preview-image}
 
@@ -27,20 +27,20 @@ Chapters 1–7 evaluate **California's 1989 Proposition 99 cigarette tax**, the 
 Chapters 8–10 evaluate the **Callaway-Sant'Anna minimum-wage county panel**, where thousands of counties adopted different state minimum-wage levels at different years. The single-treated-unit toolkit no longer applies: the estimand becomes a family of cohort-specific ATTs indexed by adoption year, and the methods exploit the panel's panel-data structure rather than a single time series.
 
 - **Staggered difference-in-differences** — group-time ATT(g, t) estimators that avoid two-way fixed-effects bias.
-- **Matrix completion and interactive fixed effects** — factor models that relax parallel trends.
+- **Interactive fixed effects and matrix completion** — factor models that relax parallel trends.
 - **Generalized synthetic control** — projecting treated units onto factors estimated from never-treated controls.
 
-Each chapter pairs the conceptual logic of the method with a worked R example using publicly available data, so readers can reproduce every estimate end-to-end.
+Each chapter pairs the conceptual logic of the method with a worked R example using publicly available data, so readers can reproduce every estimate end-to-end. A forthcoming cross-method comparison chapter will tabulate the ATT estimates from chapters 2–10 side by side on the two shared datasets; chapter 10 sketches what that comparison will look like.
 
 ## How to read this book
 
-The chapters are designed to be read sequentially but each is self-contained. Readers new to causal inference should start with chapter 1, which lays out the potential-outcomes vocabulary and a decision tree that maps each data situation to the appropriate method in this book. Code is folded by default — click **`</> Code`** in any chapter to reveal the underlying R. The full source is available [on GitHub](https://github.com/quarcs-lab/ccm). An on-demand PDF build of the book may also be available from the navbar; because PDFs are rebuilt only on request, the live PDF can lag a few commits behind the HTML site.
+The chapters are designed to be read sequentially but each is self-contained. Readers new to causal inference should start with chapter 1, which lays out the potential-outcomes vocabulary and a decision tree that maps each data situation to the appropriate method in this book. Code is folded by default — click **`</> Code`** in any chapter to reveal the underlying R. The full source is available [on GitHub](https://github.com/quarcs-lab/ccm). The HTML site is the canonical version of the book; an on-demand PDF build may also be available from the navbar, but because PDFs are rebuilt only on request, the live PDF can lag a few commits behind the HTML.
 
 For readers who want to render a single chapter without cloning the repo, every numbered chapter offers a self-contained `.zip` bundle (chapter source, dataset, and a minimal `_quarto.yml`) at the bottom of the same **`</> Code`** dropdown. Unzip and run `quarto render <chapter>.qmd` — no `renv` setup required.
 
 ## Acknowledgments
 
-This book builds on the infrastructure of the companion project [*Mastering Causal Metrics*](https://github.com/cmg777/intro2causal) and on a long tradition of applied econometric scholarship. The Proposition 99 panel used throughout Part I was assembled by @abadie2010synthetic; the staggered-adoption minimum-wage panel in Part II is the county-level dataset packaged with the `did` R package by @callaway2021difference. I am also grateful to the open-source maintainers of `tidysynth`, `Synth`, `CausalImpact`, `bsts`, `scpi`, `did`, `HonestDiD`, `fect`, and `gsynth` — every chapter in this book is a thin wrapper around their work.
+This book builds on the infrastructure of the companion project [*Mastering Causal Metrics*](https://github.com/cmg777/intro2causal) and on a long tradition of applied econometric scholarship. The Proposition 99 panel used throughout Part I was assembled by @abadie2010synthetic; the staggered-adoption minimum-wage panel in Part II is the county-level dataset packaged with the `did` R package by @callaway2021difference. I am also grateful to the open-source maintainers of `tidysynth`, `Synth`, `CausalImpact`, `bsts`, `scpi`, `did`, `HonestDiD`, `fect`, `gsynth`, `fixest`, `fpp3` (and its `fable`/`feasts` siblings), `panelView`, and `Rcpp` — every chapter in this book is a thin wrapper around their work.
 
 ## License
 

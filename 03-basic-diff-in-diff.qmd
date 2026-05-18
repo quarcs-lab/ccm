@@ -21,7 +21,7 @@ The identifying assumption is **parallel trends**: California and Nevada would h
 
 The formal DiD identity is
 
-$$\hat{\tau}_{\text{DiD}} = \big(\bar{Y}_{\text{CA, post}} - \bar{Y}_{\text{CA, pre}}\big) - \big(\bar{Y}_{\text{NV, post}} - \bar{Y}_{\text{NV, pre}}\big).$$
+$$\widehat{\tau}_{\text{DiD}} \,=\, \big(\bar{Y}_{\text{CA, post}} - \bar{Y}_{\text{CA, pre}}\big) - \big(\bar{Y}_{\text{NV, post}} - \bar{Y}_{\text{NV, pre}}\big).$$
 
 In the chapter 1 notation, this is the imputation $\widehat{Y_{1t}(0)} = \overline{Y}_{1,\text{pre}} + (\overline{Y}_{0,\text{post}} - \overline{Y}_{0,\text{pre}})$ — California's pre-period mean plus Nevada's pre-to-post change.
 
@@ -29,7 +29,7 @@ The matching **population regression** is
 
 $$Y_{it} = \alpha + \beta_1 \, \mathrm{Post}_t + \beta_2 \, \mathrm{Treat}_i + \tau \, (\mathrm{Post}_t \times \mathrm{Treat}_i) + u_{it},$$
 
-where $\mathrm{Treat}_i = 1$ for California and $0$ for Nevada, and $\mathrm{Post}_t = 1$ for $t \ge 1989$. The interaction coefficient $\tau$ is the DiD ATT — algebraically identical to the change-of-changes identity above, but in a form that gives us a standard error.
+where $\mathrm{Treat}_i = 1$ for California and $0$ for Nevada, and $\mathrm{Post}_t = 1$ for $t \ge 1989$. The OLS estimator $\widehat{\tau}$ of the interaction coefficient is the DiD ATT — algebraically identical to the change-of-changes identity above, but in a form that gives us a standard error. We refer to this estimator as $\widehat{\tau}_{\text{DiD}}$ throughout.
 
 The four ingredients of the DiD calculation are easier to see as a 2×2 grid. Each cell holds a group mean; the two within-state changes are the row differences; the DiD estimate is the difference *of* those differences.
 
@@ -109,7 +109,7 @@ The resulting `prop99_did` tibble has 20 rows (2 states × 10 years) and four co
 
 ## Fit and HAC inference
 
-**The model.** The two-way interacted OLS `cigsale ~ state * prepost` is the *regression form* of the 2×2 grid above — the arithmetic in the grid is literally what this regression computes. The four estimated coefficients map one-to-one onto the grid cells: the intercept is the Nevada–Pre cell, `stateCalifornia` shifts up or down to land on the California–Pre cell, `prepostPost` shifts to the Nevada–Post cell, and the interaction `stateCalifornia:prepostPost` is exactly the DiD ATT $\hat\tau$ — the *extra* California change beyond what happened to Nevada over the same window.
+**The model.** The two-way interacted OLS `cigsale ~ state * prepost` is the *regression form* of the 2×2 grid above — the arithmetic in the grid is literally what this regression computes. The four estimated coefficients map one-to-one onto the grid cells: the intercept is the Nevada–Pre cell, `stateCalifornia` shifts up or down to land on the California–Pre cell, `prepostPost` shifts to the Nevada–Post cell, and the interaction `stateCalifornia:prepostPost` is exactly the DiD ATT $\widehat{\tau}_{\text{DiD}}$ — the *extra* California change beyond what happened to Nevada over the same window.
 
 **Standard errors on a 2×2 panel are tricky.** Textbook OLS SEs assume i.i.d. errors, which fails here because within-state residuals are serially correlated over the ten-year window. The standard fix — clustering by state [@bertrand2004how] — is **degenerate with only two clusters**: the cluster-robust variance estimator's asymptotic theory requires the number of clusters $G$ to grow, and at $G = 2$ it collapses to a single 2×2 outer product. Software will compute a number; one cannot interpret it. We report HAC-robust SEs via `sandwich::vcovHAC` as a transparent compromise: they correct for within-unit autocorrelation by treating the stacked panel as a long time series, but they ignore the cross-state row boundary in the stacked design. The qualitative reading — that the DiD point estimate is statistically indistinguishable from zero — survives every reasonable choice; readers should treat the $p$-value as a rough heuristic, not a textbook test.
 
@@ -131,7 +131,30 @@ ms_pretty(list("Two-way interacted OLS, HAC SEs" = fit_did),
           notes    = "Standard errors HAC-robust via sandwich::vcovHAC.")
 ```
 
-**Reading the output.** The interaction coefficient $\hat\tau$ (R name: `stateCalifornia:prepostPost`) is roughly $-5.68$ packs (HAC SE ≈ 5.39, $p \approx 0.31$). That is *dramatically* smaller than the naive $-27.02$ from chapter 1, and statistically indistinguishable from zero. Why? Because the `prepostPost` main effect is also large: $-21.34$ packs. Nevada's own cigarette sales fell by 21.3 packs between 1984–1988 and 1989–1993. When DiD subtracts that Nevada change from California's change, almost all of California's drop is absorbed.
+```{r}
+#| label: did-stats
+#| echo: false
+did_coefs   <- coef(fit_did)
+did_att     <- unname(did_coefs[["stateCalifornia:prepostPost"]])
+nv_change   <- unname(did_coefs[["prepostPost"]])
+ca_extra    <- unname(did_coefs[["stateCalifornia"]])  # CA - NV level shift in pre
+hac_vcov    <- sandwich::vcovHAC(fit_did)
+did_se      <- sqrt(diag(hac_vcov))[["stateCalifornia:prepostPost"]]
+did_t       <- did_att / did_se
+did_p       <- 2 * pt(-abs(did_t), df = fit_did$df.residual)
+
+# Cell means (for the 2x2 grid and the within-CA pre-to-post change).
+cell_means <- prop99_did |>
+  group_by(state, prepost) |>
+  summarize(mean_cigsale = mean(cigsale), .groups = "drop")
+ca_pre   <- cell_means$mean_cigsale[cell_means$state == "California" & cell_means$prepost == "Pre"]
+ca_post  <- cell_means$mean_cigsale[cell_means$state == "California" & cell_means$prepost == "Post"]
+nv_pre   <- cell_means$mean_cigsale[cell_means$state == "Nevada"     & cell_means$prepost == "Pre"]
+nv_post  <- cell_means$mean_cigsale[cell_means$state == "Nevada"     & cell_means$prepost == "Post"]
+ca_change_22 <- ca_post - ca_pre
+```
+
+**Reading the output.** The interaction coefficient $\widehat{\tau}_{\text{DiD}}$ (R name: `stateCalifornia:prepostPost`) is `r sprintf("%+.2f", did_att)` packs (HAC SE $\approx$ `r sprintf("%.2f", did_se)`, $p \approx$ `r sprintf("%.2f", did_p)`). That is *dramatically* smaller than California's own within-state pre-to-post change of `r sprintf("%+.1f", ca_change_22)` packs over this 1984–1993 window, and statistically indistinguishable from zero. Why? Because the `prepostPost` main effect — Nevada's own pre-to-post change — is also large at `r sprintf("%+.2f", nv_change)` packs. When DiD subtracts that Nevada change from California's change, almost all of California's drop is absorbed.
 
 ## Visual diagnostic
 
@@ -174,7 +197,18 @@ ms_pretty(list("Pre-trend slope test (1984-1988)" = fit_pre),
           notes    = "If parallel trends held, the slope difference should be ~0.")
 ```
 
-The slope-difference estimate is roughly $-4.63$ packs per year with HAC $p \approx 0.024$. Even **before** Proposition 99, California was declining roughly 4.6 packs/year *faster* than Nevada — i.e. the two series were already diverging in the direction the policy would later push, so the parallel-trends assumption is *rejected* by the pre-period data themselves. This is load-bearing: it turns the chapter's diagnosis from "Nevada has its own decline (visible in the plot)" into "California was already separating from Nevada (testable, rejected)".
+```{r}
+#| label: pretrend-stats
+#| echo: false
+pre_coefs    <- coef(fit_pre)
+slope_diff   <- unname(pre_coefs[["stateCalifornia:year"]])
+hac_vcov_pre <- sandwich::vcovHAC(fit_pre)
+slope_se     <- sqrt(diag(hac_vcov_pre))[["stateCalifornia:year"]]
+slope_t      <- slope_diff / slope_se
+slope_p      <- 2 * pt(-abs(slope_t), df = fit_pre$df.residual)
+```
+
+The slope-difference estimate is `r sprintf("%+.2f", slope_diff)` packs per year with HAC $p \approx$ `r sprintf("%.3f", slope_p)`. Even **before** Proposition 99, California was declining roughly `r sprintf("%.1f", abs(slope_diff))` packs/year *faster* than Nevada — i.e. the two series were already diverging in the direction the policy would later push, so the **parallel trends** assumption is *rejected* by the pre-period data themselves. This is load-bearing: it turns the chapter's diagnosis from "Nevada has its own decline (visible in the plot)" into "California was already separating from Nevada (testable, rejected)". The test is a *falsification* check: failing it disqualifies the design, but passing it does not *prove* parallel trends in the post-period — the missing-data nature of the counterfactual is untestable by construction.
 
 This is the textbook DiD pitfall. A single control unit that itself is shifting in the same direction makes the contrast collapse. Nevada is geographically and culturally adjacent to California. It inherits many of the same secular forces: rising health awareness, federal tobacco settlements, retail-price spillovers. So it is a poor "what would California have done?" control.
 
@@ -184,21 +218,21 @@ This is the textbook DiD pitfall. A single control unit that itself is shifting 
 
 **A third pitfall.** Treating Nevada as causally exogenous. Nevada borders California on a 600-km stretch, sits inside California's TV-advertising and retail-price corridor, and inherits its anti-smoking media spillovers. The "control" is not policy-untreated in the deep sense — only in the narrow sense of not having passed Proposition 99 itself.
 
-**Recap.** DiD against Nevada says $-5.7$ packs and we cannot reject zero. The lesson is *not* that DiD is broken — it is that DiD with a single similar control unit is fragile. **Synthetic Control (chapter 4) is the principled response**: instead of one neighbour, blend *many Nevadas* into a *weighted* synthetic California — the optimisation picks the weights so the analyst no longer has to hand-pick the control.
+**Recap.** DiD against Nevada returns $\widehat{\tau}_{\text{DiD}} \approx$ `r sprintf("%+.2f", did_att)` packs and we cannot reject zero. The lesson is *not* that DiD is broken — it is that DiD with a single similar control unit is fragile, and the pre-trends test makes that fragility formal rather than merely visual. **Synthetic Control (chapter 4) is the principled response**: instead of one neighbour, blend *many Nevadas* into a *weighted* synthetic California — the optimisation picks the weights so the analyst no longer has to hand-pick the control.
 
 ## Key takeaways
 
 **Methods:**
 
-- Difference-in-Differences (DiD) is a 2×2 contrast that estimates the Average Treatment effect on the Treated (ATT) as $\hat\tau = (\bar Y_{\text{CA,post}} - \bar Y_{\text{CA,pre}}) - (\bar Y_{\text{NV,post}} - \bar Y_{\text{NV,pre}})$ — California's pre-to-post change minus Nevada's, with the control's change imputing California's missing $Y_{1t}(0)$.
+- Difference-in-Differences (DiD) is a 2×2 contrast that estimates the Average Treatment effect on the Treated (ATT) as $\widehat{\tau}_{\text{DiD}} = (\bar Y_{\text{CA,post}} - \bar Y_{\text{CA,pre}}) - (\bar Y_{\text{NV,post}} - \bar Y_{\text{NV,pre}})$ — California's pre-to-post change minus Nevada's, with the control's change imputing California's missing $Y_{1t}(0)$.
 - The two-way interacted regression `cigsale ~ state * prepost` is the regression form of that 2×2 grid; with one treated unit and one control, the `state:prepost` interaction is algebraically identical to the change-of-changes ATT and is equivalent to the unit-and-period two-way fixed-effects specification on this balanced panel.
 - Identification rests on **parallel trends** — California and Nevada would have evolved on parallel paths absent Proposition 99. Differences in *levels* between the two states are absorbed by the unit fixed effect; only differences in *trends* bias the DiD estimand.
 
 **Lessons:**
 
-- Adding even one outside comparison unit dramatically shrinks the estimated effect. The naive within-California drop of $-27$ packs collapses to roughly $-5.7$ packs once Nevada's own $-21.3$ pack decline is subtracted off, and the resulting ATT is statistically indistinguishable from zero.
-- Inspect parallel trends both visually *and* formally. Regressing `cigsale ~ state * year` on the 1984–1988 pre-window yields a slope difference of about $-4.63$ packs/year ($p \approx 0.024$): California was already declining faster than Nevada *before* the policy, so parallel trends is rejected by the pre-period data themselves.
-- A failed pre-trends test reframes the chapter's headline. The shrinkage from $-27$ to $-5.7$ is not just "Nevada has its own decline" but "California was already separating from Nevada in the policy's direction" — meaning DiD against Nevada absorbs genuine treatment signal into a non-parallel counterfactual.
+- Adding even one outside comparison unit dramatically shrinks the estimated effect. California's within-state pre-to-post change of `r sprintf("%+.1f", ca_change_22)` packs over the 1984–1993 window collapses to $\widehat{\tau}_{\text{DiD}} \approx$ `r sprintf("%+.2f", did_att)` packs once Nevada's own `r sprintf("%+.1f", nv_change)`-pack pre-to-post change is subtracted off, and the resulting ATT is statistically indistinguishable from zero.
+- Inspect **parallel trends** both visually *and* formally. Regressing `cigsale ~ state * year` on the 1984–1988 pre-window yields a slope difference of `r sprintf("%+.2f", slope_diff)` packs/year ($p \approx$ `r sprintf("%.3f", slope_p)`): California was already declining faster than Nevada *before* the policy, so parallel trends is rejected by the pre-period data themselves.
+- A failed pre-trends test reframes the chapter's headline. The shrinkage is not just "Nevada has its own decline" but "California was already separating from Nevada in the policy's direction" — meaning DiD against Nevada absorbs genuine treatment signal into a non-parallel counterfactual.
 
 **Caveats:**
 
@@ -208,9 +242,13 @@ This is the textbook DiD pitfall. A single control unit that itself is shifting 
 
 ## Further reading
 
-This chapter is the **canonical 2×2 / single-shock DiD**: one treated unit (California), one control unit (Nevada), one pre-period, one post-period. **Chapter 8 (Part II)** revisits DiD in the *staggered-adoption* setting — many treated units that switch at different dates — using the Callaway–Sant'Anna group-time ATT estimator [@callaway2021difference], the Sun–Abraham interaction-weighted estimator [@sun2021estimating], and the Rambachan–Roth honest-DiD sensitivity bounds [@rambachan2023more] on a Callaway-Sant'Anna minimum-wage county panel. The two chapters together cover the modern DiD toolkit.
+This chapter is the **canonical 2×2 / single-shock DiD**: one treated unit (California), one control unit (Nevada), one pre-period, one post-period. **Chapter 8 (Part II)** revisits DiD in the *staggered-adoption* setting — many treated units that switch at different dates — using the Callaway–Sant'Anna group-time ATT estimator, the Sun–Abraham interaction-weighted estimator, and the Rambachan–Roth honest-DiD sensitivity bounds on a minimum-wage county panel. The two chapters together cover the modern DiD toolkit.
 
-**Classical references.** @cardkrueger1994minimum is the textbook applied 2×2 DiD (New Jersey vs Pennsylvania minimum wage and fast-food employment). @bertrand2004how is the seminal warning that DiD standard errors are biased toward zero under residual autocorrelation — the reason this chapter's inference choice is non-trivial. @bernal2017interrupted is the practitioner reference for parallel-trends *visual* diagnostics. For modern multi-period DiD with staggered adoption, `did` (Callaway–Sant'Anna) and `fixest::feols` (two-way fixed effects with cluster-robust SEs — but **only when there are enough clusters**) are the standard R workhorses.
+- @cardkrueger1994minimum — *applied example* — the textbook 2×2 DiD on New Jersey vs Pennsylvania minimum wage and fast-food employment; the historical template for the design in this chapter.
+- @bertrand2004how — *seminal warning* — DiD standard errors are biased toward zero under residual autocorrelation, and the cluster-robust fix requires the number of clusters to grow; the reason this chapter's inference choice is non-trivial at $G = 2$.
+- @bernal2017interrupted — *tutorial* — practitioner reference for parallel-trends *visual* diagnostics in a public-health setting.
+- @roth2023whats — *review* — a synthesis of the recent DiD econometrics literature, useful for orienting between the 2×2 case here and the staggered-adoption machinery of chapter 8.
+- @callaway2022handbook — *handbook chapter* — a longer-form treatment of DiD for policy evaluation that motivates the move from the 2×2 design to group-time ATTs.
 
 ## Exercises
 
@@ -306,21 +344,21 @@ Refit the DiD and compare three standard-error choices for the DiD interaction: 
 
 ```{r}
 #| label: ex-ch03-04
-ms_pretty(list("Classical OLS" = fit_did,
-               "HC1 (White)"   = fit_did,
-               "HAC (Newey-West)" = fit_did),
+ms_pretty(list("Classical OLS"        = fit_did,
+               "HC1 (White)"          = fit_did,
+               "HAC (Andrews/vcovHAC)" = fit_did),
           vcov     = list(NULL,
                           sandwich::vcovHC,
                           sandwich::vcovHAC),
           coef_map = c("stateCalifornia:prepostPost" = "DiD interaction"))
 ```
 
-Classical OLS underestimates the SE because it assumes within-state residuals are independent; HC1 is similar (it corrects for heteroskedasticity but not autocorrelation). HAC is the largest because it explicitly inflates the SE for serial correlation across the ten-year window. **Cluster-by-state is not in the comparison because $G = 2$**: the cluster-robust variance estimator's asymptotic theory needs the number of clusters to grow, and at two clusters it collapses to a single 2×2 outer product. Software will produce a number; the number has no statistical meaning. With only two units, accept the HAC compromise and let the point estimate carry the argument — or move to synthetic control (ch. 4), where placebo-based inference replaces classical SEs.
+Classical OLS underestimates the SE because it assumes within-state residuals are independent; HC1 is similar — it corrects for heteroskedasticity but not autocorrelation. HAC is the largest because it explicitly inflates the SE for serial correlation across the ten-year window. **Cluster-by-state is not in the comparison because $G = 2$**: the cluster-robust variance estimator's asymptotic theory needs the number of clusters to grow, and at two clusters it collapses to a single 2×2 outer product. Software will produce a number; the number has no statistical meaning. With only two units, accept the HAC compromise and let the point estimate carry the argument — or move to synthetic control (ch. 4), where placebo-based inference replaces classical SEs.
 :::
 
 ### Exercise 5 (stretch): Pool three control states into a TWFE-like DiD
 
-Extend the 2×2 panel to **three control states** — Nevada, Montana, and Colorado — keeping California treated and the 1984–1993 window. Fit a two-way-fixed-effects-style regression `lm(cigsale ~ state + prepost + treat:prepost)` where `treat = (state == "California")`, and compare the DiD interaction to the Nevada-only and Montana-only versions above.
+Extend the 2×2 panel to **three control states** — Nevada, Montana, and Colorado — keeping California treated and the 1984–1993 window. Fit a two-way-fixed-effects-style regression of `cigsale` on state and period dummies plus a `treat_post` indicator that equals one only for California in 1989–1993, and compare the `treat_post` coefficient (the DiD ATT) to the Nevada-only and Montana-only versions above.
 
 ::: {.callout-tip collapse="true"}
 ## Solution

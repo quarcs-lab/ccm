@@ -48,12 +48,14 @@ to impute its $Y_{it}(0)$ in the post-treatment period. Concretely:
    $\widehat{Y_{it}(0)} = \hat\alpha_i + \hat\xi_t +
    \hat\lambda_i'\hat f_t + X_{it}'\hat\beta$.
 
-The headline ATT is the average gap between observed treated
-outcomes and these imputed counterfactuals. Step 2 is what
-distinguishes gsynth from a generic IFE estimator and is the
-reason pre-treatment depth matters: the projection regression
-needs enough pre-periods per treated unit to identify each
-$\hat\lambda_i$.
+The headline ATT — written $\widehat{\tau}_{\text{gsynth}}$ to
+keep it distinct from chapter 8's $\widehat{\tau}_{\text{CS}}$ and
+chapter 9's $\widehat{\tau}_{\text{IFE}} / \widehat{\tau}_{\text{MC}}$ —
+is the average gap between observed treated outcomes and these
+imputed counterfactuals. Step 2 is what distinguishes gsynth from a
+generic IFE estimator and is the reason pre-treatment depth
+matters: the projection regression needs enough pre-periods per
+treated unit to identify each $\hat\lambda_i$.
 
 Why call this a *generalised* synthetic control? Because chapter
 4's classical SC weight vector $w$ — chosen to match California's
@@ -464,13 +466,13 @@ ggplot(cumu_df, aes(x = `Event time`, y = `Cumulative ATT`)) +
 minimum-wage panel:
 
 - gsynth with no factors ($r = 0$):
-  $\hat\tau \approx `r sprintf("%.3f", ic_tbl$ATT[ic_tbl$r == 0])`$
+  $\widehat{\tau}_{\text{gsynth}} \approx `r sprintf("%.3f", ic_tbl$ATT[ic_tbl$r == 0])`$
   (close to chapter 8's TWFE coefficient of $-0.038$).
 - gsynth with the **IC-recommended rank (with $r \ge 1$ floor)**
   ($r^* = `r r_star`$):
-  $\hat\tau \approx `r sprintf("%.3f", out$att.avg)`$.
-- Chapter 8's Callaway-Sant'Anna overall ATT: $-0.057$.
-- Chapter 8's doubly-robust conditional ATT: $-0.065$.
+  $\widehat{\tau}_{\text{gsynth}} \approx `r sprintf("%.3f", out$att.avg)`$.
+- Chapter 8's Callaway-Sant'Anna overall ATT $\widehat{\tau}_{\text{CS, overall}} \approx -0.057$.
+- Chapter 8's doubly-robust conditional ATT $\widehat{\tau}_{\text{CS, DR}} \approx -0.065$.
 
 The factor-augmented gsynth estimate is in the same direction and
 within sampling error of the chapter-8 staggered-DiD estimates.
@@ -563,7 +565,7 @@ two notations are aligned.
 
 - *Interactive fixed effects* means letting unobserved time shocks $f_t$ load on each unit through a unit-specific *factor loading* $\lambda_i$, so a single time trend can affect different counties by different amounts — a strictly richer structure than the additive two-way fixed effects of chapter 8. The identifying assumption shifts from parallel *trends* to parallel *factors*, which can be the weaker requirement when cohort-specific shocks are at work.
 - The implicit-weights table revealed that each treated county's counterfactual is a genuine mixture of many never-treated donors — no single control dominates, top weights stay well under 0.10, and the dispersion across `r length(control_ids)` controls is exactly the shape expected from a large donor pool. This grounds the abstract factor model in the same "weighted donor average" intuition as classical SCM.
-- The factor-augmented ATT ($r^* = 1$) roughly doubles the no-factor baseline and lands within sampling error of chapter 8's Callaway-Sant'Anna estimates ($-0.057$ overall, $-0.065$ doubly-robust). Two estimators with different identifying assumptions (parallel trends vs. parallel factors) pointing the same direction is the strongest evidence the design can generate; the cumulative-ATT plot then shows effects deepening monotonically over event time.
+- The factor-augmented ATT $\widehat{\tau}_{\text{gsynth}}$ at $r^* = 1$ roughly doubles the no-factor baseline and lands within sampling error of chapter 8's Callaway-Sant'Anna estimates ($\widehat{\tau}_{\text{CS, overall}} \approx -0.057$, $\widehat{\tau}_{\text{CS, DR}} \approx -0.065$). Two estimators with different identifying assumptions (parallel trends vs. parallel factors) pointing the same direction is the strongest evidence the design can generate; the cumulative-ATT plot then shows effects deepening monotonically over event time.
 
 **Caveats:**
 
@@ -728,5 +730,5 @@ tibble(estimator = c("gsynth real (chapter)", "gsynth in-time placebo"),
   gt_pretty(decimals = 4)
 ```
 
-The placebo ATT is small in absolute value relative to the real headline, and its CI comfortably brackets zero — gsynth is not manufacturing a meaningful effect when no policy was passed in the pseudo-post window. A placebo magnitude approaching the real ATT would have suggested the factor model was over-fitting the pre-period; the modest placebo here corroborates the chapter's headline. Note that we lowered `min.T0` to 2 for the placebo because the pseudo-cohorts have fewer pre-periods after the shift — a real applied placebo would document the same trade-off transparently.
+The placebo ATT is small in absolute value relative to the real headline, and its CI comfortably brackets zero — gsynth is not manufacturing a meaningful effect when no policy was passed in the pseudo-post window. A placebo magnitude approaching the real ATT would have suggested the factor model was over-fitting the pre-period; the modest placebo here corroborates the chapter's headline. One caveat to document: with `min.T0 = 2` (matching the main fit), gsynth silently drops the shifted-2004 cohort because it retains only one pre-period inside `year <= 2005` after the two-year shift. The reported placebo therefore identifies off the shifted-2006 cohort alone. A real applied placebo would either lower `min.T0`, choose a smaller shift, or report the dropped-cohort caveat explicitly.
 :::

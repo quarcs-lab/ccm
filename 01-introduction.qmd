@@ -4,15 +4,16 @@ title: "Introduction"
 
 ## Learning objectives
 
-1. Frame any policy evaluation in the potential-outcomes notation $Y_i(1), Y_i(0)$ and identify the ATT as the target estimand. Treating causal inference as a missing-data problem prevents the most common mistake — reporting an ATE when only the ATT is identified.
+1. Frame any policy evaluation in the potential-outcomes notation $Y_{it}(1), Y_{it}(0)$ and identify the ATT as the target estimand. Treating causal inference as a missing-data problem prevents the most common mistake — reporting an ATE when only the ATT is identified.
 2. Audit the SUTVA assumption for a candidate evaluation and flag plausible spillover or interference channels. SUTVA failures silently bias every method that follows, so screening for them up front decides which chapter of this book applies.
-3. Use the book's method-selection decision tree to map a new regional evaluation problem to one of the ten methods covered. This skill lets the reader treat the book as a toolkit rather than a sequence, picking the right estimator for the data structure they actually have.
+3. Compute the naive pre-post estimator and explain *why* it is biased rather than treating it as a defensible answer. Every later chapter in the book is a different repair of this same baseline, so its failure mode is the diagnostic vocabulary used throughout.
+4. Use the book's method-selection decision tree to map a new regional evaluation problem to one of the ten methods covered. This skill lets the reader treat the book as a toolkit rather than a sequence, picking the right estimator for the data structure they actually have.
 
 ## Why regional impact evaluation?
 
 How do you measure the causal effect of a policy when you cannot randomise who gets treated? Most policy reforms hit a *region* — a state, province, or country — as a single block. There is no randomisation, no control arm, and often only a handful of treated units. The job of regional impact evaluation is to recover the missing counterfactual: *what would the region have looked like without the policy?*
 
-Two running case studies anchor the book. **Part I (chs. 1–7)** stays with the canonical *single-treated-unit* setting: California's 1989 Proposition 99 cigarette tax. Per-capita cigarette sales in California fell from 116 packs in 1988 to 60 packs in 2000 — almost a 50% drop — but the country as a whole was also smoking less, and the deceptively simple question is
+Two running case studies anchor the book. **Part I (chs. 1–7)** stays with the canonical *single-treated-unit* setting: California's 1989 Proposition 99 cigarette tax. Per-capita cigarette sales in California fell from roughly 116 packs in 1988 to roughly 60 packs in 2000 — almost a 50% drop — but the country as a whole was also smoking less, and the deceptively simple question is
 
 > **How much of California's drop was caused by Proposition 99, and how much would have happened anyway?**
 
@@ -35,7 +36,7 @@ Let $D_{it} \in \{0, 1\}$ be the treatment indicator. Here $D_{it} = 1$ for Cali
 
 $$Y_{it} \,=\, D_{it}\, Y_{it}(1) \,+\, (1 - D_{it})\, Y_{it}(0).$$
 
-In words: if California in 1995 was treated, we observe $Y_{1995}(1)$ — *not* the counterfactual $Y_{1995}(0)$, which is what California's smoking *would have been* in 1995 had Proposition 99 never passed. That counterfactual is the missing data.
+In words: if California (which we label $i = 1$) in 1995 was treated, we observe $Y_{1, 1995}(1)$ — *not* the counterfactual $Y_{1, 1995}(0)$, which is what California's smoking *would have been* in 1995 had Proposition 99 never passed. That counterfactual is the missing data.
 
 Writing $Y_{it}(1)$ and $Y_{it}(0)$ as well-defined quantities implicitly assumes the **stable unit treatment value assumption (SUTVA)**: state $i$'s potential outcomes depend only on its own treatment status, not on what other states are doing. SUTVA is harmless for many policies; for tobacco taxes on the California border it is exactly the assumption that chapter 7 will relax.
 
@@ -49,12 +50,12 @@ Make the missing data concrete. The table below shows what is observed (✓), wh
 | California | 1989 | 1 | **?** | 82.4 ✓ | 82.4 |
 | California | 1995 | 1 | **?** | 56.4 ✓ | 56.4 |
 | California | 2000 | 1 | **?** | 41.6 ✓ | 41.6 |
-| Nevada     | 1988 | 0 | 142.0 ✓ | — | 142.0 |
-| Nevada     | 1995 | 0 | 100.7 ✓ | — | 100.7 |
+| Nevada     | 1988 | 0 | 141.9 ✓ | — | 141.9 |
+| Nevada     | 1995 | 0 | 100.9 ✓ | — | 100.9 |
 | Utah       | 1988 | 0 | 55.0 ✓ | — | 55.0 |
 | Utah       | 1995 | 0 | 52.0 ✓ | — | 52.0 |
 
-This is what Holland (1986) called the **fundamental problem of causal inference**: for any treated unit at any time, we observe at most one of the two potential outcomes, and the other one is missing. For California after 1989 the missing column is $Y_{it}(0)$ — every "**?**" in the third column. *Every method in this book is a way to fill in those question marks.*
+This is what Holland (1986) called the **fundamental problem of causal inference**: for any treated unit at any time, we observe at most one of the two potential outcomes, and the other one is missing. For California after 1989 the missing column is $Y_{it}(0)$ — every "**?**" in the $Y_{it}(0)$ column. *Every method in this book is a way to fill in those question marks.*
 
 ### Three estimands: ITE, ATE, ATT
 
@@ -189,12 +190,14 @@ With California isolated and tagged by period, the first thing to look at is the
 #| label: tbl-prepost-means
 #| tbl-cap: "Pre vs post means in California (Proposition 99)."
 #| code-summary: "Code: Summarize California's pre- and post-1988 cigarette sales as a table."
-prop99_cali |>
+prepost_means <- prop99_cali |>
   group_by(prepost) |>
   summarize(n            = n(),
             mean_cigsale = mean(cigsale),
             sd_cigsale   = sd(cigsale),
-            .groups = "drop") |>
+            .groups = "drop")
+
+prepost_means |>
   gt_pretty(decimals = 2) |>
   cols_label(prepost      = "Period",
              n            = "Years",
@@ -202,7 +205,16 @@ prop99_cali |>
              sd_cigsale   = "SD")
 ```
 
-California's average per-capita cigarette sales fell from **116.21** packs (1970–1988) to **60.35** packs (1989–2000) — a within-state drop of 55.86 packs, or 48.1% of the pre-period mean. That is the *raw* before/after change. The rest of the book is about how much of that drop we can credibly attribute to Proposition 99 rather than to the broader American secular decline in smoking.
+```{r}
+#| label: prepost-stats
+#| echo: false
+ca_pre_mean  <- prepost_means$mean_cigsale[prepost_means$prepost == "Pre"]
+ca_post_mean <- prepost_means$mean_cigsale[prepost_means$prepost == "Post"]
+ca_drop      <- ca_pre_mean - ca_post_mean
+ca_pct_drop  <- 100 * ca_drop / ca_pre_mean
+```
+
+California's average per-capita cigarette sales fell from **`r round(ca_pre_mean, 2)`** packs (1970–1988) to **`r round(ca_post_mean, 2)`** packs (1989–2000) — a within-state drop of `r round(ca_drop, 2)` packs, or `r round(ca_pct_drop, 1)`% of the pre-period mean. That is the *raw* before/after change. The rest of the book is about how much of that drop we can credibly attribute to Proposition 99 rather than to the broader American secular decline in smoking.
 
 Before any modelling, it helps to see all 39 series at once.
 
@@ -265,9 +277,22 @@ ms_pretty(list("California (1984-1993)" = fit_prepost),
                        "prepostPost" = "Post - Pre (treatment effect)"))
 ```
 
-**Reading the output.** California's mean over 1984–1988 was about 99 packs/capita. The `prepostPost` coefficient says the 1989–1993 mean is roughly 27 packs *lower*. The Newey-West HAC standard error is still small enough to reject the null at 5% ($p \approx 0.01$). The HAC correction comes from `sandwich::NeweyWest` and accounts for the heteroskedasticity and autocorrelation that short time series typically exhibit; the classical OLS standard error is about half the Newey-West value here, so it would be wildly overconfident.
+```{r}
+#| label: naive-stats
+#| echo: false
+naive_coefs   <- coef(fit_prepost)
+naive_pre     <- unname(naive_coefs["(Intercept)"])
+naive_effect  <- unname(naive_coefs["prepostPost"])
+nw_se         <- sqrt(diag(sandwich::NeweyWest(fit_prepost)))[["prepostPost"]]
+ols_se        <- sqrt(diag(vcov(fit_prepost)))[["prepostPost"]]
+nw_t          <- naive_effect / nw_se
+nw_p          <- 2 * pt(-abs(nw_t), df = fit_prepost$df.residual)
+se_ratio      <- ols_se / nw_se
+```
 
-**The estimand is purely descriptive.** This is a within-state difference of means, *not* a causal estimate. Any nationwide secular decline in smoking gets silently bundled into the $-27$. That bundling is exactly what the later chapters try to undo.
+**Reading the output.** California's mean over 1984–1988 was about `r round(naive_pre, 1)` packs/capita. The `prepostPost` coefficient says the 1989–1993 mean is roughly `r round(abs(naive_effect), 1)` packs *lower*. The Newey-West HAC standard error is still small enough to reject the null at 5% ($p \approx `r sprintf("%.3f", nw_p)`$). The HAC correction comes from `sandwich::NeweyWest` and accounts for the heteroskedasticity and autocorrelation that short time series typically exhibit; the classical OLS standard error is about `r sprintf("%.0f", 100 * se_ratio)`% of the Newey-West value here, so it would be wildly overconfident.
+
+**The estimand is purely descriptive.** This is a within-state difference of means, *not* a causal estimate. Any nationwide secular decline in smoking gets silently bundled into the $`r round(naive_effect, 1)`$. That bundling is exactly what the later chapters try to undo.
 
 **Common pitfalls when reading this book.**
 
@@ -299,6 +324,8 @@ Chapter 8 introduces a second dataset: the **Callaway-Sant'Anna minimum-wage cou
 
 The disagreements between estimators applied to the same data are the lesson of this book.
 
+**Next up.** Chapter 2 takes the first repair seriously: it replaces the naive baseline's "frozen pre-period mean" counterfactual with California's own pre-period trend, projected forward as either a linear growth curve or an ARIMA forecast. Whether that single repair is enough — and where it visibly fails — is the story of interrupted time series.
+
 ## Key takeaways
 
 **Methods:**
@@ -310,14 +337,14 @@ The disagreements between estimators applied to the same data are the lesson of 
 
 - Part I (chs. 2–7) holds the Proposition 99 single-treated-unit case study fixed and swaps in progressively richer counterfactuals — pre-trend extrapolation (ITS), one control state (DiD), donor-pool blends (SCM family), and Bayesian state-space models — so the disagreements between estimates isolate the cost of each identifying assumption.
 - Part II (chs. 8–10) switches to the Callaway-Sant'Anna minimum-wage county panel because staggered adoption breaks single-time-series tools; the toolkit shifts to group-time ATT estimators, matrix completion, interactive fixed effects, and generalized synthetic control, all of which still impute $Y_{it}(0)$ but exploit the full panel structure.
-- California's raw pre-vs-post drop of about 56 packs per capita (48% of the pre-period mean) is a within-state difference of means, not a causal effect — the nationwide secular decline in smoking is silently bundled in, and the rest of the book exists to peel that bundle apart.
+- California's raw pre-vs-post drop of about `r round(ca_drop)` packs per capita (`r round(ca_pct_drop)`% of the pre-period mean) is a within-state difference of means, not a causal effect — the nationwide secular decline in smoking is silently bundled in, and the rest of the book exists to peel that bundle apart.
 - Choosing a method is a sequence of data-availability questions — staggered vs. single treatment, donor pool vs. only the treated series, parallel trends vs. a factor structure, frequentist vs. Bayesian inference, SUTVA vs. spillovers — and the decision tree in this chapter maps each branch to a specific chapter.
 
 **Caveats:**
 
 - Every estimator covered targets the ATT on already-treated units; none of them identifies the ATE, and extrapolating their results to "what if every state had passed Proposition 99" is outside the book's scope.
 - The naive pre-post regression is reported only as a baseline and bias yardstick — its implicit counterfactual freezes California at its pre-period mean and is almost certainly wrong, so it must never be read as a causal estimate.
-- Short time series demand HAC (heteroskedasticity- and autocorrelation-consistent) standard errors — classical OLS errors are roughly half the Newey-West value in the naive fit and would be wildly overconfident.
+- Short time series demand HAC (heteroskedasticity- and autocorrelation-consistent) standard errors — classical OLS errors are about `r sprintf("%.0f", 100 * se_ratio)`% of the Newey-West value in the naive fit and would be wildly overconfident.
 
 ## Further reading
 
@@ -363,7 +390,7 @@ tibble(estimator    = "Between-state naive (post-period)",
   gt_pretty(decimals = 2)
 ```
 
-Donor states averaged ~88 packs/capita over 1989–2000 vs ~60 for California — the between-state gap is about $-28$ packs, roughly the same magnitude as the within-state $-27$ but built on a very different counterfactual assumption. Chapter 4 will pick the donor blend properly; this is the unweighted version.
+Donor states averaged about `r round(donor_post)` packs/capita over 1989–2000 vs about `r round(ca_post)` for California — the between-state gap is roughly `r round(ca_post - donor_post, 1)` packs, broadly comparable in magnitude to the within-state `r round(naive_effect, 1)` but built on a very different counterfactual assumption. Chapter 4 will pick the donor blend properly; this is the unweighted version.
 :::
 
 ### Exercise 2: Secular pre-1988 decline in the donor pool
@@ -384,24 +411,34 @@ trend_fit <- lm(donor_mean ~ year, data = donor_pre_trend)
 ms_pretty(list("Donor pre-1988 trend" = trend_fit))
 ```
 
-The pre-1988 slope is roughly $-1$ pack/year. Carried forward across 12 post-period years (1989–2000) that is ~$-12$ packs of "expected" decline even without Proposition 99. The within-state naive estimate of $-27$ absorbs that secular decline silently — so a non-trivial chunk of the headline effect is national trend, not California policy.
+```{r}
+#| label: ex-ch01-02-stats
+#| echo: false
+donor_slope        <- unname(coef(trend_fit)["year"])
+donor_carry_drop   <- donor_slope * 12   # 12 post-period years, 1989-2000
+```
+
+The pre-1988 slope is roughly `r round(donor_slope, 2)` packs/year. Carried forward across 12 post-period years (1989–2000) that is about `r round(donor_carry_drop, 1)` packs of "expected" decline even without Proposition 99. The within-state naive estimate of `r round(naive_effect, 1)` absorbs that secular decline silently — so a non-trivial chunk of the headline effect is national trend, not California policy.
 :::
 
 ### Exercise 3: SUTVA diagnostic on California's geographic neighbours
 
-A border state that lost cigarette sales because Californians drove across the line to buy cheap tobacco would *violate* SUTVA: the neighbour's $Y(0)$ is no longer the same as in a Prop-99-free world. Compute the pre/post mean change in `cigsale` for Nevada, Oregon, and Arizona (California's neighbours in this panel), and compare to the pre/post change averaged over the rest of the donor pool. A bigger drop in neighbours is consistent with a spillover.
+A neighbouring state that lost cigarette sales because Californians drove across the line to buy cheap tobacco would *violate* SUTVA: the neighbour's $Y(0)$ is no longer the same as in a Prop-99-free world. Note that the Abadie et al. (2010) donor pool excludes states with their own contemporaneous tobacco-control programs, so California's land neighbours Oregon and Arizona are not in `prop99`. Compute the pre/post mean change in `cigsale` for Nevada (the one bordering state that *is* in the panel) and a broader regional comparison group of nearby Western states (Idaho, Utah, New Mexico), then contrast both with the pre/post change averaged over the rest of the donor pool. A bigger drop close to California is consistent with a spillover.
 
 ::: {.callout-tip collapse="true"}
 ## Solution
 
 ```{r}
 #| label: ex-ch01-03
-neighbours <- c("Nevada", "Oregon", "Arizona")
+bordering    <- c("Nevada")
+near_western <- c("Idaho", "Utah", "New Mexico")
 
 state_changes <- prop99 |>
   filter(state != "California") |>
-  mutate(group  = if_else(state %in% neighbours,
-                          "Bordering CA", "Other donor"),
+  mutate(group  = case_when(
+           state %in% bordering    ~ "Bordering CA (Nevada)",
+           state %in% near_western ~ "Near Western (ID/UT/NM)",
+           TRUE                    ~ "Other donor"),
          period = if_else(year > 1988, "Post", "Pre")) |>
   group_by(group, state, period) |>
   summarize(mean_cigsale = mean(cigsale), .groups = "drop") |>
@@ -416,7 +453,7 @@ state_changes |>
   gt_pretty(decimals = 2)
 ```
 
-Bordering states drop somewhat *more* than the rest of the donor pool, which is the pattern you would expect under cross-border purchases or shared regional taste shifts. The point is not to declare SUTVA dead — the gap is modest — but to flag that California's neighbours are *not* exchangeable with the rest of the donors. Chapter 7's Bayesian spatial SCM is the response to exactly this concern.
+Nevada's pre-to-post drop is substantially larger than the average across the rest of the donor pool, which is the pattern you would expect under cross-border purchases or shared regional taste shifts. The point is not to declare SUTVA dead with $n = 1$ — Nevada's high baseline level (over 140 packs/capita in 1988) leaves more room to fall — but to flag that California's closest neighbour is not exchangeable with the rest of the donors. Chapter 7's Bayesian spatial SCM is the response to exactly this concern.
 :::
 
 ### Exercise 4: Plot California against the donor average

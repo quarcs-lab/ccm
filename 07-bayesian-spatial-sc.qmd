@@ -61,6 +61,11 @@ MCMC_BURN  <- 2500L   # half of MCMC_ITER; bump to 50000L when MCMC_ITER hits 10
 TREAT_YEAR <- 1988L
 set.seed(SEED)
 
+# CAVEAT (see the dedicated callout under Stage 3): at MCMC_ITER = 5000L the
+# effective sample size for rho is in single digits. The Stage 3 ATT *point
+# estimate* is reliable, but the Stage 3 *credible interval* is artificially
+# narrow until iterations are raised to 100,000.
+
 knitr::opts_chunk$set(dev.args = list(bg = "transparent"))
 
 theme_set(
@@ -136,15 +141,19 @@ glue(
 )
 ```
 
-The bundled `california_smoking.rda` carries only `cigsale` and `retprice` — narrower than the predictor set chapter 4 used (which also included `lnincome`, `age15to24`, and `beer`). That is the dominant reason the Stage 1 ATT below ($\approx -18.5$) is slightly smaller in magnitude than chapter 4's $-18.85$: the methodological pipeline is identical, but the inputs differ. The `.rda` *also* ships two spatial structures we need in Stage 3 — California's contiguity row `w` (Arizona, Nevada, and Oregon non-zero) and the $38 \times 38$ donor contiguity matrix `W` — which the richer Proposition 99 dataset does not have.
+The bundled `california_smoking.rda` carries only `cigsale` and `retprice` — narrower than the predictor set chapter 4 used (which also included `lnincome`, `age15to24`, and `beer`). That is the dominant reason the Stage 1 ATT computed below is slightly smaller in magnitude than chapter 4's $-18.85$: the methodological pipeline is identical, but the inputs differ. The `.rda` *also* ships two spatial structures we need in Stage 3 — California's contiguity row `w` (Arizona, Nevada, and Oregon non-zero) and the $38 \times 38$ donor contiguity matrix `W` — which the richer Proposition 99 dataset does not have.
 
-A notation note before we proceed. In chapters 4 and 6, lowercase $w$ denoted the *simplex-constrained donor weights*; in this chapter, donor weights are written $w$ as well (to keep symbol use consistent across the SCM family), while the contiguity column carries the same name in R code only — in the math below, the contiguity row that picks out California's neighbours is also written $w$ (this is the Sakaguchi-Tagawa convention). The two roles are distinguished by context: $w$ inside an SCM regression is donor weights; $w$ inside a SAR row-coupling is the adjacency row. Where ambiguity would matter, we say "donor weights $w$" or "California's contiguity row $w$" explicitly. The book-wide $W$ stays reserved for the 38×38 spatial adjacency matrix in this chapter only. Also note the horseshoe scale parameters introduced in Stage 2 below carry an "HS" subscript ($\tau_{\mathrm{HS}}$, $\lambda_{j,\mathrm{HS}}$) to keep them distinct from any treatment-effect $\tau$ or factor-loading $\lambda_i$ used elsewhere in the book.
+A notation note before we proceed. In chapters 4 and 6, lowercase $w$ denoted the *simplex-constrained donor weights*; in this chapter, donor weights are written $w$ as well (to keep symbol use consistent across the SCM family), while the contiguity column carries the same name in R code only — in the math below, the contiguity row that picks out California's neighbours is also written $w$ (this is the Sakaguchi-Tagawa convention). The two roles are distinguished by context: $w$ inside an SCM regression is donor weights; $w$ inside a SAR row-coupling is the adjacency row. Where ambiguity would matter, we say "donor weights $w$" or "California's contiguity row $w$" explicitly. The book-wide $W$ stays reserved for the $38 \times 38$ donor-contiguity matrix in this chapter only; it is **not** the implicit-weights matrix $\Omega$ that chapter 10 will introduce for matrix completion. Also note the horseshoe scale parameters introduced in Stage 2 below carry an "HS" subscript ($\tau_{\mathrm{HS}}$, $\lambda_{j,\mathrm{HS}}$) to keep them distinct from any treatment-effect $\tau$ or factor-loading $\lambda_i$ used elsewhere in the book. The three stage-specific ATT estimators are labelled $\widehat{\tau}_{\text{SCM}}$ (Stage 1, classical simplex), $\widehat{\tau}_{\text{HS}}$ (Stage 2, horseshoe-Bayesian), and $\widehat{\tau}_{\text{SAR}}$ (Stage 3, Bayesian spatial SAR).
 
 ## Stage 1 — Classical synthetic control
 
-Classical SCM picks donor weights $w$ on the simplex that minimise the pre-treatment fit error between California and the synthetic (this is $\widehat{Y_{c,t}(0)}$ in the book-wide notation). Formally,
+Classical SCM picks donor weights $w$ on the simplex that minimise the pre-treatment fit error between California's observed outcome $Y_{1,\text{pre}}$ and the donor-blended synthetic $Y_{c,\text{pre}}\, w$ — the same predictor used as $\widehat{Y_{1,t}(0)}$ in chapters 4 and 6. Formally,
 
-$$\widehat{w} \,=\, \arg\min_w \, \big\| Y_{1,\text{pre}} - Y_{c,\text{pre}}\, w \big\|^2 \;\; \text{s.t.} \;\; w_j \ge 0, \;\; \sum_j w_j = 1.$$
+$$\widehat{w} \,=\, \arg\min_w \, \big\| Y_{1,\text{pre}} - Y_{c,\text{pre}}\, w \big\|^2 \;\; \text{s.t.} \;\; w_j \ge 0, \;\; \sum_j w_j = 1,$$
+
+and the resulting ATT estimator is the post-period mean gap (reusing chapter 4's label),
+
+$$\widehat{\tau}_{\text{SCM}} \,=\, \frac{1}{T_{\text{post}}} \sum_{t > t^*} \Big[\, Y_{1t} - Y_{c,t}\, \widehat{w}\, \Big].$$
 
 We use `tidysynth` with a small set of predictors (the mean of `cigsale` and `retprice` over the pre-period, plus three single-year lags of `cigsale`).
 
@@ -206,10 +215,11 @@ ggplot(traj_classic, aes(x = year)) +
 ```{r}
 #| label: stage1-att-print
 #| code-summary: "Code: Print the Stage 1 classical-SCM ATT estimate."
-glue("Stage 1 ATT (Classical SCM): {format(round(att_classic, 2), nsmall = 2)} packs/capita")
+glue("Stage 1 ATT (Classical SCM): tau_SCM_hat = ",
+     "{format(round(att_classic, 2), nsmall = 2)} packs/capita")
 ```
 
-Utah, Nevada, Montana, and Connecticut together carry essentially all the weight; the remaining 34 donors are flat zero. The ATT of about $-18.5$ packs/capita is recovered from a *near-deterministic* synthetic. Two questions follow: is the four-donor sparsity a feature of the data or an artefact of the simplex constraint, and is Nevada's weight contaminated by spillovers from California? Stages 2 and 3 attack these one at a time.
+Utah, Nevada, Montana, and Connecticut together carry essentially all the weight; the remaining 34 donors are flat zero. The point estimate $\widehat{\tau}_{\text{SCM}} \approx `r format(round(att_classic, 2), nsmall = 2)`$ packs/capita is recovered from a *near-deterministic* synthetic. Two questions follow: is the four-donor sparsity a feature of the data or an artefact of the simplex constraint, and is Nevada's weight contaminated by spillovers from California? Stages 2 and 3 attack these one at a time.
 
 ## Stage 2 — Bayesian synthetic control with a horseshoe prior
 
@@ -219,7 +229,11 @@ $$w_j \mid \tau_{\mathrm{HS}}, \lambda_{j,\mathrm{HS}} \,\sim\, \mathcal{N}\big(
 
 Here $\tau_{\mathrm{HS}}$ is the *horseshoe global scale* (often written plain $\tau$ in the horseshoe literature) and $\lambda_{j,\mathrm{HS}}$ is the *horseshoe local scale* for donor $j$; the subscript keeps these distinct from a treatment-effect $\tau$ or factor-loading $\lambda_i$ a reader might be carrying from other chapters. The C++ sampler uses the equivalent Makalic-Schmidt (2015) auxiliary-variable parametrisation — same posterior, easier conditionals.
 
-The package's C++ Gibbs sampler `hs_alpha_gibbs_cpp()` returns post-burn draws of the donor-weight vector $w$ (named `alpha` in the helper code) from the resulting hierarchy. We construct the pre-treatment matrices and call it directly.
+The package's C++ Gibbs sampler `hs_alpha_gibbs_cpp()` returns post-burn draws of the donor-weight vector $w$ (named `alpha` in the helper code) from the resulting hierarchy. The Stage-2 ATT estimator we report is the posterior mean of the draw-level gap,
+
+$$\widehat{\tau}_{\text{HS}} \,=\, \mathbb{E}\!\left[ \, \frac{1}{T_{\text{post}}} \sum_{t > t^*} \big(Y_{1t} - Y_{c,t}\, w\big) \, \Big|\, \text{data} \, \right],$$
+
+with a 95% credible interval obtained from the 2.5/97.5 quantiles of the same draws. We construct the pre-treatment matrices and call the sampler directly.
 
 ```{r}
 #| label: stage2-fit
@@ -262,7 +276,8 @@ att_hs       <- mean(att_hs_draws)
 att_hs_ci    <- quantile(att_hs_draws, c(0.025, 0.975), names = FALSE)
 
 glue(
-  "Stage 2 ATT (Bayesian HS): {format(round(att_hs, 2), nsmall = 2)} packs/capita, ",
+  "Stage 2 ATT (Bayesian HS): tau_HS_hat = ",
+  "{format(round(att_hs, 2), nsmall = 2)} packs/capita, ",
   "95% CrI [{format(round(att_hs_ci[1], 2), nsmall = 2)}, ",
   "{format(round(att_hs_ci[2], 2), nsmall = 2)}]"
 )
@@ -332,9 +347,15 @@ ggplot(paths_hs, aes(x = year)) +
   labs(x = NULL, y = "Per-capita cigarette sales (packs)")
 ```
 
-The donor pool **broadens dramatically**. About `r n_active` of 38 donors carry posterior mean weight above 0.01, versus four under the classical simplex. Crucially, even among the top-five posterior means, only Nevada's 95% credible interval excludes zero — every other top weight is statistically consistent with no contribution. The teaching point is that classical SCM's sparsity is partly a constraint artefact: when we admit posterior uncertainty over weights, the data do not strongly insist on a four-donor synthetic. Note also which donor's interval excludes zero: only Nevada's. Twenty-three donors carry posterior mean mass, but **only one** is statistically distinguishable from a no-contribution donor — which foreshadows the Stage 3 finding that the spillover concentrates almost entirely on Nevada.
+```{r}
+#| label: stage2-counts
+#| echo: false
+n_classic_active <- sum(grab_unit_weights(sc_classic)$weight > 0.01)
+```
 
-The ATT also moves — from $-18.5$ to about $-15.8$ packs/capita — and its 95% credible interval is wider than Stage 1's bootstrap CI by design. The horseshoe propagates donor-weight uncertainty into the gap series rather than treating $w$ as fixed at the optimiser's best guess. The interval still never reaches zero.
+The donor pool **broadens dramatically**. About `r n_active` of 38 donors carry posterior mean weight above 0.01, versus `r n_classic_active` under the classical simplex. Crucially, even among the top-five posterior means, only Nevada's 95% credible interval excludes zero — every other top weight is statistically consistent with no contribution. The teaching point is that classical SCM's sparsity is partly a constraint artefact: when we admit posterior uncertainty over weights, the data do not strongly insist on a four-donor synthetic. Note also which donor's interval excludes zero: only Nevada's. About `r n_active` donors carry posterior mean mass, but **only one** is statistically distinguishable from a no-contribution donor — which foreshadows the Stage 3 finding that the spillover concentrates almost entirely on Nevada.
+
+The ATT also moves — from $\widehat{\tau}_{\text{SCM}} \approx `r format(round(att_classic, 2), nsmall = 2)`$ to $\widehat{\tau}_{\text{HS}} \approx `r format(round(att_hs, 2), nsmall = 2)`$ packs/capita — and its 95% credible interval is wider than Stage 1's bootstrap CI by design. The horseshoe propagates donor-weight uncertainty into the gap series rather than treating $w$ as fixed at the optimiser's best guess. The interval still never reaches zero.
 
 ## Stage 3 — Bayesian spatial synthetic control with SAR spillovers
 
@@ -380,25 +401,26 @@ att_sar_ci <- fit_sar$effects$ate_ci95
 glue(
   "Posterior mean rho: {format(round(rho_hat, 3), nsmall = 3)} | ",
   "ESS(rho) = {format(round(ess_rho, 1), nsmall = 1)}\n",
-  "Stage 3 ATT (Bayesian Spatial SAR): {format(round(att_sar, 2), nsmall = 2)} ",
+  "Stage 3 ATT (Bayesian Spatial SAR): tau_SAR_hat = ",
+  "{format(round(att_sar, 2), nsmall = 2)} ",
   "packs/capita, 95% CrI [{format(round(att_sar_ci[1], 2), nsmall = 2)}, ",
   "{format(round(att_sar_ci[2], 2), nsmall = 2)}]"
 )
 ```
 
-The posterior mean $\hat\rho \approx 0.223$ is positive (consistent with the cross-border intuition that neighbours co-move), but at ESS = 2.9 the chain has barely moved from its starting value of $0$; the magnitude of $\hat\rho$ should not be over-read at the 5,000-iteration run we use here. The callout below explains how to recover the publication-grade $\hat\rho$. The Stage 3 ATT sits between the classical and Bayesian-horseshoe estimates: adding the SAR layer *reattributes* a portion of the gap away from California's direct response toward neighbour spillovers.
+The posterior mean $\hat\rho \approx `r format(round(rho_hat, 3), nsmall = 3)`$ is positive (consistent with the cross-border intuition that neighbours co-move), but at ESS = `r format(round(ess_rho, 1), nsmall = 1)` the chain has barely moved from its starting value of $0$; the magnitude of $\hat\rho$ should not be over-read at the tutorial-scale `r format(MCMC_ITER, big.mark = ",")`-iteration run we use here. The callout below explains how to recover the publication-grade $\hat\rho$. The Stage 3 ATT, $\widehat{\tau}_{\text{SAR}} \approx `r format(round(att_sar, 2), nsmall = 2)`$ packs/capita, sits between $\widehat{\tau}_{\text{SCM}}$ and $\widehat{\tau}_{\text{HS}}$: adding the SAR layer *reattributes* a portion of the gap away from California's direct response toward neighbour spillovers.
 
 :::{.callout-warning}
-## ESS(ρ) at tutorial scale is too low for a trustworthy CrI
+## ESS($\rho$) at tutorial scale is too low for a trustworthy CrI
 
-The chapter runs the sampler at 5,000 iterations to keep render times manageable. At that budget, the effective sample size for $\rho$ is in the single digits — far below the rule-of-thumb 200 — and the 95% credible interval for the Stage 3 ATT is therefore *artificially narrow*. The point estimate is recoverable (a posterior mean has low bias even at low ESS); the interval should be read as illustrative. To match the @sakaguchi2026spatial published numbers, raise `MCMC_ITER` to `100000L` and `MCMC_BURN` to `50000L` and rerender (expect ~30–90 min wall-clock).
+The chapter runs the sampler at `r format(MCMC_ITER, big.mark = ",")` iterations to keep render times manageable. At that budget, the effective sample size for $\rho$ is in the single digits (`r format(round(ess_rho, 1), nsmall = 1)` in the run above) — far below the rule-of-thumb 200 — and the 95% credible interval for $\widehat{\tau}_{\text{SAR}}$ is therefore *artificially narrow*. The point estimate is recoverable (a posterior mean has low bias even at low ESS); the interval should be read as illustrative. To match the @sakaguchi2026spatial published numbers, raise `MCMC_ITER` to `100000L` and `MCMC_BURN` to `50000L` and rerender (expect ~30–90 min wall-clock).
 :::
 
 The single most important MCMC diagnostic is the traceplot: it lets a reader see *how* the chain failed to mix, not just *that* it did.
 
 ```{r}
 #| label: fig-trace-rho
-#| fig-cap: "Traceplot of rho over the 2,500 post-burn iterations. At this 5,000-iteration run the chain visibly fails to mix — the visual diagnosis behind ESS = 2.9. A healthy chain would look like white-noise oscillation around a stationary mean; this one drifts in long, slow excursions."
+#| fig-cap: "Traceplot of rho over the post-burn iterations. At the tutorial-scale 5,000-iteration run the chain visibly fails to mix — the visual diagnosis behind a single-digit ESS. A healthy chain would look like white-noise oscillation around a stationary mean; this one drifts in long, slow excursions."
 #| fig-width: 8
 #| fig-height: 3
 #| code-summary: "Code: Plot the post-burn traceplot of rho to diagnose chain mixing."
@@ -443,7 +465,7 @@ where $A = W + w\, w^{\top}$ (the same matrix from the SAR likelihood) and $Y_0$
 
 ```{r}
 #| label: tbl-spillover-top8
-#| tbl-cap: "Top-8 donor states by absolute post-1988 mean spillover. Nevada absorbs roughly 16x the next state."
+#| tbl-cap: "Top-8 donor states by absolute post-1988 mean spillover. Nevada absorbs the bulk of the spillover mass — roughly an order of magnitude more than the next-largest donor."
 #| code-summary: "Code: Rank donors by mean post-1988 spillover and tabulate the top 8."
 spill_mat   <- fit_sar$effects$spill
 post_idx    <- which(as.numeric(rownames(spill_mat)) >= TREAT_YEAR)
@@ -456,6 +478,12 @@ spill_top8  <- tibble(state = colnames(spill_mat),
 spill_top8 |>
   gt_pretty(decimals = 3) |>
   cols_label(state = "Donor", avg_spillover = "Mean post-1988 spillover")
+
+nevada_spill   <- colMeans(spill_post)["Nevada"]
+spill_runner   <- spill_top8 |>
+  filter(state != "Nevada") |>
+  slice_max(abs(avg_spillover), n = 1)
+spill_ratio_nv <- abs(nevada_spill) / abs(spill_runner$avg_spillover)
 ```
 
 ```{r}
@@ -472,7 +500,7 @@ spill_top8 |>
   labs(x = "Mean post-1988 spillover (packs/capita)", y = NULL)
 ```
 
-**Nevada is the dominant spillover-receiver by more than an order of magnitude (≈16× the next-largest).** Idaho and Utah trail far behind; every other donor's spillover is small enough to be policy-noise. The story is consistent with cross-border tobacco flows reshaping consumption on both sides of the California–Nevada line — the empirical signature of SUTVA failure for this case study.
+**Nevada is the dominant spillover-receiver by more than an order of magnitude** (Nevada's mean post-1988 spillover is $\approx `r format(round(nevada_spill, 2), nsmall = 2)`$ packs/capita, roughly `r format(round(spill_ratio_nv, 1), nsmall = 1)`× the next-largest donor `r spill_runner$state`). Every other donor's spillover is small enough to be policy-noise. The story is consistent with cross-border tobacco flows reshaping consumption on both sides of the California–Nevada line — the empirical signature of SUTVA failure for this case study.
 
 ## Prior predictive diagnostic
 
@@ -538,12 +566,12 @@ Stacking the three estimators makes the pedagogical arc visible.
 
 ```{r}
 #| label: tbl-cross-stage
-#| tbl-cap: "Cross-stage comparison of ATT estimates. The active-donor count jumps from 4 to 23 between Stage 1 and Stage 2 and then stays at 23 in Stage 3, because Stage 3 conditions on Stage 2's w-hat (plug-in approximation). The Stage 3 CrI is artificially narrow because ESS(rho) is in single digits at the 5,000-iteration scale."
+#| tbl-cap: "Cross-stage comparison of ATT estimates ($\\widehat\\tau_{\\text{SCM}}$, $\\widehat\\tau_{\\text{HS}}$, $\\widehat\\tau_{\\text{SAR}}$). The active-donor count jumps between Stage 1 and Stage 2 and then stays at the Stage 2 level in Stage 3 because Stage 3 conditions on the Stage-2 posterior-mean donor weights (plug-in approximation). The Stage 3 CrI is artificially narrow because ESS($\\rho$) is in single digits at the tutorial-scale MCMC budget."
 #| code-summary: "Code: Tabulate cross-stage ATT estimates, intervals, active donors, and ESS(rho)."
 tibble(
-  Stage          = c("Classical SCM (tidysynth)",
-                     "Bayesian HS (no spillovers)",
-                     "Bayesian Spatial SAR (with spillovers)"),
+  Stage          = c("Stage 1 — Classical SCM (tidysynth)",
+                     "Stage 2 — Bayesian HS (no spillovers)",
+                     "Stage 3 — Bayesian Spatial SAR (spillovers)"),
   ATT            = c(att_classic, att_hs, att_sar),
   `2.5%`         = c(NA_real_,    att_hs_ci[1], att_sar_ci[1]),
   `97.5%`        = c(NA_real_,    att_hs_ci[2], att_sar_ci[2]),
@@ -557,36 +585,44 @@ tibble(
 
 Three observations.
 
-- **Sign and order of magnitude agree.** All three estimators place the ATT between roughly $-15$ and $-19$ packs/capita per year, and none of the intervals reaches zero. Whatever one believes about the simplex or SUTVA, Proposition 99 reduced California cigarette consumption.
-- **Active-donor count jumps once.** Heavier-tailed priors admit more donors with non-trivial mass (4 → 23 between Stage 1 and Stage 2); the Stage 3 count is identical to Stage 2 by construction (the SAR step holds $w$ fixed at its Stage-2 posterior mean). The sparse four-donor synthetic of Stage 1 looks like one plausible counterfactual rather than the right one.
-- **The Stage 3 credible interval is the narrowest but the least trustworthy.** ESS(ρ) is in single digits and the plug-in for $w$ removes a second source of uncertainty that ought to widen the interval; downstream prose should treat that interval as illustrative.
+- **Sign and order of magnitude agree.** All three estimators place the ATT in the same neighbourhood ($\widehat{\tau}_{\text{SCM}} \approx `r format(round(att_classic, 2), nsmall = 2)`$, $\widehat{\tau}_{\text{HS}} \approx `r format(round(att_hs, 2), nsmall = 2)`$, $\widehat{\tau}_{\text{SAR}} \approx `r format(round(att_sar, 2), nsmall = 2)`$ packs/capita per year), and none of the intervals reaches zero. Whatever one believes about the simplex or SUTVA, Proposition 99 reduced California cigarette consumption.
+- **Active-donor count jumps once.** Heavier-tailed priors admit more donors with non-trivial mass (`r n_classic_active` $\to$ `r n_active` between Stage 1 and Stage 2); the Stage 3 count is identical to Stage 2 by construction (the SAR step holds $w$ fixed at its Stage-2 posterior mean). The sparse `r n_classic_active`-donor synthetic of Stage 1 looks like one plausible counterfactual rather than the right one.
+- **The Stage 3 credible interval is the narrowest but the least trustworthy.** ESS($\rho$) is in single digits and the plug-in for $w$ removes a second source of uncertainty that ought to widen the interval; downstream prose should treat that interval as illustrative.
 
 ## Common pitfall: tutorial-scale MCMC and the credibility of credible intervals
 
-The Stage 3 credible interval in the cross-stage table is the narrowest of the three, and a careless reader could conclude that the Bayesian spatial SAR is also the *most precise*. It is not. Three caveats compound at the 5,000-iteration budget this chapter uses:
+The Stage 3 credible interval in the cross-stage table is the narrowest of the three, and a careless reader could conclude that the Bayesian spatial SAR is also the *most precise*. It is not. Three caveats compound at the tutorial-scale `r format(MCMC_ITER, big.mark = ",")`-iteration budget this chapter uses:
 
-1. **ESS(ρ) is in single digits.** The chain has barely moved from its starting value of $0$; the credible interval is built on at most three or four effectively-independent draws, so its width is dominated by sampling noise, not by genuine posterior concentration. Raise `MCMC_ITER` to `100000L` and `MCMC_BURN` to `50000L` to recover a trustworthy interval (≈30–90 min wall-clock).
+1. **ESS($\rho$) is in single digits.** The chain has barely moved from its starting value of $0$; the credible interval is built on at most a handful of effectively-independent draws, so its width is dominated by sampling noise, not by genuine posterior concentration. Raise `MCMC_ITER` to `100000L` and `MCMC_BURN` to `50000L` to recover a trustworthy interval (≈30–90 min wall-clock).
 2. **The plug-in for $w$ removes a source of uncertainty.** Step 2 of the sampler conditions on $\widehat{w}$ from Step 1 rather than sampling $w$ and $\rho$ jointly. Posterior uncertainty in donor weights therefore does not propagate into the $\rho$ posterior, narrowing the Stage 3 ATT interval beyond what a fully joint posterior would produce. A fully joint sampler would widen Stage 3 even at high ESS.
 3. **`sc_spillover()` runs a single chain.** For paper-grade work run 3–4 chains from over-dispersed starts and compute $\hat R$ (the Gelman-Rubin convergence diagnostic); a between-chain spread that exceeds within-chain variance flags non-convergence that ESS alone cannot detect.
 
-The point estimate $\widehat{\mathrm{ATT}} \approx -16.6$ packs/capita is robust to all three issues — posterior means are low-bias even at low ESS — but **intervals demand discipline**. Treat the Stage 3 CrI as illustrative until the three points above are addressed.
+The point estimate $\widehat{\tau}_{\text{SAR}} \approx `r format(round(att_sar, 2), nsmall = 2)`$ packs/capita is robust to all three issues — posterior means are low-bias even at low ESS — but **intervals demand discipline**. Treat the Stage 3 CrI as illustrative until the three points above are addressed.
 
 ## Recap
+
+```{r}
+#| label: recap-helpers
+#| echo: false
+nv_str <- format(round(nevada_spill, 2), nsmall = 2)
+```
 
 | Question | Answer |
 |---|---|
 | What does this chapter estimate? | The ATT of Proposition 99 on California cigarette sales, 1988–2000 |
 | Which assumption does Stage 2 relax? | The simplex constraint on donor weights — replaced by a horseshoe prior |
 | Which assumption does Stage 3 relax? | SUTVA — donor outcomes are now allowed to respond to the treatment via a SAR layer |
-| Where does the spillover land? | Almost entirely on Nevada (mean post-1988 spillover $\approx -3.75$ packs/capita on Nevada); other donors are an order of magnitude smaller |
-| What is the chapter's caveat? | At the 5,000-iteration run the ESS for ρ is too small for the Stage 3 CrI to be trustworthy — raise iterations for paper-grade inference |
-| Is the headline robust? | Yes — all three ATT estimates are negative, never cross zero, and agree on order of magnitude |
+| Where does the spillover land? | Almost entirely on Nevada (mean post-1988 spillover $\approx `r nv_str`$ packs/capita on Nevada); other donors are an order of magnitude smaller |
+| What is the chapter's caveat? | At the tutorial-scale MCMC budget the ESS for $\rho$ is too small for the Stage 3 CrI to be trustworthy — raise iterations for paper-grade inference |
+| Is the headline robust? | Yes — all three ATT estimates ($\widehat{\tau}_{\text{SCM}}$, $\widehat{\tau}_{\text{HS}}$, $\widehat{\tau}_{\text{SAR}}$) are negative, never cross zero, and agree on order of magnitude |
 
 ## Where this case study ends, and where Part II begins
 
-This is the last chapter that works the Proposition 99 case study. Across seven chapters we have asked the same question — did California's 1989 tobacco tax reduce per-capita cigarette consumption? — under progressively weaker assumptions: an interrupted time series (ch.2), a 2×2 difference-in-differences (ch.3), classical synthetic control on the simplex (ch.4), a Bayesian structural time-series counterfactual (ch.5), a frequentist prediction interval around the SC fit (ch.6), and finally a Bayesian spatial relaxation of both the simplex and SUTVA (this chapter). The headline survives every reframe: the estimated ATT is consistently between roughly $-15$ and $-19$ packs per capita, and never crosses zero.
+This is the **last chapter of Part I** and the last chapter that works the Proposition 99 case study. Across seven chapters we have asked the same question — did California's 1989 tobacco tax reduce per-capita cigarette consumption? — under progressively weaker assumptions: an interrupted time series (ch. 2), a 2×2 difference-in-differences (ch. 3), classical synthetic control on the simplex (ch. 4), a Bayesian structural time-series counterfactual (ch. 5), a frequentist prediction interval around the SC fit (ch. 6), and finally a Bayesian spatial relaxation of both the simplex and SUTVA (this chapter). The headline survives every reframe: the estimated ATT is consistently in the same negative neighbourhood and never crosses zero.
 
-The headline survives because Proposition 99 is a *single-treated-unit* case with a clean pre-period and one large, sharp policy break. Most real-world policy data is messier: many units adopt at different dates, treatment effects evolve, and parallel-trends violations need to be diagnosed rather than assumed away. Part II (chapters 8–10) leaves Proposition 99 behind and picks up the **Callaway-Sant'Anna minimum-wage county panel** (1,745 US counties × 2003–2007, three adoption cohorts), where the methods we have used so far either fail outright (one treated unit ≠ staggered cohorts) or scale awkwardly. Chapter 8 starts there with the modern staggered-DiD toolkit, generalising the *ATT on California* estimand we have estimated seven different ways here into the *ATT(g, t)* framework that lets a researcher decompose, weight, and sensitivity-test heterogeneous treatment effects across cohorts and event times.
+Chapter 6 closed with a *frequentist* prediction interval around the synthetic counterfactual; this chapter closed with a *Bayesian* credible interval that additionally absorbs the cross-border spillover SUTVA had been hiding. Same single-treated-unit toolkit, different inferential language, complementary pictures of the same headline.
+
+The single-treated-unit toolkit ends here. Most real-world policy data is messier: many units adopt at different dates, treatment effects evolve over event time, and parallel-trends violations need to be diagnosed rather than assumed away. Part II (chapters 8–10) leaves Proposition 99 behind and picks up the **Callaway-Sant'Anna minimum-wage county panel** (1,745 US counties × 2003–2007, three adoption cohorts), where the methods we have used so far either fail outright (one treated unit ≠ staggered cohorts) or scale awkwardly. Chapter 8 starts there with the modern staggered-DiD toolkit, generalising the *ATT on California* estimand we have estimated seven different ways here into the *ATT(g, t)* framework that lets a researcher decompose, weight, and sensitivity-test heterogeneous treatment effects across cohorts and event times.
 
 ## Key takeaways
 
@@ -597,16 +633,16 @@ The headline survives because Proposition 99 is a *single-treated-unit* case wit
 
 **Lessons:**
 
-- Whatever SUTVA imposes here is a *constraint on a specific donor*, not a constraint on the headline: all three ATT estimates (classical $-18.5$, horseshoe $-15.8$, SAR $-16.6$ packs/capita) sit between $-15$ and $-19$ and none of the intervals reaches zero — the policy effect on California survives relaxing both the simplex and SUTVA.
-- Replacing the simplex with a horseshoe broadens the active donor pool from 4 to 23 — the classical sparsity is shown to be partly a constraint artefact rather than a feature of the data — but only Nevada's posterior 95% credible interval excludes zero, foreshadowing where the Stage 3 spillover lands.
-- The headline derived quantity is the **Nevada spillover**: Nevada absorbs roughly 16× the next-largest donor's mean post-1988 spillover, the empirical signature of cross-border cigarette flows reshaping consumption on both sides of the California-Nevada line. SUTVA fails for this case study, and the SAR layer localises the failure to one neighbour.
+- Whatever SUTVA imposes here is a *constraint on a specific donor*, not a constraint on the headline: all three ATT estimates ($\widehat{\tau}_{\text{SCM}} \approx `r format(round(att_classic, 2), nsmall = 2)`$, $\widehat{\tau}_{\text{HS}} \approx `r format(round(att_hs, 2), nsmall = 2)`$, $\widehat{\tau}_{\text{SAR}} \approx `r format(round(att_sar, 2), nsmall = 2)`$ packs/capita) sit in the same neighbourhood and none of the intervals reaches zero — the policy effect on California survives relaxing both the simplex and SUTVA.
+- Replacing the simplex with a horseshoe broadens the active donor pool from `r n_classic_active` to `r n_active` — the classical sparsity is shown to be partly a constraint artefact rather than a feature of the data — but only Nevada's posterior 95% credible interval excludes zero, foreshadowing where the Stage 3 spillover lands.
+- The headline derived quantity is the **Nevada spillover**: Nevada absorbs roughly `r format(round(spill_ratio_nv, 1), nsmall = 1)`× the next-largest donor's mean post-1988 spillover, the empirical signature of cross-border cigarette flows reshaping consumption on both sides of the California-Nevada line. SUTVA fails for this case study, and the SAR layer localises the failure to one neighbour.
 - A prior predictive check on four summary statistics (donor mean, spatial $Y'WY$, lag-1 autocorrelation, PC1 variance share) confirms the prior is compatible with — not overwhelming — the data: a routine sanity check before trusting any Bayesian posterior.
 
 **Caveats:**
 
-- Identifying the spatial-lag parameter $\rho$ from a single observational panel is hard. At the tutorial-scale 5,000-iteration run, ESS($\rho$) sits in the single digits (≈2.9), the traceplot visibly fails to mix, and the Stage 3 credible interval is narrowest precisely because it is least trustworthy; recovering a publication-grade $\hat\rho$ requires raising iterations to 100,000 and running multiple chains with a Gelman-Rubin $\hat R$ diagnostic.
+- Identifying the spatial-lag parameter $\rho$ from a single observational panel is hard. At the tutorial-scale MCMC budget, ESS($\rho$) sits in the single digits (`r format(round(ess_rho, 1), nsmall = 1)` in the run above), the traceplot visibly fails to mix, and the Stage 3 credible interval is narrowest precisely because it is least trustworthy; recovering a publication-grade $\hat\rho$ requires raising iterations to 100,000 and running multiple chains with a Gelman-Rubin $\hat R$ diagnostic.
 - `sc_spillover()` runs a **plug-in approximation**, not a fully joint posterior — the SAR step fixes $w$ at its Stage-2 posterior mean rather than sampling $(w, \rho)$ jointly. Uncertainty in donor weights therefore does not propagate into $\rho$, narrowing the Stage 3 ATT interval beyond what a fully joint sampler would produce.
-- The bundled `california_smoking.rda` carries only `cigsale` and `retprice` — a narrower predictor set than chapter 4 — which is why the Stage 1 ATT here is $-18.5$ rather than the $-18.85$ of the original Abadie replication. The methodological pipeline is identical; the inputs differ.
+- The bundled `california_smoking.rda` carries only `cigsale` and `retprice` — a narrower predictor set than chapter 4 — which is why $\widehat{\tau}_{\text{SCM}}$ here is $\approx `r format(round(att_classic, 2), nsmall = 2)`$ rather than the $-18.85$ of the original Abadie replication. The methodological pipeline is identical; the inputs differ.
 
 ## Further reading
 
@@ -677,7 +713,7 @@ The posterior probability of a negative effect climbs above the conventional 95%
 
 ### Exercise 3: Distribution of active donor count across Stage 2 posterior draws
 
-The chapter said "about 23 donors carry posterior mean weight above 0.01." That is a *posterior-mean* statistic. The *posterior* statistic is the number of donors active *in each draw*. Plot the histogram of active-donor count (using the same 0.01 threshold) across all post-burn MCMC iterations.
+The chapter reported a posterior-*mean* active-donor count of `r n_active` (donors whose posterior mean weight exceeds 0.01). That is a *posterior-mean* statistic. The *posterior* statistic is the number of donors active *in each draw*. Plot the histogram of active-donor count (using the same 0.01 threshold) across all post-burn MCMC iterations.
 
 ::: {.callout-tip collapse="true"}
 ## Solution
@@ -697,7 +733,7 @@ tibble(active = active_per_draw) |>
 summary(active_per_draw)
 ```
 
-The per-draw active-donor count is concentrated in a relatively wide range — the model never settles on a single sparse subset of donors the way the simplex does. Each MCMC draw constructs a different sparse synthetic; the posterior-mean *summary* lights up 23 states only because different draws spread their weight across overlapping subsets. This is the horseshoe behaving as intended: model uncertainty is encoded in the posterior over which donors matter, not buried in a single point estimate.
+The per-draw active-donor count is concentrated in a relatively wide range — the model never settles on a single sparse subset of donors the way the simplex does. Each MCMC draw constructs a different sparse synthetic; the posterior-mean *summary* lights up roughly `r n_active` states only because different draws spread their weight across overlapping subsets. This is the horseshoe behaving as intended: model uncertainty is encoded in the posterior over which donors matter, not buried in a single point estimate.
 :::
 
 ### Exercise 4: How concentrated is the Stage 3 spillover?
@@ -768,5 +804,5 @@ tibble(estimator = c("Stage 1 real (1988)", "Stage 1 placebo (1980)"),
   gt_pretty(decimals = 2)
 ```
 
-The placebo "ATT" is much smaller in absolute value than the real Stage-1 ATT of $\approx -18.5$. The classical SCM machinery is not manufacturing comparable gaps when no treatment occurred in the pseudo-post window — the real estimate is not a generic artefact of the pipeline. A placebo magnitude approaching the real ATT would have been a five-alarm signal; the small magnitude here corroborates Stage 1's headline.
+The placebo "ATT" is much smaller in absolute value than the real Stage-1 estimate $\widehat{\tau}_{\text{SCM}} \approx `r format(round(att_classic, 2), nsmall = 2)`$. The classical SCM machinery is not manufacturing comparable gaps when no treatment occurred in the pseudo-post window — the real estimate is not a generic artefact of the pipeline. A placebo magnitude approaching the real ATT would have been a five-alarm signal; the small magnitude here corroborates Stage 1's headline.
 :::

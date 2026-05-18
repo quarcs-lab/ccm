@@ -29,15 +29,15 @@ TWFE never absorbs — and so cannot net out.
 This chapter relaxes parallel trends in a specific way. We model the
 counterfactual outcome as a **factor structure**:
 
-$$Y_{it}(0) \;=\; \alpha_i + \xi_t + \lambda_i' f_t + \varepsilon_{it}.$$
+$$Y_{it}(0) \;=\; \alpha_i + \xi_t + \lambda_i^\top f_t + \varepsilon_{it}.$$
 
 Each unit $i$ has a loading vector $\lambda_i$; each period a factor
-vector $f_t$. Their interaction $\lambda_i' f_t$ encodes
+vector $f_t$. Their interaction $\lambda_i^\top f_t$ encodes
 time-varying unobserved heterogeneity that no county or year fixed
 effect can absorb. We write the model without observable covariates
 for simplicity, but `fect()` accepts a covariate matrix
-$X_{it}$ — e.g. `lemp ~ D + lpop + lavg_pay` — and chapter 10
-exercises exactly that extension on the same panel.
+$X_{it}$ — e.g. `lemp ~ D + lpop + lavg_pay` — and one of this
+chapter's exercises walks through exactly that extension.
 
 Two views of the same object give two estimators
 [@liu2024practical]:
@@ -46,18 +46,20 @@ Two views of the same object give two estimators
   @xu2017generalized; @liu2024practical] treats
   $(\alpha, \xi, \Lambda, F)$ as parameters to be estimated on
   control observations, then imputes $Y_{it}(0)$ on treated cells.
+  We write the resulting estimator $\widehat{\tau}_{\text{IFE}}$.
 - **Matrix Completion (MC)** [@athey2021matrix] reframes the same
   problem as filling missing entries of the implicit $Y(0)$ matrix:
   mask the treated cells, then complete via nuclear-norm-regularised
-  SVD.
+  SVD. We write the resulting estimator $\widehat{\tau}_{\text{MC}}$.
 
 Yiqing Xu's `fect` [@liu2024practical] package implements both with
 a common API and a common counterfactual-plot diagnostic. By
-chapter's end we compare IFEct and MC on the same panel — two
-estimators, two identifying assumptions, one substantive question.
-Chapter 10 then does the deep dive on one specific member of this
-family — generalized synthetic control via the `gsynth` package —
-using the same panel.
+chapter's end we compare $\widehat{\tau}_{\text{IFE}}$ and
+$\widehat{\tau}_{\text{MC}}$ on the same panel — two estimators, two
+identifying assumptions, one substantive question. Chapter 10 then
+does the deep dive on one specific member of this family —
+generalized synthetic control via the `gsynth` package — using the
+same panel.
 
 ## Setup and data
 
@@ -96,17 +98,16 @@ one small adjustment: factor-based estimators need **at least as
 many pre-treatment periods per cohort as the number of factors they
 try to fit** — concretely, identifying $r$ factors on a treated unit
 requires at least $r + 1$ pre-treatment periods for that unit.
-Chapter 8's 2003-2007 `data2` window (see
-`08-staggered-did.qmd:99`) leaves the 2004 cohort with only one
-pre-period (year 2003). To keep that cohort in the IFE sample we
-would need to set `min.T0 = 1` — the user-controlled inclusion
-threshold that drops treated units with fewer pre-periods — which
-in turn caps the identifiable rank at zero for that cohort and
-collapses IFEct back to TWFE. Widening the window to 2001-2007
-gives 2004 three pre-periods (2001-2003), so we can set
-`min.T0 = 2` and let CV search over $r \in \{0, 1, 2\}$. Everything
-else (cohort filter, region drop, treatment indicator) is identical
-to chapter 8.
+Chapter 8's 2003-2007 working window leaves the 2004 cohort with
+only one pre-period (year 2003). To keep that cohort in the IFE
+sample we would need to set `min.T0 = 1` — the user-controlled
+inclusion threshold that drops treated units with fewer
+pre-periods — which in turn caps the identifiable rank at zero for
+that cohort and collapses IFEct back to TWFE. Widening the window
+to 2001-2007 gives 2004 three pre-periods (2001-2003), so we can
+set `min.T0 = 2` and let CV search over $r \in \{0, 1, 2\}$.
+Everything else (cohort filter, region drop, treatment indicator)
+is identical to chapter 8.
 
 ```{r}
 #| label: data-load
@@ -174,7 +175,7 @@ absent any minimum-wage increase. Where they differ is in how they
 restrict that matrix.
 
 **IFEct** imposes the explicit factor decomposition $Y_{it}(0) =
-\alpha_i + \xi_t + \lambda_i' f_t + \varepsilon_{it}$, fits
+\alpha_i + \xi_t + \lambda_i^\top f_t + \varepsilon_{it}$, fits
 $(\alpha, \xi, \Lambda, F)$ on the **control** observations only,
 and uses those estimates to impute $Y_{it}(0)$ for treated
 cells. The choice of $r$ — how many factors — is made by
@@ -346,21 +347,24 @@ tibble(
 ## IFEct and MC compared
 
 A caveat first, then the comparison. On this 7-year window, CV
-selects $r = 0$ for IFEct — meaning IFEct here operationally
-collapses to two-way fixed effects: the factor term $\lambda_i' f_t$
-drops out and the imputation reduces to $\widehat{Y_{it}(0)} =
-\widehat{\alpha}_i + \widehat{\xi}_t$. This is not a bug, it is a
-finding: with $T = 7$ and 3 pre-periods on the shorter cohort, CV
-is conservative and refuses to credit a latent factor it cannot
-validate out-of-sample. MC, by contrast, lands on a small but
-non-zero penalty ($\eta = 0.0007$), so MC retains a regularised
-low-rank deviation from TWFE.
+selects $r = `r unname(out_ife$r.cv)`$ for IFEct — meaning IFEct
+here operationally collapses to two-way fixed effects: the factor
+term $\lambda_i^\top f_t$ drops out and the imputation reduces to
+$\widehat{Y_{it}(0)} = \widehat{\alpha}_i + \widehat{\xi}_t$. This
+is not a bug, it is a finding: with $T = 7$ and 3 pre-periods on
+the shorter cohort, CV is conservative and refuses to credit a
+latent factor it cannot validate out-of-sample. MC, by contrast,
+lands on a small but non-zero penalty
+($\eta \approx `r sprintf("%.4f", out_mc$lambda.cv)`$), so MC
+retains a regularised low-rank deviation from TWFE.
 
 So the empirical contrast on this panel is **not** between an
 explicit factor model and a low-rank completion — it is between
-TWFE-style imputation (IFEct at $r = 0$) and nuclear-norm
-penalised imputation (MC at $\eta = 0.0007$). That two estimators
-that disagree about the identifying assumption — *in principle* an
+TWFE-style imputation ($\widehat{\tau}_{\text{IFE}}$ at $r =
+`r unname(out_ife$r.cv)`$) and nuclear-norm penalised imputation
+($\widehat{\tau}_{\text{MC}}$ at $\eta \approx
+`r sprintf("%.4f", out_mc$lambda.cv)`$). That two estimators that
+disagree about the identifying assumption — *in principle* an
 explicit linear factor model vs. an approximately low-rank $Y(0)$
 matrix — still point to the same sign and the same order of
 magnitude is meaningful: the qualitative conclusion is robust to
@@ -379,12 +383,14 @@ can produce.
 **The methods reconciled.** Two answers to the same question on the
 2001-2007 minimum-wage panel:
 
-- *IFEct*: factor model of $Y(0)$ fit on never-treated, imputed on
-  treated, $r$ chosen by cross-validation. Here CV picks $r = 0$,
-  so IFEct collapses to two-way fixed effects — a finding, not a
-  bug.
-- *Matrix Completion*: low-rank completion of the masked $Y(0)$
-  matrix, nuclear-norm penalty $\eta$ chosen by cross-validation.
+- $\widehat{\tau}_{\text{IFE}}$: factor model of $Y(0)$ fit on
+  never-treated, imputed on treated, $r$ chosen by cross-validation.
+  Here CV picks $r = `r unname(out_ife$r.cv)`$, so IFEct collapses
+  to two-way fixed effects — a finding, not a bug.
+- $\widehat{\tau}_{\text{MC}}$: low-rank completion of the masked
+  $Y(0)$ matrix, nuclear-norm penalty $\eta$ chosen by
+  cross-validation
+  ($\eta \approx `r sprintf("%.4f", out_mc$lambda.cv)`$).
 
 Both point downward; both sit in the same neighbourhood; neither is
 uniquely correct. Factor-based estimators *relax* parallel trends
@@ -406,14 +412,14 @@ too small. Both are over-fitting masquerading as identification.
 
 **Methods:**
 
-- *Interactive fixed effects* (IFEct) writes the untreated potential outcome as $Y_{it}(0) = \alpha_i + \xi_t + \lambda_i' f_t + \varepsilon_{it}$, where $\lambda_i' f_t$ is a low-rank product of $r$ latent factors $f_t$ and unit loadings $\lambda_i$ that absorbs time-varying unobserved heterogeneity no fixed effect can net out. Fitting $(\alpha, \xi, \Lambda, F)$ on never-treated cells and imputing $\widehat{Y_{it}(0)}$ on treated cells turns the ATT into an outcome-imputation problem; the rank $r$ is chosen by holding out blocks of control cells and minimising out-of-sample MSPE.
-- *Matrix completion* (MC) drops the explicit factor decomposition and only assumes the implicit $Y(0)$ matrix is approximately low-rank, then fills its masked treated entries by minimising $\|Y_{\mathrm{obs}} - \widehat{Y(0)}\|_F^2 + \eta\,\|\widehat{Y(0)}\|_*$. The *nuclear norm* $\|\cdot\|_*$ — the sum of singular values — is the convex relaxation of "low rank" in the same way that the $\ell_1$ norm relaxes "sparse", and the penalty weight $\eta$ (returned by `fect` as `lambda.cv`) is again chosen by cross-validation.
+- *Interactive fixed effects* (IFEct) writes the untreated potential outcome as $Y_{it}(0) = \alpha_i + \xi_t + \lambda_i^\top f_t + \varepsilon_{it}$, where $\lambda_i^\top f_t$ is a low-rank product of $r$ latent factors $f_t$ and unit loadings $\lambda_i$ that absorbs time-varying unobserved heterogeneity no fixed effect can net out. Fitting $(\alpha, \xi, \Lambda, F)$ on never-treated cells and imputing $\widehat{Y_{it}(0)}$ on treated cells turns the ATT into an outcome-imputation problem and yields $\widehat{\tau}_{\text{IFE}}$; the rank $r$ is chosen by holding out blocks of control cells and minimising out-of-sample MSPE.
+- *Matrix completion* (MC) drops the explicit factor decomposition and only assumes the implicit $Y(0)$ matrix is approximately low-rank, then fills its masked treated entries by minimising $\|Y_{\mathrm{obs}} - \widehat{Y(0)}\|_F^2 + \eta\,\|\widehat{Y(0)}\|_*$ to yield $\widehat{\tau}_{\text{MC}}$. The *nuclear norm* $\|\cdot\|_*$ — the sum of singular values — is the convex relaxation of "low rank" in the same way that the $\ell_1$ norm relaxes "sparse", and the penalty weight $\eta$ (returned by `fect` as `lambda.cv`) is again chosen by cross-validation.
 
 **Lessons:**
 
 - Both estimators *relax* parallel trends rather than replacing it: TWFE is the $r = 0$ corner of IFEct and the $\eta \to \infty$ limit of MC, so any non-zero CV pick is the data telling you parallel trends was insufficient on its own.
 - The signature FECT diagnostic is the **counterfactual-path overlay**: plot the observed average outcome on treated units against the model-implied $Y(0)$, and read off the event-study ATT as the gap. A flat pre-treatment overlay is the visual quality check — the analogue of a pre-trend test for parallel-trends DiD.
-- On the 2001-2007 minimum-wage panel CV picks $r = 0$ for IFEct (it collapses to two-way fixed effects) but a small non-zero $\eta = 0.0007$ for MC; the two estimators nevertheless land in the same neighbourhood, and that agreement is the strongest robustness check a short panel can produce — qualitatively the same answer under two different relaxations of parallel trends.
+- On the 2001-2007 minimum-wage panel CV picks $r = `r unname(out_ife$r.cv)`$ for IFEct (it collapses to two-way fixed effects) but a small non-zero $\eta \approx `r sprintf("%.4f", out_mc$lambda.cv)`$ for MC; the two estimators nevertheless land in the same neighbourhood, and that agreement is the strongest robustness check a short panel can produce — qualitatively the same answer under two different relaxations of parallel trends.
 
 **Caveats:**
 
@@ -441,7 +447,7 @@ These exercises probe the chapter's central tensions: CV's reluctance to credit 
 
 ### Exercise 1: Force IFEct at $r = 1$
 
-CV picked $r = 0$, collapsing IFEct to TWFE. Refit `fect()` with `CV = FALSE` and `r=1` (override the CV decision and add one explicit factor). Report the ATT and compare to the chapter's $r = 0$ baseline. Does the on-impact event-time ATT shift?
+CV picked $r = `r unname(out_ife$r.cv)`$, collapsing IFEct to TWFE. Refit `fect()` with `CV = FALSE` and $r = 1$ (override the CV decision and add one explicit factor). Report the ATT and compare to the chapter's CV-selected baseline. Does the on-impact event-time ATT shift?
 
 ::: {.callout-tip collapse="true"}
 ## Solution
@@ -464,7 +470,7 @@ out_ife_r1 <- fect(
   seed     = 42
 )
 
-tibble(spec = c("IFEct r = 0 (CV-selected, chapter)",
+tibble(spec = c(sprintf("IFEct r = %d (CV-selected, chapter)", out_ife$r.cv),
                 "IFEct r = 1 (forced)"),
        att  = c(out_ife$att.avg, out_ife_r1$att.avg)) |>
   gt_pretty(decimals = 4)
@@ -475,7 +481,7 @@ Forcing $r = 1$ moves the ATT modestly: one explicit factor absorbs some of the 
 
 ### Exercise 2: MC penalty hand-tune
 
-Refit `fect()` for MC with `CV = FALSE` at two hand-chosen penalty values — $\eta = 0.05$ (looser, more shrinkage) and $\eta = 0.0001$ (tighter, near-interpolation). Report the ATTs and discuss which lands closer to the CV-selected $\eta = 0.0007$.
+Refit `fect()` for MC with `CV = FALSE` at two hand-chosen penalty values — $\eta = 0.05$ (looser, more shrinkage) and $\eta = 0.0001$ (tighter, near-interpolation). Report the ATTs and discuss which lands closer to the CV-selected $\eta \approx `r sprintf("%.4f", out_mc$lambda.cv)`$.
 
 ::: {.callout-tip collapse="true"}
 ## Solution
@@ -513,7 +519,7 @@ out_mc_tight <- fect(
 )
 
 tibble(spec = c("MC eta = 0.05 (loose)",
-                "MC eta = 0.0007 (CV, chapter)",
+                sprintf("MC eta = %.4f (CV, chapter)", out_mc$lambda.cv),
                 "MC eta = 0.0001 (tight)"),
        att  = c(out_mc_loose$att.avg, out_mc$att.avg, out_mc_tight$att.avg)) |>
   gt_pretty(decimals = 4)
@@ -603,7 +609,7 @@ bind_rows(
   gt_pretty(decimals = 4)
 ```
 
-The two estimators agree closely in event-time tails where the data is sparse and CIs are wide. Disagreement (if any) concentrates at the on-impact event time, where IFEct (collapsed to TWFE at $r = 0$) lacks the MC penalty's ability to smooth the imputed $Y(0)$ across nearby cells. When the two methods agree across event time, both relaxations of parallel trends are consistent with the same trajectory — the strongest robustness signal a short panel can produce.
+The two estimators agree closely in event-time tails where the data is sparse and CIs are wide. Disagreement (if any) concentrates at the on-impact event time, where IFEct (here collapsed to TWFE at $r = `r unname(out_ife$r.cv)`$) lacks the MC penalty's ability to smooth the imputed $Y(0)$ across nearby cells. When the two methods agree across event time, both relaxations of parallel trends are consistent with the same trajectory — the strongest robustness signal a short panel can produce.
 :::
 
 ### Exercise 5 (stretch): In-time placebo test via `fect`
@@ -623,7 +629,7 @@ out_ife_placebo <- fect(
   method         = "ife",
   force          = "two-way",
   CV             = FALSE,
-  r              = 0,
+  r              = out_ife$r.cv,
   min.T0         = 2,
   se             = TRUE,
   nboots         = 50,
