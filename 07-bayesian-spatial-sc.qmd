@@ -2,6 +2,13 @@
 title: "Bayesian Spatial Synthetic Control"
 ---
 
+## Learning objectives
+
+1. Fit a Bayesian SCM with horseshoe priors using the bundled `R/scspill/` Gibbs sampler. Horseshoe relaxes the simplex constraint, and the chapter shows the simplex's four-donor sparsity is partly a constraint artifact — 23 donors load under the horseshoe.
+2. Propagate donor-weight posterior uncertainty into credible intervals on the post-period gap series. Honest uncertainty on the ATT requires propagating uncertainty about the donor weights themselves, not just the noise around the synthetic counterfactual.
+3. Add a spatial-autoregressive (SAR) layer so donor outcomes can respond to the treatment, and estimate per-donor spillovers via the Sakaguchi-Tagawa identification formula. This is the only method in the book that relaxes SUTVA and recovers a closed-form spillover for each neighbour — essential when the treated unit shares a border with several controls.
+4. Run prior predictive checks on summary statistics (mean, spatial structure, autocorrelation, factor dominance) to confirm the SAR prior is compatible with the observed data. Prior predictive checks are the safeguard against a posterior driven by a misspecified prior rather than the data.
+
 ## Why a fourth synthetic-control chapter?
 
 Chapter 4 fit a *classical* Synthetic Control: donor weights live on the simplex and are chosen by a quadratic optimiser. Chapter 5 borrowed donor information in a different way — through a Bayesian structural time-series model. Chapter 6 then put a finite-sample frequentist prediction interval around the classical fit and relaxed the simplex to lasso / ridge / OLS — but, like chapters 4 and 5, retained SUTVA. All three treat the donor states' outcomes as *unaffected* by California's policy. That assumption — the **stable unit treatment value assumption (SUTVA)** — is the price of any synthetic-control estimate.

@@ -2,6 +2,13 @@
 title: "Basic Differences-in-Differences"
 ---
 
+## Learning objectives
+
+1. Construct the 2×2 DiD grid (treated vs. one control, pre vs. post) and recover the ATT as the difference of differences. This is the simplest causal contrast in the book and the conceptual anchor every later DiD generalization builds on.
+2. Estimate the 2×2 DiD as a single OLS interaction (`cigsale ~ state * prepost`) and read the ATT off the interaction coefficient. The regression form is what scales to covariates and time-varying treatments in later chapters.
+3. Test the parallel-trends assumption formally by fitting `cigsale ~ state * year` on the pre-period and checking whether the slope-difference interaction is zero. A reader who only "eyeballs" parallel trends has no defence against a referee who fits the regression.
+4. Compute HAC-robust standard errors with `sandwich::vcovHAC` and explain why cluster-robust inference collapses at $G = 2$. This is the practical inference fix every 2-unit DiD needs, and naming the collapse keeps the reader from defaulting to a broken `cluster = state` call.
+
 ## The DiD idea
 
 Chapter 2 showed that any within-unit method — growth curve, ARIMA — is fragile because the counterfactual is identified only by an assumption the data cannot verify. Difference-in-Differences borrows strength from *outside* California by adding one control unit, replacing an extrapolation assumption with a comparability assumption.

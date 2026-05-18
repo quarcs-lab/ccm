@@ -2,6 +2,12 @@
 title: "Introduction"
 ---
 
+## Learning objectives
+
+1. Frame any policy evaluation in the potential-outcomes notation $Y_i(1), Y_i(0)$ and identify the ATT as the target estimand. Treating causal inference as a missing-data problem prevents the most common mistake — reporting an ATE when only the ATT is identified.
+2. Audit the SUTVA assumption for a candidate evaluation and flag plausible spillover or interference channels. SUTVA failures silently bias every method that follows, so screening for them up front decides which chapter of this book applies.
+3. Use the book's method-selection decision tree to map a new regional evaluation problem to one of the ten methods covered. This skill lets the reader treat the book as a toolkit rather than a sequence, picking the right estimator for the data structure they actually have.
+
 ## Why regional impact evaluation?
 
 How do you measure the causal effect of a policy when you cannot randomise who gets treated? Most policy reforms hit a *region* — a state, province, or country — as a single block. There is no randomisation, no control arm, and often only a handful of treated units. The job of regional impact evaluation is to recover the missing counterfactual: *what would the region have looked like without the policy?*

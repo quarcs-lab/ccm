@@ -2,6 +2,13 @@
 title: "Synthetic Control with Prediction Intervals"
 ---
 
+## Learning objectives
+
+1. Fit synthetic-control weights under four regularization regimes (simplex, lasso, ridge, OLS) from `scpi`'s single API. Running all four at once is how the reader checks whether their headline estimate is a constraint artifact rather than a data finding.
+2. Construct finite-sample prediction intervals by decomposing SC error into in-sample weight uncertainty and out-of-sample shocks. These are the first SC intervals in the book with proven frequentist coverage, and replacing chapter 4's permutation *p*-value with a coverage statement is what makes the method publishable in econometrics venues.
+3. Set Bonferroni-adjusted alpha splits (`u.alpha`, `e.alpha`) so a stated joint coverage level is the actual joint coverage level. Without the split the union bound is violated and the interval's nominal coverage is unachieved, even though the "95% PI" label still appears on the plot.
+4. Sweep confidence levels (80/90/95/99%) and report at which level the post-period outcome reliably exits the band. The sweep is the natural way to quantify evidence strength when a single conventional level is arbitrary.
+
 ## Why a third synthetic-control chapter?
 
 Chapter 4 fit the classical synthetic-control estimator with `tidysynth`: donor weights live on the simplex, and the inference story is the Fisher-exact placebo permutation test. Chapter 5 produced posterior credible intervals from a structural Bayesian time-series model.

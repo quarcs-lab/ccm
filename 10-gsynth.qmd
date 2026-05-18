@@ -2,6 +2,13 @@
 title: "Generalized Synthetic Control"
 ---
 
+## Learning objectives
+
+1. Estimate latent factors on the never-treated subpanel with `gsynth` and project each treated unit onto factor space. This is what scales single-unit synthetic control (chapter 4) to dozens of treated units with unit-specific counterfactuals.
+2. Select the factor count via information criterion and check robustness across the factor grid. Information criteria break ties when the data only weakly prefer a model — without the grid check the reader is one rounding decision away from a different headline ATT.
+3. Extract and interpret implicit donor weights for each treated unit. The weights ground the abstract latent-factor model in observable donor units, exposing which control counties drive each treated unit's counterfactual.
+4. Diagnose extrapolation failure via convex-hull checks on the loadings plot. Treated units whose factor loadings fall outside the control cloud are extrapolations, not interpolations, and flagging them is the difference between an honest and an overstated estimate.
+
 ## Where gsynth fits
 
 Earlier chapters have asked the same counterfactual question in

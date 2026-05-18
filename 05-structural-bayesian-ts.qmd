@@ -2,6 +2,14 @@
 title: "Structural Bayesian Time Series"
 ---
 
+## Learning objectives
+
+1. Fit a BSTS local-level trend model with a spike-and-slab prior over donor regressors using `CausalImpact`. Spike-and-slab is what makes the method tractable on the 194-donor pre-period and is the right tool whenever predictors outnumber pre-period observations.
+2. Impute missing donor covariates with random-forest multiple imputation and reshape into the wide matrix `CausalImpact` expects. Real donor panels (income, beer, demographics) come with 16–55% missingness, and skipping imputation throws away most of the pre-period information.
+3. Extract posterior inclusion probabilities to see which donors the BSTS fit actually relies on. Inclusion probabilities are the Bayesian analogue of the SC donor weights from chapter 4 and let the reader audit the counterfactual.
+4. Diagnose MCMC convergence with Rhat and effective sample size before reading off credible intervals. The chapter's default of 1,000 iterations is deliberately tight, and a reader who skips this step risks reporting credible bands from an unconverged chain.
+5. Read CausalImpact credible intervals as posterior probability statements, not frequentist confidence coverage. This is the only method in the book that produces direct probability statements about the effect, and conflating the two interpretations is one of the most common reporting errors in applied work.
+
 ## The BSTS / CausalImpact idea
 
 Fit a **Bayesian structural time-series (BSTS)** model on the pre-period. Use *other states' cigarette sales* (and optionally covariates) as predictors. Project the fitted model forward as the counterfactual. The posterior over (observed − projected) gives a credible interval for the policy effect.

@@ -2,6 +2,13 @@
 title: "Interactive Fixed Effects and Matrix Completion"
 ---
 
+## Learning objectives
+
+1. Fit interactive-fixed-effects models and select the latent factor rank by cross-validation in `fect`. Letting CV pick the rank is what frees the reader from the unverifiable parallel-trends assumption while keeping the model from overfitting.
+2. Overlay counterfactual and observed outcome paths to assess pre-treatment fit. Visual pre-treatment fit is the chapter's headline diagnostic and the only honest check that the factor model captured the relevant comovement.
+3. Compare interactive-fixed-effects and matrix-completion estimators on the same panel. The two estimators rest on structurally different identifying assumptions, so agreement between them is one of the strongest robustness statements available for a staggered design.
+4. Reason about the trade-off between pre-period depth and identifiable factor rank. Short panels cannot support many factors, and ignoring this ceiling fits noise into the loadings — producing a phantom counterfactual on the treated cells rather than a credible one.
+
 ## When parallel trends isn't enough
 
 Chapter 8 squeezed every drop of usable signal out of the

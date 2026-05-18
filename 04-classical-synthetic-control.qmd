@@ -2,6 +2,14 @@
 title: "Classical Synthetic Control"
 ---
 
+## Learning objectives
+
+1. Construct the four-stage `tidysynth` pipeline that optimizes donor weights to match the treated unit's pre-period predictor profile. This is the workhorse of the single-treated-unit synthetic-control literature and recurs in chapters 6 and 7.
+2. Extract donor unit weights and the V-matrix predictor weights and inspect their concentration. Heavy concentration on one or two donors is the chapter's main fragility diagnostic and is what later prediction-interval methods try to fix.
+3. Compute the post-period ATT as the mean gap between the treated unit and its synthetic counterpart. This single quantity is the headline estimate every subsequent SC variant in the book reports.
+4. Conduct placebo permutation inference by refitting the pipeline on each donor and ranking California's MSPE ratio against the placebo distribution. Permutation tests are the proper SC uncertainty quantification — *p*-values from regression won't help here.
+5. Run leave-one-out and in-time placebo robustness checks and report when the estimate survives them. Without these checks the headline ATT is one donor away from being an artifact.
+
 ## The SCM idea
 
 Synthetic Control stops using one control state. Instead, it builds a *weighted combination* of donor states that matches the treated unit's pre-period as closely as possible on a chosen set of predictors. The weighted combination is "synthetic California". The gap between observed California and synthetic California is the estimated effect.

@@ -2,6 +2,13 @@
 title: "Staggered Differences-in-Differences"
 ---
 
+## Learning objectives
+
+1. Estimate group-time average treatment effects with `did::att_gt()` on a staggered-adoption panel. This is the workhorse of modern DiD — the estimator that replaced two-way fixed effects after the negative-weight critique.
+2. Aggregate group-time effects into event-study dynamics with `aggte(type = "dynamic")`. The aggregation step is what gives the reader a single defensible event-study plot without the contamination problems of a TWFE event study.
+3. Condition on covariates using regression, IPW, and doubly-robust estimators, and default to the doubly-robust choice. Doubly-robust estimation is consistent if *either* the outcome model or the propensity-score model is correctly specified, which is why it is the safe default — knowing all three lets the reader defend that choice against a referee.
+4. Run Rambachan-Roth relative-magnitudes sensitivity analysis with `HonestDiD` and report the smallest pre-trend violation that would overturn the post-treatment conclusion. This converts an unverifiable parallel-trends assumption into a falsifiable claim about how robust the headline result is.
+
 ## When TWFE breaks under staggered adoption
 
 Chapter 3 ran a textbook 2×2 DiD on Proposition 99, with California
