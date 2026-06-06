@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>5&nbsp; Structural Bayesian Time Series – Comparative Causal Metrics</title>
+<title>6&nbsp; Structural Bayesian Time Series – Comparative Causal Metrics</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -85,8 +85,8 @@ div.csl-indent {
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./06-synthetic-control-prediction-intervals.html" rel="next">
-<link href="./04-classical-synthetic-control.html" rel="prev">
+<link href="./07-synthetic-control-prediction-intervals.html" rel="next">
+<link href="./05-augmented-synthetic-control.html" rel="prev">
 <link href="./images/favicon.svg" rel="icon" type="image/svg+xml">
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
@@ -336,7 +336,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./05-structural-bayesian-ts.html"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Structural Bayesian Time Series</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./06-structural-bayesian-ts.html"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Structural Bayesian Time Series</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -415,38 +415,44 @@ window.Quarto = {
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./05-structural-bayesian-ts.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Structural Bayesian Time Series</span></span></a>
+  <a href="./05-augmented-synthetic-control.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Augmented Synthetic Control</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./06-synthetic-control-prediction-intervals.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Synthetic Control with Prediction Intervals</span></span></a>
+  <a href="./06-structural-bayesian-ts.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Structural Bayesian Time Series</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./07-bayesian-spatial-sc.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Bayesian Spatial Synthetic Control</span></span></a>
+  <a href="./07-synthetic-control-prediction-intervals.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Synthetic Control with Prediction Intervals</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./08-staggered-did.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Staggered Differences-in-Differences</span></span></a>
+  <a href="./08-bayesian-spatial-sc.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Bayesian Spatial Synthetic Control</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./09-matrix-completion-and-ife.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Interactive Fixed Effects and Matrix Completion</span></span></a>
+  <a href="./09-staggered-did.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Staggered Differences-in-Differences</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./10-gsynth.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Generalized Synthetic Control</span></span></a>
+  <a href="./10-matrix-completion-and-ife.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Interactive Fixed Effects and Matrix Completion</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./11-gsynth.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Generalized Synthetic Control</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -465,32 +471,32 @@ window.Quarto = {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#learning-objectives" id="toc-learning-objectives" class="nav-link active" data-scroll-target="#learning-objectives"><span class="header-section-number">5.1</span> Learning objectives</a></li>
-  <li><a href="#the-bsts-causalimpact-idea" id="toc-the-bsts-causalimpact-idea" class="nav-link" data-scroll-target="#the-bsts-causalimpact-idea"><span class="header-section-number">5.2</span> The BSTS / CausalImpact idea</a></li>
-  <li><a href="#the-model-in-two-pieces" id="toc-the-model-in-two-pieces" class="nav-link" data-scroll-target="#the-model-in-two-pieces"><span class="header-section-number">5.3</span> The model in two pieces</a></li>
-  <li><a href="#setup-and-data" id="toc-setup-and-data" class="nav-link" data-scroll-target="#setup-and-data"><span class="header-section-number">5.4</span> Setup and data</a></li>
-  <li><a href="#imputation-and-wide-pivot" id="toc-imputation-and-wide-pivot" class="nav-link" data-scroll-target="#imputation-and-wide-pivot"><span class="header-section-number">5.5</span> Imputation and wide pivot</a></li>
-  <li><a href="#fit-the-bayesian-structural-ts-model" id="toc-fit-the-bayesian-structural-ts-model" class="nav-link" data-scroll-target="#fit-the-bayesian-structural-ts-model"><span class="header-section-number">5.6</span> Fit the Bayesian structural TS model</a>
+  <li><a href="#learning-objectives" id="toc-learning-objectives" class="nav-link active" data-scroll-target="#learning-objectives"><span class="header-section-number">6.1</span> Learning objectives</a></li>
+  <li><a href="#the-bsts-causalimpact-idea" id="toc-the-bsts-causalimpact-idea" class="nav-link" data-scroll-target="#the-bsts-causalimpact-idea"><span class="header-section-number">6.2</span> The BSTS / CausalImpact idea</a></li>
+  <li><a href="#the-model-in-two-pieces" id="toc-the-model-in-two-pieces" class="nav-link" data-scroll-target="#the-model-in-two-pieces"><span class="header-section-number">6.3</span> The model in two pieces</a></li>
+  <li><a href="#setup-and-data" id="toc-setup-and-data" class="nav-link" data-scroll-target="#setup-and-data"><span class="header-section-number">6.4</span> Setup and data</a></li>
+  <li><a href="#imputation-and-wide-pivot" id="toc-imputation-and-wide-pivot" class="nav-link" data-scroll-target="#imputation-and-wide-pivot"><span class="header-section-number">6.5</span> Imputation and wide pivot</a></li>
+  <li><a href="#fit-the-bayesian-structural-ts-model" id="toc-fit-the-bayesian-structural-ts-model" class="nav-link" data-scroll-target="#fit-the-bayesian-structural-ts-model"><span class="header-section-number">6.6</span> Fit the Bayesian structural TS model</a>
   <ul class="collapse">
-  <li><a href="#which-donors-did-the-spike-and-slab-pick" id="toc-which-donors-did-the-spike-and-slab-pick" class="nav-link" data-scroll-target="#which-donors-did-the-spike-and-slab-pick"><span class="header-section-number">5.6.1</span> Which donors did the spike-and-slab pick?</a></li>
-  <li><a href="#mcmc-convergence-diagnostics" id="toc-mcmc-convergence-diagnostics" class="nav-link" data-scroll-target="#mcmc-convergence-diagnostics"><span class="header-section-number">5.6.2</span> MCMC convergence diagnostics</a></li>
-  <li><a href="#what-if-we-drop-the-covariates" id="toc-what-if-we-drop-the-covariates" class="nav-link" data-scroll-target="#what-if-we-drop-the-covariates"><span class="header-section-number">5.6.3</span> What if we drop the covariates?</a></li>
+  <li><a href="#which-donors-did-the-spike-and-slab-pick" id="toc-which-donors-did-the-spike-and-slab-pick" class="nav-link" data-scroll-target="#which-donors-did-the-spike-and-slab-pick"><span class="header-section-number">6.6.1</span> Which donors did the spike-and-slab pick?</a></li>
+  <li><a href="#mcmc-convergence-diagnostics" id="toc-mcmc-convergence-diagnostics" class="nav-link" data-scroll-target="#mcmc-convergence-diagnostics"><span class="header-section-number">6.6.2</span> MCMC convergence diagnostics</a></li>
+  <li><a href="#what-if-we-drop-the-covariates" id="toc-what-if-we-drop-the-covariates" class="nav-link" data-scroll-target="#what-if-we-drop-the-covariates"><span class="header-section-number">6.6.3</span> What if we drop the covariates?</a></li>
   </ul></li>
-  <li><a href="#the-two-panel-diagnostic" id="toc-the-two-panel-diagnostic" class="nav-link" data-scroll-target="#the-two-panel-diagnostic"><span class="header-section-number">5.7</span> The two-panel diagnostic</a></li>
-  <li><a href="#common-pitfall" id="toc-common-pitfall" class="nav-link" data-scroll-target="#common-pitfall"><span class="header-section-number">5.8</span> Common pitfall</a></li>
-  <li><a href="#where-to-next" id="toc-where-to-next" class="nav-link" data-scroll-target="#where-to-next"><span class="header-section-number">5.9</span> Where to next</a></li>
-  <li><a href="#key-takeaways" id="toc-key-takeaways" class="nav-link" data-scroll-target="#key-takeaways"><span class="header-section-number">5.10</span> Key takeaways</a></li>
-  <li><a href="#further-reading" id="toc-further-reading" class="nav-link" data-scroll-target="#further-reading"><span class="header-section-number">5.11</span> Further reading</a></li>
-  <li><a href="#exercises" id="toc-exercises" class="nav-link" data-scroll-target="#exercises"><span class="header-section-number">5.12</span> Exercises</a>
+  <li><a href="#the-two-panel-diagnostic" id="toc-the-two-panel-diagnostic" class="nav-link" data-scroll-target="#the-two-panel-diagnostic"><span class="header-section-number">6.7</span> The two-panel diagnostic</a></li>
+  <li><a href="#common-pitfall" id="toc-common-pitfall" class="nav-link" data-scroll-target="#common-pitfall"><span class="header-section-number">6.8</span> Common pitfall</a></li>
+  <li><a href="#where-to-next" id="toc-where-to-next" class="nav-link" data-scroll-target="#where-to-next"><span class="header-section-number">6.9</span> Where to next</a></li>
+  <li><a href="#key-takeaways" id="toc-key-takeaways" class="nav-link" data-scroll-target="#key-takeaways"><span class="header-section-number">6.10</span> Key takeaways</a></li>
+  <li><a href="#further-reading" id="toc-further-reading" class="nav-link" data-scroll-target="#further-reading"><span class="header-section-number">6.11</span> Further reading</a></li>
+  <li><a href="#exercises" id="toc-exercises" class="nav-link" data-scroll-target="#exercises"><span class="header-section-number">6.12</span> Exercises</a>
   <ul class="collapse">
-  <li><a href="#exercise-1-mcmc-iteration-sensitivity" id="toc-exercise-1-mcmc-iteration-sensitivity" class="nav-link" data-scroll-target="#exercise-1-mcmc-iteration-sensitivity"><span class="header-section-number">5.12.1</span> Exercise 1: MCMC iteration sensitivity</a></li>
-  <li><a href="#exercise-2-in-time-placebo-at-1985" id="toc-exercise-2-in-time-placebo-at-1985" class="nav-link" data-scroll-target="#exercise-2-in-time-placebo-at-1985"><span class="header-section-number">5.12.2</span> Exercise 2: In-time placebo at 1985</a></li>
-  <li><a href="#exercise-3-pointwise-credible-band-width-by-post-year" id="toc-exercise-3-pointwise-credible-band-width-by-post-year" class="nav-link" data-scroll-target="#exercise-3-pointwise-credible-band-width-by-post-year"><span class="header-section-number">5.12.3</span> Exercise 3: Pointwise credible-band width by post-year</a></li>
-  <li><a href="#exercise-4-from-posterior-p-to-probability-of-any-effect" id="toc-exercise-4-from-posterior-p-to-probability-of-any-effect" class="nav-link" data-scroll-target="#exercise-4-from-posterior-p-to-probability-of-any-effect"><span class="header-section-number">5.12.4</span> Exercise 4: From posterior <span class="math inline">\(p\)</span> to “probability of any effect”</a></li>
-  <li><a href="#exercise-5-stretch-proper-multiple-imputation-with-rubins-rules-pooling" id="toc-exercise-5-stretch-proper-multiple-imputation-with-rubins-rules-pooling" class="nav-link" data-scroll-target="#exercise-5-stretch-proper-multiple-imputation-with-rubins-rules-pooling"><span class="header-section-number">5.12.5</span> Exercise 5 (stretch): Proper multiple imputation with Rubin’s-rules pooling</a></li>
+  <li><a href="#exercise-1-mcmc-iteration-sensitivity" id="toc-exercise-1-mcmc-iteration-sensitivity" class="nav-link" data-scroll-target="#exercise-1-mcmc-iteration-sensitivity"><span class="header-section-number">6.12.1</span> Exercise 1: MCMC iteration sensitivity</a></li>
+  <li><a href="#exercise-2-in-time-placebo-at-1985" id="toc-exercise-2-in-time-placebo-at-1985" class="nav-link" data-scroll-target="#exercise-2-in-time-placebo-at-1985"><span class="header-section-number">6.12.2</span> Exercise 2: In-time placebo at 1985</a></li>
+  <li><a href="#exercise-3-pointwise-credible-band-width-by-post-year" id="toc-exercise-3-pointwise-credible-band-width-by-post-year" class="nav-link" data-scroll-target="#exercise-3-pointwise-credible-band-width-by-post-year"><span class="header-section-number">6.12.3</span> Exercise 3: Pointwise credible-band width by post-year</a></li>
+  <li><a href="#exercise-4-from-posterior-p-to-probability-of-any-effect" id="toc-exercise-4-from-posterior-p-to-probability-of-any-effect" class="nav-link" data-scroll-target="#exercise-4-from-posterior-p-to-probability-of-any-effect"><span class="header-section-number">6.12.4</span> Exercise 4: From posterior <span class="math inline">\(p\)</span> to “probability of any effect”</a></li>
+  <li><a href="#exercise-5-stretch-proper-multiple-imputation-with-rubins-rules-pooling" id="toc-exercise-5-stretch-proper-multiple-imputation-with-rubins-rules-pooling" class="nav-link" data-scroll-target="#exercise-5-stretch-proper-multiple-imputation-with-rubins-rules-pooling"><span class="header-section-number">6.12.5</span> Exercise 5 (stretch): Proper multiple imputation with Rubin’s-rules pooling</a></li>
   </ul></li>
   </ul>
-<div class="toc-actions"><ul><li><a href="https://github.com/quarcs-lab/ccm/edit/main/05-structural-bayesian-ts.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/quarcs-lab/ccm/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
+<div class="toc-actions"><ul><li><a href="https://github.com/quarcs-lab/ccm/edit/main/06-structural-bayesian-ts.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/quarcs-lab/ccm/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
@@ -498,7 +504,7 @@ window.Quarto = {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Structural Bayesian Time Series</span></h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li><li><hr class="dropdown-divider"></li><li><a id="quarto-view-source" class="dropdown-item" href="javascript:void(0)" role="button">View Source</a></li></ul></div></div>
+<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Structural Bayesian Time Series</span></h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li><li><hr class="dropdown-divider"></li><li><a id="quarto-view-source" class="dropdown-item" href="javascript:void(0)" role="button">View Source</a></li></ul></div></div>
 </div>
 
 
@@ -515,8 +521,8 @@ window.Quarto = {
 </header>
 
 
-<section id="learning-objectives" class="level2" data-number="5.1">
-<h2 data-number="5.1" class="anchored" data-anchor-id="learning-objectives"><span class="header-section-number">5.1</span> Learning objectives</h2>
+<section id="learning-objectives" class="level2" data-number="6.1">
+<h2 data-number="6.1" class="anchored" data-anchor-id="learning-objectives"><span class="header-section-number">6.1</span> Learning objectives</h2>
 <ol type="1">
 <li>Fit a BSTS local-level trend model with a spike-and-slab prior over donor regressors using <code>CausalImpact</code>. Spike-and-slab is what makes the method tractable on the 194-donor pre-period and is the right tool whenever predictors outnumber pre-period observations.</li>
 <li>Impute missing donor covariates with random-forest multiple imputation and reshape into the wide matrix <code>CausalImpact</code> expects. Real donor panels (income, beer, demographics) come with 16–55% missingness, and skipping imputation throws away most of the pre-period information.</li>
@@ -525,13 +531,13 @@ window.Quarto = {
 <li>Read CausalImpact credible intervals as posterior probability statements, not frequentist confidence coverage. This is the only method in the book that produces direct probability statements about the effect, and conflating the two interpretations is one of the most common reporting errors in applied work.</li>
 </ol>
 </section>
-<section id="the-bsts-causalimpact-idea" class="level2" data-number="5.2">
-<h2 data-number="5.2" class="anchored" data-anchor-id="the-bsts-causalimpact-idea"><span class="header-section-number">5.2</span> The BSTS / CausalImpact idea</h2>
-<p>Fit a <strong>Bayesian structural time-series (BSTS)</strong> model on the pre-period. Use <em>other states’ cigarette sales</em> (and optionally covariates) as predictors. Project the fitted model forward as the counterfactual. The posterior over (observed − projected) gives a credible interval for the policy effect. We will write the resulting point estimate as <span class="math inline">\(\widehat{\tau}_{\text{BSTS}}\)</span> — the posterior-mean ATT — to keep it distinct from chapter 4’s simplex-weight estimator and chapter 6’s <code>scpi</code> prediction-interval estimator.</p>
+<section id="the-bsts-causalimpact-idea" class="level2" data-number="6.2">
+<h2 data-number="6.2" class="anchored" data-anchor-id="the-bsts-causalimpact-idea"><span class="header-section-number">6.2</span> The BSTS / CausalImpact idea</h2>
+<p>Chapter 4 built California’s counterfactual from a <em>convex</em> blend of donors and chapter 5 bias-corrected that blend with a ridge outcome model; this chapter borrows the donor information a third way. Fit a <strong>Bayesian structural time-series (BSTS)</strong> model on the pre-period. Use <em>other states’ cigarette sales</em> (and optionally covariates) as predictors. Project the fitted model forward as the counterfactual. The posterior over (observed − projected) gives a credible interval for the policy effect. We will write the resulting point estimate as <span class="math inline">\(\widehat{\tau}_{\text{BSTS}}\)</span> — the posterior-mean ATT — to keep it distinct from chapter 4’s simplex-weight estimator and chapter 7’s <code>scpi</code> prediction-interval estimator.</p>
 <p>This is the only method in the book that delivers a <em>credible</em> interval (CrI) — a direct probability statement about the parameter. Concretely, the 95% <strong>credible interval</strong> that <code>CausalImpact</code> reports is a Bayesian object: “given the model and the data, there is a 95% posterior probability that the effect lies in this range”. This is <strong>not</strong> a frequentist 95% confidence interval, which would instead say “if we re-ran the entire study many times, 95% of the intervals we construct would cover the true effect”. The two answer different questions and need not coincide numerically. We will write “CrI” rather than “CI” throughout to keep the distinction visible.</p>
 </section>
-<section id="the-model-in-two-pieces" class="level2" data-number="5.3">
-<h2 data-number="5.3" class="anchored" data-anchor-id="the-model-in-two-pieces"><span class="header-section-number">5.3</span> The model in two pieces</h2>
+<section id="the-model-in-two-pieces" class="level2" data-number="6.3">
+<h2 data-number="6.3" class="anchored" data-anchor-id="the-model-in-two-pieces"><span class="header-section-number">6.3</span> The model in two pieces</h2>
 <p>The BSTS counterfactual is</p>
 <p><span class="math display">\[Y_{1t} = \mu_t + \beta^\top x_t + \varepsilon_t, \quad t \le t^*\]</span></p>
 <p>where <span class="math inline">\(\mu_t\)</span> is a local-level trend, <span class="math inline">\(x_t\)</span> are the control-series regressors (other states’ <code>cigsale</code>, plus optional covariates), and <span class="math inline">\(t^*\)</span> is the intervention date. California’s outcome is <em>a slowly-evolving trend</em> <strong>plus</strong> <em>a linear combination of donor-state series</em> <strong>plus</strong> <em>a random error</em>.</p>
@@ -562,17 +568,17 @@ window.Quarto = {
 </div>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-bsts-counterfactual-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;5.1: Decomposition of the BSTS counterfactual: a local-level trend, a regression on donor cigsale + covariates, and random error sum to Ŷ₁ₜ, which is then subtracted from the observed series to give the policy effect.
+Figure&nbsp;6.1: Decomposition of the BSTS counterfactual: a local-level trend, a regression on donor cigsale + covariates, and random error sum to Ŷ₁ₜ, which is then subtracted from the observed series to give the policy effect.
 </figcaption>
 </figure>
 </div>
 </div>
 </div>
 <p>The trend <span class="math inline">\(\mu_t\)</span> absorbs the dynamics that no control series can explain; the regression term <span class="math inline">\(\beta^\top x_t\)</span> borrows information from the donor pool. After the model is fit on <span class="math inline">\(t \le t^*\)</span>, it is projected forward to give <span class="math inline">\(\widehat{Y_{1t}(0)}\)</span>, and the posterior over <span class="math inline">\(Y_{1t} - \widehat{Y_{1t}(0)}\)</span> gives the credible interval for the policy effect. Averaging that pointwise gap over the post-period yields <span class="math inline">\(\widehat{\tau}_{\text{BSTS}}\)</span>.</p>
-<p><strong>Contrast with classical synthetic control (chapter 4).</strong> This is the same donor-pool idea as classical synthetic control, but with a different prior over the weights <em>and</em> a different output object. Chapter 4 returns a single <strong>point estimate</strong> of the ATT plus a placebo rank; chapter 5 returns a full <strong>posterior distribution</strong> over the ATT, from which the point estimate <span class="math inline">\(\widehat{\tau}_{\text{BSTS}}\)</span> and the 95% CrI are just two summaries. The mechanical difference behind that is the constraint set: synthetic control constrains the weight vector <span class="math inline">\(w\)</span> to the unit simplex (non-negative, sum to one), so it gives <strong>convex</strong> weights (every “synthetic California” is a weighted average of donor states that lives inside their convex hull) and a Fisher exact <span class="math inline">\(p\)</span>-value from placebo permutation; BSTS lets <span class="math inline">\(\beta\)</span> be any sparse real-valued vector under the spike-and-slab prior, so it gives possibly <strong>negative</strong> coefficients <span class="math inline">\(\beta_j\)</span> (not weights <span class="math inline">\(w_j\)</span> — the two play analogous roles, but live on different supports) and a posterior credible interval. The two estimates need not agree, and when they disagree the reason almost always lives in this prior choice over <span class="math inline">\(w\)</span> versus <span class="math inline">\(\beta\)</span>.</p>
+<p><strong>Contrast with classical synthetic control (chapter 4).</strong> This is the same donor-pool idea as classical synthetic control, but with a different prior over the weights <em>and</em> a different output object. Chapter 4 returns a single <strong>point estimate</strong> of the ATT plus a placebo rank; chapter 6 returns a full <strong>posterior distribution</strong> over the ATT, from which the point estimate <span class="math inline">\(\widehat{\tau}_{\text{BSTS}}\)</span> and the 95% CrI are just two summaries. The mechanical difference behind that is the constraint set: synthetic control constrains the weight vector <span class="math inline">\(w\)</span> to the unit simplex (non-negative, sum to one), so it gives <strong>convex</strong> weights (every “synthetic California” is a weighted average of donor states that lives inside their convex hull) and a Fisher exact <span class="math inline">\(p\)</span>-value from placebo permutation; BSTS lets <span class="math inline">\(\beta\)</span> be any sparse real-valued vector under the spike-and-slab prior, so it gives possibly <strong>negative</strong> coefficients <span class="math inline">\(\beta_j\)</span> (not weights <span class="math inline">\(w_j\)</span> — the two play analogous roles, but live on different supports) and a posterior credible interval. The two estimates need not agree, and when they disagree the reason almost always lives in this prior choice over <span class="math inline">\(w\)</span> versus <span class="math inline">\(\beta\)</span>.</p>
 </section>
-<section id="setup-and-data" class="level2" data-number="5.4">
-<h2 data-number="5.4" class="anchored" data-anchor-id="setup-and-data"><span class="header-section-number">5.4</span> Setup and data</h2>
+<section id="setup-and-data" class="level2" data-number="6.4">
+<h2 data-number="6.4" class="anchored" data-anchor-id="setup-and-data"><span class="header-section-number">6.4</span> Setup and data</h2>
 <p><strong>Packages.</strong> <code>tidyverse</code> covers wrangling and plotting. <code>CausalImpact</code> is Google’s wrapper around the <code>bsts</code> (Bayesian Structural Time Series) package: it takes a wide matrix with the treated outcome in column 1 and donor series in the remaining columns, fits a Bayesian state-space model on the pre-period, projects forward as the counterfactual, and returns posterior means + 95% credible intervals on the pointwise and cumulative effects. <code>mice</code> <span class="citation" data-cites="vanbuuren2011mice">(<a href="references.html#ref-vanbuuren2011mice" role="doc-biblioref">Buuren &amp; Groothuis-Oudshoorn, 2011</a>)</span> provides multiple imputation by chained equations — we use its random-forest mode (here with <span class="math inline">\(m = 1\)</span>, so this is <em>single</em> random-forest imputation, i.e.&nbsp;one draw from what would otherwise be a multiple-imputation procedure) to fill the missing covariate values before pivoting to wide form. The <code>R/table_helpers.R</code> helper provides <code>gt_pretty()</code> for the summary table.</p>
 <div class="cell">
 <details class="code-fold">
@@ -608,8 +614,8 @@ Figure&nbsp;5.1: Decomposition of the BSTS counterfactual: a local-level trend, 
 </div>
 <p>The loaded <code>prop99</code> is the same 1,209-row × 7-column tibble used in chapter 4 (39 states × 31 years × the <code>cigsale</code> outcome and four covariates). The next section deals with the missing covariate values and the long-to-wide reshape that CausalImpact requires.</p>
 </section>
-<section id="imputation-and-wide-pivot" class="level2" data-number="5.5">
-<h2 data-number="5.5" class="anchored" data-anchor-id="imputation-and-wide-pivot"><span class="header-section-number">5.5</span> Imputation and wide pivot</h2>
+<section id="imputation-and-wide-pivot" class="level2" data-number="6.5">
+<h2 data-number="6.5" class="anchored" data-anchor-id="imputation-and-wide-pivot"><span class="header-section-number">6.5</span> Imputation and wide pivot</h2>
 <p>CausalImpact wants a <em>wide</em> dataset with the treated outcome in column 1 and every control series in the remaining columns. The covariate columns have missing values (<code>lnincome</code> is missing 16% of rows, <code>age15to24</code> 32%, <code>beer</code> 55%), so we fill them with single random-forest imputation from <code>mice</code>.</p>
 <div class="cell">
 <details class="code-fold">
@@ -639,8 +645,8 @@ Figure&nbsp;5.1: Decomposition of the BSTS counterfactual: a local-level trend, 
 </div>
 <p>The reported <code>dim()</code> confirms the reshape: <code>prop99_wide</code> is <strong>31 rows × 195 columns</strong> — one row per year 1970–2000, and 39 states × 5 variables in the columns (<code>cigsale_*</code>, <code>lnincome_*</code>, <code>beer_*</code>, <code>age15to24_*</code>, <code>retprice_*</code> for each of the 39 states), with <code>year</code> dropped and <code>cigsale_California</code> relocated to column 1 because that’s what <code>CausalImpact()</code> expects as the treated outcome.</p>
 </section>
-<section id="fit-the-bayesian-structural-ts-model" class="level2" data-number="5.6">
-<h2 data-number="5.6" class="anchored" data-anchor-id="fit-the-bayesian-structural-ts-model"><span class="header-section-number">5.6</span> Fit the Bayesian structural TS model</h2>
+<section id="fit-the-bayesian-structural-ts-model" class="level2" data-number="6.6">
+<h2 data-number="6.6" class="anchored" data-anchor-id="fit-the-bayesian-structural-ts-model"><span class="header-section-number">6.6</span> Fit the Bayesian structural TS model</h2>
 <p><strong>The fit.</strong> The chunk below calls <code>CausalImpact(prop99_wide, pre.period, post.period)</code> with the pre and post windows expressed as <em>integer row indices</em> (not years): row 1 is 1970, row 19 is 1988 (the last pre-period year), row 20 is 1989, row 31 is 2000. Under the hood, <code>CausalImpact</code> uses an MCMC sampler — by default 1,000 iterations with the first 100 discarded as burn-in. For a tutorial on 19 pre-period observations that default is fine, but production work should rerun with <code>model.args = list(niter = 10000)</code> and inspect convergence diagnostics (we add a few of these below). The returned <code>impact_full$summary</code> is a two-row data frame — one row for the <em>average</em> effect over 1989–2000 and one row for the <em>cumulative</em> effect — with posterior means and 95% credible bounds for each. The helper code below the <code>CausalImpact()</code> call just formats those columns into the table.</p>
 <div class="cell">
 <details class="code-fold">
@@ -682,7 +688,7 @@ Figure&nbsp;5.1: Decomposition of the BSTS counterfactual: a local-level trend, 
 <div id="tbl-causalimpact" class="cell quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-causalimpact-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Table&nbsp;5.1: CausalImpact posterior summary; brackets are 95% credible intervals.
+Table&nbsp;6.1: CausalImpact posterior summary; brackets are 95% credible intervals.
 </figcaption>
 <div aria-describedby="tbl-causalimpact-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output-display">
@@ -1179,8 +1185,8 @@ Table&nbsp;5.1: CausalImpact posterior summary; brackets are 95% credible interv
 <li><strong>Cumulative effect:</strong> <span class="math inline">\(\approx\)</span> -153.9 packs over 12 years, with 95% CrI <span class="math inline">\([\)</span> -385.3, 60.2 <span class="math inline">\(]\)</span>, or roughly 16% of what would have been expected absent the policy.</li>
 <li><strong>Posterior probability of any causal effect:</strong> <span class="math inline">\(\approx\)</span> 92%.</li>
 </ul>
-<section id="which-donors-did-the-spike-and-slab-pick" class="level3" data-number="5.6.1">
-<h3 data-number="5.6.1" class="anchored" data-anchor-id="which-donors-did-the-spike-and-slab-pick"><span class="header-section-number">5.6.1</span> Which donors did the spike-and-slab pick?</h3>
+<section id="which-donors-did-the-spike-and-slab-pick" class="level3" data-number="6.6.1">
+<h3 data-number="6.6.1" class="anchored" data-anchor-id="which-donors-did-the-spike-and-slab-pick"><span class="header-section-number">6.6.1</span> Which donors did the spike-and-slab pick?</h3>
 <p>With 194 candidate regressors and an <code>expected.model.size = 3</code> prior, most coefficients are shrunk to zero in most MCMC iterations. The natural diagnostic is the <strong>posterior inclusion probability</strong> <span class="math inline">\(\pi_j = \Pr(\beta_j \ne 0 \mid Y)\)</span> — for each column, the share of post-burn-in MCMC iterations in which the column’s coefficient was <em>not</em> in the spike. Calling <code>plot()</code> on the underlying <code>bsts</code> model with <code>"coefficients"</code> returns a horizontal bar plot of the top contributors.</p>
 <div class="cell">
 <details class="code-fold">
@@ -1191,10 +1197,10 @@ Table&nbsp;5.1: CausalImpact posterior summary; brackets are 95% credible interv
 <div id="fig-inclusion" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-inclusion-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="05-structural-bayesian-ts_files/figure-html/fig-inclusion-1.png" class="img-fluid figure-img" width="672">
+<img src="06-structural-bayesian-ts_files/figure-html/fig-inclusion-1.png" class="img-fluid figure-img" width="672">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-inclusion-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;5.2: Posterior inclusion probabilities for the donor regressors. Bars are the share of MCMC iterations in which each donor’s coefficient was non-zero; longer bars are the donors the spike-and-slab prior kept in the model. The colour indicates the posterior-mean sign of the coefficient when it is included.
+Figure&nbsp;6.2: Posterior inclusion probabilities for the donor regressors. Bars are the share of MCMC iterations in which each donor’s coefficient was non-zero; longer bars are the donors the spike-and-slab prior kept in the model. The colour indicates the posterior-mean sign of the coefficient when it is included.
 </figcaption>
 </figure>
 </div>
@@ -1202,8 +1208,8 @@ Figure&nbsp;5.2: Posterior inclusion probabilities for the donor regressors. Bar
 </div>
 <p>Notice that with 194 candidate columns and a prior that expects only 3 of them to matter, the inclusion probabilities <span class="math inline">\(\pi_j\)</span> are individually low — even the top donor sits around 5–10%, not at the 80–100% levels you might see in a more identified problem. The top contributors here are typically <em>covariate</em> columns (state-level <code>retprice</code>, <code>age15to24</code>, <code>beer</code>) rather than the raw donor <code>cigsale_*</code> series — a striking contrast with chapter 4, where the simplex weights <span class="math inline">\(w_j\)</span> placed all the mass on Utah, Nevada, Montana, Colorado, and Connecticut’s <em>cigarette-sales</em> series. Two warnings carry over from chapter 4: (i) a high <span class="math inline">\(\pi_j\)</span> does <em>not</em> mean a donor is “causally similar” to California — it means the donor’s column is useful for <em>predicting</em> California pre-1989; and (ii) unlike SC’s simplex weights, BSTS coefficients <span class="math inline">\(\beta_j\)</span> can be negative, so a column with a high <span class="math inline">\(\pi_j\)</span> and a negative posterior-mean coefficient is being used as a <em>contrast</em> rather than as a positive ingredient.</p>
 </section>
-<section id="mcmc-convergence-diagnostics" class="level3" data-number="5.6.2">
-<h3 data-number="5.6.2" class="anchored" data-anchor-id="mcmc-convergence-diagnostics"><span class="header-section-number">5.6.2</span> MCMC convergence diagnostics</h3>
+<section id="mcmc-convergence-diagnostics" class="level3" data-number="6.6.2">
+<h3 data-number="6.6.2" class="anchored" data-anchor-id="mcmc-convergence-diagnostics"><span class="header-section-number">6.6.2</span> MCMC convergence diagnostics</h3>
 <p>With only 1,000 iterations (the default) and 19 pre-period observations, it’s worth sanity-checking that the sampler has actually converged before reading the credible interval off the screen. Two cheap checks: a visual one on the state-space components, and a numerical one on the regression coefficients of the donors that are <em>most often</em> included in the model.</p>
 <div class="cell">
 <details class="code-fold">
@@ -1214,10 +1220,10 @@ Figure&nbsp;5.2: Posterior inclusion probabilities for the donor regressors. Bar
 <div id="fig-bsts-components" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-bsts-components-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="05-structural-bayesian-ts_files/figure-html/fig-bsts-components-1.png" class="img-fluid figure-img" width="672">
+<img src="06-structural-bayesian-ts_files/figure-html/fig-bsts-components-1.png" class="img-fluid figure-img" width="672">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-bsts-components-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;5.3: BSTS state-space components: trend (μₜ) and the contribution of the regression term. A visually flat, mean-reverting residual is consistent with sampler convergence; obvious drift or stickiness is not.
+Figure&nbsp;6.3: BSTS state-space components: trend (μₜ) and the contribution of the regression term. A visually flat, mean-reverting residual is consistent with sampler convergence; obvious drift or stickiness is not.
 </figcaption>
 </figure>
 </div>
@@ -1274,7 +1280,7 @@ Figure&nbsp;5.3: BSTS state-space components: trend (μₜ) and the contribution
 <div id="tbl-mcmc-diagnostics" class="cell quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-mcmc-diagnostics-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Table&nbsp;5.2: Convergence diagnostics for the donor regressors with the highest posterior inclusion probability. Rhat near 1.0 and ESS well above 100 are the standard rules of thumb; values far from these warrant a longer chain via <code>model.args = list(niter = 10000)</code>.
+Table&nbsp;6.2: Convergence diagnostics for the donor regressors with the highest posterior inclusion probability. Rhat near 1.0 and ESS well above 100 are the standard rules of thumb; values far from these warrant a longer chain via <code>model.args = list(niter = 10000)</code>.
 </figcaption>
 <div aria-describedby="tbl-mcmc-diagnostics-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output-display">
@@ -1785,8 +1791,8 @@ Table&nbsp;5.2: Convergence diagnostics for the donor regressors with the highes
 </div>
 <p>For 1,000 default iterations the components plot should look stable and the Rhat values should sit near 1; ESS values in the low hundreds are tolerable for a tutorial but on the thin side for publication. Re-running with <code>model.args = list(niter = 10000)</code> is the easy upgrade.</p>
 </section>
-<section id="what-if-we-drop-the-covariates" class="level3" data-number="5.6.3">
-<h3 data-number="5.6.3" class="anchored" data-anchor-id="what-if-we-drop-the-covariates"><span class="header-section-number">5.6.3</span> What if we drop the covariates?</h3>
+<section id="what-if-we-drop-the-covariates" class="level3" data-number="6.6.3">
+<h3 data-number="6.6.3" class="anchored" data-anchor-id="what-if-we-drop-the-covariates"><span class="header-section-number">6.6.3</span> What if we drop the covariates?</h3>
 <p>The covariate columns are heavily imputed (<code>beer</code> was 55% missing). A natural robustness check is to re-fit using only other states’ <code>cigsale</code> series — a leaner donor pool that lets us see how much of the headline result is driven by the covariates. We rebuild a covariate-free wide matrix from the <em>original, un-imputed</em> <code>prop99</code> (so no imputation enters this fit at all) and pass it through <code>CausalImpact</code> with the same pre/post windows.</p>
 <div class="cell">
 <details class="code-fold">
@@ -1821,7 +1827,7 @@ Table&nbsp;5.2: Convergence diagnostics for the donor regressors with the highes
 <div id="tbl-causalimpact-nocov" class="cell quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-causalimpact-nocov-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Table&nbsp;5.3: CausalImpact fit with only donor <code>cigsale</code> columns (no imputed covariates).
+Table&nbsp;6.3: CausalImpact fit with only donor <code>cigsale</code> columns (no imputed covariates).
 </figcaption>
 <div aria-describedby="tbl-causalimpact-nocov-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output-display">
@@ -2315,8 +2321,8 @@ Table&nbsp;5.3: CausalImpact fit with only donor <code>cigsale</code> columns (n
 <p>Without covariates the donor matrix collapses to 38 columns (one <code>cigsale</code> per donor state), so the spike-and-slab now selects among states only. Compared to the covariate fit above, the point estimate typically moves a few packs and the posterior probability of a non-zero effect shifts accordingly — the covariates absorb some of the variation the simpler model was attributing to Proposition 99, which can be read as either “added robustness” or “watered-down signal” depending on how much you trust the imputed beer-and-income covariates.</p>
 </section>
 </section>
-<section id="the-two-panel-diagnostic" class="level2" data-number="5.7">
-<h2 data-number="5.7" class="anchored" data-anchor-id="the-two-panel-diagnostic"><span class="header-section-number">5.7</span> The two-panel diagnostic</h2>
+<section id="the-two-panel-diagnostic" class="level2" data-number="6.7">
+<h2 data-number="6.7" class="anchored" data-anchor-id="the-two-panel-diagnostic"><span class="header-section-number">6.7</span> The two-panel diagnostic</h2>
 <p><strong>What to look for.</strong> Calling <code>plot()</code> on a <code>CausalImpact</code> object returns its default two-panel figure: the <strong>top panel</strong> shows observed California (solid line) against the Bayesian counterfactual (dashed) with its 95% credible band; the <strong>bottom panel</strong> shows the <em>cumulative</em> gap — the running sum of <code>observed − counterfactual</code> from the intervention date onwards, with its own credible band. Read the top panel for whether and when the policy effect opens up, and the bottom panel for whether the cumulative effect’s credible band excludes zero by the end of the series.</p>
 <div class="cell">
 <details class="code-fold">
@@ -2327,10 +2333,10 @@ Table&nbsp;5.3: CausalImpact fit with only donor <code>cigsale</code> columns (n
 <div id="fig-causalimpact" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-causalimpact-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="05-structural-bayesian-ts_files/figure-html/fig-causalimpact-1.png" class="img-fluid figure-img" width="768">
+<img src="06-structural-bayesian-ts_files/figure-html/fig-causalimpact-1.png" class="img-fluid figure-img" width="768">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-causalimpact-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;5.4: CausalImpact two-panel: pointwise observed vs Bayesian counterfactual, and cumulative effect over time.
+Figure&nbsp;6.4: CausalImpact two-panel: pointwise observed vs Bayesian counterfactual, and cumulative effect over time.
 </figcaption>
 </figure>
 </div>
@@ -2338,20 +2344,20 @@ Figure&nbsp;5.4: CausalImpact two-panel: pointwise observed vs Bayesian counterf
 </div>
 <p>The top panel shows the pointwise picture: observed California opens a steady gap below the Bayesian counterfactual starting in 1989, with a 95% credible band that widens as we forecast further from the training window. The bottom panel cumulates that gap over time. By 2000 the cumulative effect is approximately -153.9 packs/capita with a 95% credible interval of <span class="math inline">\([\)</span> -385.3, 60.2 <span class="math inline">\(]\)</span> — wide enough that zero sits inside the band, which is why the headline posterior probability of a non-zero effect is only <span class="math inline">\(\approx\)</span> 92%, not the <span class="math inline">\(&gt; 99\%\)</span> the eyeball test of the top panel might suggest. This is the gap between <em>pointwise</em> certainty (the dashed line is clearly above the solid one) and <em>cumulative</em> certainty (twelve consecutive partly-overlapping pointwise bands compound into a wider cumulative band).</p>
 </section>
-<section id="common-pitfall" class="level2" data-number="5.8">
-<h2 data-number="5.8" class="anchored" data-anchor-id="common-pitfall"><span class="header-section-number">5.8</span> Common pitfall</h2>
+<section id="common-pitfall" class="level2" data-number="6.8">
+<h2 data-number="6.8" class="anchored" data-anchor-id="common-pitfall"><span class="header-section-number">6.8</span> Common pitfall</h2>
 <p>Imputing missing covariates without thinking about the imputation model. The random-forest fill we use here is a single-imputation shortcut for tutorial speed. With multiple imputation (<span class="math inline">\(m &gt; 1\)</span>) or a different model, the estimate can move by 1–3 packs. Two concrete failure modes are worth spelling out, because they affect the credibility of the headline number rather than just its width.</p>
 <p><strong>Example 1 — Imputing donor covariates with a model that “sees” California.</strong> Our <code>mice(prop99, ...)</code> call passes the entire panel — California rows included — into the imputation model. For this dataset, with only four covariates and most missingness clustered in <code>beer</code> (≈55%) and <code>age15to24</code> (≈32%) on donor states, the consequence is usually mild. But if you were to feed the <em>full panel with the post-period California outcome attached</em> into an imputer that also uses <code>cigsale</code> as a predictor, the imputer could learn from California’s post-1989 trajectory and propagate that information back into donor states’ missing covariate cells. CausalImpact would then build a counterfactual that mechanically tracks California’s post-period — biasing the estimated effect <em>toward zero</em> by construction. The safe pattern is to impute donor covariates <em>before</em> the treated outcome is in scope, or to drop the treated unit from the imputer entirely and impute donors only.</p>
 <p><strong>Example 2 — Single (<code>m = 1</code>) vs multiple (<code>m = 5</code>) imputation.</strong> Single imputation treats the imputed values as if they were observed, then propagates that pretend-observed dataset through <code>CausalImpact</code>. The posterior credible band you get back is the model’s uncertainty <em>given</em> the imputed cells — it knows nothing about the uncertainty <em>introduced by the imputation itself</em>. With proper multiple imputation (<code>mice(..., m = 5)</code> and Rubin’s-rules pooling across the five resulting fits), the credible band widens by roughly 1–3 packs on this dataset because the across-imputation variance is added to the within-imputation variance. The point estimate barely moves; the interval does. For a tutorial we keep <code>m = 1</code> for speed and clarity, but a published number should use <code>m ≥ 5</code> and report a pooled estimate.</p>
 <p><strong>Example 3 — Posterior inclusion probabilities are not causal weights.</strong> As in chapter 4’s V-matrix, a donor state with high <span class="math inline">\(\pi_j\)</span> is one that is <em>useful for predicting California’s pre-period sales</em>, not one that is <em>causally similar</em> to California. The two are correlated but they are not the same; reading the inclusion-probability plot as a “ranking of causally-similar states” is the same mistake chapter 4 warned about with the V matrix. And <span class="math inline">\(\pi_j\)</span> should never be plotted on the same axis as chapter 4’s <span class="math inline">\(w_j\)</span> — they are not the same quantity, only analogous diagnostics.</p>
 <p><strong>Example 4 — No MCMC convergence check.</strong> It is easy to take the 95% credible interval at face value without ever asking whether the sampler that produced it has converged. The default 1,000 iterations is on the thin side for a 195-column donor pool, and the diagnostics chunk above (Rhat, ESS, components plot) is the minimum honest check. If Rhat is well above 1 or ESS for a top donor is in the single digits, the credible band is not yet a credible posterior — rerun with <code>model.args = list(niter = 10000)</code>.</p>
 </section>
-<section id="where-to-next" class="level2" data-number="5.9">
-<h2 data-number="5.9" class="anchored" data-anchor-id="where-to-next"><span class="header-section-number">5.9</span> Where to next</h2>
-<p>The credible interval around <span class="math inline">\(\widehat{\tau}_{\text{BSTS}}\)</span> here is a Bayesian object — its width depends on the prior. The natural follow-up question is whether a <strong>frequentist</strong> prediction interval, built without a prior over donor weights, would tell the same story. Chapter 6 answers that with the <code>scpi</code> framework of <span class="citation" data-cites="cattaneo2021prediction">Cattaneo et al. (<a href="references.html#ref-cattaneo2021prediction" role="doc-biblioref">2021</a>)</span> and <span class="citation" data-cites="cattaneo2025scpi">Cattaneo et al. (<a href="references.html#ref-cattaneo2025scpi" role="doc-biblioref">2025</a>)</span>, which constructs a finite-sample prediction interval around the <em>synthetic-control</em> counterfactual from chapter 4 by separating in-sample weight uncertainty from out-of-sample forecast error.</p>
+<section id="where-to-next" class="level2" data-number="6.9">
+<h2 data-number="6.9" class="anchored" data-anchor-id="where-to-next"><span class="header-section-number">6.9</span> Where to next</h2>
+<p>The credible interval around <span class="math inline">\(\widehat{\tau}_{\text{BSTS}}\)</span> here is a Bayesian object — its width depends on the prior. The natural follow-up question is whether a <strong>frequentist</strong> prediction interval, built without a prior over donor weights, would tell the same story. Chapter 7 answers that with the <code>scpi</code> framework of <span class="citation" data-cites="cattaneo2021prediction">Cattaneo et al. (<a href="references.html#ref-cattaneo2021prediction" role="doc-biblioref">2021</a>)</span> and <span class="citation" data-cites="cattaneo2025scpi">Cattaneo et al. (<a href="references.html#ref-cattaneo2025scpi" role="doc-biblioref">2025</a>)</span>, which constructs a finite-sample prediction interval around the <em>synthetic-control</em> counterfactual from chapter 4 by separating in-sample weight uncertainty from out-of-sample forecast error.</p>
 </section>
-<section id="key-takeaways" class="level2" data-number="5.10">
-<h2 data-number="5.10" class="anchored" data-anchor-id="key-takeaways"><span class="header-section-number">5.10</span> Key takeaways</h2>
+<section id="key-takeaways" class="level2" data-number="6.10">
+<h2 data-number="6.10" class="anchored" data-anchor-id="key-takeaways"><span class="header-section-number">6.10</span> Key takeaways</h2>
 <p><strong>Methods:</strong></p>
 <ul>
 <li>Bayesian structural time series (BSTS) — implemented in <code>CausalImpact</code> — fits a state-space model <span class="math inline">\(Y_{1t} = \mu_t + \beta^\top x_t + \varepsilon_t\)</span> on the pre-period, where <span class="math inline">\(\mu_t\)</span> is a local-level trend and <span class="math inline">\(\beta^\top x_t\)</span> is a regression on donor-state series and covariates; projecting the fit forward yields the posterior counterfactual <span class="math inline">\(\widehat{Y_{1t}(0)}\)</span>, and averaging <span class="math inline">\(Y_{1t} - \widehat{Y_{1t}(0)}\)</span> over the post-period gives the posterior-mean ATT <span class="math inline">\(\widehat{\tau}_{\text{BSTS}}\)</span>.</li>
@@ -2371,8 +2377,8 @@ Figure&nbsp;5.4: CausalImpact two-panel: pointwise observed vs Bayesian counterf
 <li>With 19 pre-period observations and 1,000 default MCMC iterations, convergence is not automatic — Rhat near 1 and ESS in the low hundreds are the minimum honest check, and <code>model.args = list(niter = 10000)</code> is the cheap upgrade for any non-tutorial use. As in chapter 4, high posterior inclusion probability <span class="math inline">\(\pi_j\)</span> means a donor <em>predicts</em> California well, not that it is causally similar.</li>
 </ul>
 </section>
-<section id="further-reading" class="level2" data-number="5.11">
-<h2 data-number="5.11" class="anchored" data-anchor-id="further-reading"><span class="header-section-number">5.11</span> Further reading</h2>
+<section id="further-reading" class="level2" data-number="6.11">
+<h2 data-number="6.11" class="anchored" data-anchor-id="further-reading"><span class="header-section-number">6.11</span> Further reading</h2>
 <ul>
 <li><span class="citation" data-cites="brodersen2015inferring">Brodersen et al. (<a href="references.html#ref-brodersen2015inferring" role="doc-biblioref">2015</a>)</span> — the original <code>CausalImpact</code> paper.</li>
 <li><span class="citation" data-cites="brodersen-causalimpact-talk">Brodersen (<a href="references.html#ref-brodersen-causalimpact-talk" role="doc-biblioref">2015</a>)</span> — a 50-minute walk-through of the CausalImpact intuition by the package’s lead author.</li>
@@ -2382,11 +2388,11 @@ Figure&nbsp;5.4: CausalImpact two-panel: pointwise observed vs Bayesian counterf
 <li><span class="citation" data-cites="vanbuuren2011mice">Buuren &amp; Groothuis-Oudshoorn (<a href="references.html#ref-vanbuuren2011mice" role="doc-biblioref">2011</a>)</span> — the <code>mice</code> package and the multiple-imputation-by-chained-equations framework, including why <span class="math inline">\(m = 1\)</span> is a shortcut and not the recommended default.</li>
 </ul>
 </section>
-<section id="exercises" class="level2" data-number="5.12">
-<h2 data-number="5.12" class="anchored" data-anchor-id="exercises"><span class="header-section-number">5.12</span> Exercises</h2>
+<section id="exercises" class="level2" data-number="6.12">
+<h2 data-number="6.12" class="anchored" data-anchor-id="exercises"><span class="header-section-number">6.12</span> Exercises</h2>
 <p>These exercises stretch the chapter’s “what could move this credible interval?” question: change the MCMC budget, change the intervention date (placebo), interrogate the forecast-horizon uncertainty, derive the posterior probability of an effect from the raw posterior <span class="math inline">\(p\)</span>, and finally run the <em>proper</em> multiple-imputation pipeline that the “Common pitfall” section warned against skipping. All exercises reuse <code>prop99</code>, <code>prop99_wide</code>, <code>impact_full</code>, <code>pre_idx</code>, and <code>post_idx</code> from the setup chunks above.</p>
-<section id="exercise-1-mcmc-iteration-sensitivity" class="level3" data-number="5.12.1">
-<h3 data-number="5.12.1" class="anchored" data-anchor-id="exercise-1-mcmc-iteration-sensitivity"><span class="header-section-number">5.12.1</span> Exercise 1: MCMC iteration sensitivity</h3>
+<section id="exercise-1-mcmc-iteration-sensitivity" class="level3" data-number="6.12.1">
+<h3 data-number="6.12.1" class="anchored" data-anchor-id="exercise-1-mcmc-iteration-sensitivity"><span class="header-section-number">6.12.1</span> Exercise 1: MCMC iteration sensitivity</h3>
 <p>The chapter’s default fit uses <code>CausalImpact</code>’s default 1,000 MCMC iterations. Refit with <code>niter = 200</code> (deliberately under-sampled) and <code>niter = 2000</code> (a more honest setting), and compare the average-effect 95% credible-interval widths. How sensitive is the headline interval to MCMC budget?</p>
 <div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
@@ -2923,8 +2929,8 @@ Figure&nbsp;5.4: CausalImpact two-panel: pointwise observed vs Bayesian counterf
 </div>
 </div>
 </section>
-<section id="exercise-2-in-time-placebo-at-1985" class="level3" data-number="5.12.2">
-<h3 data-number="5.12.2" class="anchored" data-anchor-id="exercise-2-in-time-placebo-at-1985"><span class="header-section-number">5.12.2</span> Exercise 2: In-time placebo at 1985</h3>
+<section id="exercise-2-in-time-placebo-at-1985" class="level3" data-number="6.12.2">
+<h3 data-number="6.12.2" class="anchored" data-anchor-id="exercise-2-in-time-placebo-at-1985"><span class="header-section-number">6.12.2</span> Exercise 2: In-time placebo at 1985</h3>
 <p>Refit <code>CausalImpact</code> pretending the intervention was 1985 instead of 1989, with the panel restricted to pre-1989 data so the real policy can never enter the training window. The pseudo-post window is 1986–1988 (3 years). If BSTS is well calibrated, the placebo “ATT” should be small in absolute value.</p>
 <div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
@@ -3451,8 +3457,8 @@ Figure&nbsp;5.4: CausalImpact two-panel: pointwise observed vs Bayesian counterf
 </div>
 </div>
 </section>
-<section id="exercise-3-pointwise-credible-band-width-by-post-year" class="level3" data-number="5.12.3">
-<h3 data-number="5.12.3" class="anchored" data-anchor-id="exercise-3-pointwise-credible-band-width-by-post-year"><span class="header-section-number">5.12.3</span> Exercise 3: Pointwise credible-band width by post-year</h3>
+<section id="exercise-3-pointwise-credible-band-width-by-post-year" class="level3" data-number="6.12.3">
+<h3 data-number="6.12.3" class="anchored" data-anchor-id="exercise-3-pointwise-credible-band-width-by-post-year"><span class="header-section-number">6.12.3</span> Exercise 3: Pointwise credible-band width by post-year</h3>
 <p>The 95% pointwise credible band on the counterfactual widens as the forecast horizon grows — a textbook property of state-space models. Extract the per-year band from <code>impact_full$series</code> and plot the band width by year. By 2000, how much wider is the band than in 1989?</p>
 <div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
@@ -3485,7 +3491,7 @@ Figure&nbsp;5.4: CausalImpact two-panel: pointwise observed vs Bayesian counterf
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="05-structural-bayesian-ts_files/figure-html/ex-ch05-03-1.png" class="img-fluid figure-img" width="768"></p>
+<p><img src="06-structural-bayesian-ts_files/figure-html/ex-ch05-03-1.png" class="img-fluid figure-img" width="768"></p>
 </figure>
 </div>
 </div>
@@ -3974,8 +3980,8 @@ Figure&nbsp;5.4: CausalImpact two-panel: pointwise observed vs Bayesian counterf
 </div>
 </div>
 </section>
-<section id="exercise-4-from-posterior-p-to-probability-of-any-effect" class="level3" data-number="5.12.4">
-<h3 data-number="5.12.4" class="anchored" data-anchor-id="exercise-4-from-posterior-p-to-probability-of-any-effect"><span class="header-section-number">5.12.4</span> Exercise 4: From posterior <span class="math inline">\(p\)</span> to “probability of any effect”</h3>
+<section id="exercise-4-from-posterior-p-to-probability-of-any-effect" class="level3" data-number="6.12.4">
+<h3 data-number="6.12.4" class="anchored" data-anchor-id="exercise-4-from-posterior-p-to-probability-of-any-effect"><span class="header-section-number">6.12.4</span> Exercise 4: From posterior <span class="math inline">\(p\)</span> to “probability of any effect”</h3>
 <p>The chapter quotes “posterior probability of any causal effect ≈ 92%.” That number does not appear directly in the <code>impact_full$summary</code> table — it is <span class="math inline">\(1 - p\)</span>, where <code>p</code> is the <em>posterior tail probability</em> that the simulated counterfactual is as extreme as the observed series under the fitted model (i.e.&nbsp;the share of posterior draws of <span class="math inline">\(\widehat{Y_{1t}(0)}\)</span> summed over the post-period that lie on the <em>same side</em> as the observed sum). Verify this by extracting <code>impact_full$summary$p</code> and computing <span class="math inline">\(1 - p\)</span> for both horizons.</p>
 <div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
@@ -4480,8 +4486,8 @@ Figure&nbsp;5.4: CausalImpact two-panel: pointwise observed vs Bayesian counterf
 </div>
 </div>
 </section>
-<section id="exercise-5-stretch-proper-multiple-imputation-with-rubins-rules-pooling" class="level3" data-number="5.12.5">
-<h3 data-number="5.12.5" class="anchored" data-anchor-id="exercise-5-stretch-proper-multiple-imputation-with-rubins-rules-pooling"><span class="header-section-number">5.12.5</span> Exercise 5 (stretch): Proper multiple imputation with Rubin’s-rules pooling</h3>
+<section id="exercise-5-stretch-proper-multiple-imputation-with-rubins-rules-pooling" class="level3" data-number="6.12.5">
+<h3 data-number="6.12.5" class="anchored" data-anchor-id="exercise-5-stretch-proper-multiple-imputation-with-rubins-rules-pooling"><span class="header-section-number">6.12.5</span> Exercise 5 (stretch): Proper multiple imputation with Rubin’s-rules pooling</h3>
 <p>The chapter’s <span class="math inline">\(m = 1\)</span> fill is a shortcut that the “Common pitfall” section explicitly flags as anti-conservative. Run <strong>proper</strong> multiple imputation with <span class="math inline">\(m = 5\)</span> random-forest completions, fit <code>CausalImpact</code> on each, and pool the average-effect point estimate and 95% interval using <strong>Rubin’s rules</strong>. Compare the pooled interval to the chapter’s <span class="math inline">\(m = 1\)</span> interval.</p>
 <div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
@@ -5531,13 +5537,13 @@ Scott, S. L., &amp; Varian, H. R. (2014). Predicting the present with <span>Baye
   </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./04-classical-synthetic-control.html" class="pagination-link" aria-label="Classical Synthetic Control">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Classical Synthetic Control</span></span>
+      <a href="./05-augmented-synthetic-control.html" class="pagination-link" aria-label="Augmented Synthetic Control">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Augmented Synthetic Control</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./06-synthetic-control-prediction-intervals.html" class="pagination-link" aria-label="Synthetic Control with Prediction Intervals">
-        <span class="nav-page-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Synthetic Control with Prediction Intervals</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="./07-synthetic-control-prediction-intervals.html" class="pagination-link" aria-label="Synthetic Control with Prediction Intervals">
+        <span class="nav-page-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Synthetic Control with Prediction Intervals</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
@@ -5555,7 +5561,7 @@ Scott, S. L., &amp; Varian, H. R. (2014). Predicting the present with <span>Baye
 <span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a><span class="fu">## The BSTS / CausalImpact idea</span></span>
 <span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a>Fit a **Bayesian structural time-series (BSTS)** model on the pre-period. Use *other states' cigarette sales* (and optionally covariates) as predictors. Project the fitted model forward as the counterfactual. The posterior over (observed − projected) gives a credible interval for the policy effect. We will write the resulting point estimate as $\widehat{\tau}_{\text{BSTS}}$ — the posterior-mean ATT — to keep it distinct from chapter 4's simplex-weight estimator and chapter 6's <span class="in">`scpi`</span> prediction-interval estimator.</span>
+<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a>Chapter 4 built California's counterfactual from a *convex* blend of donors and chapter 5 bias-corrected that blend with a ridge outcome model; this chapter borrows the donor information a third way. Fit a **Bayesian structural time-series (BSTS)** model on the pre-period. Use *other states' cigarette sales* (and optionally covariates) as predictors. Project the fitted model forward as the counterfactual. The posterior over (observed − projected) gives a credible interval for the policy effect. We will write the resulting point estimate as $\widehat{\tau}_{\text{BSTS}}$ — the posterior-mean ATT — to keep it distinct from chapter 4's simplex-weight estimator and chapter 7's <span class="in">`scpi`</span> prediction-interval estimator.</span>
 <span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb17-17"><a href="#cb17-17" aria-hidden="true" tabindex="-1"></a>This is the only method in the book that delivers a *credible* interval (CrI) — a direct probability statement about the parameter. Concretely, the 95% **credible interval** that `CausalImpact` reports is a Bayesian object: "given the model and the data, there is a 95% posterior probability that the effect lies in this range". This is **not** a frequentist 95% confidence interval, which would instead say "if we re-ran the entire study many times, 95% of the intervals we construct would cover the true effect". The two answer different questions and need not coincide numerically. We will write "CrI" rather than "CI" throughout to keep the distinction visible.</span>
 <span id="cb17-18"><a href="#cb17-18" aria-hidden="true" tabindex="-1"></a></span>
@@ -5594,7 +5600,7 @@ Scott, S. L., &amp; Varian, H. R. (2014). Predicting the present with <span>Baye
 <span id="cb17-53"><a href="#cb17-53" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb17-54"><a href="#cb17-54" aria-hidden="true" tabindex="-1"></a>The trend $\mu_t$ absorbs the dynamics that no control series can explain; the regression term $\beta^\top x_t$ borrows information from the donor pool. After the model is fit on $t \le t^*$, it is projected forward to give $\widehat{Y_{1t}(0)}$, and the posterior over $Y_{1t} - \widehat{Y_{1t}(0)}$ gives the credible interval for the policy effect. Averaging that pointwise gap over the post-period yields $\widehat{\tau}_{\text{BSTS}}$.</span>
 <span id="cb17-55"><a href="#cb17-55" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-56"><a href="#cb17-56" aria-hidden="true" tabindex="-1"></a>**Contrast with classical synthetic control (chapter 4).** This is the same donor-pool idea as classical synthetic control, but with a different prior over the weights *and* a different output object. Chapter 4 returns a single **point estimate** of the ATT plus a placebo rank; chapter 5 returns a full **posterior distribution** over the ATT, from which the point estimate $\widehat{\tau}_{\text{BSTS}}$ and the 95% CrI are just two summaries. The mechanical difference behind that is the constraint set: synthetic control constrains the weight vector $w$ to the unit simplex (non-negative, sum to one), so it gives **convex** weights (every "synthetic California" is a weighted average of donor states that lives inside their convex hull) and a Fisher exact $p$-value from placebo permutation; BSTS lets $\beta$ be any sparse real-valued vector under the spike-and-slab prior, so it gives possibly **negative** coefficients $\beta_j$ (not weights $w_j$ — the two play analogous roles, but live on different supports) and a posterior credible interval. The two estimates need not agree, and when they disagree the reason almost always lives in this prior choice over $w$ versus $\beta$.</span>
+<span id="cb17-56"><a href="#cb17-56" aria-hidden="true" tabindex="-1"></a>**Contrast with classical synthetic control (chapter 4).** This is the same donor-pool idea as classical synthetic control, but with a different prior over the weights *and* a different output object. Chapter 4 returns a single **point estimate** of the ATT plus a placebo rank; chapter 6 returns a full **posterior distribution** over the ATT, from which the point estimate $\widehat{\tau}_{\text{BSTS}}$ and the 95% CrI are just two summaries. The mechanical difference behind that is the constraint set: synthetic control constrains the weight vector $w$ to the unit simplex (non-negative, sum to one), so it gives **convex** weights (every "synthetic California" is a weighted average of donor states that lives inside their convex hull) and a Fisher exact $p$-value from placebo permutation; BSTS lets $\beta$ be any sparse real-valued vector under the spike-and-slab prior, so it gives possibly **negative** coefficients $\beta_j$ (not weights $w_j$ — the two play analogous roles, but live on different supports) and a posterior credible interval. The two estimates need not agree, and when they disagree the reason almost always lives in this prior choice over $w$ versus $\beta$.</span>
 <span id="cb17-57"><a href="#cb17-57" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb17-58"><a href="#cb17-58" aria-hidden="true" tabindex="-1"></a><span class="fu">## Setup and data</span></span>
 <span id="cb17-59"><a href="#cb17-59" aria-hidden="true" tabindex="-1"></a></span>
@@ -5879,7 +5885,7 @@ Scott, S. L., &amp; Varian, H. R. (2014). Predicting the present with <span>Baye
 <span id="cb17-358"><a href="#cb17-358" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb17-359"><a href="#cb17-359" aria-hidden="true" tabindex="-1"></a><span class="fu">## Where to next</span></span>
 <span id="cb17-360"><a href="#cb17-360" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-361"><a href="#cb17-361" aria-hidden="true" tabindex="-1"></a>The credible interval around $\widehat{\tau}_{\text{BSTS}}$ here is a Bayesian object — its width depends on the prior. The natural follow-up question is whether a **frequentist** prediction interval, built without a prior over donor weights, would tell the same story. Chapter 6 answers that with the <span class="in">`scpi`</span> framework of @cattaneo2021prediction and @cattaneo2025scpi, which constructs a finite-sample prediction interval around the *synthetic-control* counterfactual from chapter 4 by separating in-sample weight uncertainty from out-of-sample forecast error.</span>
+<span id="cb17-361"><a href="#cb17-361" aria-hidden="true" tabindex="-1"></a>The credible interval around $\widehat{\tau}_{\text{BSTS}}$ here is a Bayesian object — its width depends on the prior. The natural follow-up question is whether a **frequentist** prediction interval, built without a prior over donor weights, would tell the same story. Chapter 7 answers that with the <span class="in">`scpi`</span> framework of @cattaneo2021prediction and @cattaneo2025scpi, which constructs a finite-sample prediction interval around the *synthetic-control* counterfactual from chapter 4 by separating in-sample weight uncertainty from out-of-sample forecast error.</span>
 <span id="cb17-362"><a href="#cb17-362" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb17-363"><a href="#cb17-363" aria-hidden="true" tabindex="-1"></a><span class="fu">## Key takeaways</span></span>
 <span id="cb17-364"><a href="#cb17-364" aria-hidden="true" tabindex="-1"></a></span>
@@ -6104,7 +6110,7 @@ Scott, S. L., &amp; Varian, H. R. (2014). Predicting the present with <span>Baye
 </code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
-<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/quarcs-lab/ccm/edit/main/05-structural-bayesian-ts.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/quarcs-lab/ccm/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer><script>
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/quarcs-lab/ccm/edit/main/06-structural-bayesian-ts.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/quarcs-lab/ccm/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer><script>
 document.addEventListener('DOMContentLoaded', function() {
   var tocNav = document.getElementById('TOC');
   if (tocNav) {

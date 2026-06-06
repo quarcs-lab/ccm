@@ -85,7 +85,7 @@ div.csl-indent {
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./05-structural-bayesian-ts.html" rel="next">
+<link href="./05-augmented-synthetic-control.html" rel="next">
 <link href="./03-basic-diff-in-diff.html" rel="prev">
 <link href="./images/favicon.svg" rel="icon" type="image/svg+xml">
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
@@ -415,38 +415,44 @@ window.Quarto = {
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./05-structural-bayesian-ts.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Structural Bayesian Time Series</span></span></a>
+  <a href="./05-augmented-synthetic-control.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Augmented Synthetic Control</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./06-synthetic-control-prediction-intervals.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Synthetic Control with Prediction Intervals</span></span></a>
+  <a href="./06-structural-bayesian-ts.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Structural Bayesian Time Series</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./07-bayesian-spatial-sc.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Bayesian Spatial Synthetic Control</span></span></a>
+  <a href="./07-synthetic-control-prediction-intervals.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Synthetic Control with Prediction Intervals</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./08-staggered-did.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Staggered Differences-in-Differences</span></span></a>
+  <a href="./08-bayesian-spatial-sc.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Bayesian Spatial Synthetic Control</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./09-matrix-completion-and-ife.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Interactive Fixed Effects and Matrix Completion</span></span></a>
+  <a href="./09-staggered-did.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Staggered Differences-in-Differences</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./10-gsynth.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Generalized Synthetic Control</span></span></a>
+  <a href="./10-matrix-completion-and-ife.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Interactive Fixed Effects and Matrix Completion</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./11-gsynth.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Generalized Synthetic Control</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -526,7 +532,7 @@ window.Quarto = {
 <section id="learning-objectives" class="level2" data-number="4.1">
 <h2 data-number="4.1" class="anchored" data-anchor-id="learning-objectives"><span class="header-section-number">4.1</span> Learning objectives</h2>
 <ol type="1">
-<li>Construct the four-stage <code>tidysynth</code> pipeline that optimises donor weights <span class="math inline">\(w_j\)</span> on the unit simplex to match the treated unit’s pre-period predictor profile. This is the workhorse of the single-treated-unit synthetic-control literature and recurs in chapters 6 and 7.</li>
+<li>Construct the four-stage <code>tidysynth</code> pipeline that optimises donor weights <span class="math inline">\(w_j\)</span> on the unit simplex to match the treated unit’s pre-period predictor profile. This is the workhorse of the single-treated-unit synthetic-control literature and recurs in chapters 5, 7, and 8.</li>
 <li>Extract donor unit weights <span class="math inline">\(w_j\)</span> and the <span class="math inline">\(V\)</span>-matrix predictor weights and inspect their concentration. Heavy concentration on one or two donors is the chapter’s main fragility diagnostic and is what later prediction-interval methods try to fix.</li>
 <li>Compute the post-period estimator <span class="math inline">\(\widehat{\tau}_{\text{SCM}}\)</span> as the mean gap between the treated unit and its synthetic counterpart. This single quantity is the headline estimate every subsequent SC variant in the book reports.</li>
 <li>Conduct placebo permutation inference by refitting the pipeline on each donor and ranking California’s MSPE ratio against the placebo distribution. Permutation tests are the proper SC uncertainty quantification — <em>p</em>-values from regression won’t help here.</li>
@@ -4191,7 +4197,7 @@ Table&nbsp;4.6: <code>grab_synthetic_control()</code> — observed vs synthetic 
 </tr>
 </tbody>
 </table>
-<p>Synthetic Control is the book’s headline causal estimate, and the placebo / MSPE-ratio diagnostics both confirm that California’s post-1989 trajectory is unusual relative to what other states experienced in the same window. <strong>Chapter 5</strong> hands the same donor information to a Bayesian state-space model and asks whether a <em>credible interval</em> (a direct probability statement about the effect) tells the same story as <span class="math inline">\(\widehat{\tau}_{\text{SCM}}\)</span>. Chapter 6 then revisits the same donor pool with <code>scpi</code>, replacing the Fisher rank-based <span class="math inline">\(p\)</span>-value with finite-sample <em>prediction intervals</em> that decompose forecast error into in-sample weight uncertainty and out-of-sample post-treatment shocks. Chapter 7 closes the synthetic-control arc by relaxing SUTVA — letting donor sales themselves respond to California’s policy through a spatial autoregressive layer — so that the cross-border spillover into Nevada becomes a derived quantity rather than an assumption.</p>
+<p>Synthetic Control is the book’s headline causal estimate, and the placebo / MSPE-ratio diagnostics both confirm that California’s post-1989 trajectory is unusual relative to what other states experienced in the same window. <strong>Chapter 5</strong> stays in the synthetic-control family but moves past the simplex: it bias-corrects the classical fit with a ridge outcome model and generalises to staggered, multi-treated adoption, on a simulated panel built to have the poor pre-period fit Proposition 99 never suffered. <strong>Chapter 6</strong> then hands the same donor information to a Bayesian state-space model and asks whether a <em>credible interval</em> (a direct probability statement about the effect) tells the same story as <span class="math inline">\(\widehat{\tau}_{\text{SCM}}\)</span>. Chapter 7 revisits the same donor pool with <code>scpi</code>, replacing the Fisher rank-based <span class="math inline">\(p\)</span>-value with finite-sample <em>prediction intervals</em> that decompose forecast error into in-sample weight uncertainty and out-of-sample post-treatment shocks. Chapter 8 closes the synthetic-control arc by relaxing SUTVA — letting donor sales themselves respond to California’s policy through a spatial autoregressive layer — so that the cross-border spillover into Nevada becomes a derived quantity rather than an assumption.</p>
 </section>
 <section id="key-takeaways" class="level2" data-number="4.16">
 <h2 data-number="4.16" class="anchored" data-anchor-id="key-takeaways"><span class="header-section-number">4.16</span> Key takeaways</h2>
@@ -6500,8 +6506,8 @@ Liu, L., Wang, Y., &amp; Xu, Y. (2024). A practical guide to counterfactual esti
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./05-structural-bayesian-ts.html" class="pagination-link" aria-label="Structural Bayesian Time Series">
-        <span class="nav-page-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Structural Bayesian Time Series</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="./05-augmented-synthetic-control.html" class="pagination-link" aria-label="Augmented Synthetic Control">
+        <span class="nav-page-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Augmented Synthetic Control</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
@@ -6511,7 +6517,7 @@ Liu, L., Wang, Y., &amp; Xu, Y. (2024). A practical guide to counterfactual esti
 <span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a><span class="fu">## Learning objectives</span></span>
 <span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Construct the four-stage <span class="in">`tidysynth`</span> pipeline that optimises donor weights $w_j$ on the unit simplex to match the treated unit's pre-period predictor profile. This is the workhorse of the single-treated-unit synthetic-control literature and recurs in chapters 6 and 7.</span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Construct the four-stage <span class="in">`tidysynth`</span> pipeline that optimises donor weights $w_j$ on the unit simplex to match the treated unit's pre-period predictor profile. This is the workhorse of the single-treated-unit synthetic-control literature and recurs in chapters 5, 7, and 8.</span>
 <span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>Extract donor unit weights $w_j$ and the $V$-matrix predictor weights and inspect their concentration. Heavy concentration on one or two donors is the chapter's main fragility diagnostic and is what later prediction-interval methods try to fix.</span>
 <span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>Compute the post-period estimator $\widehat{\tau}_{\text{SCM}}$ as the mean gap between the treated unit and its synthetic counterpart. This single quantity is the headline estimate every subsequent SC variant in the book reports.</span>
 <span id="cb32-10"><a href="#cb32-10" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>Conduct placebo permutation inference by refitting the pipeline on each donor and ranking California's MSPE ratio against the placebo distribution. Permutation tests are the proper SC uncertainty quantification — *p*-values from regression won't help here.</span>
@@ -7029,7 +7035,7 @@ Liu, L., Wang, Y., &amp; Xu, Y. (2024). A practical guide to counterfactual esti
 <span id="cb32-568"><a href="#cb32-568" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> What is the inference statistic? <span class="pp">|</span> Fisher exact $p \approx$ <span class="in">`r sprintf("%.3f", fisher_p_ca)`</span> (California ranks <span class="in">`r rank_ca`</span> of <span class="in">`r n_units`</span> on the MSPE ratio) <span class="pp">|</span></span>
 <span id="cb32-569"><a href="#cb32-569" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> What is the design-time pitfall? <span class="pp">|</span> Don't read the $V$ matrix as a list of causal drivers — it is a list of *good pre-period predictors* <span class="pp">|</span></span>
 <span id="cb32-570"><a href="#cb32-570" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-571"><a href="#cb32-571" aria-hidden="true" tabindex="-1"></a>Synthetic Control is the book's headline causal estimate, and the placebo / MSPE-ratio diagnostics both confirm that California's post-1989 trajectory is unusual relative to what other states experienced in the same window. **Chapter 5** hands the same donor information to a Bayesian state-space model and asks whether a *credible interval* (a direct probability statement about the effect) tells the same story as $\widehat{\tau}_{\text{SCM}}$. Chapter 6 then revisits the same donor pool with `scpi`, replacing the Fisher rank-based $p$-value with finite-sample *prediction intervals* that decompose forecast error into in-sample weight uncertainty and out-of-sample post-treatment shocks. Chapter 7 closes the synthetic-control arc by relaxing SUTVA — letting donor sales themselves respond to California's policy through a spatial autoregressive layer — so that the cross-border spillover into Nevada becomes a derived quantity rather than an assumption.</span>
+<span id="cb32-571"><a href="#cb32-571" aria-hidden="true" tabindex="-1"></a>Synthetic Control is the book's headline causal estimate, and the placebo / MSPE-ratio diagnostics both confirm that California's post-1989 trajectory is unusual relative to what other states experienced in the same window. **Chapter 5** stays in the synthetic-control family but moves past the simplex: it bias-corrects the classical fit with a ridge outcome model and generalises to staggered, multi-treated adoption, on a simulated panel built to have the poor pre-period fit Proposition 99 never suffered. **Chapter 6** then hands the same donor information to a Bayesian state-space model and asks whether a *credible interval* (a direct probability statement about the effect) tells the same story as $\widehat{\tau}_{\text{SCM}}$. Chapter 7 revisits the same donor pool with `scpi`, replacing the Fisher rank-based $p$-value with finite-sample *prediction intervals* that decompose forecast error into in-sample weight uncertainty and out-of-sample post-treatment shocks. Chapter 8 closes the synthetic-control arc by relaxing SUTVA — letting donor sales themselves respond to California's policy through a spatial autoregressive layer — so that the cross-border spillover into Nevada becomes a derived quantity rather than an assumption.</span>
 <span id="cb32-572"><a href="#cb32-572" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb32-573"><a href="#cb32-573" aria-hidden="true" tabindex="-1"></a><span class="fu">## Key takeaways</span></span>
 <span id="cb32-574"><a href="#cb32-574" aria-hidden="true" tabindex="-1"></a></span>

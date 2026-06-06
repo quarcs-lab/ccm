@@ -382,38 +382,44 @@ div.csl-indent {
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./05-structural-bayesian-ts.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Structural Bayesian Time Series</span></span></a>
+  <a href="./05-augmented-synthetic-control.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Augmented Synthetic Control</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./06-synthetic-control-prediction-intervals.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Synthetic Control with Prediction Intervals</span></span></a>
+  <a href="./06-structural-bayesian-ts.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Structural Bayesian Time Series</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./07-bayesian-spatial-sc.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Bayesian Spatial Synthetic Control</span></span></a>
+  <a href="./07-synthetic-control-prediction-intervals.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Synthetic Control with Prediction Intervals</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./08-staggered-did.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Staggered Differences-in-Differences</span></span></a>
+  <a href="./08-bayesian-spatial-sc.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Bayesian Spatial Synthetic Control</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./09-matrix-completion-and-ife.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Interactive Fixed Effects and Matrix Completion</span></span></a>
+  <a href="./09-staggered-did.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Staggered Differences-in-Differences</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./10-gsynth.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Generalized Synthetic Control</span></span></a>
+  <a href="./10-matrix-completion-and-ife.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Interactive Fixed Effects and Matrix Completion</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./11-gsynth.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Generalized Synthetic Control</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -496,12 +502,13 @@ div.csl-indent {
 </section>
 <section id="part-i-one-region-one-shock" class="level3">
 <h3 class="anchored" data-anchor-id="part-i-one-region-one-shock">Part I — One region, one shock</h3>
-<p>Chapters 1–7 evaluate <strong>California’s 1989 Proposition 99 cigarette tax</strong>, the canonical single-treated-unit policy evaluation. Every method in this half builds a counterfactual for California from a different data source — the state’s own past, a neighbour, a weighted blend of donor states, or a Bayesian time-series model — and reports the average treatment effect on the treated (ATT) between 1989 and 2000. The ATT compares California’s observed cigarette sales after the policy against what they <em>would have been</em> without it; chapter 1 makes this missing-counterfactual logic precise.</p>
+<p>Chapters 1–8 study the single-treated-unit setting. Most evaluate <strong>California’s 1989 Proposition 99 cigarette tax</strong>, the canonical example: each builds a counterfactual for California from a different data source — the state’s own past, a neighbour, a weighted blend of donor states, or a Bayesian time-series model — and reports the average treatment effect on the treated (ATT) between 1989 and 2000. Chapter 5 is the exception, stress-testing augmented synthetic control on a purpose-built <em>simulated</em> tobacco panel where the true effect is known. The ATT compares California’s observed cigarette sales after the policy against what they <em>would have been</em> without it; chapter 1 makes this missing-counterfactual logic precise.</p>
 <ul>
 <li><strong>Introduction</strong> — the potential-outcomes vocabulary and a naive pre-post strawman estimate.</li>
 <li><strong>Interrupted time series</strong> — extrapolating California’s pre-period trajectory forward.</li>
 <li><strong>Basic difference-in-differences</strong> — subtracting a single control state’s pre-to-post change.</li>
 <li><strong>Classical synthetic control</strong> — building a weighted donor blend that matches the pre-period.</li>
+<li><strong>Augmented synthetic control</strong> — bias-correcting and multi-period synthetic control on a simulated, staggered, multi-treated tobacco panel via <code>augsynth</code>.</li>
 <li><strong>Structural Bayesian time series</strong> — state-space counterfactuals with posterior credible intervals.</li>
 <li><strong>Synthetic control with prediction intervals</strong> — frequentist forecast-error decomposition via the <code>scpi</code> package.</li>
 <li><strong>Bayesian spatial synthetic control</strong> — a horseshoe-prior donor blend with spatial spillovers onto neighbours.</li>
@@ -509,13 +516,13 @@ div.csl-indent {
 </section>
 <section id="part-ii-many-regions-staggered-adoption" class="level3">
 <h3 class="anchored" data-anchor-id="part-ii-many-regions-staggered-adoption">Part II — Many regions, staggered adoption</h3>
-<p>Chapters 8–10 evaluate the <strong>Callaway-Sant’Anna minimum-wage county panel</strong>, where thousands of counties adopted different state minimum-wage levels at different years. The single-treated-unit toolkit no longer applies: the estimand becomes a family of cohort-specific ATTs indexed by adoption year, and the methods exploit the panel’s panel-data structure rather than a single time series.</p>
+<p>Chapters 9–11 evaluate the <strong>Callaway-Sant’Anna minimum-wage county panel</strong>, where thousands of counties adopted different state minimum-wage levels at different years. The single-treated-unit toolkit no longer applies: the estimand becomes a family of cohort-specific ATTs indexed by adoption year, and the methods exploit the panel’s panel-data structure rather than a single time series.</p>
 <ul>
 <li><strong>Staggered difference-in-differences</strong> — group-time ATT(g, t) estimators that avoid two-way fixed-effects bias.</li>
 <li><strong>Interactive fixed effects and matrix completion</strong> — factor models that relax parallel trends.</li>
 <li><strong>Generalized synthetic control</strong> — projecting treated units onto factors estimated from never-treated controls.</li>
 </ul>
-<p>Each chapter pairs the conceptual logic of the method with a worked R example using publicly available data, so readers can reproduce every estimate end-to-end. A forthcoming cross-method comparison chapter will tabulate the ATT estimates from chapters 2–10 side by side on the two shared datasets; chapter 10 sketches what that comparison will look like.</p>
+<p>Each chapter pairs the conceptual logic of the method with a worked R example using publicly available data, so readers can reproduce every estimate end-to-end. A forthcoming cross-method comparison chapter will tabulate the ATT estimates from chapters 2–11 side by side on the two shared datasets; chapter 11 sketches what that comparison will look like.</p>
 </section>
 </section>
 <section id="how-to-read-this-book" class="level2">
@@ -525,7 +532,7 @@ div.csl-indent {
 </section>
 <section id="acknowledgments" class="level2">
 <h2 class="anchored" data-anchor-id="acknowledgments">Acknowledgments</h2>
-<p>This book builds on the infrastructure of the companion project <a href="https://github.com/cmg777/intro2causal"><em>Mastering Causal Metrics</em></a> and on a long tradition of applied econometric scholarship. The Proposition 99 panel used throughout Part I was assembled by <span class="citation" data-cites="abadie2010synthetic">Abadie et al. (<a href="references.html#ref-abadie2010synthetic" role="doc-biblioref">2010</a>)</span>; the staggered-adoption minimum-wage panel in Part II is the county-level dataset packaged with the <code>did</code> R package by <span class="citation" data-cites="callaway2021difference">Callaway &amp; Sant’Anna (<a href="references.html#ref-callaway2021difference" role="doc-biblioref">2021</a>)</span>. I am also grateful to the open-source maintainers of <code>tidysynth</code>, <code>Synth</code>, <code>CausalImpact</code>, <code>bsts</code>, <code>scpi</code>, <code>did</code>, <code>HonestDiD</code>, <code>fect</code>, <code>gsynth</code>, <code>fixest</code>, <code>fpp3</code> (and its <code>fable</code>/<code>feasts</code> siblings), <code>panelView</code>, and <code>Rcpp</code> — every chapter in this book is a thin wrapper around their work.</p>
+<p>This book builds on the infrastructure of the companion project <a href="https://github.com/cmg777/intro2causal"><em>Mastering Causal Metrics</em></a> and on a long tradition of applied econometric scholarship. The Proposition 99 panel used through most of Part I was assembled by <span class="citation" data-cites="abadie2010synthetic">Abadie et al. (<a href="references.html#ref-abadie2010synthetic" role="doc-biblioref">2010</a>)</span> (chapter 5 instead uses a small simulated tobacco panel of the author’s own construction to exercise the augmented-control estimators); the staggered-adoption minimum-wage panel in Part II is the county-level dataset packaged with the <code>did</code> R package by <span class="citation" data-cites="callaway2021difference">Callaway &amp; Sant’Anna (<a href="references.html#ref-callaway2021difference" role="doc-biblioref">2021</a>)</span>. I am also grateful to the open-source maintainers of <code>tidysynth</code>, <code>Synth</code>, <code>augsynth</code>, <code>CausalImpact</code>, <code>bsts</code>, <code>scpi</code>, <code>did</code>, <code>HonestDiD</code>, <code>fect</code>, <code>gsynth</code>, <code>fixest</code>, <code>fpp3</code> (and its <code>fable</code>/<code>feasts</code> siblings), <code>panelView</code>, and <code>Rcpp</code> — every chapter in this book is a thin wrapper around their work.</p>
 </section>
 <section id="license" class="level2">
 <h2 class="anchored" data-anchor-id="license">License</h2>
@@ -1046,43 +1053,44 @@ Callaway, B., &amp; Sant’Anna, P. H. C. (2021). Difference-in-differences with
 <span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="fu">### Part I — One region, one shock</span></span>
 <span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>Chapters 1–7 evaluate **California's 1989 Proposition 99 cigarette tax**, the canonical single-treated-unit policy evaluation. Every method in this half builds a counterfactual for California from a different data source — the state's own past, a neighbour, a weighted blend of donor states, or a Bayesian time-series model — and reports the average treatment effect on the treated (ATT) between 1989 and 2000. The ATT compares California's observed cigarette sales after the policy against what they *would have been* without it; chapter 1 makes this missing-counterfactual logic precise.</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>Chapters 1–8 study the single-treated-unit setting. Most evaluate **California's 1989 Proposition 99 cigarette tax**, the canonical example: each builds a counterfactual for California from a different data source — the state's own past, a neighbour, a weighted blend of donor states, or a Bayesian time-series model — and reports the average treatment effect on the treated (ATT) between 1989 and 2000. Chapter 5 is the exception, stress-testing augmented synthetic control on a purpose-built *simulated* tobacco panel where the true effect is known. The ATT compares California's observed cigarette sales after the policy against what they *would have been* without it; chapter 1 makes this missing-counterfactual logic precise.</span>
 <span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Introduction** — the potential-outcomes vocabulary and a naive pre-post strawman estimate.</span>
 <span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Interrupted time series** — extrapolating California's pre-period trajectory forward.</span>
 <span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Basic difference-in-differences** — subtracting a single control state's pre-to-post change.</span>
 <span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Classical synthetic control** — building a weighted donor blend that matches the pre-period.</span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Structural Bayesian time series** — state-space counterfactuals with posterior credible intervals.</span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Synthetic control with prediction intervals** — frequentist forecast-error decomposition via the <span class="in">`scpi`</span> package.</span>
-<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Bayesian spatial synthetic control** — a horseshoe-prior donor blend with spatial spillovers onto neighbours.</span>
-<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a><span class="fu">### Part II — Many regions, staggered adoption</span></span>
-<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>Chapters 8–10 evaluate the **Callaway-Sant'Anna minimum-wage county panel**, where thousands of counties adopted different state minimum-wage levels at different years. The single-treated-unit toolkit no longer applies: the estimand becomes a family of cohort-specific ATTs indexed by adoption year, and the methods exploit the panel's panel-data structure rather than a single time series.</span>
-<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Staggered difference-in-differences** — group-time ATT(g, t) estimators that avoid two-way fixed-effects bias.</span>
-<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Interactive fixed effects and matrix completion** — factor models that relax parallel trends.</span>
-<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Generalized synthetic control** — projecting treated units onto factors estimated from never-treated controls.</span>
-<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>Each chapter pairs the conceptual logic of the method with a worked R example using publicly available data, so readers can reproduce every estimate end-to-end. A forthcoming cross-method comparison chapter will tabulate the ATT estimates from chapters 2–10 side by side on the two shared datasets; chapter 10 sketches what that comparison will look like.</span>
-<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a><span class="fu">## How to read this book</span></span>
-<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>The chapters are designed to be read sequentially but each is self-contained. Readers new to causal inference should start with chapter 1, which lays out the potential-outcomes vocabulary and a decision tree that maps each data situation to the appropriate method in this book. Code is folded by default — click **`&lt;/&gt; Code`** in any chapter to reveal the underlying R. The full source is available <span class="co">[</span><span class="ot">on GitHub</span><span class="co">](https://github.com/quarcs-lab/ccm)</span>. The HTML site is the canonical version of the book; an on-demand PDF build may also be available from the navbar, but because PDFs are rebuilt only on request, the live PDF can lag a few commits behind the HTML.</span>
-<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a>For readers who want to render a single chapter without cloning the repo, every numbered chapter offers a self-contained <span class="in">`.zip`</span> bundle (chapter source, dataset, and a minimal <span class="in">`_quarto.yml`</span>) at the bottom of the same **`&lt;/&gt; Code`** dropdown. Unzip and run <span class="in">`quarto render &lt;chapter&gt;.qmd`</span> — no <span class="in">`renv`</span> setup required.</span>
-<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a><span class="fu">## Acknowledgments</span></span>
-<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a>This book builds on the infrastructure of the companion project <span class="co">[</span><span class="ot">*Mastering Causal Metrics*</span><span class="co">](https://github.com/cmg777/intro2causal)</span> and on a long tradition of applied econometric scholarship. The Proposition 99 panel used throughout Part I was assembled by @abadie2010synthetic; the staggered-adoption minimum-wage panel in Part II is the county-level dataset packaged with the <span class="in">`did`</span> R package by @callaway2021difference. I am also grateful to the open-source maintainers of <span class="in">`tidysynth`</span>, <span class="in">`Synth`</span>, <span class="in">`CausalImpact`</span>, <span class="in">`bsts`</span>, <span class="in">`scpi`</span>, <span class="in">`did`</span>, <span class="in">`HonestDiD`</span>, <span class="in">`fect`</span>, <span class="in">`gsynth`</span>, <span class="in">`fixest`</span>, <span class="in">`fpp3`</span> (and its <span class="in">`fable`</span>/<span class="in">`feasts`</span> siblings), <span class="in">`panelView`</span>, and <span class="in">`Rcpp`</span> — every chapter in this book is a thin wrapper around their work.</span>
-<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a><span class="fu">## License</span></span>
-<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a>The text of this book is released under the <span class="co">[</span><span class="ot">Creative Commons Attribution 4.0 International (CC-BY 4.0)</span><span class="co">](https://creativecommons.org/licenses/by/4.0/)</span> licence, and all accompanying R code is released under the <span class="co">[</span><span class="ot">MIT License</span><span class="co">](https://github.com/quarcs-lab/ccm/blob/main/LICENSE)</span>. You are free to reuse, adapt, and redistribute the material with attribution.</span>
-<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a><span class="fu">## How to cite</span></span>
-<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; Mendez, C. (2026). *Comparative Causal Metrics: An Introduction to Regional Impact Evaluation*. </span><span class="ot">&lt;https://quarcs-lab.github.io/ccm/&gt;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Augmented synthetic control** — bias-correcting and multi-period synthetic control on a simulated, staggered, multi-treated tobacco panel via <span class="in">`augsynth`</span>.</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Structural Bayesian time series** — state-space counterfactuals with posterior credible intervals.</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Synthetic control with prediction intervals** — frequentist forecast-error decomposition via the <span class="in">`scpi`</span> package.</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Bayesian spatial synthetic control** — a horseshoe-prior donor blend with spatial spillovers onto neighbours.</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a><span class="fu">### Part II — Many regions, staggered adoption</span></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>Chapters 9–11 evaluate the **Callaway-Sant'Anna minimum-wage county panel**, where thousands of counties adopted different state minimum-wage levels at different years. The single-treated-unit toolkit no longer applies: the estimand becomes a family of cohort-specific ATTs indexed by adoption year, and the methods exploit the panel's panel-data structure rather than a single time series.</span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Staggered difference-in-differences** — group-time ATT(g, t) estimators that avoid two-way fixed-effects bias.</span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Interactive fixed effects and matrix completion** — factor models that relax parallel trends.</span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Generalized synthetic control** — projecting treated units onto factors estimated from never-treated controls.</span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>Each chapter pairs the conceptual logic of the method with a worked R example using publicly available data, so readers can reproduce every estimate end-to-end. A forthcoming cross-method comparison chapter will tabulate the ATT estimates from chapters 2–11 side by side on the two shared datasets; chapter 11 sketches what that comparison will look like.</span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a><span class="fu">## How to read this book</span></span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>The chapters are designed to be read sequentially but each is self-contained. Readers new to causal inference should start with chapter 1, which lays out the potential-outcomes vocabulary and a decision tree that maps each data situation to the appropriate method in this book. Code is folded by default — click **`&lt;/&gt; Code`** in any chapter to reveal the underlying R. The full source is available <span class="co">[</span><span class="ot">on GitHub</span><span class="co">](https://github.com/quarcs-lab/ccm)</span>. The HTML site is the canonical version of the book; an on-demand PDF build may also be available from the navbar, but because PDFs are rebuilt only on request, the live PDF can lag a few commits behind the HTML.</span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a>For readers who want to render a single chapter without cloning the repo, every numbered chapter offers a self-contained <span class="in">`.zip`</span> bundle (chapter source, dataset, and a minimal <span class="in">`_quarto.yml`</span>) at the bottom of the same **`&lt;/&gt; Code`** dropdown. Unzip and run <span class="in">`quarto render &lt;chapter&gt;.qmd`</span> — no <span class="in">`renv`</span> setup required.</span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a><span class="fu">## Acknowledgments</span></span>
+<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a>This book builds on the infrastructure of the companion project <span class="co">[</span><span class="ot">*Mastering Causal Metrics*</span><span class="co">](https://github.com/cmg777/intro2causal)</span> and on a long tradition of applied econometric scholarship. The Proposition 99 panel used through most of Part I was assembled by @abadie2010synthetic (chapter 5 instead uses a small simulated tobacco panel of the author's own construction to exercise the augmented-control estimators); the staggered-adoption minimum-wage panel in Part II is the county-level dataset packaged with the <span class="in">`did`</span> R package by @callaway2021difference. I am also grateful to the open-source maintainers of <span class="in">`tidysynth`</span>, <span class="in">`Synth`</span>, <span class="in">`augsynth`</span>, <span class="in">`CausalImpact`</span>, <span class="in">`bsts`</span>, <span class="in">`scpi`</span>, <span class="in">`did`</span>, <span class="in">`HonestDiD`</span>, <span class="in">`fect`</span>, <span class="in">`gsynth`</span>, <span class="in">`fixest`</span>, <span class="in">`fpp3`</span> (and its <span class="in">`fable`</span>/<span class="in">`feasts`</span> siblings), <span class="in">`panelView`</span>, and <span class="in">`Rcpp`</span> — every chapter in this book is a thin wrapper around their work.</span>
+<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a><span class="fu">## License</span></span>
+<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a>The text of this book is released under the <span class="co">[</span><span class="ot">Creative Commons Attribution 4.0 International (CC-BY 4.0)</span><span class="co">](https://creativecommons.org/licenses/by/4.0/)</span> licence, and all accompanying R code is released under the <span class="co">[</span><span class="ot">MIT License</span><span class="co">](https://github.com/quarcs-lab/ccm/blob/main/LICENSE)</span>. You are free to reuse, adapt, and redistribute the material with attribution.</span>
+<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a><span class="fu">## How to cite</span></span>
+<span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; Mendez, C. (2026). *Comparative Causal Metrics: An Introduction to Regional Impact Evaluation*. </span><span class="ot">&lt;https://quarcs-lab.github.io/ccm/&gt;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
 <footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/quarcs-lab/ccm/edit/main/index.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/quarcs-lab/ccm/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer><script>
