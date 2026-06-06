@@ -412,6 +412,28 @@
       "Maintainer": "Balasubramanian Narasimhan <naras@stat.Stanford.EDU>",
       "Repository": "CRAN"
     },
+    "FNN": {
+      "Package": "FNN",
+      "Version": "1.1.4.1",
+      "Source": "Repository",
+      "Date": "2023-12-31",
+      "Title": "Fast Nearest Neighbor Search Algorithms and Applications",
+      "Authors@R": "c(person(\"Alina\", \"Beygelzimer\", role = \"aut\", comment = \"cover tree library\"), person(\"Sham\", \"Kakadet\", role = \"aut\", comment = \"cover tree library\"), person(\"John\", \"Langford\", role = \"aut\", comment = \"cover tree library\"),  person(\"Sunil\", \"Arya\", role = \"aut\", comment = \"ANN library 1.1.2 for the kd-tree approach\"), person(\"David\", \"Mount\", role = \"aut\", comment = \"ANN library 1.1.2 for the kd-tree approach\"), person(\"Shengqiao\", \"Li\", role = c(\"aut\", \"cre\"), email = \"lishengqiao@yahoo.com\"))",
+      "Copyright": "ANN Copyright (c) 1997-2010 University of Maryland and Sunil Arya and David Mount. All Rights Reserved.",
+      "Depends": [
+        "R (>= 4.0.0)"
+      ],
+      "Suggests": [
+        "chemometrics",
+        "mvtnorm"
+      ],
+      "Description": "Cover-tree and kd-tree fast k-nearest neighbor search algorithms and related applications including KNN classification, regression and information measures are implemented.",
+      "License": "GPL (>= 2)",
+      "NeedsCompilation": "yes",
+      "Repository": "CRAN",
+      "Author": "Alina Beygelzimer [aut] (cover tree library), Sham Kakadet [aut] (cover tree library), John Langford [aut] (cover tree library), Sunil Arya [aut] (ANN library 1.1.2 for the kd-tree approach), David Mount [aut] (ANN library 1.1.2 for the kd-tree approach), Shengqiao Li [aut, cre]",
+      "Maintainer": "Shengqiao Li <lishengqiao@yahoo.com>"
+    },
     "Formula": {
       "Package": "Formula",
       "Version": "1.2-5",
@@ -428,6 +450,80 @@
       "NeedsCompilation": "no",
       "Author": "Achim Zeileis [aut, cre] (<https://orcid.org/0000-0003-0918-3766>), Yves Croissant [aut]",
       "Maintainer": "Achim Zeileis <Achim.Zeileis@R-project.org>",
+      "Repository": "CRAN"
+    },
+    "GGally": {
+      "Package": "GGally",
+      "Version": "2.4.0",
+      "Source": "Repository",
+      "Type": "Package",
+      "Title": "Extension to 'ggplot2'",
+      "Authors@R": "c( person(\"Barret\", \"Schloerke\", , \"schloerke@gmail.com\", role = c(\"aut\", \"cre\"), comment = c(ORCID = \"0000-0001-9986-114X\")), person(\"Di\", \"Cook\", , \"dicook@monash.edu\", role = c(\"aut\", \"ths\"), comment = c(ORCID = \"0000-0002-3813-7155\")), person(\"Joseph\", \"Larmarange\", , \"joseph@larmarange.net\", role = \"aut\", comment = c(ORCID = \"0000-0001-7097-700X\")), person(\"Francois\", \"Briatte\", , \"f.briatte@gmail.com\", role = \"aut\"), person(\"Moritz\", \"Marbach\", , \"mmarbach@mail.uni-mannheim.de\", role = \"aut\"), person(\"Edwin\", \"Thoen\", , \"edwinthoen@gmail.com\", role = \"aut\"), person(\"Amos\", \"Elberg\", , \"amos.elberg@gmail.com\", role = \"aut\"), person(\"Ott\", \"Toomet\", , \"otoomet@gmail.com\", role = \"ctb\"), person(\"Jason\", \"Crowley\", , \"crowley.jason.s@gmail.com\", role = \"aut\"), person(\"Heike\", \"Hofmann\", , \"hhofmann4@unl.edu\", role = \"ths\", comment = c(ORCID = \"0000-0001-6216-5183\")), person(\"Hadley\", \"Wickham\", , \"h.wickham@gmail.com\", role = \"ths\", comment = c(ORCID = \"0000-0003-4757-117X\")) )",
+      "Description": "The R package 'ggplot2' is a plotting system based on the grammar of graphics.  'GGally' extends 'ggplot2' by adding several functions to reduce the complexity of combining geometric objects with transformed data.  Some of these functions include a pairwise plot matrix, a two group pairwise plot matrix, a parallel coordinates plot, a survival plot, and several functions to plot networks.",
+      "License": "GPL (>= 2.0)",
+      "URL": "https://ggobi.github.io/ggally/, https://github.com/ggobi/ggally",
+      "BugReports": "https://github.com/ggobi/ggally/issues",
+      "Depends": [
+        "ggplot2 (>= 3.5.2)",
+        "R (>= 4.3)"
+      ],
+      "Imports": [
+        "cli",
+        "dplyr (>= 1.1.0)",
+        "ggstats (>= 0.9.0)",
+        "grDevices",
+        "grid",
+        "gtable (>= 0.2.0)",
+        "lifecycle",
+        "magrittr",
+        "progress",
+        "RColorBrewer",
+        "rlang",
+        "S7 (>= 0.2.0)",
+        "scales (>= 1.3.0)",
+        "tidyr (>= 1.3.0)",
+        "utils"
+      ],
+      "Suggests": [
+        "airports",
+        "broom (>= 0.7.0)",
+        "broom.helpers (>= 1.3.0)",
+        "chemometrics",
+        "crosstalk",
+        "emmeans",
+        "geosphere (>= 1.5-1)",
+        "ggforce",
+        "Hmisc",
+        "igraph (>= 1.0.1)",
+        "intergraph (>= 2.0-2)",
+        "knitr",
+        "labelled",
+        "mapproj",
+        "maps (>= 3.1.0)",
+        "network (>= 1.17.1)",
+        "nnet",
+        "rmarkdown",
+        "scagnostics",
+        "sna (>= 2.3-2)",
+        "spelling",
+        "survival",
+        "testthat (>= 3.0.0)",
+        "vdiffr"
+      ],
+      "RdMacros": "lifecycle",
+      "Config/Needs/website": "tidyverse/tidytemplate",
+      "Config/testthat/edition": "3",
+      "Config/usethis/last-upkeep": "2025-06-13",
+      "Encoding": "UTF-8",
+      "Language": "en-US",
+      "LazyData": "true",
+      "LazyLoad": "yes",
+      "RoxygenNote": "7.3.2",
+      "SystemRequirements": "openssl",
+      "Collate": "'GGally-package.R' 'data-australia-pisa-2012.R' 'data-baseball.R' 'data-flea.R' 'data-happy.R' 'data-nasa.R' 'data-nba_ppg_2008.R' 'data-pigs.R' 'data-psychademic.R' 'data-tips.R' 'data-twitter_spambots.R' 'deprecated.R' 'find-combo.R' 'gg-plots.R' 'ggally_colbar.R' 'ggally_cross.R' 'ggaly_trends.R' 'ggbivariate.R' 'ggcoef.R' 'ggcorr.R' 'ggfacet.R' 'gglyph.R' 'ggpairs_getput.R' 'ggmatrix.R' 'ggmatrix_gtable.R' 'ggmatrix_gtable_helpers.R' 'ggmatrix_legend.R' 'ggmatrix_make_plot.R' 'ggmatrix_print.R' 'ggmatrix_progress.R' 'ggnet.R' 'ggnet2.R' 'ggnetworkmap.R' 'ggnostic.R' 'ggpairs.R' 'ggpairs_add.R' 'ggpairs_internal_plots.R' 'ggparcoord.R' 'ggsave.R' 'ggscatmat.R' 'ggsurv.R' 'ggtable.R' 'reexports.R' 'utils-pipe.R' 'utils.R' 'vig_ggally.R' 'zzz.R'",
+      "NeedsCompilation": "no",
+      "Author": "Barret Schloerke [aut, cre] (ORCID: <https://orcid.org/0000-0001-9986-114X>), Di Cook [aut, ths] (ORCID: <https://orcid.org/0000-0002-3813-7155>), Joseph Larmarange [aut] (ORCID: <https://orcid.org/0000-0001-7097-700X>), Francois Briatte [aut], Moritz Marbach [aut], Edwin Thoen [aut], Amos Elberg [aut], Ott Toomet [ctb], Jason Crowley [aut], Heike Hofmann [ths] (ORCID: <https://orcid.org/0000-0001-6216-5183>), Hadley Wickham [ths] (ORCID: <https://orcid.org/0000-0003-4757-117X>)",
+      "Maintainer": "Barret Schloerke <schloerke@gmail.com>",
       "Repository": "CRAN"
     },
     "HonestDiD": {
@@ -502,6 +598,30 @@
       "NeedsCompilation": "yes",
       "Author": "Matt Wand [aut], Cleve Moler [ctb] (LINPACK routines in src/d*), Brian Ripley [trl, cre, ctb] (R port and updates)",
       "Maintainer": "Brian Ripley <Brian.Ripley@R-project.org>",
+      "Repository": "CRAN"
+    },
+    "LiblineaR": {
+      "Package": "LiblineaR",
+      "Version": "2.10-24",
+      "Source": "Repository",
+      "Encoding": "UTF-8",
+      "Title": "Linear Predictive Models Based on the LIBLINEAR C/C++ Library",
+      "Date": "2024-09-13",
+      "Authors@R": "c( person(\"Thibault\",\"Helleputte\",email=\"thibault.helleputte@dnalytics.com\",role=c(\"cre\",\"aut\",\"cph\")), person(\"Jérôme\",\"Paul\",role=c(\"aut\")), person(\"Pierre\",\"Gramme\",role=c(\"aut\")) )",
+      "Description": "A wrapper around the LIBLINEAR C/C++ library for machine learning (available at <https://www.csie.ntu.edu.tw/~cjlin/liblinear/>). LIBLINEAR is a simple library for solving large-scale regularized linear classification and regression. It currently supports L2-regularized classification (such as logistic regression, L2-loss linear SVM and L1-loss linear SVM) as well as L1-regularized classification (such as L2-loss linear SVM and logistic regression) and L2-regularized support vector regression (with L1- or L2-loss). The main features of LiblineaR include multi-class classification (one-vs-the rest, and Crammer & Singer method), cross validation for model selection, probability estimates (logistic regression only) or weights for unbalanced data. The estimation of the models is particularly fast as compared to other libraries.",
+      "License": "GPL-2",
+      "LazyLoad": "yes",
+      "Suggests": [
+        "SparseM",
+        "Matrix"
+      ],
+      "Imports": [
+        "methods"
+      ],
+      "URL": "<https://dnalytics.com/software/liblinear/>",
+      "NeedsCompilation": "yes",
+      "Author": "Thibault Helleputte [cre, aut, cph], Jérôme Paul [aut], Pierre Gramme [aut]",
+      "Maintainer": "Thibault Helleputte <thibault.helleputte@dnalytics.com>",
       "Repository": "CRAN"
     },
     "MASS": {
@@ -1173,6 +1293,60 @@
       "Author": "Hadley Wickham [aut, cre]",
       "Maintainer": "Hadley Wickham <hadley@rstudio.com>",
       "Repository": "CRAN"
+    },
+    "augsynth": {
+      "Package": "augsynth",
+      "Version": "0.2.0",
+      "Source": "GitHub",
+      "Title": "The Augmented Synthetic Control Method",
+      "Authors@R": "person(\"Eli\", \"Ben-Michael\", email = \"ebenmichael@berkeley.edu\", role = c(\"aut\", \"cre\"))",
+      "Description": "A package implementing the Augmented Synthetic Controls Method.",
+      "Depends": [
+        "R (>= 3.5.0)"
+      ],
+      "Imports": [
+        "dplyr",
+        "tidyr",
+        "magrittr",
+        "ggplot2",
+        "MASS",
+        "LiblineaR",
+        "Formula",
+        "Matrix",
+        "osqp",
+        "rlang",
+        "purrr",
+        "FNN"
+      ],
+      "Remotes": "susanathey/MCPanel",
+      "License": "MIT + file LICENSE",
+      "Encoding": "UTF-8",
+      "LazyData": "true",
+      "RoxygenNote": "7.3.3",
+      "Suggests": [
+        "testthat",
+        "CausalImpact",
+        "keras",
+        "gsynth",
+        "knitr",
+        "rmarkdown",
+        "softImpute",
+        "MCPanel",
+        "glmnet",
+        "randomForest",
+        "kableExtra",
+        "ggrepel"
+      ],
+      "VignetteBuilder": "knitr",
+      "RemoteType": "github",
+      "RemoteHost": "api.github.com",
+      "RemoteRepo": "augsynth",
+      "RemoteUsername": "ebenmichael",
+      "RemoteRef": "HEAD",
+      "RemoteSha": "7a90ea48877fae7925a72cb50bc03a315bc7c042",
+      "NeedsCompilation": "no",
+      "Author": "Eli Ben-Michael [aut, cre]",
+      "Maintainer": "Eli Ben-Michael <ebenmichael@berkeley.edu>"
     },
     "backports": {
       "Package": "backports",
@@ -2665,6 +2839,114 @@
       "Maintainer": "Dirk Eddelbuettel <edd@debian.org>",
       "Repository": "CRAN"
     },
+    "doFuture": {
+      "Package": "doFuture",
+      "Version": "1.2.1",
+      "Source": "Repository",
+      "Title": "Use Foreach to Parallelize via the Future Framework",
+      "Depends": [
+        "foreach (>= 1.5.0)",
+        "future (>= 1.49.0)"
+      ],
+      "Imports": [
+        "future.apply",
+        "globals",
+        "iterators",
+        "parallel",
+        "utils"
+      ],
+      "Suggests": [
+        "doRNG (>= 1.8.2)",
+        "markdown",
+        "R.rsp"
+      ],
+      "VignetteBuilder": "R.rsp",
+      "Authors@R": "c(person(\"Henrik\", \"Bengtsson\", role = c(\"aut\", \"cre\", \"cph\"), email = \"henrikb@braju.com\", comment = c(ORCID = \"0000-0002-7579-5165\")))",
+      "Description": "The 'future' package provides a unifying parallelization framework for R that supports many parallel and distributed backends <doi:10.32614/RJ-2021-048>. The 'foreach' package provides a powerful API for iterating over an R expression in parallel. The 'doFuture' package brings the best of the two together. There are two alternative ways to use this package. The recommended approach is to use 'y <- foreach(...) %dofuture% { ... }', which does not require using 'registerDoFuture()' and has many advantages over '%dopar%'. The alternative is the traditional 'foreach' approach by registering the 'foreach' adapter 'registerDoFuture()' and so that 'y <- foreach(...) %dopar% { ... }' runs in parallelizes with the 'future' framework.",
+      "License": "LGPL (>= 2.1)",
+      "LazyLoad": "TRUE",
+      "URL": "https://doFuture.futureverse.org, https://github.com/futureverse/doFuture",
+      "BugReports": "https://github.com/futureverse/doFuture/issues",
+      "Language": "en-US",
+      "Encoding": "UTF-8",
+      "RoxygenNote": "7.3.3",
+      "NeedsCompilation": "no",
+      "Author": "Henrik Bengtsson [aut, cre, cph] (ORCID: <https://orcid.org/0000-0002-7579-5165>)",
+      "Maintainer": "Henrik Bengtsson <henrikb@braju.com>",
+      "Repository": "CRAN"
+    },
+    "doParallel": {
+      "Package": "doParallel",
+      "Version": "1.0.17",
+      "Source": "Repository",
+      "Type": "Package",
+      "Title": "Foreach Parallel Adaptor for the 'parallel' Package",
+      "Authors@R": "c(person(\"Folashade\", \"Daniel\", role=\"cre\", email=\"fdaniel@microsoft.com\"), person(\"Microsoft\", \"Corporation\", role=c(\"aut\", \"cph\")), person(\"Steve\", \"Weston\", role=\"aut\"), person(\"Dan\", \"Tenenbaum\", role=\"ctb\"))",
+      "Description": "Provides a parallel backend for the %dopar% function using the parallel package.",
+      "Depends": [
+        "R (>= 2.14.0)",
+        "foreach (>= 1.2.0)",
+        "iterators (>= 1.0.0)",
+        "parallel",
+        "utils"
+      ],
+      "Suggests": [
+        "caret",
+        "mlbench",
+        "rpart",
+        "RUnit"
+      ],
+      "Enhances": [
+        "compiler"
+      ],
+      "License": "GPL-2",
+      "URL": "https://github.com/RevolutionAnalytics/doparallel",
+      "BugReports": "https://github.com/RevolutionAnalytics/doparallel/issues",
+      "NeedsCompilation": "no",
+      "Author": "Folashade Daniel [cre], Microsoft Corporation [aut, cph], Steve Weston [aut], Dan Tenenbaum [ctb]",
+      "Maintainer": "Folashade Daniel <fdaniel@microsoft.com>",
+      "Repository": "CRAN"
+    },
+    "doRNG": {
+      "Package": "doRNG",
+      "Version": "1.8.6.3",
+      "Source": "Repository",
+      "Type": "Package",
+      "Title": "Generic Reproducible Parallel Backend for 'foreach' Loops",
+      "Date": "2026-02-05",
+      "Encoding": "UTF-8",
+      "Authors@R": "c( person(\"Renaud\", \"Gaujoux\", email = \"renozao@protonmail.com\", role = c(\"aut\")), person(given = c(\"Emilio\", \"L.\"), family = \"Sáenz Guillén\", email = \"Emilio.Saenz-Guillen@citystgeorges.ac.uk\", role = \"cre\") )",
+      "Description": "Provides functions to perform reproducible parallel foreach loops, using independent random streams as generated by L'Ecuyer's combined multiple-recursive generator [L'Ecuyer (1999), <DOI:10.1287/opre.47.1.159>]. It enables to easily convert standard '%dopar%' loops into fully reproducible loops, independently of the number of workers, the task scheduling strategy, or the chosen parallel environment and associated foreach backend.",
+      "License": "GPL (>= 2)",
+      "LazyLoad": "yes",
+      "URL": "https://github.com/emilioluissaenzguillen/doRNG",
+      "BugReports": "https://github.com/emilioluissaenzguillen/doRNG/issues",
+      "Depends": [
+        "R (>= 3.0.0)",
+        "foreach",
+        "rngtools (>= 1.5)"
+      ],
+      "Imports": [
+        "stats",
+        "utils",
+        "iterators"
+      ],
+      "Suggests": [
+        "doParallel",
+        "doMPI",
+        "doRedis",
+        "rbenchmark",
+        "knitr",
+        "rbibutils (>= 1.3)",
+        "testthat",
+        "covr"
+      ],
+      "RoxygenNote": "7.3.3",
+      "NeedsCompilation": "no",
+      "Author": "Renaud Gaujoux [aut], Emilio L. Sáenz Guillén [cre]",
+      "Maintainer": "Emilio L. Sáenz Guillén <Emilio.Saenz-Guillen@citystgeorges.ac.uk>",
+      "Repository": "CRAN"
+    },
     "doSNOW": {
       "Package": "doSNOW",
       "Version": "1.0.20",
@@ -3023,6 +3305,66 @@
       "NeedsCompilation": "yes",
       "Author": "Winston Chang [aut, cre], Posit Software, PBC [cph, fnd], Tessil [cph] (hopscotch_map library)",
       "Maintainer": "Winston Chang <winston@posit.co>",
+      "Repository": "CRAN"
+    },
+    "fect": {
+      "Package": "fect",
+      "Version": "2.4.1",
+      "Source": "Repository",
+      "Type": "Package",
+      "Title": "Fixed Effects Counterfactual Estimators",
+      "Date": "2026-04-29",
+      "Authors@R": "c(person(\"Licheng\", \"Liu\", , \"lichengl@stanford.edu\", role = c(\"aut\")),  person(\"Ziyi\", \"Liu\", , \"zyliu2023@berkeley.edu\", role = c(\"aut\")), person(\"Ye\", \"Wang\", , \"yezhehuzhi@gmail.com\", role = c(\"aut\")),  person(\"Yiqing\", \"Xu\", , \"yiqingxu@stanford.edu\", role = c(\"aut\", \"cre\")), person(\"Tianzhu\", \"Qin\", , \"tianzhu@stanford.edu\", role = c(\"aut\")), person(\"Shiyun\", \"Hu\", , \"hushiyun@pku.edu.cn\", role = c(\"aut\")), person(\"Rivka\", \"Lipkovitz\", , \"rivkal@mit.edu\", role = c(\"aut\")))",
+      "Author": "Licheng Liu [aut], Ziyi Liu [aut], Ye Wang [aut], Yiqing Xu [aut, cre], Tianzhu Qin [aut], Shiyun Hu [aut], Rivka Lipkovitz [aut]",
+      "Maintainer": "Yiqing Xu <yiqingxu@stanford.edu>",
+      "Description": "Provides tools for estimating causal effects in panel data using counterfactual methods, as well as other modern DID estimators. It is designed for causal panel analysis with binary treatments under the parallel trends assumption. The package supports scenarios where treatments can switch on and off and allows for limited carryover effects. It includes several imputation estimators, such as Gsynth (Xu 2017), linear factor models, and the matrix completion method. Detailed methodology is described in Liu, Wang, and Xu (2024) <doi:10.48550/arXiv.2107.00856> and Chiu et al. (2025) <doi:10.48550/arXiv.2309.15983>. Optionally integrates with the \"HonestDiDFEct\" package for sensitivity analyses compatible with imputation estimators. \"HonestDiDFEct\" is not on CRAN but can be obtained from <https://github.com/lzy318/HonestDiDFEct>.",
+      "URL": "https://yiqingxu.org/packages/fect/, https://github.com/xuyiqing/fect",
+      "BugReports": "https://github.com/xuyiqing/fect/issues",
+      "NeedsCompilation": "yes",
+      "License": "MIT + file LICENSE",
+      "Imports": [
+        "Rcpp (>= 0.12.3)",
+        "ggplot2 (>= 2.1.0)",
+        "GGally (>= 1.0.1)",
+        "doParallel (>= 1.0.10)",
+        "doFuture",
+        "foreach (>= 1.4.3)",
+        "abind (>= 1.4-0)",
+        "codetools",
+        "MASS",
+        "gridExtra",
+        "grid",
+        "fixest",
+        "doRNG",
+        "future",
+        "parallelly",
+        "mvtnorm",
+        "dplyr",
+        "future.apply",
+        "reshape2",
+        "rlang",
+        "scales",
+        "splines"
+      ],
+      "Suggests": [
+        "panelView",
+        "testthat (>= 3.0.0)",
+        "did",
+        "DIDmultiplegtDYN",
+        "ggrepel",
+        "HonestDiDFEct"
+      ],
+      "Depends": [
+        "R (>= 4.1.0)"
+      ],
+      "LinkingTo": [
+        "Rcpp",
+        "RcppArmadillo"
+      ],
+      "RoxygenNote": "7.3.3",
+      "Encoding": "UTF-8",
+      "Config/testthat/edition": "3",
+      "LazyData": "true",
       "Repository": "CRAN"
     },
     "fixest": {
@@ -3466,6 +3808,118 @@
       "Maintainer": "Thomas Lin Pedersen <thomas.pedersen@posit.co>",
       "Repository": "CRAN"
     },
+    "ggrepel": {
+      "Package": "ggrepel",
+      "Version": "0.9.8",
+      "Source": "Repository",
+      "Authors@R": "c( person(\"Kamil\", \"Slowikowski\", email = \"kslowikowski@gmail.com\", role = c(\"aut\", \"cre\"), comment = c(ORCID = \"0000-0002-2843-6370\")), person(\"Teun\", \"van den Brand\", role = \"ctb\", comment = c(ORCID = \"0000-0002-9335-7468\")), person(\"Alicia\", \"Schep\", role = \"ctb\", comment = c(ORCID = \"0000-0002-3915-0618\")), person(\"Sean\", \"Hughes\", role = \"ctb\", comment = c(ORCID = \"0000-0002-9409-9405\")), person(\"Trung Kien\", \"Dang\", role = \"ctb\", comment = c(ORCID = \"0000-0001-7562-6495\")), person(\"Saulius\", \"Lukauskas\", role = \"ctb\"), person(\"Jean-Olivier\", \"Irisson\", role = \"ctb\", comment = c(ORCID = \"0000-0003-4920-3880\")), person(\"Zhian N\", \"Kamvar\", role = \"ctb\", comment = c(ORCID = \"0000-0003-1458-7108\")), person(\"Thompson\", \"Ryan\", role = \"ctb\", comment = c(ORCID = \"0000-0002-0450-8181\")), person(\"Dervieux\", \"Christophe\", role = \"ctb\", comment = c(ORCID = \"0000-0003-4474-2498\")), person(\"Yutani\", \"Hiroaki\", role = \"ctb\"), person(\"Pierre\", \"Gramme\", role = \"ctb\"), person(\"Amir Masoud\", \"Abdol\", role = \"ctb\"), person(\"Malcolm\", \"Barrett\", role = \"ctb\", comment = c(ORCID = \"0000-0003-0299-5825\")), person(\"Robrecht\", \"Cannoodt\", role = \"ctb\", comment = c(ORCID = \"0000-0003-3641-729X\")), person(\"Michał\", \"Krassowski\", role = \"ctb\", comment = c(ORCID = \"0000-0002-9638-7785\")), person(\"Michael\", \"Chirico\", role = \"ctb\", comment = c(ORCID = \"0000-0003-0787-087X\")), person(\"Pedro\", \"Aphalo\", role = \"ctb\", comment = c(ORCID = \"0000-0003-3385-972X\")), person(\"Francis\", \"Barton\", role = \"ctb\") )",
+      "Title": "Automatically Position Non-Overlapping Text Labels with 'ggplot2'",
+      "Description": "Provides text and label geoms for 'ggplot2' that help to avoid overlapping text labels. Labels repel away from each other and away from the data points.",
+      "Depends": [
+        "R (>= 4.1.0)",
+        "ggplot2 (>= 3.5.2)"
+      ],
+      "Imports": [
+        "grid",
+        "Rcpp",
+        "rlang (>= 1.1.6)",
+        "S7",
+        "scales (>= 1.4.0)",
+        "withr (>= 3.0.2)"
+      ],
+      "Suggests": [
+        "knitr",
+        "rmarkdown",
+        "testthat",
+        "svglite",
+        "vdiffr",
+        "gridExtra",
+        "ggpp",
+        "patchwork",
+        "devtools",
+        "prettydoc",
+        "ggbeeswarm",
+        "dplyr",
+        "magrittr",
+        "readr",
+        "stringr",
+        "marquee",
+        "rsvg",
+        "sf"
+      ],
+      "VignetteBuilder": "knitr",
+      "License": "GPL-3 | file LICENSE",
+      "URL": "https://ggrepel.slowkow.com/, https://github.com/slowkow/ggrepel",
+      "BugReports": "https://github.com/slowkow/ggrepel/issues",
+      "RoxygenNote": "7.3.3",
+      "LinkingTo": [
+        "Rcpp"
+      ],
+      "Encoding": "UTF-8",
+      "NeedsCompilation": "yes",
+      "Author": "Kamil Slowikowski [aut, cre] (ORCID: <https://orcid.org/0000-0002-2843-6370>), Teun van den Brand [ctb] (ORCID: <https://orcid.org/0000-0002-9335-7468>), Alicia Schep [ctb] (ORCID: <https://orcid.org/0000-0002-3915-0618>), Sean Hughes [ctb] (ORCID: <https://orcid.org/0000-0002-9409-9405>), Trung Kien Dang [ctb] (ORCID: <https://orcid.org/0000-0001-7562-6495>), Saulius Lukauskas [ctb], Jean-Olivier Irisson [ctb] (ORCID: <https://orcid.org/0000-0003-4920-3880>), Zhian N Kamvar [ctb] (ORCID: <https://orcid.org/0000-0003-1458-7108>), Thompson Ryan [ctb] (ORCID: <https://orcid.org/0000-0002-0450-8181>), Dervieux Christophe [ctb] (ORCID: <https://orcid.org/0000-0003-4474-2498>), Yutani Hiroaki [ctb], Pierre Gramme [ctb], Amir Masoud Abdol [ctb], Malcolm Barrett [ctb] (ORCID: <https://orcid.org/0000-0003-0299-5825>), Robrecht Cannoodt [ctb] (ORCID: <https://orcid.org/0000-0003-3641-729X>), Michał Krassowski [ctb] (ORCID: <https://orcid.org/0000-0002-9638-7785>), Michael Chirico [ctb] (ORCID: <https://orcid.org/0000-0003-0787-087X>), Pedro Aphalo [ctb] (ORCID: <https://orcid.org/0000-0003-3385-972X>), Francis Barton [ctb]",
+      "Maintainer": "Kamil Slowikowski <kslowikowski@gmail.com>",
+      "Repository": "CRAN"
+    },
+    "ggstats": {
+      "Package": "ggstats",
+      "Version": "0.13.0",
+      "Source": "Repository",
+      "Type": "Package",
+      "Title": "Extension to 'ggplot2' for Plotting Stats",
+      "Authors@R": "c( person( \"Joseph\", \"Larmarange\", , \"joseph@larmarange.net\", role = c(\"aut\", \"cre\"), comment = c(ORCID = \"0000-0001-7097-700X\") ) )",
+      "Description": "Provides new statistics, new geometries and new positions for  'ggplot2' and a suite of functions to facilitate the creation of  statistical plots.",
+      "License": "GPL (>= 3)",
+      "URL": "https://larmarange.github.io/ggstats/, https://github.com/larmarange/ggstats",
+      "BugReports": "https://github.com/larmarange/ggstats/issues",
+      "Depends": [
+        "R (>= 4.2)"
+      ],
+      "Imports": [
+        "cli",
+        "dplyr",
+        "forcats",
+        "ggplot2 (>= 4.0.0)",
+        "lifecycle",
+        "patchwork",
+        "purrr",
+        "rlang",
+        "scales",
+        "stats",
+        "stringr",
+        "utils",
+        "tidyr"
+      ],
+      "Suggests": [
+        "betareg",
+        "broom",
+        "broom.helpers (>= 1.20.0)",
+        "emmeans",
+        "glue",
+        "gtsummary",
+        "knitr",
+        "labelled (>= 2.11.0)",
+        "reshape",
+        "rmarkdown",
+        "nnet",
+        "parameters",
+        "pscl",
+        "testthat (>= 3.0.0)",
+        "spelling",
+        "survey",
+        "survival",
+        "vdiffr"
+      ],
+      "Encoding": "UTF-8",
+      "RoxygenNote": "7.3.3",
+      "Config/testthat/edition": "3",
+      "Language": "en-US",
+      "VignetteBuilder": "knitr",
+      "NeedsCompilation": "no",
+      "Author": "Joseph Larmarange [aut, cre] (ORCID: <https://orcid.org/0000-0001-7097-700X>)",
+      "Maintainer": "Joseph Larmarange <joseph@larmarange.net>",
+      "Repository": "CRAN"
+    },
     "glmx": {
       "Package": "glmx",
       "Version": "0.2-1",
@@ -3710,6 +4164,36 @@
       "RoxygenNote": "7.3.2",
       "NeedsCompilation": "yes",
       "Author": "Mark van der Loo [aut, cre], David Turner [ctb]",
+      "Repository": "CRAN"
+    },
+    "gridExtra": {
+      "Package": "gridExtra",
+      "Version": "2.3",
+      "Source": "Repository",
+      "Authors@R": "c(person(\"Baptiste\", \"Auguie\", email = \"baptiste.auguie@gmail.com\", role = c(\"aut\", \"cre\")), person(\"Anton\", \"Antonov\", email = \"tonytonov@gmail.com\", role = c(\"ctb\")))",
+      "License": "GPL (>= 2)",
+      "Title": "Miscellaneous Functions for \"Grid\" Graphics",
+      "Type": "Package",
+      "Description": "Provides a number of user-level functions to work with \"grid\" graphics, notably to arrange multiple grid-based plots on a page, and draw tables.",
+      "VignetteBuilder": "knitr",
+      "Imports": [
+        "gtable",
+        "grid",
+        "grDevices",
+        "graphics",
+        "utils"
+      ],
+      "Suggests": [
+        "ggplot2",
+        "egg",
+        "lattice",
+        "knitr",
+        "testthat"
+      ],
+      "RoxygenNote": "6.0.1",
+      "NeedsCompilation": "no",
+      "Author": "Baptiste Auguie [aut, cre], Anton Antonov [ctb]",
+      "Maintainer": "Baptiste Auguie <baptiste.auguie@gmail.com>",
       "Repository": "CRAN"
     },
     "gt": {
@@ -4638,6 +5122,57 @@
         "stats",
         "graphics"
       ],
+      "Repository": "CRAN"
+    },
+    "labelled": {
+      "Package": "labelled",
+      "Version": "2.16.0",
+      "Source": "Repository",
+      "Type": "Package",
+      "Title": "Manipulating Labelled Data",
+      "Maintainer": "Joseph Larmarange <joseph@larmarange.net>",
+      "Authors@R": "c( person(\"Joseph\", \"Larmarange\", email = \"joseph@larmarange.net\", role = c(\"aut\", \"cre\"), comment = c(ORCID = \"0000-0001-7097-700X\")), person(\"Daniel\", \"Ludecke\", role = \"ctb\"), person(\"Hadley\", \"Wickham\", role = \"ctb\"), person(\"Michal\", \"Bojanowski\", role = \"ctb\"), person(\"François\", \"Briatte\", role = \"ctb\") )",
+      "Description": "Work with labelled data imported from 'SPSS' or 'Stata' with 'haven' or 'foreign'. This package provides useful functions to deal with \"haven_labelled\" and \"haven_labelled_spss\" classes introduced by 'haven' package.",
+      "License": "GPL (>= 3)",
+      "Encoding": "UTF-8",
+      "Depends": [
+        "R (>= 3.2)"
+      ],
+      "Imports": [
+        "haven (>= 2.4.1)",
+        "cli",
+        "dplyr (>= 1.1.0)",
+        "lifecycle",
+        "rlang (>= 1.1.0)",
+        "vctrs",
+        "stringr",
+        "tidyr (>= 1.3.0)",
+        "tidyselect"
+      ],
+      "Suggests": [
+        "gt",
+        "knitr",
+        "rmarkdown",
+        "purrr",
+        "questionr",
+        "snakecase",
+        "spelling",
+        "survey",
+        "testthat (>= 3.2.0)"
+      ],
+      "Enhances": [
+        "memisc"
+      ],
+      "URL": "https://larmarange.github.io/labelled/, https://github.com/larmarange/labelled",
+      "BugReports": "https://github.com/larmarange/labelled/issues",
+      "VignetteBuilder": "knitr",
+      "LazyData": "true",
+      "RoxygenNote": "7.3.3",
+      "Language": "en-US",
+      "Config/testthat/edition": "3",
+      "Config/Needs/check": "memisc",
+      "NeedsCompilation": "no",
+      "Author": "Joseph Larmarange [aut, cre] (ORCID: <https://orcid.org/0000-0001-7097-700X>), Daniel Ludecke [ctb], Hadley Wickham [ctb], Michal Bojanowski [ctb], François Briatte [ctb]",
       "Repository": "CRAN"
     },
     "latex2exp": {
@@ -5609,6 +6144,40 @@
       "NeedsCompilation": "yes",
       "Author": "Xavier Robin [cre, aut] (ORCID: <https://orcid.org/0000-0002-6813-3200>), Natacha Turck [aut], Alexandre Hainard [aut], Natalia Tiberti [aut], Frédérique Lisacek [aut], Jean-Charles Sanchez [aut], Markus Müller [aut], Stefan Siegert [ctb] (Fast DeLong code), Matthias Doering [ctb] (Hand & Till Multiclass), Zane Billings [ctb] (DeLong paired test CI)",
       "Maintainer": "Xavier Robin <pROC-cran@xavier.robin.name>",
+      "Repository": "CRAN"
+    },
+    "panelView": {
+      "Package": "panelView",
+      "Version": "1.3.1",
+      "Source": "Repository",
+      "Type": "Package",
+      "Title": "Visualizing Panel Data",
+      "Date": "2026-05-13",
+      "Authors@R": "c(person(\"Yiqing\", \"Xu\", ,\"yiqingxu@stanford.edu\", role = c(\"aut\", \"cre\"),  comment = c(ORCID = \"0000-0003-2041-6671\")), person(\"Hongyu\", \"Mou\", , \"hongyumou@g.ucla.edu\", role = c(\"aut\")),  person(\"Licheng\", \"Liu\", ,\"liulch@mit.edu\", role = c(\"aut\")))",
+      "Maintainer": "Yiqing Xu <yiqingxu@stanford.edu>",
+      "Description": "Visualizes panel data. It has four main functionalities: (1) it plots the treatment status and missing values in a panel dataset; (2) it visualizes the temporal dynamics of a main variable of interest; (3) it depicts the bivariate relationships between a treatment variable and an outcome variable either by unit or in aggregate; (4) it displays the network structure of multi-way fixed effects as a k-partite graph, identifying connected components, singletons, and duplicate observations. For details, see <doi:10.18637/jss.v107.i07>.",
+      "URL": "https://yiqingxu.org/packages/panelview/, https://github.com/xuyiqing/panelView",
+      "BugReports": "https://github.com/xuyiqing/panelView/issues",
+      "License": "MIT + file LICENSE",
+      "Imports": [
+        "ggplot2 (>= 3.4.0)",
+        "gridExtra",
+        "grid",
+        "dplyr (>= 1.0.0)"
+      ],
+      "Depends": [
+        "R (>= 2.10)"
+      ],
+      "Encoding": "UTF-8",
+      "Suggests": [
+        "testthat (>= 3.0.0)",
+        "igraph"
+      ],
+      "RoxygenNote": "7.3.2",
+      "LazyData": "true",
+      "Config/testthat/edition": "3",
+      "NeedsCompilation": "no",
+      "Author": "Yiqing Xu [aut, cre] (ORCID: <https://orcid.org/0000-0003-2041-6671>), Hongyu Mou [aut], Licheng Liu [aut]",
       "Repository": "CRAN"
     },
     "parallelly": {
@@ -7306,6 +7875,38 @@
       "NeedsCompilation": "no",
       "Author": "JJ Allaire [aut], Yihui Xie [aut, cre] (ORCID: <https://orcid.org/0000-0003-0645-5666>), Christophe Dervieux [aut] (ORCID: <https://orcid.org/0000-0003-4474-2498>), Jonathan McPherson [aut], Javier Luraschi [aut], Kevin Ushey [aut], Aron Atkins [aut], Hadley Wickham [aut], Joe Cheng [aut], Winston Chang [aut], Richard Iannone [aut] (ORCID: <https://orcid.org/0000-0003-3925-190X>), Andrew Dunning [ctb] (ORCID: <https://orcid.org/0000-0003-0464-5036>), Atsushi Yasumoto [ctb, cph] (ORCID: <https://orcid.org/0000-0002-8335-495X>, cph: Number sections Lua filter), Barret Schloerke [ctb], Carson Sievert [ctb] (ORCID: <https://orcid.org/0000-0002-4958-2844>), Devon Ryan [ctb] (ORCID: <https://orcid.org/0000-0002-8549-0971>), Frederik Aust [ctb] (ORCID: <https://orcid.org/0000-0003-4900-788X>), Jeff Allen [ctb], JooYoung Seo [ctb] (ORCID: <https://orcid.org/0000-0002-4064-6012>), Malcolm Barrett [ctb], Rob Hyndman [ctb], Romain Lesur [ctb], Roy Storey [ctb], Ruben Arslan [ctb], Sergio Oller [ctb], Posit Software, PBC [cph, fnd], jQuery UI contributors [ctb, cph] (jQuery UI library; authors listed in inst/rmd/h/jqueryui/AUTHORS.txt), Mark Otto [ctb] (Bootstrap library), Jacob Thornton [ctb] (Bootstrap library), Bootstrap contributors [ctb] (Bootstrap library), Twitter, Inc [cph] (Bootstrap library), Alexander Farkas [ctb, cph] (html5shiv library), Scott Jehl [ctb, cph] (Respond.js library), Ivan Sagalaev [ctb, cph] (highlight.js library), Greg Franko [ctb, cph] (tocify library), John MacFarlane [ctb, cph] (Pandoc templates), Google, Inc. [ctb, cph] (ioslides library), Dave Raggett [ctb] (slidy library), W3C [cph] (slidy library), Dave Gandy [ctb, cph] (Font-Awesome), Ben Sperry [ctb] (Ionicons), Drifty [cph] (Ionicons), Aidan Lister [ctb, cph] (jQuery StickyTabs), Benct Philip Jonsson [ctb, cph] (pagebreak Lua filter), Albert Krewinkel [ctb, cph] (pagebreak Lua filter)",
       "Maintainer": "Yihui Xie <xie@yihui.name>",
+      "Repository": "CRAN"
+    },
+    "rngtools": {
+      "Package": "rngtools",
+      "Version": "1.5.2",
+      "Source": "Repository",
+      "Authors@R": "c(person(\"Renaud\", \"Gaujoux\", email = \"renozao@protonmail.com\", role = c(\"aut\", \"cre\")), person(\"Max\", \"Kuhn\", role = \"ctb\"))",
+      "License": "GPL-3",
+      "Title": "Utility Functions for Working with Random Number Generators",
+      "Description": "Provides a set of functions for working with Random Number Generators (RNGs). In particular, a generic S4 framework is defined for getting/setting the current RNG, or RNG data that are embedded into objects for reproducibility. Notably, convenient default methods greatly facilitate the way current RNG settings can be changed.",
+      "URL": "https://renozao.github.io/rngtools/",
+      "BugReports": "https://github.com/renozao/rngtools/issues",
+      "Encoding": "UTF-8",
+      "Depends": [
+        "R (>= 3.2.0)",
+        "methods"
+      ],
+      "Imports": [
+        "digest",
+        "utils",
+        "stats",
+        "parallel"
+      ],
+      "Suggests": [
+        "covr",
+        "RUnit",
+        "testthat"
+      ],
+      "RoxygenNote": "7.0.2",
+      "NeedsCompilation": "no",
+      "Author": "Renaud Gaujoux [aut, cre], Max Kuhn [ctb]",
+      "Maintainer": "Renaud Gaujoux <renozao@protonmail.com>",
       "Repository": "CRAN"
     },
     "rpart": {

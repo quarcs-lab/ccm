@@ -12,11 +12,11 @@ Source for the Quarto book by Carlos Mendez. Built with **R + Quarto**, publishe
 
 ## Project status
 
-**Stage:** eleven method chapters drafted with live R, organised in two parts. **Part I (chs. 1–8)** centres on the Proposition 99 cigarette-tax dataset for the canonical single-treated-unit setting, except chapter 5 (augmented synthetic control), which uses a purpose-built simulated panel (`data/tobacco_sim.dta`); chapter 8 additionally pulls in the Sakaguchi & Tagawa spatial dataset shipped alongside its replication helpers. **Part II (chs. 9–11)** switches to the Callaway-Sant'Anna minimum-wage county panel for staggered-adoption methods. Every chapter carries graduated exercises. Chapter 5 now renders; threading it into the preface and the chapter-1 roadmap/decision tree is in progress.
+**Stage:** eleven method chapters drafted with live R, organised in two parts. **Part I (chs. 1–8)** centres on the Proposition 99 cigarette-tax dataset for the canonical single-treated-unit setting, except chapter 5 (augmented synthetic control), which uses a purpose-built simulated panel (`data/tobacco_sim.dta`); chapter 8 additionally pulls in the Sakaguchi & Tagawa spatial dataset shipped alongside its replication helpers. **Part II (chs. 9–11)** switches to the Callaway-Sant'Anna minimum-wage county panel for staggered-adoption methods. Every chapter carries graduated exercises. Chapter 5 now renders and is threaded into the preface and the chapter-1 roadmap and decision tree.
 
 | # | Chapter | File | Status |
 |---|---|---|---|
-| — | Preface | `index.qmd` | first draft (two-part scope; does not yet list chapter 5) |
+| — | Preface | `index.qmd` | first draft (two-part scope; lists all eleven chapters) |
 | 1 | Introduction | `01-introduction.qmd` | first draft (live R; Prop 99 example; two-part roadmap) |
 | 2 | Interrupted Time Series | `02-interrupted-time-series.qmd` | first draft (live R; growth-curve + ARIMA) |
 | 3 | Basic Differences-in-Differences | `03-basic-diff-in-diff.qmd` | first draft (live R; CA vs Nevada) |
@@ -34,7 +34,7 @@ Source for the Quarto book by Carlos Mendez. Built with **R + Quarto**, publishe
 
 - [x] Quarto book project with HTML (auto-published) + LaTeX PDF (on demand)
 - [x] Dark/light theme toggle (`cosmo` / `darkly`) with custom CSS palette
-- [x] `renv.lock` pinning 146 R packages at R 4.5.2 for reproducibility
+- [x] `renv.lock` pinning 250 R packages at R 4.5.2 for reproducibility
 - [x] Bibliography wired in (`references.bib` + `apa.csl`)
 - [x] Cover image and favicon
 - [x] Live site on GitHub Pages via `quarto publish gh-pages`
@@ -45,7 +45,6 @@ Source for the Quarto book by Carlos Mendez. Built with **R + Quarto**, publishe
 
 **Next:**
 
-- Thread the new chapter 5 into the preface (`index.qmd`) and the chapter-1 roadmap table + decision tree, then render and publish it.
 - Cross-method comparison chapter — bring the ATT estimates onto one forest plot and discuss the disagreements.
 
 ---

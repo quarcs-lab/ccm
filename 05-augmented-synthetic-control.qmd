@@ -83,9 +83,10 @@ flowchart LR
 ## The estimator
 
 The ridge outcome model regresses pre-period outcomes on the donor outcomes with
-an $L_2$ penalty $\lambda$ chosen by cross-validation; the penalty shrinks the
-correction toward zero, so ASCM never strays far from the SCM fit unless the data
-demand it. Two knobs matter throughout:
+an $L_2$ penalty $\lambda_{\text{ridge}}$ chosen by cross-validation (we subscript
+it to keep it distinct from the factor loadings $\lambda_i$ the book uses
+elsewhere); the penalty shrinks the correction toward zero, so ASCM never strays
+far from the SCM fit unless the data demand it. Two knobs matter throughout:
 
 - **`progfunc`** selects the outcome model: `"none"` (plain SCM — no correction),
   `"ridge"` (the default ASCM), or others such as `"en"` (elastic net). Ridge is
@@ -99,6 +100,15 @@ Unlike the simplex, the ridge-augmented weights are *not* constrained to be
 non-negative — the correction can place small negative weights on donors,
 allowing the controlled extrapolation that a convex combination forbids. That is
 the source of both ASCM's power and its risk.
+
+**Identification.** ASCM recovers the ATT under one assumption: the
+ridge-augmented model correctly imputes the treated unit's untreated path
+$\widehat{Y_{1t}(0)}$ from the donors — the SCM weights plus the outcome-model
+correction capture every systematic pre-period difference, leaving only noise.
+This is weaker than the classical-SCM requirement that the treated unit lie
+*inside* the donor convex hull, but it is not free: if the residual imbalance
+reflects a confounder the ridge model cannot see, the correction is biased too.
+Everything in this chapter is conditional on it.
 
 ## Setup and data
 
@@ -309,32 +319,52 @@ flat), which is exactly what the imbalance number warned about.
 
 ```{r}
 #| label: fig-single-outcomes
-#| fig-cap: "Observed Borealis cigarette sales (solid) vs the ridge-ASCM synthetic counterfactual (dashed). The vertical line marks the 1989 adoption."
+#| fig-cap: "Observed Borealis cigarette sales (orange) vs the ridge-ASCM synthetic counterfactual (blue, dashed). The dotted line marks the 1989 adoption; the visible pre-1989 gap is the residual imbalance the simplex could not close."
 #| fig-width: 8
 #| fig-height: 5
 #| warning: false
-#| code-summary: "Code: Plot observed vs synthetic levels for the ridge fit."
-plot(syn_ridge, plot_type = "outcomes") +
-  labs(x = NULL, y = "Cigarette sales (packs per capita)")
+#| code-summary: "Code: Reconstruct the synthetic series (observed minus gap) and plot both."
+gap_single <- as_tibble(s_ridge$att)
+
+borealis_levels <- sub1 |>
+  filter(state == "Borealis") |>
+  select(year, observed = cigsale) |>
+  left_join(gap_single, by = c("year" = "Time")) |>
+  mutate(synthetic = observed - Estimate)
+
+borealis_levels |>
+  ggplot(aes(year)) +
+  geom_vline(xintercept = 1988.5, color = "#d97757", linetype = "dotted", linewidth = 0.7) +
+  geom_line(aes(y = observed,  color = "Observed Borealis"), linewidth = 1.1) +
+  geom_line(aes(y = synthetic, color = "Synthetic (ridge ASCM)"),
+            linetype = "dashed", linewidth = 1.1) +
+  scale_color_manual(values = c("Observed Borealis"      = "#d97757",
+                                "Synthetic (ridge ASCM)" = "#6a9bcc")) +
+  labs(x = NULL, y = "Cigarette sales (packs per capita)", color = NULL)
 ```
 
 ```{r}
 #| label: fig-single-gap
-#| fig-cap: "Estimated effect of the program on Borealis cigarette sales (treated minus synthetic) with a 95% conformal band. The pre-period gap is the residual imbalance; the post-period gap is the ATT."
+#| fig-cap: "Estimated effect on Borealis cigarette sales (observed minus synthetic) with its 95% conformal band. The pre-1989 gap is residual imbalance; the post-1989 gap is the ATT."
 #| fig-width: 8
 #| fig-height: 5
 #| warning: false
-#| code-summary: "Code: Plot the gap from the precomputed conformal summary."
-plot(s_ridge) +
-  labs(x = NULL, y = "Effect on cigarette sales")
+#| code-summary: "Code: Plot the gap and its conformal band in the book palette."
+gap_single |>
+  ggplot(aes(Time, Estimate)) +
+  geom_hline(yintercept = 0, color = "#94a3b8", linetype = "dashed") +
+  geom_vline(xintercept = 1988.5, color = "#d97757", linetype = "dotted", linewidth = 0.7) +
+  geom_ribbon(aes(ymin = lower_bound, ymax = upper_bound), fill = "#6a9bcc", alpha = 0.15) +
+  geom_line(color = "#6a9bcc", linewidth = 1.1) +
+  labs(x = NULL, y = "Effect on cigarette sales (packs per capita)")
 ```
 
-Ridge picks its penalty $\lambda$ by cross-validation; the CV curve shows the
-error-minimising choice the fit used.
+Ridge picks its penalty $\lambda_{\text{ridge}}$ by cross-validation; the CV curve
+shows the error-minimising choice the fit used.
 
 ```{r}
 #| label: fig-single-cv
-#| fig-cap: "Cross-validation curve for the ridge penalty. The selected lambda balances pre-period fit against the size of the bias correction."
+#| fig-cap: "Cross-validation curve for the ridge penalty. The selected penalty balances pre-period fit against the size of the bias correction."
 #| fig-width: 8
 #| fig-height: 4.5
 #| warning: false
@@ -541,6 +571,14 @@ small and lagged true effect, is prone to do) and a limitation when the outcomes
 genuinely want different donors. Which regime you are in is a judgement call, not
 a setting.
 
+**Where this leaves us.** On a panel built to break the simplex, augmented
+synthetic control repaired the pre-period fit that classical synthetic control
+could not. Chapter 6 (Structural Bayesian Time Series) returns to the Proposition
+99 data and the single-treated-unit question, but swaps the donor-weighting
+machinery for a Bayesian state-space model — replacing the ridge correction and
+conformal band with a full posterior over $\widehat{Y_{1t}(0)}$ and a credible
+interval, a different language for the same uncertainty.
+
 ## Recap
 
 | Question | Answer |
@@ -557,7 +595,7 @@ a setting.
 **Methods:**
 
 - The augmented synthetic control method estimates $\widehat{Y_{1t}(0)} = \sum_j \widehat{w}_j Y_{jt} + \big(\widehat{m}_t(X_1) - \sum_j \widehat{w}_j \widehat{m}_t(X_j)\big)$, keeping the synthetic-control weights $\widehat{w}$ but adding a ridge outcome model $\widehat{m}$ that de-biases the residual pre-period imbalance; with `progfunc = "none"` the correction is zero and the estimator collapses to the classical SCM of chapter 4.
-- The augmentation relaxes the simplex's non-negativity constraint, so the effective weights can be slightly negative — a *controlled extrapolation* governed by a cross-validated ridge penalty $\lambda$, which is what lets ASCM reach treated units outside the donor convex hull that no convex combination can match.
+- The augmentation relaxes the simplex's non-negativity constraint, so the effective weights can be slightly negative — a *controlled extrapolation* governed by a cross-validated ridge penalty $\lambda_{\text{ridge}}$, which is what lets ASCM reach treated units outside the donor convex hull that no convex combination can match.
 - `multisynth` extends the estimator to staggered adoption by fitting a partially-pooled synthetic control per treated unit (pooling fraction `nu`), aligning them in event time, and averaging — the synthetic-control counterpart to the Callaway-Sant'Anna group-time aggregation in chapter 9 — while `augsynth_multiout` finds a single weight vector that balances several outcomes' pre-periods jointly.
 
 **Lessons:**

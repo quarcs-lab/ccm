@@ -12,25 +12,26 @@ The book is written for advanced undergraduates, master's students, and early-ca
 
 ### Part I — One region, one shock
 
-Chapters 1–7 evaluate **California's 1989 Proposition 99 cigarette tax**, the canonical single-treated-unit policy evaluation. Every method in this half builds a counterfactual for California from a different data source — the state's own past, a neighbour, a weighted blend of donor states, or a Bayesian time-series model — and reports the average treatment effect on the treated (ATT) between 1989 and 2000. The ATT compares California's observed cigarette sales after the policy against what they *would have been* without it; chapter 1 makes this missing-counterfactual logic precise.
+Chapters 1–8 study the single-treated-unit setting. Most evaluate **California's 1989 Proposition 99 cigarette tax**, the canonical example: each builds a counterfactual for California from a different data source — the state's own past, a neighbour, a weighted blend of donor states, or a Bayesian time-series model — and reports the average treatment effect on the treated (ATT) between 1989 and 2000. Chapter 5 is the exception, stress-testing augmented synthetic control on a purpose-built *simulated* tobacco panel where the true effect is known. The ATT compares California's observed cigarette sales after the policy against what they *would have been* without it; chapter 1 makes this missing-counterfactual logic precise.
 
 - **Introduction** — the potential-outcomes vocabulary and a naive pre-post strawman estimate.
 - **Interrupted time series** — extrapolating California's pre-period trajectory forward.
 - **Basic difference-in-differences** — subtracting a single control state's pre-to-post change.
 - **Classical synthetic control** — building a weighted donor blend that matches the pre-period.
+- **Augmented synthetic control** — bias-correcting and multi-period synthetic control on a simulated, staggered, multi-treated tobacco panel via `augsynth`.
 - **Structural Bayesian time series** — state-space counterfactuals with posterior credible intervals.
 - **Synthetic control with prediction intervals** — frequentist forecast-error decomposition via the `scpi` package.
 - **Bayesian spatial synthetic control** — a horseshoe-prior donor blend with spatial spillovers onto neighbours.
 
 ### Part II — Many regions, staggered adoption
 
-Chapters 8–10 evaluate the **Callaway-Sant'Anna minimum-wage county panel**, where thousands of counties adopted different state minimum-wage levels at different years. The single-treated-unit toolkit no longer applies: the estimand becomes a family of cohort-specific ATTs indexed by adoption year, and the methods exploit the panel's panel-data structure rather than a single time series.
+Chapters 9–11 evaluate the **Callaway-Sant'Anna minimum-wage county panel**, where thousands of counties adopted different state minimum-wage levels at different years. The single-treated-unit toolkit no longer applies: the estimand becomes a family of cohort-specific ATTs indexed by adoption year, and the methods exploit the panel's panel-data structure rather than a single time series.
 
 - **Staggered difference-in-differences** — group-time ATT(g, t) estimators that avoid two-way fixed-effects bias.
 - **Interactive fixed effects and matrix completion** — factor models that relax parallel trends.
 - **Generalized synthetic control** — projecting treated units onto factors estimated from never-treated controls.
 
-Each chapter pairs the conceptual logic of the method with a worked R example using publicly available data, so readers can reproduce every estimate end-to-end. A forthcoming cross-method comparison chapter will tabulate the ATT estimates from chapters 2–10 side by side on the two shared datasets; chapter 10 sketches what that comparison will look like.
+Each chapter pairs the conceptual logic of the method with a worked R example using publicly available data, so readers can reproduce every estimate end-to-end. A forthcoming cross-method comparison chapter will tabulate the ATT estimates from chapters 2–11 side by side on the two shared datasets; chapter 11 sketches what that comparison will look like.
 
 ## How to read this book
 
@@ -40,7 +41,7 @@ For readers who want to render a single chapter without cloning the repo, every 
 
 ## Acknowledgments
 
-This book builds on the infrastructure of the companion project [*Mastering Causal Metrics*](https://github.com/cmg777/intro2causal) and on a long tradition of applied econometric scholarship. The Proposition 99 panel used throughout Part I was assembled by @abadie2010synthetic; the staggered-adoption minimum-wage panel in Part II is the county-level dataset packaged with the `did` R package by @callaway2021difference. I am also grateful to the open-source maintainers of `tidysynth`, `Synth`, `CausalImpact`, `bsts`, `scpi`, `did`, `HonestDiD`, `fect`, `gsynth`, `fixest`, `fpp3` (and its `fable`/`feasts` siblings), `panelView`, and `Rcpp` — every chapter in this book is a thin wrapper around their work.
+This book builds on the infrastructure of the companion project [*Mastering Causal Metrics*](https://github.com/cmg777/intro2causal) and on a long tradition of applied econometric scholarship. The Proposition 99 panel used through most of Part I was assembled by @abadie2010synthetic (chapter 5 instead uses a small simulated tobacco panel of the author's own construction to exercise the augmented-control estimators); the staggered-adoption minimum-wage panel in Part II is the county-level dataset packaged with the `did` R package by @callaway2021difference. I am also grateful to the open-source maintainers of `tidysynth`, `Synth`, `augsynth`, `CausalImpact`, `bsts`, `scpi`, `did`, `HonestDiD`, `fect`, `gsynth`, `fixest`, `fpp3` (and its `fable`/`feasts` siblings), `panelView`, and `Rcpp` — every chapter in this book is a thin wrapper around their work.
 
 ## License
 

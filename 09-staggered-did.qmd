@@ -10,8 +10,9 @@ title: "Staggered Differences-in-Differences"
 4. Run Rambachan-Roth relative-magnitudes sensitivity analysis with `HonestDiD` and report the smallest pre-trend violation that would overturn the post-treatment conclusion. This converts an unverifiable parallel-trends assumption into a falsifiable claim about how robust the headline result is.
 
 ::: {.callout-note appearance="simple"}
-**Part II begins here.** Chapters 2–7 held the dataset fixed
-(Proposition 99) and varied the estimator. From this chapter forward
+**Part II begins here.** Chapters 2–8 stayed in the single-treated-unit
+world — Proposition 99 throughout, except chapter 5's purpose-built
+simulated tobacco panel — and varied the estimator. From this chapter forward
 we switch datasets too: a 1,745-county minimum-wage panel with
 *staggered* adoption replaces California's single-shock setting, and
 the toolkit shifts to estimators built for that structure.
@@ -565,7 +566,7 @@ $$Y_{it}(\infty) = \alpha_i + \xi_t + \lambda_i' f_t + \varepsilon_{it}.$$
 
 The $\lambda_i' f_t$ term absorbs time-varying unobserved
 heterogeneity that no county or year fixed effect can net out.
-Chapter 9 fits this model with matrix completion and interactive
+Chapter 10 fits this model with matrix completion and interactive
 fixed effects on the same minimum-wage panel and provides a second,
 assumption-distinct read on the same substantive question.
 :::
@@ -621,7 +622,7 @@ the companion post at
 
 **Caveats:**
 
-- Every estimator in the chapter — TWFE, $ATT(g, t)$, conditional DiD, even the HonestDiD bounds — still leans on a parallel-trends-style identifying assumption; the on-impact effect here is *fragile*, with a relative-magnitudes breakdown $\bar M \le$ `r sprintf("%.2f", breakdown_mbar)` on the coarse grid, so under mild parallel-trends violations the on-impact conclusion does not survive (though the cumulative `r sprintf("%+.3f", dyn3$est)` effect by $e = +3$ is more robust). Chapter 9 relaxes parallel trends in a different way — by modelling $Y_{it}(\infty)$ as a factor structure.
+- Every estimator in the chapter — TWFE, $ATT(g, t)$, conditional DiD, even the HonestDiD bounds — still leans on a parallel-trends-style identifying assumption; the on-impact effect here is *fragile*, with a relative-magnitudes breakdown $\bar M \le$ `r sprintf("%.2f", breakdown_mbar)` on the coarse grid, so under mild parallel-trends violations the on-impact conclusion does not survive (though the cumulative `r sprintf("%+.3f", dyn3$est)` effect by $e = +3$ is more robust). Chapter 10 relaxes parallel trends in a different way — by modelling $Y_{it}(\infty)$ as a factor structure.
 - Cohort sizes here are modest (especially cohort 2006), the panel is short (2003–2007), and the never-treated pool is the comparison group of choice — switching to not-yet-treated controls trades a larger comparison pool for the stronger assumption that future-treated counties are valid controls for already-treated ones in the interim; the choice should be defended, not defaulted to.
 
 ## Exercises

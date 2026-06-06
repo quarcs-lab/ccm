@@ -11,7 +11,7 @@ title: "Interactive Fixed Effects and Matrix Completion"
 
 ## When parallel trends isn't enough
 
-Chapter 8 squeezed every drop of usable signal out of the
+Chapter 9 squeezed every drop of usable signal out of the
 Callaway-Sant'Anna minimum-wage panel under one identifying
 assumption: **parallel trends**. Conditional or unconditional, with
 or without never-treated counties, with or without anticipation
@@ -56,7 +56,7 @@ Yiqing Xu's `fect` [@liu2024practical] package implements both with
 a common API and a common counterfactual-plot diagnostic. By
 chapter's end we compare $\widehat{\tau}_{\text{IFE}}$ and
 $\widehat{\tau}_{\text{MC}}$ on the same panel — two estimators, two
-identifying assumptions, one substantive question. Chapter 10 then
+identifying assumptions, one substantive question. Chapter 11 then
 does the deep dive on one specific member of this family —
 generalized synthetic control via the `gsynth` package — using the
 same panel.
@@ -93,12 +93,12 @@ theme_set(
 )
 ```
 
-We work from the same `cs_minwage.rds` panel as chapter 8, but with
+We work from the same `cs_minwage.rds` panel as chapter 9, but with
 one small adjustment: factor-based estimators need **at least as
 many pre-treatment periods per cohort as the number of factors they
 try to fit** — concretely, identifying $r$ factors on a treated unit
 requires at least $r + 1$ pre-treatment periods for that unit.
-Chapter 8's 2003-2007 working window leaves the 2004 cohort with
+Chapter 9's 2003-2007 working window leaves the 2004 cohort with
 only one pre-period (year 2003). To keep that cohort in the IFE
 sample we would need to set `min.T0 = 1` — the user-controlled
 inclusion threshold that drops treated units with fewer
@@ -107,7 +107,7 @@ that cohort and collapses IFEct back to TWFE. Widening the window
 to 2001-2007 gives 2004 three pre-periods (2001-2003), so we can
 set `min.T0 = 2` and let CV search over $r \in \{0, 1, 2\}$.
 Everything else (cohort filter, region drop, treatment indicator)
-is identical to chapter 8.
+is identical to chapter 9.
 
 ```{r}
 #| label: data-load
@@ -138,10 +138,10 @@ mw |>
   gt_pretty()
 ```
 
-The outcome `lemp` (log teen employment; see chapter 8 for full
+The outcome `lemp` (log teen employment; see chapter 9 for full
 data provenance) and the treatment indicator `D` (1 once a county's
 state has raised its minimum wage above the federal floor, 0
-otherwise) line up with chapter 8's definitions.
+otherwise) line up with chapter 9's definitions.
 
 ## Visualising the panel
 
@@ -437,7 +437,7 @@ with the `fect` package — its online companion at
 authoritative tutorial. Athey et al.'s own implementation lives in
 the `MCPanel` package
 (<https://github.com/susanathey/MCPanel>) for readers who want to
-compare `fect::mc` against the canonical reference code. Chapter 10
+compare `fect::mc` against the canonical reference code. Chapter 11
 zooms in on `gsynth`, the IFE estimator implemented in a
 standalone package, on the same Callaway-Sant'Anna panel.
 
