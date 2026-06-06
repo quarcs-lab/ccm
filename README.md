@@ -168,6 +168,10 @@ Add bibliography entries to `references.bib`. They appear on the **References** 
 
 The preface (`index.qmd`) and references (`references.qmd`) use a top-level `# Heading {.unnumbered}` instead of a YAML `title:` field, so they appear in the sidebar without a chapter number.
 
+### Automated chapter authoring (Claude Code)
+
+Contributors using [Claude Code](https://claude.com/claude-code) can run the project skill **`write-book-chapter`** (in `.claude/skills/write-book-chapter/`) to draft a new method chapter in the house style and keep the book in sync — numbering, `_quarto.yml`, the preface, the chapter-1 roadmap and decision tree, this README, `references.bib`, and the per-chapter download bundles. Invoke it with `/write-book-chapter` plus a brief (method, R package, dataset, placement); it proposes an outline, then writes, render-checks, and integrates the chapter. See `.claude/skills/write-book-chapter/SKILL.md`.
+
 ## License
 
 MIT — see [LICENSE](LICENSE).

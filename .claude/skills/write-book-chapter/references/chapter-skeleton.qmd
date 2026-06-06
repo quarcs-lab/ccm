@@ -1,0 +1,242 @@
+---
+title: "{{CHAPTER TITLE}}"
+---
+
+<!--
+  CHAPTER SKELETON for Comparative Causal Metrics.
+  Copy this to NN-your-slug.qmd and fill every {{PLACEHOLDER}}.
+  Read references/house-style.md first. Do NOT reorder sections.
+  Replace ALL <!-- comments --> with real content or delete them.
+  Every number in prose must come from inline R: `r sprintf("%.1f", obj)`.
+-->
+
+## Learning objectives
+
+<!-- 3-4 numbered objectives. Each is TWO sentences: what the reader does,
+     then why it matters / what it buys them. -->
+
+1. {{Do X with `pkg::fn()`.}} {{Why this is the technical core / what it buys.}}
+2. {{Do Y.}} {{Why.}}
+3. {{Do Z.}} {{Why.}}
+
+<!-- PART-SEAM ONLY: if this chapter opens Part II, paste the callout-note from
+     house-style.md §9 here and delete this comment. Otherwise delete this block. -->
+
+## {{The <method> idea}}
+
+<!-- Opening CALLBACK to the previous chapter by name and number, then what THIS
+     chapter changes. Keep sentences short. -->
+
+{{Chapter K (Previous Method) did ... . This chapter ... .}}
+
+This chapter fits {{N}} variants on the same {{dataset}} data:
+
+1. {{Variant 1 — one line.}}
+2. {{Variant 2 — one line.}}
+
+<!-- State the through-line: each variant builds the counterfactual
+     $\widehat{Y_{1t}(0)}$ a different way, then ATT = observed - imputed. -->
+
+**Identification.** {{One paragraph: the single assumption under which this
+method recovers the ATT. Name it. Say everything in the chapter is conditional
+on it.}}
+
+## Setup and data
+
+**Packages.** {{One short paragraph naming each package and what it does in this
+chapter — tidyverse for wrangling/plots, the method package, any SE/diagnostic
+helper, and the in-repo `R/table_helpers.R`.}}
+
+```{r}
+#| label: setup
+#| message: false
+#| warning: false
+#| code-summary: "Code: Load packages, source table helpers, and set transparent ggplot theme."
+library(tidyverse)
+# {{method-specific packages}}
+source("R/table_helpers.R")
+
+knitr::opts_chunk$set(dev.args = list(bg = "transparent"))
+
+theme_set(
+  theme_minimal(base_size = 12) +
+    theme(
+      plot.background  = element_rect(fill = "transparent", color = NA),
+      panel.background = element_rect(fill = "transparent", color = NA),
+      panel.grid.major = element_line(color = "#94a3b8", linewidth = 0.25),
+      panel.grid.minor = element_line(color = "#94a3b8", linewidth = 0.15),
+      text             = element_text(color = "#94a3b8"),
+      axis.text        = element_text(color = "#94a3b8")
+    )
+)
+```
+
+**Dataset.** {{Shape (rows × cols), treated unit(s), cutoff t*, outcome and its
+units, and how this chapter subsets/transforms it.}}
+
+```{r}
+#| label: data-load
+#| code-summary: "Code: {{Load the dataset and build the chapter-specific subset.}}"
+# {{Part I:}} prop99 <- read_rds("data/proposition99.rds") |> as_tibble()
+# {{Part II:}} panel <- read_rds("data/cs_minwage.rds")
+# {{build the subset/transform used below}}
+```
+
+<!-- ============ ONE SECTION PER METHOD VARIANT (repeat this block) ============ -->
+
+## {{Method variant 1}}
+
+**The idea.** {{Plain-English intuition in 1-2 short sentences.}}
+
+**The equation.** {{Lead-in sentence, then display math in book notation.}}
+
+$$\widehat{Y_{1t}(0)} = {{...}}, \qquad \widehat{\tau}_{\text{{{method}}}} = \frac{1}{T_{\text{post}}} \sum_{t > t^*} \Big[ Y_{1t} - \widehat{Y_{1t}(0)} \Big].$$
+
+In words: {{restate the equation in plain English; define every symbol.}}
+
+```{r}
+#| label: tbl-{{slug}}
+#| tbl-cap: "{{Caption that fully describes the table.}}"
+#| code-summary: "Code: {{imperative description}}."
+# {{fit the model; render with ms_pretty() for models or gt_pretty() for frames}}
+```
+
+```{r}
+#| label: {{slug}}-stats
+#| echo: false
+# {{precompute scalars the prose references inline, e.g.:}}
+# est_1 <- mean(post$y - cf)
+```
+
+**Reading the output.** {{Interpret the numbers using inline R, e.g. the estimate
+is $\approx `r sprintf("%.1f", est_1)`$. Compare to neighbouring methods. State
+the window/estimand so it's comparable.}}
+
+```{r}
+#| label: fig-{{slug}}
+#| fig-cap: "{{Caption.}}"
+#| fig-width: 8
+#| fig-height: 5
+#| code-summary: "Code: {{imperative description}}."
+# {{plot observed (#d97757) vs counterfactual (#6a9bcc dashed), dotted cutoff vline}}
+```
+
+{{One paragraph reading the figure.}}
+
+**Common pitfall.** {{The single most likely way to misuse or misread this
+variant.}}
+
+<!-- ============ END method-variant block; repeat as needed ============ -->
+
+## What the {{...}} estimates tell us
+
+<!-- Cross-variant discussion. Reconcile the numbers (inline R). Name the lesson.
+     Then CLOSE with a hand-off to the next chapter by name and number
+     (or, for the last method chapter, to the planned comparison chapter). -->
+
+**{{The disagreement / Where this leaves us}}.** {{...}}
+
+**A note on standard errors.** {{If relevant: which SE/uncertainty story applies
+and why.}}
+
+**Where this leaves us.** {{Hand-off: name the next chapter and what it adds.}}
+
+**Recap.** {{One-sentence recap with the headline numbers inline.}}
+
+## Key takeaways
+
+**Methods:**
+
+- {{Estimator(s) + R functions used.}}
+
+**Lessons:**
+
+- {{Conceptual morals; headline ATT with inline numbers; cross-method comparison.}}
+
+**Caveats:**
+
+- {{Assumptions and failure modes; when not to trust the estimate.}}
+
+## Further reading
+
+- @{{key}} — *{{textbook|tutorial|R package|practical guide|review|paper}}* — {{one sentence.}}
+- @{{key}} — *{{type}}* — {{one sentence.}}
+- @{{key}} — *{{type}}* — {{one sentence.}}
+
+## Exercises
+
+<!-- Short intro: exercises reuse the setup objects; nothing to re-load. -->
+
+The exercises below {{probe the chapter's lesson}}. All reuse the objects from the
+setup chunks; nothing needs to be re-loaded.
+
+### Exercise 1: {{Title}}
+
+{{Prompt.}}
+
+::: {.callout-tip collapse="true"}
+## Solution
+
+```{r}
+#| label: ex-ch{{NN}}-01
+# {{solution; tables via gt_pretty()}}
+```
+
+{{One short paragraph interpreting the result and tying it to the lesson.}}
+:::
+
+### Exercise 2: {{Title}}
+
+{{Prompt.}}
+
+::: {.callout-tip collapse="true"}
+## Solution
+
+```{r}
+#| label: ex-ch{{NN}}-02
+```
+
+{{Interpretation.}}
+:::
+
+### Exercise 3: {{Title}}
+
+{{Prompt.}}
+
+::: {.callout-tip collapse="true"}
+## Solution
+
+```{r}
+#| label: ex-ch{{NN}}-03
+```
+
+{{Interpretation.}}
+:::
+
+### Exercise 4: {{Title}}
+
+{{Prompt.}}
+
+::: {.callout-tip collapse="true"}
+## Solution
+
+```{r}
+#| label: ex-ch{{NN}}-04
+```
+
+{{Interpretation.}}
+:::
+
+### Exercise 5 (stretch): {{Title}}
+
+{{Prompt — a harder, open-ended extension, often a placebo on an untreated unit.}}
+
+::: {.callout-tip collapse="true"}
+## Solution
+
+```{r}
+#| label: ex-ch{{NN}}-05
+```
+
+{{Interpretation.}}
+:::

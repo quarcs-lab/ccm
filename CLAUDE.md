@@ -42,6 +42,14 @@ quarto render --to pdf                               # needs TinyTeX; Quarto pro
 - **Citations** go in `references.bib` (BibTeX). They render with the APA 7 style from `apa.csl` and appear automatically on the References page — there is nothing to wire up per-citation.
 - **Theming overrides** live in `custom.css`, loaded by the HTML format only.
 
+## Authoring new chapters (skill)
+
+To add or insert a method chapter, use the project skill **`write-book-chapter`** (`.claude/skills/write-book-chapter/`). It encodes this repo's chapter template, notation, and colour palette, and keeps the rest of the book in sync: numbering (append or insert+renumber), `_quarto.yml`, the preface (`index.qmd`), chapter 1's roadmap table and decision-tree mermaid, `README.md`, `references.bib`, the per-chapter download bundles, and the neighbour-chapter cross-references. It renders the chapter live until clean, then (on request) commits and publishes.
+
+- Entry point: `.claude/skills/write-book-chapter/SKILL.md`.
+- Bundled references the skill reads: `references/house-style.md` (voice, the book-wide notation table, the palette, and anti-bug rules distilled from `audit/`), `references/chapter-skeleton.qmd` (the canonical section order), and `references/integration-checklist.md` (the full-sync file map + the insert/renumber procedure).
+- `.claude/` is gitignored as session state, so these files were committed with `git add -f`; re-run `git add -f` after editing them.
+
 ## Publishing workflow (HTML auto-publishes; PDF on demand; no EPUB)
 
 **The website at <https://quarcs-lab.github.io/ccm/> must stay in sync with `main`.** Every time a `.qmd` is modified, re-render HTML and re-publish:
