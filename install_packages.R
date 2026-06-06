@@ -45,10 +45,23 @@ pkgs <- c(
   "twfeweights",
   "BMisc",
   "pte",
-  "patchwork"
+  "patchwork",
+  # Chapter 5 — augmented synthetic control (augsynth) + labeled Stata I/O
+  "haven",
+  "labelled",
+  "LiblineaR",
+  "FNN",
+  "ggrepel"
 )
 
 renv::install(pkgs)
+
+# GitHub-only: the augmented synthetic control package (not on CRAN). Its
+# optional MCPanel backend (the progfunc = "mcp" matrix-completion option) is a
+# Suggests dependency and is intentionally omitted — the book does not use it,
+# and MCPanel does not compile cleanly on recent toolchains.
+renv::install("ebenmichael/augsynth")
+
 renv::snapshot(prompt = FALSE)
 
 message("Done. renv.lock is now pinned. Commit it to git.")

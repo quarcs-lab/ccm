@@ -34,4 +34,10 @@ Imports:
     patchwork,
     broom,
     fect,
-    panelView
+    panelView,
+    augsynth,
+    LiblineaR,
+    FNN,
+    haven,
+    labelled,
+    ggrepel

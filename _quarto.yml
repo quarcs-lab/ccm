@@ -29,12 +29,13 @@ book:
     - 02-interrupted-time-series.qmd
     - 03-basic-diff-in-diff.qmd
     - 04-classical-synthetic-control.qmd
-    - 05-structural-bayesian-ts.qmd
-    - 06-synthetic-control-prediction-intervals.qmd
-    - 07-bayesian-spatial-sc.qmd
-    - 08-staggered-did.qmd
-    - 09-matrix-completion-and-ife.qmd
-    - 10-gsynth.qmd
+    - 05-augmented-synthetic-control.qmd
+    - 06-structural-bayesian-ts.qmd
+    - 07-synthetic-control-prediction-intervals.qmd
+    - 08-bayesian-spatial-sc.qmd
+    - 09-staggered-did.qmd
+    - 10-matrix-completion-and-ife.qmd
+    - 11-gsynth.qmd
     - references.qmd
 
 bibliography: references.bib

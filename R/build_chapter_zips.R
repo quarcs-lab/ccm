@@ -8,12 +8,13 @@ chapters <- c(
   "02-interrupted-time-series.qmd",
   "03-basic-diff-in-diff.qmd",
   "04-classical-synthetic-control.qmd",
-  "05-structural-bayesian-ts.qmd",
-  "06-synthetic-control-prediction-intervals.qmd",
-  "07-bayesian-spatial-sc.qmd",
-  "08-staggered-did.qmd",
-  "09-matrix-completion-and-ife.qmd",
-  "10-gsynth.qmd"
+  "05-augmented-synthetic-control.qmd",
+  "06-structural-bayesian-ts.qmd",
+  "07-synthetic-control-prediction-intervals.qmd",
+  "08-bayesian-spatial-sc.qmd",
+  "09-staggered-did.qmd",
+  "10-matrix-completion-and-ife.qmd",
+  "11-gsynth.qmd"
 )
 
 # Every chapter sources R/table_helpers.R and reads data/proposition99.rds.
@@ -37,19 +38,37 @@ detect_packages <- function(paths) {
 }
 
 build_install_chunk <- function(pkgs) {
-  pkg_list <- paste(sprintf('"%s"', sort(pkgs)), collapse = ", ")
-  c(
+  # GitHub-only packages (not on CRAN) are installed with remotes::install_github;
+  # everything else comes from CRAN. dependencies = NA skips Suggests (e.g. the
+  # augsynth Suggests MCPanel, which does not compile on recent toolchains).
+  github <- c(augsynth = "ebenmichael/augsynth")
+  gh       <- github[names(github) %in% pkgs]
+  cran     <- sort(setdiff(pkgs, names(github)))
+  cran_list <- paste(sprintf('"%s"', cran), collapse = ", ")
+  lines <- c(
     "```{r}",
     "#| label: install-packages",
     "#| message: false",
     "#| warning: false",
-    paste0("pkgs <- c(", pkg_list, ")"),
-    "to_install <- setdiff(pkgs, rownames(installed.packages()))",
+    paste0("cran_pkgs <- c(", cran_list, ")"),
+    "to_install <- setdiff(cran_pkgs, rownames(installed.packages()))",
     "if (length(to_install)) {",
     "  install.packages(to_install, repos = \"https://cloud.r-project.org\")",
-    "}",
-    "```"
+    "}"
   )
+  if (length(gh)) {
+    lines <- c(lines,
+      "if (!requireNamespace(\"remotes\", quietly = TRUE)) {",
+      "  install.packages(\"remotes\", repos = \"https://cloud.r-project.org\")",
+      "}")
+    for (i in seq_along(gh)) {
+      lines <- c(lines,
+        sprintf(paste0("if (!requireNamespace(\"%s\", quietly = TRUE)) ",
+                       "remotes::install_github(\"%s\", dependencies = NA, upgrade = \"never\")"),
+                names(gh)[i], gh[[i]]))
+    }
+  }
+  c(lines, "```")
 }
 
 # Add bibliography + csl to the chapter YAML so citations resolve without a
@@ -76,9 +95,17 @@ for (chap in chapters) {
   file.copy("references.bib",         file.path(stage, "references.bib"),         overwrite = TRUE)
   file.copy("apa.csl",                file.path(stage, "apa.csl"),                overwrite = TRUE)
 
-  # Chapter 7 ships the scspill helpers + .cpp kernels + spatial .rda so the
+  # Chapter 5 ships the purpose-built simulated tobacco panel (a labelled Stata
+  # file) so a reader can render the augmented synthetic control chapter
+  # standalone without the rest of the book.
+  if (chap == "05-augmented-synthetic-control.qmd") {
+    file.copy("data/tobacco_sim.dta",
+              file.path(stage, "data/tobacco_sim.dta"), overwrite = TRUE)
+  }
+
+  # Chapter 8 ships the scspill helpers + .cpp kernels + spatial .rda so the
   # standalone bundle can reproduce the Bayesian Spatial SCM without network.
-  if (chap == "07-bayesian-spatial-sc.qmd") {
+  if (chap == "08-bayesian-spatial-sc.qmd") {
     dir.create(file.path(stage, "R/scspill"), recursive = TRUE)
     scspill_files <- list.files("R/scspill", full.names = TRUE, all.files = TRUE, no.. = TRUE)
     file.copy(scspill_files, file.path(stage, "R/scspill"), overwrite = TRUE)
@@ -86,25 +113,25 @@ for (chap in chapters) {
               file.path(stage, "data/california_smoking.rda"), overwrite = TRUE)
   }
 
-  # Chapter 8 ships the CS minimum-wage county panel and the honest_did
+  # Chapter 9 ships the CS minimum-wage county panel and the honest_did
   # bridge that connects did::AGGTEobj to HonestDiD.
-  if (chap == "08-staggered-did.qmd") {
+  if (chap == "09-staggered-did.qmd") {
     file.copy("data/cs_minwage.rds",
               file.path(stage, "data/cs_minwage.rds"), overwrite = TRUE)
     file.copy("R/honest_did.R",
               file.path(stage, "R/honest_did.R"), overwrite = TRUE)
   }
 
-  # Chapter 9 ships the CS minimum-wage county panel so a reader can
+  # Chapter 10 ships the CS minimum-wage county panel so a reader can
   # render the IFE/MC chapter standalone without the rest of the book.
-  if (chap == "09-matrix-completion-and-ife.qmd") {
+  if (chap == "10-matrix-completion-and-ife.qmd") {
     file.copy("data/cs_minwage.rds",
               file.path(stage, "data/cs_minwage.rds"), overwrite = TRUE)
   }
 
-  # Chapter 10 ships the same CS minimum-wage county panel so a reader
+  # Chapter 11 ships the same CS minimum-wage county panel so a reader
   # can render the gsynth chapter standalone without the rest of the book.
-  if (chap == "10-gsynth.qmd") {
+  if (chap == "11-gsynth.qmd") {
     file.copy("data/cs_minwage.rds",
               file.path(stage, "data/cs_minwage.rds"), overwrite = TRUE)
   }
