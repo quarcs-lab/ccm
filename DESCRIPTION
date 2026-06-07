@@ -42,4 +42,8 @@ Imports:
     labelled,
     ggrepel,
     synthdid,
-    xsynthdid
+    xsynthdid,
+    coda,
+    fpp3,
+    gsynth,
+    mice
