@@ -93,12 +93,12 @@ theme_set(
 )
 ```
 
-We work from the same `cs_minwage.rds` panel as chapter 8, but with
+We work from the same `cs_minwage.rds` panel as chapter 10, but with
 one small adjustment: factor-based estimators need **at least as
 many pre-treatment periods per cohort as the number of factors they
 try to fit** — concretely, identifying $r$ factors on a treated unit
 requires at least $r + 1$ pre-treatment periods for that unit.
-Chapter 8's 2003-2007 working window leaves the 2004 cohort with
+Chapter 10's 2003-2007 working window leaves the 2004 cohort with
 only one pre-period (year 2003). To keep that cohort in the IFE
 sample we would need to set `min.T0 = 1` — the user-controlled
 inclusion threshold that drops treated units with fewer
@@ -107,7 +107,7 @@ that cohort and collapses IFEct back to TWFE. Widening the window
 to 2001-2007 gives 2004 three pre-periods (2001-2003), so we can
 set `min.T0 = 2` and let CV search over $r \in \{0, 1, 2\}$.
 Everything else (cohort filter, region drop, treatment indicator)
-is identical to chapter 8.
+is identical to chapter 10.
 
 ```{r}
 #| label: data-load
@@ -138,10 +138,10 @@ mw |>
   gt_pretty()
 ```
 
-The outcome `lemp` (log teen employment; see chapter 8 for full
+The outcome `lemp` (log teen employment; see chapter 10 for full
 data provenance) and the treatment indicator `D` (1 once a county's
 state has raised its minimum wage above the federal floor, 0
-otherwise) line up with chapter 8's definitions.
+otherwise) line up with chapter 10's definitions.
 
 ## Visualising the panel
 
@@ -453,7 +453,7 @@ CV picked $r = `r unname(out_ife$r.cv)`$, collapsing IFEct to TWFE. Refit `fect(
 ## Solution
 
 ```{r}
-#| label: ex-ch09-01
+#| label: ex-ch11-01
 #| message: false
 #| warning: false
 out_ife_r1 <- fect(
@@ -487,7 +487,7 @@ Refit `fect()` for MC with `CV = FALSE` at two hand-chosen penalty values — $\
 ## Solution
 
 ```{r}
-#| label: ex-ch09-02
+#| label: ex-ch11-02
 #| message: false
 #| warning: false
 out_mc_loose <- fect(
@@ -536,7 +536,7 @@ Refit both IFEct and MC with `lemp ~ D + lpop + lavg_pay` (adding log county pop
 ## Solution
 
 ```{r}
-#| label: ex-ch09-03
+#| label: ex-ch11-03
 #| message: false
 #| warning: false
 out_ife_x <- fect(
@@ -590,7 +590,7 @@ The chapter shows the per-event-time ATT as plots only. Build a numeric side-by-
 ## Solution
 
 ```{r}
-#| label: ex-ch09-04
+#| label: ex-ch11-04
 extract_eventtime <- function(out, label) {
   m <- out$est.att
   tibble(method = label,
@@ -620,7 +620,7 @@ The two estimators agree closely in event-time tails where the data is sparse an
 ## Solution
 
 ```{r}
-#| label: ex-ch09-05
+#| label: ex-ch11-05
 #| message: false
 #| warning: false
 out_ife_placebo <- fect(

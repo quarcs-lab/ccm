@@ -552,6 +552,19 @@ a setting.
 | Several outcomes at once? | One weight vector, per-outcome ATTs (`augsynth_multiout`): sales down, mortality down, revenue up |
 | What relaxes vs classical SCM? | Non-negativity — ridge weights may go slightly negative, permitting controlled extrapolation |
 
+**Where this leaves us.** Chapter 5 closed the residual pre-period gap by *adding
+a model* — a ridge outcome regression that bias-corrects the simplex fit.
+**Chapter 6 (Synthetic Difference-in-Differences)** closes the same gap with a
+very different move: instead of a model, it adds a *second* simplex. SCM picks
+unit weights to match the treated pre-period; SDID also picks **time** weights
+to align donor and post-period years, and runs DiD on the doubly de-meaned
+panel. The de-biasing intuition carries over; the machinery is two ridge-simplex
+problems and a TWFE regression rather than one simplex plus a ridge outcome
+model. Throughout chapter 6 we write the SDID unit weights as $\omega_i$ and
+its time weights as $\nu_t$ to keep $\lambda$ here unambiguous: in this chapter
+it is the ridge penalty, and in chapter 11 it will be the factor loading; in
+chapter 6 it would have been the time-weight vector, hence the rename.
+
 ## Key takeaways
 
 **Methods:**

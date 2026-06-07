@@ -11,7 +11,7 @@ title: "Bayesian Spatial Synthetic Control"
 
 ## Why a fourth synthetic-control chapter?
 
-Chapter 4 fit a *classical* Synthetic Control: donor weights live on the simplex and are chosen by a quadratic optimiser. Chapter 5 borrowed donor information in a different way — through a Bayesian structural time-series model. Chapter 6 then put a finite-sample frequentist prediction interval around the classical fit and relaxed the simplex to lasso / ridge / OLS — but, like chapters 4 and 5, retained SUTVA. All three treat the donor states' outcomes as *unaffected* by California's policy. That assumption — the **stable unit treatment value assumption (SUTVA)** — is the price of any synthetic-control estimate.
+Chapter 4 fit a *classical* Synthetic Control: donor weights live on the simplex and are chosen by a quadratic optimiser. Chapter 5 augmented those weights with a ridge outcome-model bias correction. Chapter 6 then ran DiD on a panel doubly de-meaned by simplex unit and time weights. Chapter 7 borrowed donor information through a Bayesian structural time-series model. Chapter 8 put a finite-sample frequentist prediction interval around the classical fit and relaxed the simplex to lasso / ridge / OLS — but, like every chapter before it, retained SUTVA. All of them treat the donor states' outcomes as *unaffected* by California's policy. That assumption — the **stable unit treatment value assumption (SUTVA)** — is the price of any synthetic-control estimate.
 
 For tobacco, SUTVA is empirically suspect. When California raised retail prices in 1989, cross-border-shopping into Nevada changed cigarette sales *on both sides of the line*. If donor sales themselves shift because of the treatment, then the "counterfactual" we build from them is contaminated.
 
@@ -143,11 +143,11 @@ glue(
 
 The bundled `california_smoking.rda` carries only `cigsale` and `retprice` — narrower than the predictor set chapter 4 used (which also included `lnincome`, `age15to24`, and `beer`). That is the dominant reason the Stage 1 ATT computed below is slightly smaller in magnitude than chapter 4's $-18.85$: the methodological pipeline is identical, but the inputs differ. The `.rda` *also* ships two spatial structures we need in Stage 3 — California's contiguity row `w` (Arizona, Nevada, and Oregon non-zero) and the $38 \times 38$ donor contiguity matrix `W` — which the richer Proposition 99 dataset does not have.
 
-A notation note before we proceed. In chapters 4 and 6, lowercase $w$ denoted the *simplex-constrained donor weights*; in this chapter, donor weights are written $w$ as well (to keep symbol use consistent across the SCM family), while the contiguity column carries the same name in R code only — in the math below, the contiguity row that picks out California's neighbours is also written $w$ (this is the Sakaguchi-Tagawa convention). The two roles are distinguished by context: $w$ inside an SCM regression is donor weights; $w$ inside a SAR row-coupling is the adjacency row. Where ambiguity would matter, we say "donor weights $w$" or "California's contiguity row $w$" explicitly. The book-wide $W$ stays reserved for the $38 \times 38$ donor-contiguity matrix in this chapter only; it is **not** the implicit-weights matrix $\Omega$ that chapter 10 will introduce for matrix completion. Also note the horseshoe scale parameters introduced in Stage 2 below carry an "HS" subscript ($\tau_{\mathrm{HS}}$, $\lambda_{j,\mathrm{HS}}$) to keep them distinct from any treatment-effect $\tau$ or factor-loading $\lambda_i$ used elsewhere in the book. The three stage-specific ATT estimators are labelled $\widehat{\tau}_{\text{SCM}}$ (Stage 1, classical simplex), $\widehat{\tau}_{\text{HS}}$ (Stage 2, horseshoe-Bayesian), and $\widehat{\tau}_{\text{SAR}}$ (Stage 3, Bayesian spatial SAR).
+A notation note before we proceed. In chapters 4 and 8, lowercase $w$ denoted the *simplex-constrained donor weights*; in this chapter, donor weights are written $w$ as well (to keep symbol use consistent across the SCM family), while the contiguity column carries the same name in R code only — in the math below, the contiguity row that picks out California's neighbours is also written $w$ (this is the Sakaguchi-Tagawa convention). The two roles are distinguished by context: $w$ inside an SCM regression is donor weights; $w$ inside a SAR row-coupling is the adjacency row. Where ambiguity would matter, we say "donor weights $w$" or "California's contiguity row $w$" explicitly. The book-wide $W$ stays reserved for the $38 \times 38$ donor-contiguity matrix in this chapter only; it is **not** the implicit-weights matrix $\Omega$ that chapter 11 will introduce for matrix completion. Also note the horseshoe scale parameters introduced in Stage 2 below carry an "HS" subscript ($\tau_{\mathrm{HS}}$, $\lambda_{j,\mathrm{HS}}$) to keep them distinct from any treatment-effect $\tau$ or factor-loading $\lambda_i$ used elsewhere in the book. The three stage-specific ATT estimators are labelled $\widehat{\tau}_{\text{SCM}}$ (Stage 1, classical simplex), $\widehat{\tau}_{\text{HS}}$ (Stage 2, horseshoe-Bayesian), and $\widehat{\tau}_{\text{SAR}}$ (Stage 3, Bayesian spatial SAR).
 
 ## Stage 1 — Classical synthetic control
 
-Classical SCM picks donor weights $w$ on the simplex that minimise the pre-treatment fit error between California's observed outcome $Y_{1,\text{pre}}$ and the donor-blended synthetic $Y_{c,\text{pre}}\, w$ — the same predictor used as $\widehat{Y_{1,t}(0)}$ in chapters 4 and 6. Formally,
+Classical SCM picks donor weights $w$ on the simplex that minimise the pre-treatment fit error between California's observed outcome $Y_{1,\text{pre}}$ and the donor-blended synthetic $Y_{c,\text{pre}}\, w$ — the same predictor used as $\widehat{Y_{1,t}(0)}$ in chapters 4 and 8. Formally,
 
 $$\widehat{w} \,=\, \arg\min_w \, \big\| Y_{1,\text{pre}} - Y_{c,\text{pre}}\, w \big\|^2 \;\; \text{s.t.} \;\; w_j \ge 0, \;\; \sum_j w_j = 1,$$
 
@@ -618,11 +618,11 @@ nv_str <- format(round(nevada_spill, 2), nsmall = 2)
 
 ## Where this case study ends, and where Part II begins
 
-This is the **last chapter of Part I** and the last chapter that works the Proposition 99 case study. Across seven chapters we have asked the same question — did California's 1989 tobacco tax reduce per-capita cigarette consumption? — under progressively weaker assumptions: an interrupted time series (ch. 2), a 2×2 difference-in-differences (ch. 3), classical synthetic control on the simplex (ch. 4), a Bayesian structural time-series counterfactual (ch. 5), a frequentist prediction interval around the SC fit (ch. 6), and finally a Bayesian spatial relaxation of both the simplex and SUTVA (this chapter). The headline survives every reframe: the estimated ATT is consistently in the same negative neighbourhood and never crosses zero.
+This is the **last chapter of Part I** and the last chapter that works the Proposition 99 case study. Across eight chapters we have asked the same question — did California's 1989 tobacco tax reduce per-capita cigarette consumption? — under progressively weaker assumptions: an interrupted time series (ch. 2), a 2×2 difference-in-differences (ch. 3), classical synthetic control on the simplex (ch. 4), an augmented SC with a ridge bias correction (ch. 5), a synthetic DiD on a doubly de-meaned panel (ch. 6), a Bayesian structural time-series counterfactual (ch. 7), a frequentist prediction interval around the SC fit (ch. 8), and finally a Bayesian spatial relaxation of both the simplex and SUTVA (this chapter). The headline survives every reframe: the estimated ATT is consistently in the same negative neighbourhood and never crosses zero.
 
-Chapter 6 closed with a *frequentist* prediction interval around the synthetic counterfactual; this chapter closed with a *Bayesian* credible interval that additionally absorbs the cross-border spillover SUTVA had been hiding. Same single-treated-unit toolkit, different inferential language, complementary pictures of the same headline.
+Chapter 8 closed with a *frequentist* prediction interval around the synthetic counterfactual; this chapter closed with a *Bayesian* credible interval that additionally absorbs the cross-border spillover SUTVA had been hiding. Same single-treated-unit toolkit, different inferential language, complementary pictures of the same headline.
 
-The single-treated-unit toolkit ends here. Most real-world policy data is messier: many units adopt at different dates, treatment effects evolve over event time, and parallel-trends violations need to be diagnosed rather than assumed away. Part II (chapters 8–10) leaves Proposition 99 behind and picks up the **Callaway-Sant'Anna minimum-wage county panel** (1,745 US counties × 2003–2007, three adoption cohorts), where the methods we have used so far either fail outright (one treated unit ≠ staggered cohorts) or scale awkwardly. Chapter 8 starts there with the modern staggered-DiD toolkit, generalising the *ATT on California* estimand we have estimated seven different ways here into the *ATT(g, t)* framework that lets a researcher decompose, weight, and sensitivity-test heterogeneous treatment effects across cohorts and event times.
+The single-treated-unit toolkit ends here. Most real-world policy data is messier: many units adopt at different dates, treatment effects evolve over event time, and parallel-trends violations need to be diagnosed rather than assumed away. Part II (chapters 10–12) leaves Proposition 99 behind and picks up the **Callaway-Sant'Anna minimum-wage county panel** (1,745 US counties × 2003–2007, three adoption cohorts), where the methods we have used so far either fail outright (one treated unit ≠ staggered cohorts) or scale awkwardly. Chapter 10 starts there with the modern staggered-DiD toolkit, generalising the *ATT on California* estimand we have estimated eight different ways here into the *ATT(g, t)* framework that lets a researcher decompose, weight, and sensitivity-test heterogeneous treatment effects across cohorts and event times.
 
 ## Key takeaways
 
@@ -664,7 +664,7 @@ In Stage 1, Utah was the largest donor by weight (the classical simplex placed r
 ## Solution
 
 ```{r}
-#| label: ex-ch07-01
+#| label: ex-ch09-01
 utah_classic <- grab_unit_weights(sc_classic) |>
   filter(unit == "Utah") |>
   pull(weight)
@@ -693,7 +693,7 @@ The chapter's Stage 2 credible interval covers the *average* ATT over 1988–200
 ## Solution
 
 ```{r}
-#| label: ex-ch07-02
+#| label: ex-ch09-02
 #| fig-width: 8
 #| fig-height: 4
 prob_neg <- tibble(
@@ -719,7 +719,7 @@ The chapter reported a posterior-*mean* active-donor count of `r n_active` (dono
 ## Solution
 
 ```{r}
-#| label: ex-ch07-03
+#| label: ex-ch09-03
 #| fig-width: 7
 #| fig-height: 4
 active_per_draw <- rowSums(alpha_draws_hs > 0.01)
@@ -744,7 +744,7 @@ The chapter showed Nevada dominates the SAR spillover by an order of magnitude. 
 ## Solution
 
 ```{r}
-#| label: ex-ch07-04
+#| label: ex-ch09-04
 spill_mat   <- fit_sar$effects$spill
 post_rows   <- which(as.numeric(rownames(spill_mat)) >= TREAT_YEAR)
 spill_post  <- spill_mat[post_rows, , drop = FALSE]
@@ -763,7 +763,7 @@ list(nevada_share    = shares$share[shares$state == "Nevada"],
      top3_states     = shares$state[1:3])
 ```
 
-Nevada absorbs the bulk of the total absolute spillover by itself; the top-3 share approaches 1, leaving the remaining 35 donors with essentially no policy-relevant spillover mass. SUTVA fails sharply on one neighbour, not diffusely across the donor pool. That is a much friendlier diagnosis than the alternative — a diffuse failure would make every donor a leaky control and would force a much wider re-examination of the chapter 4 / 6 estimates.
+Nevada absorbs the bulk of the total absolute spillover by itself; the top-3 share approaches 1, leaving the remaining 35 donors with essentially no policy-relevant spillover mass. SUTVA fails sharply on one neighbour, not diffusely across the donor pool. That is a much friendlier diagnosis than the alternative — a diffuse failure would make every donor a leaky control and would force a much wider re-examination of the chapter 4 / 8 estimates.
 :::
 
 ### Exercise 5 (stretch): Stage 1 in-time placebo at 1980
@@ -774,7 +774,7 @@ Run the Stage 1 classical pipeline pretending the intervention was 1980 instead 
 ## Solution
 
 ```{r}
-#| label: ex-ch07-05
+#| label: ex-ch09-05
 #| message: false
 #| warning: false
 sc_placebo <- panel_df |>

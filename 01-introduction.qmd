@@ -13,11 +13,11 @@ title: "Introduction"
 
 How do you measure the causal effect of a policy when you cannot randomise who gets treated? Most policy reforms hit a *region* — a state, province, or country — as a single block. There is no randomisation, no control arm, and often only a handful of treated units. The job of regional impact evaluation is to recover the missing counterfactual: *what would the region have looked like without the policy?*
 
-Two running case studies anchor the book. **Part I (chs. 1–7)** stays with the canonical *single-treated-unit* setting: California's 1989 Proposition 99 cigarette tax. Per-capita cigarette sales in California fell from roughly 116 packs in 1988 to roughly 60 packs in 2000 — almost a 50% drop — but the country as a whole was also smoking less, and the deceptively simple question is
+Two running case studies anchor the book. **Part I (chs. 1–9)** stays with the canonical *single-treated-unit* setting: California's 1989 Proposition 99 cigarette tax. Per-capita cigarette sales in California fell from roughly 116 packs in 1988 to roughly 60 packs in 2000 — almost a 50% drop — but the country as a whole was also smoking less, and the deceptively simple question is
 
 > **How much of California's drop was caused by Proposition 99, and how much would have happened anyway?**
 
-The original synthetic-control paper by @abadie2010synthetic used exactly this dataset; we replicate their estimate and watch what happens when seven other estimators are swapped in. **Part II (chs. 8–10)** generalises the missing-data logic to a *staggered-adoption* panel: thousands of US counties faced state minimum-wage increases at different years, and the toolkit shifts from a single time series to estimators that exploit the full panel structure.
+The original synthetic-control paper by @abadie2010synthetic used exactly this dataset; we replicate their estimate and watch what happens when eight other estimators are swapped in. **Part II (chs. 10–12)** generalises the missing-data logic to a *staggered-adoption* panel: thousands of US counties faced state minimum-wage increases at different years, and the toolkit shifts from a single time series to estimators that exploit the full panel structure.
 
 This book is a guided tour of the quasi-experimental methods that have become the workhorses of that job. Each one builds the counterfactual from a different data source — the region's own past, a single neighbour, a weighted blend of donor regions, a Bayesian time-series model, or a factor structure estimated from a wide panel — and each one therefore pays a different price in identifying assumptions. The disagreements between methods are the lesson.
 
@@ -85,7 +85,7 @@ where unit $i = 1$ denotes California (in code we identify California by name wi
 
 Some chapters (chs. 2, 4) recentre the year index so $t = 0$ at the *first* post-period year (1989). The break itself is the same: pre-period is $\{t : t \le 1988\}$ throughout.
 
-Under staggered adoption (Part II), different units begin treatment at different dates, so the ATT becomes a *family* of cohort-by-time effects $\text{ATT}(g, t)$, where $g$ is the year a unit first becomes treated. The missing-data question is identical — fill in $Y_{it}(0)$ for treated cells — but the indexing carries an extra dimension. Chapter 8 unpacks this.
+Under staggered adoption (Part II), different units begin treatment at different dates, so the ATT becomes a *family* of cohort-by-time effects $\text{ATT}(g, t)$, where $g$ is the year a unit first becomes treated. The missing-data question is identical — fill in $Y_{it}(0)$ for treated cells — but the indexing carries an extra dimension. Chapter 10 unpacks this.
 
 ### Each method is a way to impute the missing $Y(0)$
 
@@ -99,13 +99,15 @@ The table below makes this concrete: one row per method covered in this book, sp
 | Interrupted Time Series — ARIMA (ch. 2) | $\widehat{Y_{1t}(0)} = $ forecast from an ARIMA model fitted on 1970–1988. |
 | Basic Difference-in-Differences (ch. 3) | $\widehat{Y_{1t}(0)} = Y_{1, t^*} + \big(Y_{0t} - Y_{0, t^*}\big)$ — anchor at California's last pre-period value $t^* = 1988$ and add the control state's deviation from its own pre-period level. |
 | Classical Synthetic Control (ch. 4) | $\widehat{Y_{1t}(0)} = \sum_{j \in \text{donors}} w_j^*\, Y_{jt}$ — weighted blend of donor states. |
-| Structural Bayesian Time Series (ch. 5) | $\widehat{Y_{1t}(0)} = \hat\mu_t + \hat\beta^\top x_t$ — Bayesian structural time-series fit on donor data. |
-| Synthetic Control with Prediction Intervals (ch. 6) | Classical SCM weights plus an `scpi` decomposition of forecast error (in-sample weight uncertainty + out-of-sample shocks). |
-| Bayesian Spatial Synthetic Control (ch. 7) | Horseshoe-prior donor blend with a SAR spatial term — allows spillovers onto untreated neighbours. |
+| Augmented Synthetic Control (ch. 5) | $\widehat{Y_{1t}(0)} = \sum_j \widehat{w}_j Y_{jt} + \big(\widehat{m}_t(X_1) - \sum_j \widehat{w}_j \widehat{m}_t(X_j)\big)$ — SCM weights plus a ridge outcome-model bias correction. |
+| Synthetic Difference-in-Differences (ch. 6) | $\widehat{Y_{1t}(0)}$ from DiD on the panel doubly de-meaned by simplex unit weights $\omega_i$ and simplex time weights $\nu_t$ — SCM weights nested in a DiD-style identification. |
+| Structural Bayesian Time Series (ch. 7) | $\widehat{Y_{1t}(0)} = \hat\mu_t + \hat\beta^\top x_t$ — Bayesian structural time-series fit on donor data. |
+| Synthetic Control with Prediction Intervals (ch. 8) | Classical SCM weights plus an `scpi` decomposition of forecast error (in-sample weight uncertainty + out-of-sample shocks). |
+| Bayesian Spatial Synthetic Control (ch. 9) | Horseshoe-prior donor blend with a SAR spatial term — allows spillovers onto untreated neighbours. |
 | **Part II — Staggered adoption (minimum-wage panel)** | |
-| Staggered DiD / Callaway-Sant'Anna (ch. 8) | $\widehat{Y_{g,t}(0)} = $ never-treated (or not-yet-treated) cohort mean trajectory, indexed by adoption cohort $g$. |
-| Matrix Completion / Interactive Fixed Effects (ch. 9) | $\widehat{Y_{it}(0)} = \alpha_i + \xi_t + \lambda_i^\top f_t$ — factor model fitted on the untreated cells of the panel. |
-| Generalized Synthetic Control (ch. 10) | $\widehat{Y_{1t}(0)} = \hat\lambda_1^\top \hat f_t$ — project each treated unit onto factors estimated from never-treated controls. |
+| Staggered DiD / Callaway-Sant'Anna (ch. 10) | $\widehat{Y_{g,t}(0)} = $ never-treated (or not-yet-treated) cohort mean trajectory, indexed by adoption cohort $g$. |
+| Matrix Completion / Interactive Fixed Effects (ch. 11) | $\widehat{Y_{it}(0)} = \alpha_i + \xi_t + \lambda_i^\top f_t$ — factor model fitted on the untreated cells of the panel. |
+| Generalized Synthetic Control (ch. 12) | $\widehat{Y_{1t}(0)} = \hat\lambda_1^\top \hat f_t$ — project each treated unit onto factors estimated from never-treated controls. |
 
 Each subsequent chapter takes one row and shows the R code that builds the corresponding $\widehat{Y(0)}$, then subtracts it from the observed treated outcome to recover the ATT.
 
@@ -119,26 +121,30 @@ flowchart TB
     Q0 -->|Yes, staggered adoption<br/>across a panel| Q4{"Do you trust parallel trends<br/>(conditional on covariates),<br/>or is a factor structure<br/>more credible?"}
     Q0 -->|No, one treated unit or<br/>shared start date| Q1{"Do you have a credible<br/>donor pool of untreated units?<br/>(roughly 10+ similar units<br/>followed over the same window)"}
 
-    Q4 -->|Parallel trends OK| CSA["Staggered DiD / Callaway-Sant'Anna<br/>(ch. 8)<br/><br/>Cost: conditional parallel trends<br/>at the cohort level"]
+    Q4 -->|Parallel trends OK| CSA["Staggered DiD / Callaway-Sant'Anna<br/>(ch. 10)<br/><br/>Cost: conditional parallel trends<br/>at the cohort level"]
     Q4 -->|Factor structure more credible| Q5{"Fit factors on the full panel,<br/>or project treated units onto<br/>factors from a clean donor pool?"}
 
-    Q5 -->|Full panel, low-rank residuals| MC["Matrix Completion / IFE<br/>(ch. 9)<br/><br/>Cost: latent-factor model fits<br/>the untreated cells well"]
-    Q5 -->|Project onto donor factors| GSC["Generalized Synthetic Control<br/>(ch. 10)<br/><br/>Cost: never-treated controls<br/>span the factor space"]
+    Q5 -->|Full panel, low-rank residuals| MC["Matrix Completion / IFE<br/>(ch. 11)<br/><br/>Cost: latent-factor model fits<br/>the untreated cells well"]
+    Q5 -->|Project onto donor factors| GSC["Generalized Synthetic Control<br/>(ch. 12)<br/><br/>Cost: never-treated controls<br/>span the factor space"]
 
     Q1 -->|Yes| Q2{"Do you want frequentist<br/>placebo inference,<br/>or Bayesian credible<br/>intervals?"}
     Q1 -->|No, only one good control| DiD["Basic Difference-in-Differences<br/>(ch. 3)<br/><br/>Cost: parallel-trends assumption<br/>on a single comparison unit"]
     Q1 -->|"No, only the treated unit<br/>(model the smooth pre-trend)"| ITS["Interrupted Time Series<br/>(ch. 2)<br/><br/>Cost: pre-trend extrapolation<br/>must be specified correctly"]
 
-    Q2 -->|Frequentist + tidy code| SCM["Classical Synthetic Control (ch. 4)<br/>+ prediction intervals via scpi (ch. 6)<br/><br/>Cost: convex-combination of donors<br/>must match the treated pre-period"]
+    Q2 -->|Frequentist + tidy code| Q2a{"Classical SCM, ridge-augmented SCM,<br/>or DiD-on-doubly-de-meaned-panel?"}
     Q2 -->|Bayesian + uncertainty bands| Q3{"Do you suspect treatment<br/>spills over onto donor states<br/>(violating SUTVA)?"}
 
-    Q3 -->|No, SUTVA OK| CI["Structural Bayesian TS<br/>(ch. 5)<br/><br/>Cost: state-space prior;<br/>covariate-set choice<br/>affects the estimate"]
-    Q3 -->|Yes, spillovers likely| SPATIAL["Bayesian Spatial SCM<br/>(ch. 7)<br/><br/>Cost: horseshoe prior + SAR spatial term;<br/>neighbour matrix W must be plausible"]
+    Q2a -->|"Donor pool inside the convex hull<br/>+ tidy code"| SCM["Classical Synthetic Control (ch. 4)<br/>+ prediction intervals via scpi (ch. 8)<br/><br/>Cost: convex-combination of donors<br/>must match the treated pre-period"]
+    Q2a -->|"Treated unit outside the donor<br/>convex hull (poor simplex fit)"| ASCM["Augmented Synthetic Control<br/>(ch. 5)<br/><br/>Cost: ridge outcome model<br/>extrapolates; lambda CV-tuned"]
+    Q2a -->|"Non-parallel pre-trends or<br/>vertical baseline gap"| SDID["Synthetic Difference-in-Differences<br/>(ch. 6)<br/><br/>Cost: weighted parallel-trends;<br/>placebo SE for single-treated"]
+
+    Q3 -->|No, SUTVA OK| CI["Structural Bayesian TS<br/>(ch. 7)<br/><br/>Cost: state-space prior;<br/>covariate-set choice<br/>affects the estimate"]
+    Q3 -->|Yes, spillovers likely| SPATIAL["Bayesian Spatial SCM<br/>(ch. 9)<br/><br/>Cost: horseshoe prior + SAR spatial term;<br/>neighbour matrix W must be plausible"]
 
     NAIVE["Naive pre-post<br/>(this chapter)<br/><br/>Use only as a baseline.<br/>Never as a causal estimate."] -.->|"baseline for everyone"| Q0
 ```
 
-In the staggered-adoption half, Callaway-Sant'Anna is the natural starting point when conditional parallel trends are credible; matrix completion and generalized synthetic control are escape valves when they are not. In the single-treated-unit half, the synthetic-control family (chs. 4, 6, 7) and the Bayesian structural TS approach (ch. 5) are the most defensible when a donor pool exists; DiD and ITS are valid in their respective data situations but carry stronger identifying assumptions. The naive pre-post node — the rest of this chapter — is the universal baseline that *everyone* should compute first, never as the final answer, always as the bias yardstick.
+In the staggered-adoption half, Callaway-Sant'Anna is the natural starting point when conditional parallel trends are credible; matrix completion and generalized synthetic control are escape valves when they are not. In the single-treated-unit half, the synthetic-control family (chs. 4, 5, 6, 8, 9) and the Bayesian structural TS approach (ch. 7) are the most defensible when a donor pool exists; DiD and ITS are valid in their respective data situations but carry stronger identifying assumptions. The naive pre-post node — the rest of this chapter — is the universal baseline that *everyone* should compute first, never as the final answer, always as the bias yardstick.
 
 ## Setup and data
 
@@ -303,24 +309,26 @@ se_ratio      <- ols_se / nw_se
 
 ## Roadmap of the book
 
-### Part I — Proposition 99 (chs. 2–7)
+### Part I — Proposition 99 (chs. 2–9)
 
-Chapters 2–7 hold the dataset (Proposition 99) and the estimand (the ATT on California, 1989–2000) fixed and replace the naive baseline with progressively richer counterfactual constructions:
+Chapters 2–9 hold the dataset (Proposition 99) and the estimand (the ATT on California, 1989–2000) fixed and replace the naive baseline with progressively richer counterfactual constructions:
 
 - **Chapter 2 — Interrupted Time Series.** Extrapolate California's *own* pre-trend forward. Two variants: a linear growth curve and an auto-selected ARIMA forecast.
 - **Chapter 3 — Basic Difference-in-Differences.** Subtract a single control state's pre/post change from California's.
 - **Chapter 4 — Classical Synthetic Control.** Build a weighted blend of donor states that mimics California's pre-period.
-- **Chapter 5 — Structural Bayesian Time Series.** Fit a Bayesian state-space model that uses donor states as predictors and reports posterior credible intervals.
-- **Chapter 6 — Synthetic Control with Prediction Intervals.** Attach frequentist prediction intervals to classical SCM via the `scpi` package, decomposing forecast error into in-sample weight uncertainty and out-of-sample shocks.
-- **Chapter 7 — Bayesian Spatial Synthetic Control.** Add a horseshoe prior over donor weights and a SAR spatial term that allows treatment to spill over onto neighbouring states.
+- **Chapter 5 — Augmented Synthetic Control.** Bias-correct the simplex fit with a ridge outcome model; demonstrated on a purpose-built simulated panel where the treated unit sits outside the donor convex hull.
+- **Chapter 6 — Synthetic Difference-in-Differences.** Run DiD on a panel doubly de-meaned by simplex unit and time weights; replicate the Arkhangelsky et al. (2021) Table 1 DiD/SC/SDID comparison and add `xsynthdid` covariate adjustment.
+- **Chapter 7 — Structural Bayesian Time Series.** Fit a Bayesian state-space model that uses donor states as predictors and reports posterior credible intervals.
+- **Chapter 8 — Synthetic Control with Prediction Intervals.** Attach frequentist prediction intervals to classical SCM via the `scpi` package, decomposing forecast error into in-sample weight uncertainty and out-of-sample shocks.
+- **Chapter 9 — Bayesian Spatial Synthetic Control.** Add a horseshoe prior over donor weights and a SAR spatial term that allows treatment to spill over onto neighbouring states.
 
-### Part II — Staggered adoption (chs. 8–10)
+### Part II — Staggered adoption (chs. 10–12)
 
-Chapter 8 introduces a second dataset: the **Callaway-Sant'Anna minimum-wage county panel** (1,745 US counties, 2003–2007, multiple adoption cohorts). The single-time-series tools of Part I no longer apply; the next three chapters develop estimators built for the panel structure:
+Chapter 10 introduces a second dataset: the **Callaway-Sant'Anna minimum-wage county panel** (1,745 US counties, 2003–2007, multiple adoption cohorts). The single-time-series tools of Part I no longer apply; the next three chapters develop estimators built for the panel structure:
 
-- **Chapter 8 — Staggered Difference-in-Differences.** Estimate group-time ATT(g, t) directly with the Callaway-Sant'Anna estimator (and event-study aggregations), avoiding two-way fixed-effects bias from negative weights.
-- **Chapter 9 — Matrix Completion and Interactive Fixed Effects.** Relax parallel trends with a factor model; impute counterfactuals via interactive fixed effects and matrix completion.
-- **Chapter 10 — Generalized Synthetic Control.** Estimate factors on never-treated controls, project treated units onto the factor space, and impute counterfactuals.
+- **Chapter 10 — Staggered Difference-in-Differences.** Estimate group-time ATT(g, t) directly with the Callaway-Sant'Anna estimator (and event-study aggregations), avoiding two-way fixed-effects bias from negative weights.
+- **Chapter 11 — Matrix Completion and Interactive Fixed Effects.** Relax parallel trends with a factor model; impute counterfactuals via interactive fixed effects and matrix completion.
+- **Chapter 12 — Generalized Synthetic Control.** Estimate factors on never-treated controls, project treated units onto the factor space, and impute counterfactuals.
 
 The disagreements between estimators applied to the same data are the lesson of this book.
 
@@ -335,8 +343,8 @@ The disagreements between estimators applied to the same data are the lesson of 
 
 **Lessons:**
 
-- Part I (chs. 2–7) holds the Proposition 99 single-treated-unit case study fixed and swaps in progressively richer counterfactuals — pre-trend extrapolation (ITS), one control state (DiD), donor-pool blends (SCM family), and Bayesian state-space models — so the disagreements between estimates isolate the cost of each identifying assumption.
-- Part II (chs. 8–10) switches to the Callaway-Sant'Anna minimum-wage county panel because staggered adoption breaks single-time-series tools; the toolkit shifts to group-time ATT estimators, matrix completion, interactive fixed effects, and generalized synthetic control, all of which still impute $Y_{it}(0)$ but exploit the full panel structure.
+- Part I (chs. 2–9) holds the Proposition 99 single-treated-unit case study fixed and swaps in progressively richer counterfactuals — pre-trend extrapolation (ITS), one control state (DiD), donor-pool blends (SCM family, augmented SCM, synthetic DiD), and Bayesian state-space models — so the disagreements between estimates isolate the cost of each identifying assumption.
+- Part II (chs. 10–12) switches to the Callaway-Sant'Anna minimum-wage county panel because staggered adoption breaks single-time-series tools; the toolkit shifts to group-time ATT estimators, matrix completion, interactive fixed effects, and generalized synthetic control, all of which still impute $Y_{it}(0)$ but exploit the full panel structure.
 - California's raw pre-vs-post drop of about `r round(ca_drop)` packs per capita (`r round(ca_pct_drop)`% of the pre-period mean) is a within-state difference of means, not a causal effect — the nationwide secular decline in smoking is silently bundled in, and the rest of the book exists to peel that bundle apart.
 - Choosing a method is a sequence of data-availability questions — staggered vs. single treatment, donor pool vs. only the treated series, parallel trends vs. a factor structure, frequentist vs. Bayesian inference, SUTVA vs. spillovers — and the decision tree in this chapter maps each branch to a specific chapter.
 

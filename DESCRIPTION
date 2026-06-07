@@ -40,4 +40,6 @@ Imports:
     FNN,
     haven,
     labelled,
-    ggrepel
+    ggrepel,
+    synthdid,
+    xsynthdid

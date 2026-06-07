@@ -10,7 +10,7 @@ title: "Staggered Differences-in-Differences"
 4. Run Rambachan-Roth relative-magnitudes sensitivity analysis with `HonestDiD` and report the smallest pre-trend violation that would overturn the post-treatment conclusion. This converts an unverifiable parallel-trends assumption into a falsifiable claim about how robust the headline result is.
 
 ::: {.callout-note appearance="simple"}
-**Part II begins here.** Chapters 2–7 held the dataset fixed
+**Part II begins here.** Chapters 2–9 held the dataset fixed
 (Proposition 99) and varied the estimator. From this chapter forward
 we switch datasets too: a 1,745-county minimum-wage panel with
 *staggered* adoption replaces California's single-shock setting, and
@@ -636,7 +636,7 @@ Re-estimate the overall ATT using `control_group = "notyettreated"` instead of `
 ## Solution
 
 ```{r}
-#| label: ex-ch08-01
+#| label: ex-ch10-01
 attgt_nyt <- did::att_gt(yname = "lemp", idname = "id", gname = "G",
                          tname = "year", data = data2,
                          control_group = "notyettreated",
@@ -662,7 +662,7 @@ Use `did::aggte(attgt, type = "calendar")` to aggregate $ATT(g, t)$ by *calendar
 ## Solution
 
 ```{r}
-#| label: ex-ch08-02
+#| label: ex-ch10-02
 attcal <- did::aggte(attgt, type = "calendar")
 
 tibble(
@@ -686,7 +686,7 @@ Refit the doubly-robust estimator with `xformla = ~lpop` only — dropping log a
 ## Solution
 
 ```{r}
-#| label: ex-ch08-03
+#| label: ex-ch10-03
 #| message: false
 #| warning: false
 cs_dr_one <- did::att_gt(yname="lemp", tname="year", idname="id", gname="G",
@@ -721,7 +721,7 @@ $e = +3$ horizon (where the trajectory has matured).
 ## Solution
 
 ```{r}
-#| label: ex-ch08-04
+#| label: ex-ch10-04
 #| message: false
 #| warning: false
 sweep_mbar <- function(e_target, grid = seq(0, 1.5, by = 0.05)) {
@@ -754,7 +754,7 @@ Restrict to cohort-2004 counties and never-treated counties only, and fit a 2×2
 ## Solution
 
 ```{r}
-#| label: ex-ch08-05
+#| label: ex-ch10-05
 data_2x2 <- data2 |>
   filter(G %in% c(0, 2004)) |>
   mutate(treat = as.integer(G == 2004),

@@ -12,25 +12,27 @@ The book is written for advanced undergraduates, master's students, and early-ca
 
 ### Part I — One region, one shock
 
-Chapters 1–7 evaluate **California's 1989 Proposition 99 cigarette tax**, the canonical single-treated-unit policy evaluation. Every method in this half builds a counterfactual for California from a different data source — the state's own past, a neighbour, a weighted blend of donor states, or a Bayesian time-series model — and reports the average treatment effect on the treated (ATT) between 1989 and 2000. The ATT compares California's observed cigarette sales after the policy against what they *would have been* without it; chapter 1 makes this missing-counterfactual logic precise.
+Chapters 1–9 evaluate **California's 1989 Proposition 99 cigarette tax**, the canonical single-treated-unit policy evaluation. Every method in this half builds a counterfactual for California from a different data source — the state's own past, a neighbour, a weighted blend of donor states, or a Bayesian time-series model — and reports the average treatment effect on the treated (ATT) between 1989 and 2000. The ATT compares California's observed cigarette sales after the policy against what they *would have been* without it; chapter 1 makes this missing-counterfactual logic precise.
 
 - **Introduction** — the potential-outcomes vocabulary and a naive pre-post strawman estimate.
 - **Interrupted time series** — extrapolating California's pre-period trajectory forward.
 - **Basic difference-in-differences** — subtracting a single control state's pre-to-post change.
 - **Classical synthetic control** — building a weighted donor blend that matches the pre-period.
+- **Augmented synthetic control** — bias-correcting the simplex fit with a ridge outcome model.
+- **Synthetic difference-in-differences** — DiD on a panel doubly de-meaned by simplex unit and time weights, with covariate adjustment via `xsynthdid`.
 - **Structural Bayesian time series** — state-space counterfactuals with posterior credible intervals.
 - **Synthetic control with prediction intervals** — frequentist forecast-error decomposition via the `scpi` package.
 - **Bayesian spatial synthetic control** — a horseshoe-prior donor blend with spatial spillovers onto neighbours.
 
 ### Part II — Many regions, staggered adoption
 
-Chapters 8–10 evaluate the **Callaway-Sant'Anna minimum-wage county panel**, where thousands of counties adopted different state minimum-wage levels at different years. The single-treated-unit toolkit no longer applies: the estimand becomes a family of cohort-specific ATTs indexed by adoption year, and the methods exploit the panel's panel-data structure rather than a single time series.
+Chapters 10–12 evaluate the **Callaway-Sant'Anna minimum-wage county panel**, where thousands of counties adopted different state minimum-wage levels at different years. The single-treated-unit toolkit no longer applies: the estimand becomes a family of cohort-specific ATTs indexed by adoption year, and the methods exploit the panel's panel-data structure rather than a single time series.
 
 - **Staggered difference-in-differences** — group-time ATT(g, t) estimators that avoid two-way fixed-effects bias.
 - **Interactive fixed effects and matrix completion** — factor models that relax parallel trends.
 - **Generalized synthetic control** — projecting treated units onto factors estimated from never-treated controls.
 
-Each chapter pairs the conceptual logic of the method with a worked R example using publicly available data, so readers can reproduce every estimate end-to-end. A forthcoming cross-method comparison chapter will tabulate the ATT estimates from chapters 2–10 side by side on the two shared datasets; chapter 10 sketches what that comparison will look like.
+Each chapter pairs the conceptual logic of the method with a worked R example using publicly available data, so readers can reproduce every estimate end-to-end. A forthcoming cross-method comparison chapter will tabulate the ATT estimates from chapters 2–12 side by side on the two shared datasets; chapter 12 sketches what that comparison will look like.
 
 ## How to read this book
 

@@ -13,16 +13,16 @@ title: "Generalized Synthetic Control"
 
 Earlier chapters have asked the same counterfactual question in
 different ways. Chapter 4 (classical SCM) hand-built a weighted
-donor average for a single treated unit. Chapter 7 layered a
-spatial prior on top. Chapter 8 abandoned the single-treated-unit
+donor average for a single treated unit. Chapter 9 layered a
+spatial prior on top. Chapter 10 abandoned the single-treated-unit
 framing entirely and aggregated group-time ATTs under a
-parallel-trends assumption. Chapter 9 (when read in sequence)
+parallel-trends assumption. Chapter 11 (when read in sequence)
 introduces the interactive-fixed-effects family through `fect`;
 this chapter does the focused walkthrough of one specific
 estimator in that family — **generalized synthetic control
 (gsynth)** [@xu2017generalized] — using the standalone `gsynth`
 package on the same Callaway-Sant'Anna minimum-wage panel as
-chapter 8.
+chapter 10.
 
 gsynth sits at the intersection of SCM and panel DiD. Like SCM, it
 imputes a counterfactual outcome path for each treated unit using
@@ -49,8 +49,8 @@ to impute its $Y_{it}(0)$ in the post-treatment period. Concretely:
    \hat\lambda_i'\hat f_t + X_{it}'\hat\beta$.
 
 The headline ATT — written $\widehat{\tau}_{\text{gsynth}}$ to
-keep it distinct from chapter 8's $\widehat{\tau}_{\text{CS}}$ and
-chapter 9's $\widehat{\tau}_{\text{IFE}} / \widehat{\tau}_{\text{MC}}$ —
+keep it distinct from chapter 10's $\widehat{\tau}_{\text{CS}}$ and
+chapter 11's $\widehat{\tau}_{\text{IFE}} / \widehat{\tau}_{\text{MC}}$ —
 is the average gap between observed treated outcomes and these
 imputed counterfactuals. Step 2 is what distinguishes gsynth from a
 generic IFE estimator and is the reason pre-treatment depth
@@ -74,7 +74,7 @@ holds, gsynth recovers a valid ATT even if the trends themselves
 are not parallel. When it does not, the model is misspecified and
 the headline ATT is biased — diagnostics matter.
 
-One difference from chapter 8: that chapter truncated the window to
+One difference from chapter 10: that chapter truncated the window to
 `year >= 2003`, which left cohort 2004 with only one pre-treatment
 year. gsynth needs more pre-period to identify factors, so we keep
 the full 2001-2007 window. Cohort 2006 then has five pre-treatment
@@ -127,7 +127,7 @@ theme_set(
 The dataset ships as `data/cs_minwage.rds` in the chapter bundle.
 We restrict to cohorts $G \in \{0, 2004, 2006\}$ and drop the
 Northeast region (`region == "1"`) for comparability with
-chapter 8. `gsynth()` expects a base `data.frame` — passing a
+chapter 10. `gsynth()` expects a base `data.frame` — passing a
 tibble silently breaks its internal indexing — so we cast with
 `as.data.frame()`.
 
@@ -148,8 +148,8 @@ The panel has `r nrow(mw_df)` rows on
 `r length(unique(mw_df$id))` counties, balanced across 2001-2007.
 The 0/1 indicator `treat` is the only variable gsynth needs to know
 about treatment status — its name is deliberately different from
-chapter 8's `post` to remind us that gsynth's identification is not
-the same as chapter 8's.
+chapter 10's `post` to remind us that gsynth's identification is not
+the same as chapter 10's.
 
 ```{r}
 #| label: tbl-cohort-counts
@@ -206,7 +206,7 @@ panelview(lemp ~ treat, data = mw_df,
 
 The simplest way to introduce gsynth is to fit it twice. With
 $r = 0$ — no latent factors — gsynth reduces to a within-transformation
-panel estimator, the close cousin of chapter 8's TWFE regression.
+panel estimator, the close cousin of chapter 10's TWFE regression.
 With $r = 1$ — one latent factor — we let the model use the
 never-treated panel to estimate a single low-rank shock that
 treated and control units may be loading on differently. Comparing
@@ -367,7 +367,7 @@ roots — is that the counterfactual for each treated unit can be
 written as a weighted average of control units. The package
 returns these implicit weights in `out$wgt.implied` (the
 **implicit-weights matrix $\Omega$** in prose; we use the Greek
-capital Omega to avoid colliding with chapter 7's spatial-adjacency
+capital Omega to avoid colliding with chapter 9's spatial-adjacency
 $W$). Looking at *which* controls a treated unit leans on grounds
 the abstract factor model in something concrete.
 
@@ -445,7 +445,7 @@ gt_pretty(cumu_df, decimals = 4)
 
 ```{r}
 #| label: fig-cumulative
-#| fig-cap: "Cumulative ATT trajectory. The x-axis is event time (years since treatment onset); the slope of the line at any event time is the per-period effect; the line itself is the running total of treatment effect since treatment onset (event time 0). A roughly monotonically deepening shape is consistent with chapter 8's event-study finding that effects accumulate over time."
+#| fig-cap: "Cumulative ATT trajectory. The x-axis is event time (years since treatment onset); the slope of the line at any event time is the per-period effect; the line itself is the running total of treatment effect since treatment onset (event time 0). A roughly monotonically deepening shape is consistent with chapter 10's event-study finding that effects accumulate over time."
 #| fig-width: 7.5
 #| fig-height: 4.5
 #| code-summary: "Code: Plot the cumulative ATT trajectory with a normal-approximation confidence ribbon."
@@ -467,17 +467,17 @@ minimum-wage panel:
 
 - gsynth with no factors ($r = 0$):
   $\widehat{\tau}_{\text{gsynth}} \approx `r sprintf("%.3f", ic_tbl$ATT[ic_tbl$r == 0])`$
-  (close to chapter 8's TWFE coefficient of $-0.038$).
+  (close to chapter 10's TWFE coefficient of $-0.038$).
 - gsynth with the **IC-recommended rank (with $r \ge 1$ floor)**
   ($r^* = `r r_star`$):
   $\widehat{\tau}_{\text{gsynth}} \approx `r sprintf("%.3f", out$att.avg)`$.
-- Chapter 8's Callaway-Sant'Anna overall ATT $\widehat{\tau}_{\text{CS, overall}} \approx -0.057$.
-- Chapter 8's doubly-robust conditional ATT $\widehat{\tau}_{\text{CS, DR}} \approx -0.065$.
+- Chapter 10's Callaway-Sant'Anna overall ATT $\widehat{\tau}_{\text{CS, overall}} \approx -0.057$.
+- Chapter 10's doubly-robust conditional ATT $\widehat{\tau}_{\text{CS, DR}} \approx -0.065$.
 
 The factor-augmented gsynth estimate is in the same direction and
-within sampling error of the chapter-8 staggered-DiD estimates.
+within sampling error of the chapter-10 staggered-DiD estimates.
 Two estimators with very different identifying assumptions —
-parallel trends in chapter 8, parallel factors here — pointing to
+parallel trends in chapter 10, parallel factors here — pointing to
 the same conclusion is the strongest possible evidence the design
 generates.
 
@@ -498,8 +498,8 @@ simplex-loading projection addresses (see Further reading).
 :::
 
 This chapter closes the book's drafted methodological arc. The
-**cross-method comparison chapter (Chapter 11, forthcoming)** will
-tabulate the ATT point estimates from chapters 2–10 side by side
+**cross-method comparison chapter (Chapter 13, forthcoming)** will
+tabulate the ATT point estimates from chapters 2–12 side by side
 on the two shared datasets (Proposition 99 and the
 Callaway-Sant'Anna minimum-wage panel) and propose a decision
 flowchart by data structure — single vs. many treated units, long
@@ -527,7 +527,7 @@ headline:
 
 If any of those three look bad, the headline ATT should be
 presented with conspicuous caveats — or paired with a method whose
-failure modes differ, such as the chapter-8 doubly-robust DiD.
+failure modes differ, such as the chapter-10 doubly-robust DiD.
 
 ## Further reading
 
@@ -543,7 +543,7 @@ for pre-treatment fit, and matrix-completion variants
 thin shim over `fect`, the two APIs differ in small ways that the
 reader will encounter (e.g., the `nonparametric` keyword used in
 this chapter is translated internally to `fect`'s `bootstrap`).
-Chapter 9 of this book takes the broader view across IFE and
+Chapter 11 of this book takes the broader view across IFE and
 matrix-completion estimators; this chapter is the focused
 walkthrough of the gsynth estimator alone. Readers coming from
 Part I should re-read **chapter 4 (classical SC)** with the gsynth
@@ -563,9 +563,9 @@ two notations are aligned.
 
 **Lessons:**
 
-- *Interactive fixed effects* means letting unobserved time shocks $f_t$ load on each unit through a unit-specific *factor loading* $\lambda_i$, so a single time trend can affect different counties by different amounts — a strictly richer structure than the additive two-way fixed effects of chapter 8. The identifying assumption shifts from parallel *trends* to parallel *factors*, which can be the weaker requirement when cohort-specific shocks are at work.
+- *Interactive fixed effects* means letting unobserved time shocks $f_t$ load on each unit through a unit-specific *factor loading* $\lambda_i$, so a single time trend can affect different counties by different amounts — a strictly richer structure than the additive two-way fixed effects of chapter 10. The identifying assumption shifts from parallel *trends* to parallel *factors*, which can be the weaker requirement when cohort-specific shocks are at work.
 - The implicit-weights table revealed that each treated county's counterfactual is a genuine mixture of many never-treated donors — no single control dominates, top weights stay well under 0.10, and the dispersion across `r length(control_ids)` controls is exactly the shape expected from a large donor pool. This grounds the abstract factor model in the same "weighted donor average" intuition as classical SCM.
-- The factor-augmented ATT $\widehat{\tau}_{\text{gsynth}}$ at $r^* = 1$ roughly doubles the no-factor baseline and lands within sampling error of chapter 8's Callaway-Sant'Anna estimates ($\widehat{\tau}_{\text{CS, overall}} \approx -0.057$, $\widehat{\tau}_{\text{CS, DR}} \approx -0.065$). Two estimators with different identifying assumptions (parallel trends vs. parallel factors) pointing the same direction is the strongest evidence the design can generate; the cumulative-ATT plot then shows effects deepening monotonically over event time.
+- The factor-augmented ATT $\widehat{\tau}_{\text{gsynth}}$ at $r^* = 1$ roughly doubles the no-factor baseline and lands within sampling error of chapter 10's Callaway-Sant'Anna estimates ($\widehat{\tau}_{\text{CS, overall}} \approx -0.057$, $\widehat{\tau}_{\text{CS, DR}} \approx -0.065$). Two estimators with different identifying assumptions (parallel trends vs. parallel factors) pointing the same direction is the strongest evidence the design can generate; the cumulative-ATT plot then shows effects deepening monotonically over event time.
 
 **Caveats:**
 
@@ -585,7 +585,7 @@ The chapter capped the grid at $r \in \{0, 1\}$. Refit gsynth at $r = 2$, append
 ## Solution
 
 ```{r}
-#| label: ex-ch10-01
+#| label: ex-ch12-01
 #| message: false
 #| warning: false
 fit_r2 <- gsynth(lemp ~ treat + lpop + lavg_pay,
@@ -620,7 +620,7 @@ Refit gsynth at $r = r^*$ without the `lpop + lavg_pay` covariates. Does the ATT
 ## Solution
 
 ```{r}
-#| label: ex-ch10-02
+#| label: ex-ch12-02
 #| message: false
 #| warning: false
 fit_nocov <- gsynth(lemp ~ treat,
@@ -650,7 +650,7 @@ The chapter reported the top-5 implicit weights *for the five most-weighted trea
 ## Solution
 
 ```{r}
-#| label: ex-ch10-03
+#| label: ex-ch12-03
 total_weight <- tibble(
   control_county = rownames(W),
   total_abs_w    = rowSums(abs(W))
@@ -672,7 +672,7 @@ The chapter's CI depends on the bootstrap draws, which depend on the seed. Refit
 ## Solution
 
 ```{r}
-#| label: ex-ch10-04
+#| label: ex-ch12-04
 #| message: false
 #| warning: false
 fit_reseed <- gsynth(lemp ~ treat + lpop + lavg_pay,
@@ -703,7 +703,7 @@ Pretend cohort 2004 was actually treated in 2002 and cohort 2006 in 2004, restri
 ## Solution
 
 ```{r}
-#| label: ex-ch10-05
+#| label: ex-ch12-05
 #| message: false
 #| warning: false
 mw_placebo <- mw_df |>
