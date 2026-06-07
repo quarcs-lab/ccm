@@ -31,10 +31,10 @@ penalty $\lambda$ and chapter 11's factor loadings $\lambda_i$.
    `xsynthdid::adjust.outcome.for.x()`, which residualises the outcome on a
    covariate path before SDID weights are computed. This is the only piece of
    covariate machinery the SDID world ships, and it works in a single line.
-3. Match the inference method to the design: **placebo** standard errors when
-   there is a single treated unit (jackknife and bootstrap collapse), **jackknife**
-   or **bootstrap** when multiple treated cohorts make those alternatives
-   identified.
+3. Match the inference method to the design: **placebo** standard errors are the
+   only valid frequentist choice whenever a fit has a single treated unit — which
+   includes each cohort of a staggered roll-out, since SDID is fitted one treated
+   unit at a time, so jackknife and bootstrap collapse there too.
 4. Extend SDID to **staggered adoption** by fitting one synthdid per cohort and
    aggregating with the cell-count weights $\pi_g$ from @clarkepailanir2023synthetic.
    This is the SDID analogue of `multisynth` from chapter 5 — same staggered
@@ -117,8 +117,10 @@ the chapter's headline comparison so clean.
 this chapter uses head to head — `synthdid_estimate()`, `sc_estimate()`, and
 `did_estimate()`, all of which take the same matrices and so make the
 side-by-side comparison mechanical. `xsynthdid` adds `adjust.outcome.for.x()` for
-covariate residualisation and `xsdid_se_bootstrap()` for the matching standard
-errors. `haven` reads the labelled Stata file for the staggered demo
+covariate residualisation; its companion `xsdid_se_bootstrap()` supplies matching
+standard errors for designs with two or more treated units in one fit, so it
+stays unused here — every fit in this chapter has a single treated unit. `haven`
+reads the labelled Stata file for the staggered demo
 (reusing chapter 5's panel). `mice` supplies the random-forest imputation we
 need for the two sparse Prop 99 covariates.
 
@@ -137,6 +139,10 @@ source("R/table_helpers.R")
 # synthdid's placebo SEs and xsdid_se_bootstrap consume RNG; the seed is load
 # bearing.
 set.seed(42)
+
+# synthdid_plot() still draws its lines with ggplot2's deprecated `size` aesthetic;
+# quiet the upstream lifecycle deprecation so it does not leak into the chapter.
+options(lifecycle_verbosity = "quiet")
 
 knitr::opts_chunk$set(dev.args = list(bg = "transparent"))
 
@@ -172,11 +178,15 @@ prop99_raw <- read_rds("data/proposition99.rds") |>
 # age15to24 (~32%). We single-impute with mice's random-forest method (m = 1) so
 # that the SDID fit lands on one well-defined panel; chapter 7 (BSTS) treats
 # imputation as a first-class step and shows what proper multiple imputation
-# buys you in this same data.
+# buys you in this same data. The 39-level `state` identifier is held aside while
+# imputing — it is not a useful predictor (mice would drop it as collinear) — and
+# rejoined after; cigsale has no missingness and is untouched either way.
 prop99 <- prop99_raw |>
+  select(-state) |>
   mice(m = 1, method = "rf", printFlag = FALSE) |>
   complete() |>
   as_tibble() |>
+  mutate(state = prop99_raw$state, .before = 1) |>
   mutate(treated = as.integer(state == "California" & year >= 1989))
 ```
 
@@ -318,8 +328,10 @@ that actually built the counterfactual.
 #| fig-width: 8
 #| fig-height: 4.5
 #| code-summary: "Code: Render synthdid_units_plot() with the placebo SE method."
+# synthdid_units_plot() labels its points by donor, not by a "SDID" series, so a
+# scale_color_manual(c("SDID" = ...)) override never matches and only warns; we
+# keep the package's native colouring here.
 synthdid_units_plot(list("SDID" = sdid_vanilla), se.method = "placebo") +
-  scale_color_manual(values = c("SDID" = "#d97757")) +
   labs(x = "Donor state", y = "Estimated effect (each donor in turn as placebo)",
        color = NULL)
 ```
@@ -330,8 +342,11 @@ to re-fit), and the synthdid bootstrap collapses for the same reason: resampling
 treated units with replacement returns the same singleton every time. On Prop 99,
 `vcov(sdid_vanilla, method = "jackknife")` and `vcov(sdid_vanilla, method =
 "bootstrap")` both return `NA`. **Placebo SEs are the only frequentist choice**
-when there is one treated unit. We will use jackknife and bootstrap in the
-staggered demo below, where $N_{\text{treated}} \ge 2$ makes them well-defined.
+when there is one treated unit. This same constraint returns in the staggered
+demo below: each cohort is fitted as its own single-treated SDID, so placebo is
+the valid choice there too — jackknife and bootstrap would need
+$N_{\text{treated}} \ge 2$ *inside a single fit*, which fitting one cohort at a
+time never provides.
 
 ## With covariates: xsynthdid
 
@@ -394,12 +409,19 @@ $\widehat{\tau}_{\text{SDID-X}} \approx `r sprintf("%.2f", tau_sdid_x)`$
 packs/capita, against the
 $\widehat{\tau}_{\text{SDID}} \approx `r sprintf("%.2f", tau_sdid)`$ of the
 vanilla fit — a shift of
-$`r sprintf("%+.2f", tau_sdid_x - tau_sdid)`$ packs. With a single treated unit
-(California), only the placebo SE is identified — `xsynthdid::xsdid_se_bootstrap()`
-returns an error on this design because its clustered bootstrap resamples
-treated units, and one treated unit has nothing to resample. The placebo SE of
-`r sprintf("%.2f", se_xadj_pl)` is what the comparison table uses for the
-covariate-adjusted row.
+$`r sprintf("%+.2f", tau_sdid_x - tau_sdid)`$ packs that wipes out almost the
+entire estimate. That is not a refinement; it is a warning. One of the four
+covariates is **retail price**, and Proposition 99 was a cigarette *tax* — it
+raised the retail price directly. Adjusting for price therefore conditions on a
+*post-treatment mediator*, the textbook definition of a **bad control**: the
+residualisation soaks up the very channel through which the policy lowered
+smoking. Exercise 2 confirms `retprice` is the covariate doing the damage. With a
+single treated unit (California), only the placebo SE is identified —
+`xsynthdid::xsdid_se_bootstrap()` returns an error on this design because its
+clustered bootstrap resamples treated units, and one treated unit has nothing to
+resample. The placebo SE of `r sprintf("%.2f", se_xadj_pl)` leaves the
+covariate-adjusted estimate indistinguishable from zero — exactly what a bad
+control does.
 
 ```{r}
 #| label: tbl-sdid-xadj
@@ -420,9 +442,9 @@ residualisation is a TWFE regression. Use only covariates that vary *within*
 unit and *within* time (income, prices, age shares, beer here); do not add the
 identifiers themselves. (2) `xsdid_se_bootstrap()` errors on single-treated
 panels because its clustered bootstrap resamples treated units; on Prop 99
-that means it cannot run, and only the placebo SE is identified. The bootstrap
-becomes the workhorse SE in the staggered demo below, where $N_{\text{treated}}
-\ge 2$.
+that means it cannot run, and only the placebo SE is identified. The staggered
+demo below does not rescue it: fitting one cohort at a time leaves every fit with
+a single treated unit, so the placebo SE is used throughout.
 
 ## DID, SC, SDID side by side
 
@@ -494,14 +516,11 @@ populated for SDID (the other two are uniform by construction).
 #| fig-width: 9
 #| fig-height: 5.5
 #| code-summary: "Code: Render the three-estimator synthdid_plot() and override colors."
+# A multi-estimator synthdid_plot() labels its series with internal per-estimator
+# names that a c(DiD=, SC=, SDID=) override does not match (it only warns), so we
+# keep synthdid's native three-colour scheme for the comparison figure.
 synthdid_plot(list(DiD = est_did, SC = est_sc, SDID = est_sdid),
               se.method = "placebo") +
-  scale_color_manual(values = c(DiD  = "#94a3b8",
-                                SC   = "#6a9bcc",
-                                SDID = "#d97757")) +
-  scale_fill_manual(values  = c(DiD  = "#94a3b8",
-                                SC   = "#6a9bcc",
-                                SDID = "#d97757")) +
   labs(x = "Year", y = "Cigarette sales (packs per capita)",
        color = NULL, fill = NULL)
 ```
@@ -521,9 +540,7 @@ Borealis 1989, Cascadia 1992, Deltora 1995) and 36 never-treated donors.
 
 ```{r}
 #| label: fit-sdid-staggered
-#| message: false
-#| warning: false
-#| code-summary: "Code: Fit synthdid per cohort with placebo / jackknife / bootstrap SEs and stash inputs for aggregation."
+#| code-summary: "Code: Fit synthdid per cohort with its placebo SE and stash inputs for aggregation."
 donors   <- tobacco |> filter(treated == 0) |> pull(state) |> unique()
 cohorts  <- tobacco |> filter(treated == 1) |> distinct(state, adoption_year) |>
             arrange(adoption_year)
@@ -544,9 +561,7 @@ fit_cohort <- function(cohort_state, adopt_yr) {
     `Adoption yr`  = adopt_yr,
     `T_post`       = ncol(m$Y) - m$T0,
     ATT            = as.numeric(est),
-    `SE (placebo)` = sqrt(vcov(est, method = "placebo")),
-    `SE (jackknife)` = sqrt(vcov(est, method = "jackknife")),
-    `SE (bootstrap)` = sqrt(vcov(est, method = "bootstrap"))
+    `SE (placebo)` = sqrt(vcov(est, method = "placebo"))
   )
 }
 
@@ -559,8 +574,8 @@ contribute more to the aggregate.
 
 ```{r}
 #| label: tbl-staggered-per-cohort
-#| tbl-cap: "Per-cohort synthdid estimates on the tobacco_sim panel, with three SE methods. Jackknife and bootstrap work here because each cohort is treated as a standalone single-treated SDID problem and the inference resamples *cohorts*, not within-cohort cells."
-#| code-summary: "Code: Tabulate the per-cohort ATTs and three SE methods."
+#| tbl-cap: "Per-cohort synthdid estimates on the tobacco_sim panel. Each cohort is a single-treated SDID fit (one treated state against the never-treated donors), so — exactly as on Prop 99 — only the placebo standard error is defined; jackknife and bootstrap would need two or more treated units inside a single fit."
+#| code-summary: "Code: Tabulate the per-cohort ATTs and placebo SEs."
 gt_pretty(per_cohort, decimals = 2)
 ```
 
@@ -570,44 +585,40 @@ gt_pretty(per_cohort, decimals = 2)
 pi <- per_cohort$T_post / sum(per_cohort$T_post)
 tau_agg     <- sum(pi * per_cohort$ATT)
 se_agg_pl   <- sqrt(sum((pi * per_cohort$`SE (placebo)`)^2))
-se_agg_jk   <- sqrt(sum((pi * per_cohort$`SE (jackknife)`)^2))
-se_agg_boot <- sqrt(sum((pi * per_cohort$`SE (bootstrap)`)^2))
 ```
 
 ```{r}
 #| label: tbl-staggered-aggregate
-#| tbl-cap: "Aggregate staggered SDID ATT, weighted by post-period cell count pi_g. The three SE columns combine the per-cohort SEs in quadrature under the (strong) assumption of independence across cohorts."
-#| code-summary: "Code: Aggregate the per-cohort ATTs and SEs into a single headline."
+#| tbl-cap: "Aggregate staggered SDID ATT, weighted by post-period cell count pi_g. The placebo SE combines the per-cohort placebo SEs in quadrature, under the (strong) assumption that the cohort estimates are independent."
+#| code-summary: "Code: Aggregate the per-cohort ATTs and placebo SEs into a single headline."
 tibble(
   Aggregator = "pi_g = T_post,g / sum T_post (cell-count weighted)",
   ATT        = tau_agg,
-  `SE (placebo)`   = se_agg_pl,
-  `SE (jackknife)` = se_agg_jk,
-  `SE (bootstrap)` = se_agg_boot
+  `SE (placebo)` = se_agg_pl
 ) |>
   gt_pretty(decimals = 2)
 ```
 
-**A note on standard errors.** With four cohorts the three SE methods finally
-become comparable. **Placebo** assumes the placebo distribution mirrors the
-treated variance (cheap, but biased if the panel is heterogeneous).
-**Jackknife** leaves one *cohort* out and refits (deterministic; the only
-asymptotically valid SE for SDID under fixed-cohort asymptotics per
-@arkhangelsky2021synthetic Theorem 5). **Bootstrap** resamples cohorts with
-replacement (slowest; conservative under small samples). For the chapter's
-headline numbers, jackknife is the right citation; placebo and bootstrap are
-diagnostics.
+**A note on standard errors.** It is tempting to think four cohorts buy back the
+jackknife and bootstrap that Prop 99 could not support. They do not. Each cohort
+is fitted as its own single-treated SDID — one treated state against the
+never-treated donors — so leaving the treated unit out (jackknife) or resampling
+treated units (bootstrap) is exactly as undefined here as it was on Prop 99. **The
+placebo permutation is again the only valid per-cohort SE.** The aggregate SE
+combines the four per-cohort placebo SEs in quadrature, which assumes the cohort
+estimates are independent — a strong assumption, since every cohort is built from
+the same donor pool.
 
 ```{r}
 #| label: fig-sdid-event
-#| fig-cap: "Per-cohort SDID ATTs from the tobacco_sim panel with their jackknife 95% bands. Each point is one cohort's average effect across that cohort's post-period; the horizontal line is the cell-count-weighted aggregate."
+#| fig-cap: "Per-cohort SDID ATTs from the tobacco_sim panel with their placebo 95% bands. Each point is one cohort's average effect across that cohort's post-period; the horizontal line is the cell-count-weighted aggregate."
 #| fig-width: 8
 #| fig-height: 4.5
-#| code-summary: "Code: Plot per-cohort ATTs with jackknife bands and the aggregate line."
+#| code-summary: "Code: Plot per-cohort ATTs with placebo bands and the aggregate line."
 per_cohort |>
   mutate(
-    lower = ATT - 1.96 * `SE (jackknife)`,
-    upper = ATT + 1.96 * `SE (jackknife)`
+    lower = ATT - 1.96 * `SE (placebo)`,
+    upper = ATT + 1.96 * `SE (placebo)`
   ) |>
   ggplot(aes(x = factor(`Adoption yr`), y = ATT)) +
   geom_hline(yintercept = tau_agg, color = "#6a9bcc",
@@ -642,11 +653,12 @@ the donor pool. SDID lands in between because it keeps the donor reweighting
 the level mismatch the SCM weights cannot perfectly close.
 
 **A note on standard errors.** Placebo SEs were the only valid choice on Prop
-99 (single treated). On the staggered tobacco panel all three SE methods are
-identified, and jackknife is the asymptotically defensible default. The
-xsynthdid bootstrap SE for the covariate-adjusted fit is wider than the placebo
-SE because it propagates first-stage covariate uncertainty into the second
-stage — a feature, not a bug.
+99 (single treated) — and they remain the only valid choice on the staggered
+tobacco panel, because each cohort is fitted one treated state at a time.
+Multiplying cohorts does not multiply treated units *within* any single fit, so
+jackknife and bootstrap stay undefined cohort by cohort. The covariate-adjusted
+`xsdid_se_bootstrap()` needs multiple treated units in one fit for the same
+reason, so it never enters this chapter's single-treated and per-cohort designs.
 
 **Where this leaves us.** Chapter 7 (Structural Bayesian Time Series) replaces
 SDID's frequentist confidence interval with a full Bayesian posterior over the
@@ -660,7 +672,7 @@ $\widehat{\tau}_{\text{SDID}} \approx `r sprintf("%.1f", tau_sdid)`$
 packs/capita (placebo SE $`r sprintf("%.1f", se_sdid_pl)`$), the covariate
 adjustment moves it to $`r sprintf("%.1f", tau_sdid_x)`$, and the
 cell-count-weighted staggered aggregate on the tobacco panel is
-$`r sprintf("%.1f", tau_agg)`$ (jackknife SE $`r sprintf("%.1f", se_agg_jk)`$).
+$`r sprintf("%.1f", tau_agg)`$ (placebo SE $`r sprintf("%.1f", se_agg_pl)`$).
 
 ## Key takeaways
 
@@ -693,17 +705,21 @@ $`r sprintf("%.1f", tau_agg)`$ (jackknife SE $`r sprintf("%.1f", se_agg_jk)`$).
   each weight relaxation buys a portion of the gap between the two extremes.
 - Adjusting for the four time-varying covariates (income, retail price, age
   share, beer) moves the SDID estimate by
-  $`r sprintf("%+.1f", tau_sdid_x - tau_sdid)`$ packs/capita — a real but
-  modest correction. The covariate-adjusted placebo SE
+  $`r sprintf("%+.1f", tau_sdid_x - tau_sdid)`$ packs/capita — almost the whole
+  effect — because one of them, retail price, is a post-treatment *mediator* that
+  the Proposition 99 tax raised directly. Conditioning on it is a **bad control**
+  that absorbs the policy's main channel, so the covariate-adjusted estimate
+  $`r sprintf("%.1f", tau_sdid_x)`$ is a caution, not a refinement (Exercise 2
+  isolates `retprice` as the culprit). Its placebo SE
   $`r sprintf("%.2f", se_xadj_pl)`$ is the only identified SE here because
-  `xsdid_se_bootstrap()` requires multiple treated units; the bootstrap
-  becomes available in the staggered demo.
-- Inference is design-specific: for a single treated unit the *only* valid
-  frequentist SE is the placebo permutation; with multiple treated cohorts the
-  jackknife is the asymptotic default per @arkhangelsky2021synthetic, with
-  placebo and bootstrap as diagnostics. The staggered tobacco fit's aggregate
-  ATT of $`r sprintf("%.1f", tau_agg)`$ packs/capita (jackknife SE
-  $`r sprintf("%.1f", se_agg_jk)`$) confirms the simulation's expected sign.
+  `xsdid_se_bootstrap()` requires multiple treated units.
+- Inference is design-specific: the **placebo** permutation is the only valid
+  frequentist SE whenever a fit has a single treated unit — and that includes
+  every cohort of the staggered roll-out, each fitted one treated state at a
+  time. Jackknife and bootstrap need two or more treated units *inside one fit*,
+  which the per-cohort recipe never provides. The staggered tobacco fit's
+  aggregate ATT of $`r sprintf("%.1f", tau_agg)`$ packs/capita (placebo SE
+  $`r sprintf("%.1f", se_agg_pl)`$) confirms the simulation's expected sign.
 
 **Caveats:**
 
@@ -833,11 +849,12 @@ baseline?
 #| label: ex-ch06-03
 #| message: false
 #| warning: false
-imp_m5 <- mice(prop99_raw, m = 5, method = "rf", printFlag = FALSE)
+imp_m5 <- mice(prop99_raw |> select(-state), m = 5, method = "rf", printFlag = FALSE)
 
 fit_one_imp <- function(i) {
   d <- complete(imp_m5, i) |> as_tibble() |>
-    mutate(treated = as.integer(state == "California" & year >= 1989)) |>
+    mutate(state = prop99_raw$state, .before = 1,
+           treated = as.integer(state == "California" & year >= 1989)) |>
     select(state, year, cigsale, treated) |>
     as.data.frame()
   m <- panel.matrices(d, unit = "state", time = "year",
