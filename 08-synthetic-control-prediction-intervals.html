@@ -2,13 +2,16 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.8.27">
+<meta name="generator" content="quarto-1.9.37">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>7&nbsp; Synthetic Control with Prediction Intervals – Comparative Causal Metrics</title>
+<title>8&nbsp; Synthetic Control with Prediction Intervals – Comparative Causal Metrics</title>
 <style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
 div.columns{display: flex; gap: min(4vw, 1.5em);}
@@ -85,22 +88,21 @@ div.csl-indent {
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./08-bayesian-spatial-sc.html" rel="next">
-<link href="./06-structural-bayesian-ts.html" rel="prev">
+<link href="./09-bayesian-spatial-sc.html" rel="next">
+<link href="./07-structural-bayesian-ts.html" rel="prev">
 <link href="./images/favicon.svg" rel="icon" type="image/svg+xml">
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
-<script src="site_libs/quarto-html/axe/axe-check.js" type="module"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="site_libs/quarto-html/anchor.min.js"></script>
 <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-8b4baf804e461d9b72633f0de59a0cac.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark-f1aadacce99040138bbb613f9330654f.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-acf12a64177840b8d86f2d4f01b2e9fb.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark-23bbe8b5e4efc1e257f6d59dce478b08.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-0da87e08732b0aad79cc276a1be62fe2.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="site_libs/bootstrap/bootstrap-dark-c77ee8f8b07d41e0e364fbf0a2ddebb9.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="site_libs/bootstrap/bootstrap-f4c17c317be320abc46cb70a34c75ed3.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-dark-3f4f7322deb0fef096deb93f64cdd0fb.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -131,7 +133,7 @@ div.csl-indent {
 <style>html{ scroll-behavior: smooth; }</style>
 
   <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
 <script type="text/javascript">
 const typesetMath = (el) => {
@@ -332,7 +334,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./07-synthetic-control-prediction-intervals.html"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Synthetic Control with Prediction Intervals</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./08-synthetic-control-prediction-intervals.html"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Synthetic Control with Prediction Intervals</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -417,38 +419,44 @@ window.Quarto = {
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./06-structural-bayesian-ts.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Structural Bayesian Time Series</span></span></a>
+  <a href="./06-synthetic-did.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Synthetic Difference-in-Differences</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./07-synthetic-control-prediction-intervals.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Synthetic Control with Prediction Intervals</span></span></a>
+  <a href="./07-structural-bayesian-ts.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Structural Bayesian Time Series</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./08-bayesian-spatial-sc.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Bayesian Spatial Synthetic Control</span></span></a>
+  <a href="./08-synthetic-control-prediction-intervals.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Synthetic Control with Prediction Intervals</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./09-staggered-did.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Staggered Differences-in-Differences</span></span></a>
+  <a href="./09-bayesian-spatial-sc.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Bayesian Spatial Synthetic Control</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./10-matrix-completion-and-ife.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Interactive Fixed Effects and Matrix Completion</span></span></a>
+  <a href="./10-staggered-did.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Staggered Differences-in-Differences</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./11-gsynth.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Generalized Synthetic Control</span></span></a>
+  <a href="./11-matrix-completion-and-ife.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Interactive Fixed Effects and Matrix Completion</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./12-gsynth.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Generalized Synthetic Control</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -467,31 +475,31 @@ window.Quarto = {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#learning-objectives" id="toc-learning-objectives" class="nav-link active" data-scroll-target="#learning-objectives"><span class="header-section-number">7.1</span> Learning objectives</a></li>
-  <li><a href="#why-a-third-synthetic-control-chapter" id="toc-why-a-third-synthetic-control-chapter" class="nav-link" data-scroll-target="#why-a-third-synthetic-control-chapter"><span class="header-section-number">7.2</span> Why a third synthetic-control chapter?</a></li>
-  <li><a href="#the-framework" id="toc-the-framework" class="nav-link" data-scroll-target="#the-framework"><span class="header-section-number">7.3</span> The framework</a></li>
-  <li><a href="#setup-and-data" id="toc-setup-and-data" class="nav-link" data-scroll-target="#setup-and-data"><span class="header-section-number">7.4</span> Setup and data</a></li>
-  <li><a href="#preparing-the-data-for-scpi" id="toc-preparing-the-data-for-scpi" class="nav-link" data-scroll-target="#preparing-the-data-for-scpi"><span class="header-section-number">7.5</span> Preparing the data for <code>scpi</code></a></li>
-  <li><a href="#point-estimation-across-four-weight-constraints" id="toc-point-estimation-across-four-weight-constraints" class="nav-link" data-scroll-target="#point-estimation-across-four-weight-constraints"><span class="header-section-number">7.6</span> Point estimation across four weight constraints</a></li>
-  <li><a href="#donor-weights-side-by-side" id="toc-donor-weights-side-by-side" class="nav-link" data-scroll-target="#donor-weights-side-by-side"><span class="header-section-number">7.7</span> Donor weights side-by-side</a></li>
-  <li><a href="#synthetic-counterfactuals-across-constraints" id="toc-synthetic-counterfactuals-across-constraints" class="nav-link" data-scroll-target="#synthetic-counterfactuals-across-constraints"><span class="header-section-number">7.8</span> Synthetic counterfactuals across constraints</a></li>
-  <li><a href="#prediction-intervals-on-the-simplex-fit" id="toc-prediction-intervals-on-the-simplex-fit" class="nav-link" data-scroll-target="#prediction-intervals-on-the-simplex-fit"><span class="header-section-number">7.9</span> Prediction intervals on the simplex fit</a></li>
-  <li><a href="#prediction-intervals-across-all-four-constraints" id="toc-prediction-intervals-across-all-four-constraints" class="nav-link" data-scroll-target="#prediction-intervals-across-all-four-constraints"><span class="header-section-number">7.10</span> Prediction intervals across all four constraints</a></li>
-  <li><a href="#sensitivity-to-confidence-level" id="toc-sensitivity-to-confidence-level" class="nav-link" data-scroll-target="#sensitivity-to-confidence-level"><span class="header-section-number">7.11</span> Sensitivity to confidence level</a></li>
-  <li><a href="#common-pitfalls" id="toc-common-pitfalls" class="nav-link" data-scroll-target="#common-pitfalls"><span class="header-section-number">7.12</span> Common pitfalls</a></li>
-  <li><a href="#recap" id="toc-recap" class="nav-link" data-scroll-target="#recap"><span class="header-section-number">7.13</span> Recap</a></li>
-  <li><a href="#key-takeaways" id="toc-key-takeaways" class="nav-link" data-scroll-target="#key-takeaways"><span class="header-section-number">7.14</span> Key takeaways</a></li>
-  <li><a href="#further-reading" id="toc-further-reading" class="nav-link" data-scroll-target="#further-reading"><span class="header-section-number">7.15</span> Further reading</a></li>
-  <li><a href="#exercises" id="toc-exercises" class="nav-link" data-scroll-target="#exercises"><span class="header-section-number">7.16</span> Exercises</a>
+  <li><a href="#learning-objectives" id="toc-learning-objectives" class="nav-link active" data-scroll-target="#learning-objectives"><span class="header-section-number">8.1</span> Learning objectives</a></li>
+  <li><a href="#why-a-third-synthetic-control-chapter" id="toc-why-a-third-synthetic-control-chapter" class="nav-link" data-scroll-target="#why-a-third-synthetic-control-chapter"><span class="header-section-number">8.2</span> Why a third synthetic-control chapter?</a></li>
+  <li><a href="#the-framework" id="toc-the-framework" class="nav-link" data-scroll-target="#the-framework"><span class="header-section-number">8.3</span> The framework</a></li>
+  <li><a href="#setup-and-data" id="toc-setup-and-data" class="nav-link" data-scroll-target="#setup-and-data"><span class="header-section-number">8.4</span> Setup and data</a></li>
+  <li><a href="#preparing-the-data-for-scpi" id="toc-preparing-the-data-for-scpi" class="nav-link" data-scroll-target="#preparing-the-data-for-scpi"><span class="header-section-number">8.5</span> Preparing the data for <code>scpi</code></a></li>
+  <li><a href="#point-estimation-across-four-weight-constraints" id="toc-point-estimation-across-four-weight-constraints" class="nav-link" data-scroll-target="#point-estimation-across-four-weight-constraints"><span class="header-section-number">8.6</span> Point estimation across four weight constraints</a></li>
+  <li><a href="#donor-weights-side-by-side" id="toc-donor-weights-side-by-side" class="nav-link" data-scroll-target="#donor-weights-side-by-side"><span class="header-section-number">8.7</span> Donor weights side-by-side</a></li>
+  <li><a href="#synthetic-counterfactuals-across-constraints" id="toc-synthetic-counterfactuals-across-constraints" class="nav-link" data-scroll-target="#synthetic-counterfactuals-across-constraints"><span class="header-section-number">8.8</span> Synthetic counterfactuals across constraints</a></li>
+  <li><a href="#prediction-intervals-on-the-simplex-fit" id="toc-prediction-intervals-on-the-simplex-fit" class="nav-link" data-scroll-target="#prediction-intervals-on-the-simplex-fit"><span class="header-section-number">8.9</span> Prediction intervals on the simplex fit</a></li>
+  <li><a href="#prediction-intervals-across-all-four-constraints" id="toc-prediction-intervals-across-all-four-constraints" class="nav-link" data-scroll-target="#prediction-intervals-across-all-four-constraints"><span class="header-section-number">8.10</span> Prediction intervals across all four constraints</a></li>
+  <li><a href="#sensitivity-to-confidence-level" id="toc-sensitivity-to-confidence-level" class="nav-link" data-scroll-target="#sensitivity-to-confidence-level"><span class="header-section-number">8.11</span> Sensitivity to confidence level</a></li>
+  <li><a href="#common-pitfalls" id="toc-common-pitfalls" class="nav-link" data-scroll-target="#common-pitfalls"><span class="header-section-number">8.12</span> Common pitfalls</a></li>
+  <li><a href="#recap" id="toc-recap" class="nav-link" data-scroll-target="#recap"><span class="header-section-number">8.13</span> Recap</a></li>
+  <li><a href="#key-takeaways" id="toc-key-takeaways" class="nav-link" data-scroll-target="#key-takeaways"><span class="header-section-number">8.14</span> Key takeaways</a></li>
+  <li><a href="#further-reading" id="toc-further-reading" class="nav-link" data-scroll-target="#further-reading"><span class="header-section-number">8.15</span> Further reading</a></li>
+  <li><a href="#exercises" id="toc-exercises" class="nav-link" data-scroll-target="#exercises"><span class="header-section-number">8.16</span> Exercises</a>
   <ul class="collapse">
-  <li><a href="#exercise-1-cointegration-toggle" id="toc-exercise-1-cointegration-toggle" class="nav-link" data-scroll-target="#exercise-1-cointegration-toggle"><span class="header-section-number">7.16.1</span> Exercise 1: Cointegration toggle</a></li>
-  <li><a href="#exercise-2-first-post-period-year-california-pierces-the-lower-pi-bound" id="toc-exercise-2-first-post-period-year-california-pierces-the-lower-pi-bound" class="nav-link" data-scroll-target="#exercise-2-first-post-period-year-california-pierces-the-lower-pi-bound"><span class="header-section-number">7.16.2</span> Exercise 2: First post-period year California pierces the lower PI bound</a></li>
-  <li><a href="#exercise-3-per-year-treatment-effect-interval" id="toc-exercise-3-per-year-treatment-effect-interval" class="nav-link" data-scroll-target="#exercise-3-per-year-treatment-effect-interval"><span class="header-section-number">7.16.3</span> Exercise 3: Per-year treatment-effect interval</a></li>
-  <li><a href="#exercise-4-asymmetric-bonferroni-alpha-allocation" id="toc-exercise-4-asymmetric-bonferroni-alpha-allocation" class="nav-link" data-scroll-target="#exercise-4-asymmetric-bonferroni-alpha-allocation"><span class="header-section-number">7.16.4</span> Exercise 4: Asymmetric Bonferroni alpha allocation</a></li>
-  <li><a href="#exercise-5-stretch-lasso-q-sweep" id="toc-exercise-5-stretch-lasso-q-sweep" class="nav-link" data-scroll-target="#exercise-5-stretch-lasso-q-sweep"><span class="header-section-number">7.16.5</span> Exercise 5 (stretch): Lasso <span class="math inline">\(Q\)</span> sweep</a></li>
+  <li><a href="#exercise-1-cointegration-toggle" id="toc-exercise-1-cointegration-toggle" class="nav-link" data-scroll-target="#exercise-1-cointegration-toggle"><span class="header-section-number">8.16.1</span> Exercise 1: Cointegration toggle</a></li>
+  <li><a href="#exercise-2-first-post-period-year-california-pierces-the-lower-pi-bound" id="toc-exercise-2-first-post-period-year-california-pierces-the-lower-pi-bound" class="nav-link" data-scroll-target="#exercise-2-first-post-period-year-california-pierces-the-lower-pi-bound"><span class="header-section-number">8.16.2</span> Exercise 2: First post-period year California pierces the lower PI bound</a></li>
+  <li><a href="#exercise-3-per-year-treatment-effect-interval" id="toc-exercise-3-per-year-treatment-effect-interval" class="nav-link" data-scroll-target="#exercise-3-per-year-treatment-effect-interval"><span class="header-section-number">8.16.3</span> Exercise 3: Per-year treatment-effect interval</a></li>
+  <li><a href="#exercise-4-asymmetric-bonferroni-alpha-allocation" id="toc-exercise-4-asymmetric-bonferroni-alpha-allocation" class="nav-link" data-scroll-target="#exercise-4-asymmetric-bonferroni-alpha-allocation"><span class="header-section-number">8.16.4</span> Exercise 4: Asymmetric Bonferroni alpha allocation</a></li>
+  <li><a href="#exercise-5-stretch-lasso-q-sweep" id="toc-exercise-5-stretch-lasso-q-sweep" class="nav-link" data-scroll-target="#exercise-5-stretch-lasso-q-sweep"><span class="header-section-number">8.16.5</span> Exercise 5 (stretch): Lasso <span class="math inline">\(Q\)</span> sweep</a></li>
   </ul></li>
   </ul>
-<div class="toc-actions"><ul><li><a href="https://github.com/quarcs-lab/ccm/edit/main/07-synthetic-control-prediction-intervals.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/quarcs-lab/ccm/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
+<div class="toc-actions"><ul><li><a href="https://github.com/quarcs-lab/ccm/edit/main/08-synthetic-control-prediction-intervals.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/quarcs-lab/ccm/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
@@ -499,7 +507,7 @@ window.Quarto = {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Synthetic Control with Prediction Intervals</span></h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li><li><hr class="dropdown-divider"></li><li><a id="quarto-view-source" class="dropdown-item" href="javascript:void(0)" role="button">View Source</a></li></ul></div></div>
+<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Synthetic Control with Prediction Intervals</span></h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li><li><hr class="dropdown-divider"></li><li><a id="quarto-view-source" class="dropdown-item" href="javascript:void(0)" role="button">View Source</a></li></ul></div></div>
 </div>
 
 
@@ -516,8 +524,8 @@ window.Quarto = {
 </header>
 
 
-<section id="learning-objectives" class="level2" data-number="7.1">
-<h2 data-number="7.1" class="anchored" data-anchor-id="learning-objectives"><span class="header-section-number">7.1</span> Learning objectives</h2>
+<section id="learning-objectives" class="level2" data-number="8.1">
+<h2 data-number="8.1" class="anchored" data-anchor-id="learning-objectives"><span class="header-section-number">8.1</span> Learning objectives</h2>
 <ol type="1">
 <li>Fit synthetic-control weights under four regularization regimes (simplex, lasso, ridge, OLS) from <code>scpi</code>’s single API. Running all four at once is how the reader checks whether their headline estimate is a constraint artifact rather than a data finding.</li>
 <li>Construct finite-sample prediction intervals by decomposing SC error into in-sample weight uncertainty and out-of-sample shocks. These are the first SC intervals in the book with proven frequentist coverage, and replacing chapter 4’s permutation <em>p</em>-value with a coverage statement is what makes the method publishable in econometrics venues.</li>
@@ -525,25 +533,25 @@ window.Quarto = {
 <li>Sweep confidence levels (80/90/95/99%) and report at which level the post-period outcome reliably exits the band. The sweep is the natural way to quantify evidence strength when a single conventional level is arbitrary.</li>
 </ol>
 </section>
-<section id="why-a-third-synthetic-control-chapter" class="level2" data-number="7.2">
-<h2 data-number="7.2" class="anchored" data-anchor-id="why-a-third-synthetic-control-chapter"><span class="header-section-number">7.2</span> Why a third synthetic-control chapter?</h2>
-<p>Chapter 4 fit the classical synthetic-control estimator with <code>tidysynth</code>: donor weights live on the simplex, and the inference story is the Fisher-exact placebo permutation test. Chapter 6 produced posterior <strong>credible</strong> intervals (CrI) from a structural Bayesian time-series model — a probability statement about the parameter, conditional on the prior.</p>
-<p>What is still missing is a <strong>frequentist</strong> uncertainty story for the synthetic-control estimator itself. The Fisher p-value from chapter 4 is a rank statistic — it tells us California is unusual relative to the donor pool, but it does not give us a <em>prediction interval</em> with finite-sample coverage guarantees. The <code>scpi</code> package of <span class="citation" data-cites="cattaneo2021prediction">Cattaneo et al. (<a href="references.html#ref-cattaneo2021prediction" role="doc-biblioref">2021</a>)</span> and <span class="citation" data-cites="cattaneo2025scpi">Cattaneo et al. (<a href="references.html#ref-cattaneo2025scpi" role="doc-biblioref">2025</a>)</span> closes that gap. It decomposes synthetic-control forecast error into two components — in-sample weight uncertainty and out-of-sample post-treatment shocks — and constructs a <strong>prediction interval (PI)</strong> <span class="math inline">\(\widehat{\text{PI}}_{1t}\)</span> that covers the synthetic counterfactual <span class="math inline">\(\widehat{Y_{1t}(0)}\)</span> with stated finite-sample frequentist coverage. The CrI of chapter 6 and the PI of this chapter answer different questions: the CrI is a posterior over the effect given a prior; the PI is a sampling-distribution band around the counterfactual prediction.</p>
-<p><code>scpi</code> also generalises the weight-estimation step. The same API fits the <strong>simplex</strong> (classical Abadie–Diamond–Hainmueller), <strong>lasso</strong>, <strong>ridge</strong>, and <strong>OLS</strong> constraints from a single function call, so we can ask a sharper question than chapter 4 could: <em>is the headline ATT a consequence of the simplex constraint, or does it survive every reasonable choice of donor regularisation?</em> We will write the resulting point estimate as <span class="math inline">\(\widehat{\tau}_{\text{scpi}}\)</span> — adding a constraint subscript such as <span class="math inline">\(\widehat{\tau}_{\text{scpi-simplex}}\)</span> when we need to distinguish the four constraint families — to keep it distinct from chapter 4’s <span class="math inline">\(\widehat{\tau}_{\text{SCM}}\)</span> and chapter 6’s <span class="math inline">\(\widehat{\tau}_{\text{BSTS}}\)</span>.</p>
+<section id="why-a-third-synthetic-control-chapter" class="level2" data-number="8.2">
+<h2 data-number="8.2" class="anchored" data-anchor-id="why-a-third-synthetic-control-chapter"><span class="header-section-number">8.2</span> Why a third synthetic-control chapter?</h2>
+<p>Chapter 4 fit the classical synthetic-control estimator with <code>tidysynth</code>: donor weights live on the simplex, and the inference story is the Fisher-exact placebo permutation test. Chapter 5 added a ridge outcome-model bias correction; chapter 6 ran DiD on a doubly de-meaned panel; chapter 7 produced posterior <strong>credible</strong> intervals (CrI) from a structural Bayesian time-series model — a probability statement about the parameter, conditional on the prior.</p>
+<p>What is still missing is a <strong>frequentist</strong> uncertainty story for the synthetic-control estimator itself. The Fisher p-value from chapter 4 is a rank statistic — it tells us California is unusual relative to the donor pool, but it does not give us a <em>prediction interval</em> with finite-sample coverage guarantees. The <code>scpi</code> package of <span class="citation" data-cites="cattaneo2021prediction">Cattaneo et al. (<a href="references.html#ref-cattaneo2021prediction" role="doc-biblioref">2021</a>)</span> and <span class="citation" data-cites="cattaneo2025scpi">Cattaneo et al. (<a href="references.html#ref-cattaneo2025scpi" role="doc-biblioref">2025</a>)</span> closes that gap. It decomposes synthetic-control forecast error into two components — in-sample weight uncertainty and out-of-sample post-treatment shocks — and constructs a <strong>prediction interval (PI)</strong> <span class="math inline">\(\widehat{\text{PI}}_{1t}\)</span> that covers the synthetic counterfactual <span class="math inline">\(\widehat{Y_{1t}(0)}\)</span> with stated finite-sample frequentist coverage. The CrI of chapter 7 and the PI of this chapter answer different questions: the CrI is a posterior over the effect given a prior; the PI is a sampling-distribution band around the counterfactual prediction.</p>
+<p><code>scpi</code> also generalises the weight-estimation step. The same API fits the <strong>simplex</strong> (classical Abadie–Diamond–Hainmueller), <strong>lasso</strong>, <strong>ridge</strong>, and <strong>OLS</strong> constraints from a single function call, so we can ask a sharper question than chapter 4 could: <em>is the headline ATT a consequence of the simplex constraint, or does it survive every reasonable choice of donor regularisation?</em> We will write the resulting point estimate as <span class="math inline">\(\widehat{\tau}_{\text{scpi}}\)</span> — adding a constraint subscript such as <span class="math inline">\(\widehat{\tau}_{\text{scpi-simplex}}\)</span> when we need to distinguish the four constraint families — to keep it distinct from chapter 4’s <span class="math inline">\(\widehat{\tau}_{\text{SCM}}\)</span>, chapter 5’s <span class="math inline">\(\widehat{\tau}_{\text{ASCM}}\)</span>, chapter 6’s <span class="math inline">\(\widehat{\tau}_{\text{SDID}}\)</span>, and chapter 7’s <span class="math inline">\(\widehat{\tau}_{\text{BSTS}}\)</span>.</p>
 </section>
-<section id="the-framework" class="level2" data-number="7.3">
-<h2 data-number="7.3" class="anchored" data-anchor-id="the-framework"><span class="header-section-number">7.3</span> The framework</h2>
+<section id="the-framework" class="level2" data-number="8.3">
+<h2 data-number="8.3" class="anchored" data-anchor-id="the-framework"><span class="header-section-number">8.3</span> The framework</h2>
 <p>Let <span class="math inline">\(Y_{1t}\)</span> be the treated unit’s outcome at time <span class="math inline">\(t\)</span>, and <span class="math inline">\(Y_{0t}\)</span> the <span class="math inline">\(J\)</span>-vector of donor outcomes. The synthetic-control predictor is</p>
 <p><span class="math display">\[\widehat{Y_{1t}(0)} \,=\, \sum_{j} \widehat{w}_j \, Y_{jt} \,=\, \widehat{w}^\top Y_{0t},\]</span></p>
 <p>with weights <span class="math inline">\(\widehat{w} = (\widehat{w}_1, \ldots, \widehat{w}_J)\)</span> chosen on the pre-period under one of four constraint sets: simplex (<span class="math inline">\(\widehat{w}_j \ge 0\)</span> and <span class="math inline">\(\sum_j \widehat{w}_j = 1\)</span>), lasso (<span class="math inline">\(\|\widehat{w}\|_1 \le Q\)</span>), ridge (<span class="math inline">\(\|\widehat{w}\|_2 \le Q\)</span>), or OLS (unconstrained). The per-period treatment effect is <span class="math inline">\(\widehat{\tau}_t = Y_{1t} - \widehat{Y_{1t}(0)}\)</span>, and the ATT estimator is its post-period average <span class="math inline">\(\widehat{\tau}_{\text{scpi}} = T_{\text{post}}^{-1} \sum_{t &gt; t^*} \widehat{\tau}_t\)</span>.</p>
 <p>The error in estimating the <em>counterfactual</em> at any post-period <span class="math inline">\(t\)</span> decomposes as</p>
 <p><span class="math display">\[Y_{1t}(0) \;-\; \widehat{Y_{1t}(0)} \;=\; \underbrace{(w^* - \widehat{w})^\top Y_{0t}}_{\text{in-sample error}} \;+\; \underbrace{e_t}_{\text{out-of-sample error}}.\]</span></p>
 <p>The first term, the in-sample component, comes from estimating the donor weights on a finite pre-period — sampling variability propagates into the counterfactual. The second term, <span class="math inline">\(e_t\)</span>, captures post-treatment shocks and structural drift that the pre-period cannot anticipate; it grows with the forecast horizon. The placebo test in chapter 4 sidesteps this decomposition entirely — it ranks California against permuted-treatment states without modelling either error source — and so produces a <span class="math inline">\(p\)</span>-value rather than an interval. <code>scpi</code> quantifies the two error sources separately and reports a prediction interval <span class="math inline">\(\widehat{\text{PI}}_{1t} = [\widehat{Y_{1t}(0)} - L_t,\, \widehat{Y_{1t}(0)} + U_t]\)</span> around the <em>counterfactual prediction</em>, with stated finite-sample coverage.</p>
-<p>In chapter 4’s notation we would write the same predictor with the V-weighted predictor objective augmented by auxiliary covariates. Chapter 7 omits the predictor matrix <span class="math inline">\(X\)</span> entirely (see Setup) and so works directly with donor outcomes <span class="math inline">\(Y_{0t}\)</span>. A parallel frequentist-coverage literature builds prediction intervals via <em>conformal inference</em> (Chernozhukov, Wüthrich &amp; Zhu 2021, <em>JASA</em>), which trades the parametric in-sample / out-of-sample decomposition for distribution-free quantile guarantees; see Further reading.</p>
+<p>In chapter 4’s notation we would write the same predictor with the V-weighted predictor objective augmented by auxiliary covariates. This chapter omits the predictor matrix <span class="math inline">\(X\)</span> entirely (see Setup) and so works directly with donor outcomes <span class="math inline">\(Y_{0t}\)</span>. A parallel frequentist-coverage literature builds prediction intervals via <em>conformal inference</em> (Chernozhukov, Wüthrich &amp; Zhu 2021, <em>JASA</em>), which trades the parametric in-sample / out-of-sample decomposition for distribution-free quantile guarantees; see Further reading.</p>
 <p>The substantive interpretation matters and is the first pitfall of the chapter: the prediction interval <span class="math inline">\(\widehat{\text{PI}}_{1t}\)</span> bounds the <em>synthetic counterfactual</em> <span class="math inline">\(\widehat{Y_{1t}(0)}\)</span>, not the treatment effect <span class="math inline">\(\widehat{\tau}_t\)</span> and not the observed series. Because <span class="math inline">\(Y_{1t}\)</span> is observed (not random conditional on the pre-period), the band can be flipped about the observed series to produce a band for <span class="math inline">\(\widehat{\tau}_t\)</span> — exercise 3 does this — but the primary inferential statement is geometric: the treatment effect is “statistically distinct from forecasting noise” when observed California sits <em>outside</em> <span class="math inline">\(\widehat{\text{PI}}_{1t}\)</span>, most commonly when it falls <em>below</em> the lower bound of the band built around synthetic California.</p>
 </section>
-<section id="setup-and-data" class="level2" data-number="7.4">
-<h2 data-number="7.4" class="anchored" data-anchor-id="setup-and-data"><span class="header-section-number">7.4</span> Setup and data</h2>
+<section id="setup-and-data" class="level2" data-number="8.4">
+<h2 data-number="8.4" class="anchored" data-anchor-id="setup-and-data"><span class="header-section-number">8.4</span> Setup and data</h2>
 <div class="cell">
 <details class="code-fold">
 <summary>Code: Load packages, source table helpers, set seed, and configure ggplot theme.</summary>
@@ -568,7 +576,7 @@ window.Quarto = {
 <span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
-<p>The chapter reuses the Proposition 99 dataset that powered chapters 2–4 and 6: 39 US states, 1970–2000, with <code>cigsale</code> as the outcome (per-capita cigarette sales in packs). <code>scpi</code>’s <code>scdata()</code> wants the unit identifier as character — coerce the factor before handing it off. We use only the outcome series for matching (matching the configuration of the <code>scpi_pkg</code> Python illustration in <span class="citation" data-cites="cattaneo2025scpi">Cattaneo et al. (<a href="references.html#ref-cattaneo2025scpi" role="doc-biblioref">2025</a>)</span>); the auxiliary covariates <code>lnincome</code>, <code>beer</code>, and <code>age15to24</code> carry many NAs in the early pre-period and would force row deletions that bias the donor pool.</p>
+<p>The chapter reuses the Proposition 99 dataset that powered chapters 2–4 and 6–7: 39 US states, 1970–2000, with <code>cigsale</code> as the outcome (per-capita cigarette sales in packs). <code>scpi</code>’s <code>scdata()</code> wants the unit identifier as character — coerce the factor before handing it off. We use only the outcome series for matching (matching the configuration of the <code>scpi_pkg</code> Python illustration in <span class="citation" data-cites="cattaneo2025scpi">Cattaneo et al. (<a href="references.html#ref-cattaneo2025scpi" role="doc-biblioref">2025</a>)</span>); the auxiliary covariates <code>lnincome</code>, <code>beer</code>, and <code>age15to24</code> carry many NAs in the early pre-period and would force row deletions that bias the donor pool.</p>
 <p>This is an intentional departure from chapter 4, which used <code>lnincome</code>, <code>beer</code>, and <code>age15to24</code> as auxiliary predictors via <code>tidysynth::generate_predictor()</code>. The covariate-rich match in chapter 4 produces a tighter pre-period fit and a more negative simplex ATT — <span class="math inline">\(\widehat{\tau}_{\text{SCM}} \approx -18.85\)</span>; outcome-only matching here is more conservative, is more honest about the missing-data structure, and lands at a smaller <span class="math inline">\(\widehat{\tau}_{\text{scpi-simplex}}\)</span> (≈ <span class="math inline">\(-11\)</span>, see below). We return to this comparison in the Recap.</p>
 <div class="cell">
 <details class="code-fold">
@@ -581,8 +589,8 @@ window.Quarto = {
 </details>
 </div>
 </section>
-<section id="preparing-the-data-for-scpi" class="level2" data-number="7.5">
-<h2 data-number="7.5" class="anchored" data-anchor-id="preparing-the-data-for-scpi"><span class="header-section-number">7.5</span> Preparing the data for <code>scpi</code></h2>
+<section id="preparing-the-data-for-scpi" class="level2" data-number="8.5">
+<h2 data-number="8.5" class="anchored" data-anchor-id="preparing-the-data-for-scpi"><span class="header-section-number">8.5</span> Preparing the data for <code>scpi</code></h2>
 <p><code>scdata()</code> reshapes the long panel into the matrices <code>A</code> (treated pre-outcome), <code>B</code> (donor pre-outcomes), <code>P</code> (donor post-outcomes), and <code>Y.pre</code> / <code>Y.post</code> used downstream by <code>scest()</code> and <code>scpi()</code>. The two flags worth understanding for cigarette sales are <code>cointegrated.data = TRUE</code> (the long-run-variance adjustment for the I(1)-looking <code>cigsale</code> series, which only affects the inference step) and <code>constant = TRUE</code> (a single intercept across features — keeping the chapter close to the JSS illustration).</p>
 <div class="cell">
 <details class="code-fold">
@@ -603,8 +611,8 @@ window.Quarto = {
 </div>
 <p><code>data_prep</code> carries 19 pre-period years and 12 post-period years, with <span class="math inline">\(J = 38\)</span> donor states ready to be combined.</p>
 </section>
-<section id="point-estimation-across-four-weight-constraints" class="level2" data-number="7.6">
-<h2 data-number="7.6" class="anchored" data-anchor-id="point-estimation-across-four-weight-constraints"><span class="header-section-number">7.6</span> Point estimation across four weight constraints</h2>
+<section id="point-estimation-across-four-weight-constraints" class="level2" data-number="8.6">
+<h2 data-number="8.6" class="anchored" data-anchor-id="point-estimation-across-four-weight-constraints"><span class="header-section-number">8.6</span> Point estimation across four weight constraints</h2>
 <p><code>scest()</code> is the deterministic counterpart to <code>scpi()</code>: it solves for the donor weights under a chosen constraint and returns the synthetic counterfactual, but no prediction interval. Running it four times with <code>w.constr = list(name = ...)</code> swaps the constraint and leaves everything else identical, so any difference in the fitted weights is attributable to the regulariser alone.</p>
 <div class="cell">
 <details class="code-fold">
@@ -619,8 +627,8 @@ window.Quarto = {
 </div>
 <p>The four constraint sets correspond to four classical optimisation problems on the weight vector <span class="math inline">\(\widehat{w}\)</span>: simplex (<span class="math inline">\(\widehat{w}_j \ge 0\)</span>, <span class="math inline">\(\sum_j \widehat{w}_j = 1\)</span>), lasso (<span class="math inline">\(\|\widehat{w}\|_1 \le Q\)</span> with <span class="math inline">\(Q\)</span> a tuning parameter, default <span class="math inline">\(Q = 1\)</span> in <code>scpi</code>, no sign restriction), ridge (<span class="math inline">\(\|\widehat{w}\|_2 \le Q\)</span> with <span class="math inline">\(Q\)</span> chosen from the data as <span class="math inline">\((J + K)\widehat{\sigma}_u^2 / \|\widehat{w}_{\rm OLS}\|_2^2\)</span>), and OLS (unconstrained least squares). Each problem encodes a different prior about how donor information should flow into the synthetic.</p>
 </section>
-<section id="donor-weights-side-by-side" class="level2" data-number="7.7">
-<h2 data-number="7.7" class="anchored" data-anchor-id="donor-weights-side-by-side"><span class="header-section-number">7.7</span> Donor weights side-by-side</h2>
+<section id="donor-weights-side-by-side" class="level2" data-number="8.7">
+<h2 data-number="8.7" class="anchored" data-anchor-id="donor-weights-side-by-side"><span class="header-section-number">8.7</span> Donor weights side-by-side</h2>
 <div class="cell">
 <details class="code-fold">
 <summary>Code: Tabulate the top-12 donor weights side-by-side across the four constraints.</summary>
@@ -650,7 +658,7 @@ window.Quarto = {
 <div id="tbl-weights-side-by-side" class="cell quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-weights-side-by-side-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Table&nbsp;7.1: Donor weights from each of the four scpi weight-constraint families, for the 12 donors with largest maximum absolute weight across the four constraints.
+Table&nbsp;8.1: Donor weights from each of the four scpi weight-constraint families, for the 12 donors with largest maximum absolute weight across the four constraints.
 </figcaption>
 <div aria-describedby="tbl-weights-side-by-side-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output-display">
@@ -1104,7 +1112,7 @@ Table&nbsp;7.1: Donor weights from each of the four scpi weight-constraint famil
 }
 </style>
 
-<table class="gt_table do-not-create-environment cell caption-top table table-sm table-striped small" data-quarto-bootstrap="false">
+<table class="gt_table cell caption-top table table-sm table-striped small" data-quarto-bootstrap="false">
 <thead>
 <tr class="gt_col_headings header">
 <th id="state" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col">Donor state</th>
@@ -1243,18 +1251,18 @@ Table&nbsp;7.1: Donor weights from each of the four scpi weight-constraint famil
 <div id="fig-weights-heatmap" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-weights-heatmap-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="07-synthetic-control-prediction-intervals_files/figure-html/fig-weights-heatmap-1.png" class="img-fluid figure-img" width="768">
+<img src="08-synthetic-control-prediction-intervals_files/figure-html/fig-weights-heatmap-1.png" class="img-fluid figure-img" width="768">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-weights-heatmap-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;7.1: Donor weights across the four scpi constraints, displayed as a heatmap, for the 12 donors with largest maximum absolute weight across constraints. Rows are donors; columns are constraints. Red = negative weight, blue = positive.
+Figure&nbsp;8.1: Donor weights across the four scpi constraints, displayed as a heatmap, for the 12 donors with largest maximum absolute weight across constraints. Rows are donors; columns are constraints. Red = negative weight, blue = positive.
 </figcaption>
 </figure>
 </div>
 </div>
 </div>
 </section>
-<section id="synthetic-counterfactuals-across-constraints" class="level2" data-number="7.8">
-<h2 data-number="7.8" class="anchored" data-anchor-id="synthetic-counterfactuals-across-constraints"><span class="header-section-number">7.8</span> Synthetic counterfactuals across constraints</h2>
+<section id="synthetic-counterfactuals-across-constraints" class="level2" data-number="8.8">
+<h2 data-number="8.8" class="anchored" data-anchor-id="synthetic-counterfactuals-across-constraints"><span class="header-section-number">8.8</span> Synthetic counterfactuals across constraints</h2>
 <p>The point of the weight comparison is not aesthetics — it is to ask whether the <em>fitted synthetic counterfactual</em> depends on the choice of constraint. The next plot overlays the four synthetic series on the observed California trajectory.</p>
 <div class="cell">
 <details class="code-fold">
@@ -1302,10 +1310,10 @@ Figure&nbsp;7.1: Donor weights across the four scpi constraints, displayed as a 
 <div id="fig-counterfactuals" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-counterfactuals-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="07-synthetic-control-prediction-intervals_files/figure-html/fig-counterfactuals-1.png" class="img-fluid figure-img" width="864">
+<img src="08-synthetic-control-prediction-intervals_files/figure-html/fig-counterfactuals-1.png" class="img-fluid figure-img" width="864">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-counterfactuals-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;7.2: Observed California (orange) and the four scpi synthetic counterfactuals (one per constraint). Pre-1989 the four synthetics are nearly indistinguishable; post-1989 they fan out but all sit visibly above observed California.
+Figure&nbsp;8.2: Observed California (orange) and the four scpi synthetic counterfactuals (one per constraint). Pre-1989 the four synthetics are nearly indistinguishable; post-1989 they fan out but all sit visibly above observed California.
 </figcaption>
 </figure>
 </div>
@@ -1329,7 +1337,7 @@ Figure&nbsp;7.2: Observed California (orange) and the four scpi synthetic counte
 <div id="tbl-att-by-constraint" class="cell quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-att-by-constraint-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Table&nbsp;7.2: Average post-period gap (ATT) by weight constraint.
+Table&nbsp;8.2: Average post-period gap (ATT) by weight constraint.
 </figcaption>
 <div aria-describedby="tbl-att-by-constraint-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output-display">
@@ -1783,7 +1791,7 @@ Table&nbsp;7.2: Average post-period gap (ATT) by weight constraint.
 }
 </style>
 
-<table class="gt_table do-not-create-environment cell caption-top table table-sm table-striped small" data-quarto-bootstrap="false">
+<table class="gt_table cell caption-top table table-sm table-striped small" data-quarto-bootstrap="false">
 <thead>
 <tr class="gt_col_headings header">
 <th id="constraint" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col">Constraint</th>
@@ -1829,8 +1837,8 @@ Table&nbsp;7.2: Average post-period gap (ATT) by weight constraint.
 <p>All four estimators place the average post-period gap between roughly -15.8 and -11.1 packs/capita per year, with year-by-year gaps as deep as -23.9 in the late 1990s. The simplex sits at the conservative end of that range (<span class="math inline">\(\widehat{\tau}_{\text{scpi-simplex}} \approx -11.11\)</span>), lasso and ridge sit at the negative end (<span class="math inline">\(\widehat{\tau}_{\text{scpi-lasso}} \approx -15.28\)</span> and <span class="math inline">\(\widehat{\tau}_{\text{scpi-ridge}} \approx -15.77\)</span>), and OLS lands in between (<span class="math inline">\(\widehat{\tau}_{\text{scpi-ols}} \approx -14.24\)</span>). On a post-period baseline of <span class="math inline">\(\approx 60\)</span> packs/capita per year, those gaps correspond to a 18–26% reduction. Whatever one believes about the simplex, Proposition 99 reduced California cigarette sales by an economically meaningful share of pre-policy consumption.</p>
 <p>A reader paging back from chapter 4 will notice that <span class="math inline">\(\widehat{\tau}_{\text{scpi-simplex}}\)</span> here (≈ -11.11) is materially smaller in magnitude than chapter 4’s simplex ATT (<span class="math inline">\(\widehat{\tau}_{\text{SCM}} \approx -18.85\)</span>). Three things drive that gap: (i) chapter 4 used <code>lnincome</code>, <code>beer</code>, and <code>age15to24</code> as auxiliary predictors via <code>tidysynth::generate_predictor()</code>, while this chapter matches on the outcome series alone (see <em>Setup and data</em> above); (ii) the two chapters use different solvers (<code>tidysynth</code>/<code>Synth</code> quadratic optimiser vs <code>scpi</code>’s constrained-least-squares routine); and (iii) <code>scpi</code> fits with <code>constant = TRUE</code>, adding a single intercept across features. Predictor-augmented matching extracts more pre-period signal and therefore produces a more negative ATT; outcome-only matching is the more conservative — and more honest — choice when the auxiliary covariates are themselves heavily missing on the donor side. The two numbers do not contradict each other; they answer slightly different questions about the same data.</p>
 </section>
-<section id="prediction-intervals-on-the-simplex-fit" class="level2" data-number="7.9">
-<h2 data-number="7.9" class="anchored" data-anchor-id="prediction-intervals-on-the-simplex-fit"><span class="header-section-number">7.9</span> Prediction intervals on the simplex fit</h2>
+<section id="prediction-intervals-on-the-simplex-fit" class="level2" data-number="8.9">
+<h2 data-number="8.9" class="anchored" data-anchor-id="prediction-intervals-on-the-simplex-fit"><span class="header-section-number">8.9</span> Prediction intervals on the simplex fit</h2>
 <p><code>scpi()</code> is the inference-bearing sibling of <code>scest()</code>. It rebuilds the same synthetic counterfactual and adds a prediction interval. The argument settings below — <code>u.order = 1</code>, <code>u.lags = 0</code>, <code>e.order = 1</code>, <code>e.lags = 0</code>, <code>u.missp = TRUE</code>, <code>u.sigma = "HC1"</code>, <code>sims = 200</code> — are the package defaults. We override <code>e.method = "gaussian"</code> (the package default is <code>"all"</code>, which computes Gaussian, location-scale, and quantile-regression bounds simultaneously) because the Gaussian conditional subgaussian bound is the version proved in <span class="citation" data-cites="cattaneo2021prediction">Cattaneo et al. (<a href="references.html#ref-cattaneo2021prediction" role="doc-biblioref">2021</a>)</span> and is the simplest to interpret for a single-treated-unit panel.</p>
 <p><strong>A note on confidence levels.</strong> Setting <code>u.alpha = 0.025</code> and <code>e.alpha = 0.025</code> yields a <span class="math inline">\(\widehat{\text{PI}}_{1t}\)</span> that is <em>jointly</em> conservative at level <span class="math inline">\(1 - (u_\alpha + e_\alpha) = 95\%\)</span> by a Bonferroni-style union bound: the in-sample weight error <span class="math inline">\((w^* - \widehat{w})^\top Y_{0t}\)</span> and the out-of-sample shock <span class="math inline">\(e_t\)</span> are each bounded at the <span class="math inline">\(1 - 0.025 = 97.5\%\)</span> level, so the joint coverage is at least <span class="math inline">\(1 - 2 \times 0.025 = 95\%\)</span>. Equivalently, to obtain a joint <span class="math inline">\((1 - \alpha)\)</span> band we split alpha as <code>u.alpha = e.alpha = α/2</code>. We follow this convention throughout the chapter so that “95% PI” really does mean “95% joint coverage”; the sensitivity analysis later in the chapter sweeps the joint level directly.</p>
 <div class="cell">
@@ -1880,10 +1888,10 @@ Table&nbsp;7.2: Average post-period gap (ATT) by weight constraint.
 <div id="fig-pi-simplex" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-pi-simplex-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="07-synthetic-control-prediction-intervals_files/figure-html/fig-pi-simplex-1.png" class="img-fluid figure-img" width="816">
+<img src="08-synthetic-control-prediction-intervals_files/figure-html/fig-pi-simplex-1.png" class="img-fluid figure-img" width="816">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-pi-simplex-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;7.3: Simplex synthetic-control fit (blue dashed) for California (orange solid) with the 95% joint scpi prediction interval (blue PI band). Observed California falls below the lower PI bound from roughly the mid-1990s onward — the inferential analogue of “effect statistically distinguishable from forecasting noise”.
+Figure&nbsp;8.3: Simplex synthetic-control fit (blue dashed) for California (orange solid) with the 95% joint scpi prediction interval (blue PI band). Observed California falls below the lower PI bound from roughly the mid-1990s onward — the inferential analogue of “effect statistically distinguishable from forecasting noise”.
 </figcaption>
 </figure>
 </div>
@@ -1891,8 +1899,8 @@ Figure&nbsp;7.3: Simplex synthetic-control fit (blue dashed) for California (ora
 </div>
 <p>The pre-period synthetic tracks observed California almost perfectly. After 1989 the PI band fans out as the out-of-sample forecast horizon lengthens — that is <span class="math inline">\(e_t\)</span> at work. Observed California breaks below the lower bound by the early-to-mid 1990s and stays there. Under the SCPI framework that is the formal version of the statement chapter 4 made loosely with the placebo cloud: the post-1989 trajectory is not what synthetic California, plus its honest forecast error, would produce.</p>
 </section>
-<section id="prediction-intervals-across-all-four-constraints" class="level2" data-number="7.10">
-<h2 data-number="7.10" class="anchored" data-anchor-id="prediction-intervals-across-all-four-constraints"><span class="header-section-number">7.10</span> Prediction intervals across all four constraints</h2>
+<section id="prediction-intervals-across-all-four-constraints" class="level2" data-number="8.10">
+<h2 data-number="8.10" class="anchored" data-anchor-id="prediction-intervals-across-all-four-constraints"><span class="header-section-number">8.10</span> Prediction intervals across all four constraints</h2>
 <p>The substantive question — is the effect robust across constraints — also has a sharper inferential form. We can ask whether observed California falls below the <em>lower PI bound</em> under simplex, lasso, ridge, and OLS alike.</p>
 <div class="cell">
 <details class="code-fold">
@@ -1945,10 +1953,10 @@ Figure&nbsp;7.3: Simplex synthetic-control fit (blue dashed) for California (ora
 <div id="fig-pi-all" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-pi-all-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="07-synthetic-control-prediction-intervals_files/figure-html/fig-pi-all-1.png" class="img-fluid figure-img" width="960">
+<img src="08-synthetic-control-prediction-intervals_files/figure-html/fig-pi-all-1.png" class="img-fluid figure-img" width="960">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-pi-all-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;7.4: Observed California (orange) versus the 95% joint prediction interval (blue PI band) and synthetic point estimate (blue dashed) under each scpi weight constraint. The lower-bound piercing in the late 1990s survives every constraint family.
+Figure&nbsp;8.4: Observed California (orange) versus the 95% joint prediction interval (blue PI band) and synthetic point estimate (blue dashed) under each scpi weight constraint. The lower-bound piercing in the late 1990s survives every constraint family.
 </figcaption>
 </figure>
 </div>
@@ -1956,8 +1964,8 @@ Figure&nbsp;7.4: Observed California (orange) versus the 95% joint prediction in
 </div>
 <p>The PI-band widths differ — OLS is the widest because unconstrained least squares squeezes the most variance out of the pre-period and pays for it with a fatter post-period interval, while simplex is the narrowest because the non-negativity-plus-sum-to-one constraint sharply regularises the donor weights. Yet observed California eventually slips below every constraint’s lower band. The inferential conclusion does not depend on the modelling choice that chapter 4 hard-coded.</p>
 </section>
-<section id="sensitivity-to-confidence-level" class="level2" data-number="7.11">
-<h2 data-number="7.11" class="anchored" data-anchor-id="sensitivity-to-confidence-level"><span class="header-section-number">7.11</span> Sensitivity to confidence level</h2>
+<section id="sensitivity-to-confidence-level" class="level2" data-number="8.11">
+<h2 data-number="8.11" class="anchored" data-anchor-id="sensitivity-to-confidence-level"><span class="header-section-number">8.11</span> Sensitivity to confidence level</h2>
 <p>The 95% band is a convention. A second robustness check is to sweep the joint confidence level <span class="math inline">\(1 - (u_\alpha + e_\alpha)\)</span> across reasonable values and ask when the observed series finally re-enters the band. Wider bands (higher confidence) make the post-period evidence weaker; narrower bands (lower confidence) make it stronger. To keep the labels honest, we set <code>u.alpha = e.alpha = α/2</code> so that the joint Bonferroni level is exactly <span class="math inline">\(1 - \alpha\)</span> — i.e.&nbsp;a labelled “90% PI” really does have 90% joint coverage.</p>
 <div class="cell">
 <details class="code-fold">
@@ -2020,10 +2028,10 @@ Figure&nbsp;7.4: Observed California (orange) versus the 95% joint prediction in
 <div id="fig-sensitivity" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-sensitivity-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="07-synthetic-control-prediction-intervals_files/figure-html/fig-sensitivity-1.png" class="img-fluid figure-img" width="816">
+<img src="08-synthetic-control-prediction-intervals_files/figure-html/fig-sensitivity-1.png" class="img-fluid figure-img" width="816">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-sensitivity-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;7.5: Sensitivity to the joint confidence level (simplex constraint). Nested bands at 80%, 90%, 95%, and 99%. Observed California (orange) sits below the lower bound at every level by the late 1990s.
+Figure&nbsp;8.5: Sensitivity to the joint confidence level (simplex constraint). Nested bands at 80%, 90%, 95%, and 99%. Observed California (orange) sits below the lower bound at every level by the late 1990s.
 </figcaption>
 </figure>
 </div>
@@ -2031,15 +2039,15 @@ Figure&nbsp;7.5: Sensitivity to the joint confidence level (simplex constraint).
 </div>
 <p>The narrow 80% band is broken by the early 1990s; the widest 99% band still excludes observed California by the late 1990s. The post-1989 deviation is not a 95%-only artefact.</p>
 </section>
-<section id="common-pitfalls" class="level2" data-number="7.12">
-<h2 data-number="7.12" class="anchored" data-anchor-id="common-pitfalls"><span class="header-section-number">7.12</span> Common pitfalls</h2>
+<section id="common-pitfalls" class="level2" data-number="8.12">
+<h2 data-number="8.12" class="anchored" data-anchor-id="common-pitfalls"><span class="header-section-number">8.12</span> Common pitfalls</h2>
 <p><strong>Reading <span class="math inline">\(\widehat{\text{PI}}_{1t}\)</span> as a confidence interval for the treatment effect.</strong> An <code>scpi</code> prediction interval covers the <em>synthetic counterfactual</em> <span class="math inline">\(\widehat{Y_{1t}(0)}\)</span> — it tells you the range of values the synthetic-California series could plausibly take if you re-ran the donor-weight estimator on a parallel pre-period draw. The treatment effect <span class="math inline">\(\widehat{\tau}_t = Y_{1t} - \widehat{Y_{1t}(0)}\)</span> “matters” when observed California leaves the band: that is the inferential statement. Reading the band as a <span class="math inline">\(\pm\)</span> on the <em>effect size</em> (the way one would read an OLS confidence interval on a regression coefficient) is wrong, and it is the most common misuse of the package in applied work. Exercise 3 shows the formal way to flip the band onto <span class="math inline">\(\widehat{\tau}_t\)</span>: subtract the band endpoints from <span class="math inline">\(Y_{1t}\)</span> (with bounds swapped) rather than re-centring the band on <span class="math inline">\(\widehat{\tau}_t\)</span>.</p>
 <p><strong>Treating the constraint choice as innocuous.</strong> Simplex, lasso, ridge, and OLS are not interchangeable. In the run above <span class="math inline">\(\widehat{\tau}_{\text{scpi-simplex}}\)</span> and <span class="math inline">\(\widehat{\tau}_{\text{scpi-ridge}}\)</span> differ by roughly 5 packs (a 40% relative spread on the point estimate). The <em>inferential</em> conclusion happens to survive every constraint family here, but on a borderline-significant dataset it would not. Pick the constraint before you peek at the post-period and report the others as robustness checks; do not constraint-shop until a desired sign emerges. Relatedly, the lasso fits here use scpi’s default <span class="math inline">\(Q = 1\)</span>, which is what gives lasso and simplex such similar weight vectors (lasso = “L1 ball of radius 1”; simplex = “L1 ball of radius 1, restricted to the non-negative orthant”). Pushing <span class="math inline">\(Q\)</span> above 1 lets lasso assign weight outside the simplex on either side and changes the picture. A serious lasso analysis would sweep <span class="math inline">\(Q\)</span> over a grid (exercise 5); we keep <span class="math inline">\(Q = 1\)</span> here for comparability with the simplex.</p>
 <p><strong>PIs are conditional on the donor pool.</strong> <code>scpi</code> quantifies in-sample and out-of-sample error <em>given</em> the 38 donor states that survived the data-quality screen. The interval makes no statement about whether the donor pool itself is reasonable — adding or removing a state, or shifting the pre-period window, can move both <span class="math inline">\(\widehat{\tau}_{\text{scpi}}\)</span> and the band. The honest reading is that <span class="math inline">\(\widehat{\text{PI}}_{1t}\)</span> is “frequentist coverage for the counterfactual implied by <em>this</em> donor pool”; sensitivity to pool composition is a separate exercise (placebos, leave-one-out, donor-restriction sweeps).</p>
 <p><strong>PI bands grow rapidly with horizon in a small-T regime.</strong> With only 19 pre-period years and 12 post-period years, the out-of-sample component <span class="math inline">\(e_t\)</span> grows quickly: by 2000 the simplex band is several times wider than the 1990 band. A reader who looks only at the late-1990s years sees a large interval and may infer “weak evidence”; the inferential signal is concentrated in the <em>first few</em> post-period years, where the band is narrow and the gap is already opening. Always read the PI plot as a function of horizon, not as a single late-period interval.</p>
 </section>
-<section id="recap" class="level2" data-number="7.13">
-<h2 data-number="7.13" class="anchored" data-anchor-id="recap"><span class="header-section-number">7.13</span> Recap</h2>
+<section id="recap" class="level2" data-number="8.13">
+<h2 data-number="8.13" class="anchored" data-anchor-id="recap"><span class="header-section-number">8.13</span> Recap</h2>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 50%">
@@ -2073,7 +2081,7 @@ Figure&nbsp;7.5: Sensitivity to the joint confidence level (simplex constraint).
 <td>The <em>synthetic counterfactual</em> <span class="math inline">\(\widehat{Y_{1t}(0)}\)</span>, not observed California and not <span class="math inline">\(\widehat{\tau}_t\)</span> — “significance” means the observed series leaves the band</td>
 </tr>
 <tr class="even">
-<td>How does this differ from chapter 6’s credible interval?</td>
+<td>How does this differ from chapter 7’s credible interval?</td>
 <td><span class="math inline">\(\widehat{\text{PI}}_{1t}\)</span> has finite-sample frequentist coverage and is a statement about the synthetic counterfactual; CausalImpact’s CrI is a posterior probability statement about the effect, conditioned on the prior. They tend to agree when the BSTS prior is uninformative and the SCPI in-sample uncertainty term dominates.</td>
 </tr>
 <tr class="odd">
@@ -2087,8 +2095,8 @@ Figure&nbsp;7.5: Sensitivity to the joint confidence level (simplex constraint).
 </tbody>
 </table>
 </section>
-<section id="key-takeaways" class="level2" data-number="7.14">
-<h2 data-number="7.14" class="anchored" data-anchor-id="key-takeaways"><span class="header-section-number">7.14</span> Key takeaways</h2>
+<section id="key-takeaways" class="level2" data-number="8.14">
+<h2 data-number="8.14" class="anchored" data-anchor-id="key-takeaways"><span class="header-section-number">8.14</span> Key takeaways</h2>
 <p><strong>Methods:</strong></p>
 <ul>
 <li><code>scpi</code> fits the synthetic-control predictor <span class="math inline">\(\widehat{Y_{1t}(0)} = \widehat{w}^\top Y_{0t}\)</span> under a chosen donor-weight constraint (simplex, lasso, ridge, or OLS) and constructs a finite-sample prediction interval <span class="math inline">\(\widehat{\text{PI}}_{1t}\)</span> by decomposing the forecast error into two components: an in-sample piece <span class="math inline">\((w^* - \widehat{w})^\top Y_{0t}\)</span> that captures donor-weight estimation variability over a finite pre-period, and an out-of-sample piece <span class="math inline">\(e_t\)</span> that captures post-treatment shocks unknowable from the pre-period.</li>
@@ -2108,8 +2116,8 @@ Figure&nbsp;7.5: Sensitivity to the joint confidence level (simplex constraint).
 <li>Reading the band as a <span class="math inline">\(\pm\)</span> on the <em>effect size</em> — the way one would read an OLS confidence interval on a regression coefficient — is the most common applied misuse of <code>scpi</code>; the band is a region for the counterfactual, so the implied uncertainty on <span class="math inline">\(\widehat{\tau}_t = Y_{1t} - \widehat{Y_{1t}(0)}\)</span> is the mirror-image gap between the observed series and the band (exercise 3), not the band’s half-width.</li>
 </ul>
 </section>
-<section id="further-reading" class="level2" data-number="7.15">
-<h2 data-number="7.15" class="anchored" data-anchor-id="further-reading"><span class="header-section-number">7.15</span> Further reading</h2>
+<section id="further-reading" class="level2" data-number="8.15">
+<h2 data-number="8.15" class="anchored" data-anchor-id="further-reading"><span class="header-section-number">8.15</span> Further reading</h2>
 <ul>
 <li><span class="citation" data-cites="cattaneo2021prediction">Cattaneo et al. (<a href="references.html#ref-cattaneo2021prediction" role="doc-biblioref">2021</a>)</span> — the JASA paper that introduced the SCPI framework and proves the finite-sample coverage guarantee.</li>
 <li><span class="citation" data-cites="cattaneo2025scpi">Cattaneo et al. (<a href="references.html#ref-cattaneo2025scpi" role="doc-biblioref">2025</a>)</span> — the JSS software paper for the R and Python implementations; the chapter’s argument defaults are taken from its replication script.</li>
@@ -2118,13 +2126,13 @@ Figure&nbsp;7.5: Sensitivity to the joint confidence level (simplex constraint).
 <li>Chernozhukov, V., Wüthrich, K. &amp; Zhu, Y. (2021). <em>An exact and robust conformal inference method for counterfactual and synthetic controls.</em> Journal of the American Statistical Association — a distribution-free frequentist alternative to scpi’s parametric in-sample / out-of-sample decomposition. Conformal SC intervals trade scpi’s two-component parametric coverage for permutation-style quantile guarantees and are a natural companion read.</li>
 <li>The companion <strong>Python (<code>scpi_pkg</code>) and Stata (<code>scpi</code>)</strong> packages, documented at <a href="https://nppackages.github.io/scpi/" class="uri">https://nppackages.github.io/scpi/</a>, expose the same API as the R package used in this chapter.</li>
 </ul>
-<p><strong>Coming up.</strong> Chapter 8 closes Part I with a <em>fifth</em> synthetic-control perspective: a Bayesian horseshoe-prior weight model coupled with a spatial-autoregressive donor data-generating process. Chapters 4, 5, 6, and 7 all retain the stable-unit-treatment-value assumption (SUTVA) — donors are treated as unaffected by California’s policy. Chapter 8 relaxes SUTVA and recovers a closed-form spillover for each neighbour, which matters when the treated unit shares a border with several donors (Nevada, in this case).</p>
+<p><strong>Coming up.</strong> Chapter 7 closes Part I with a <em>fourth</em> synthetic-control perspective: a Bayesian horseshoe-prior weight model coupled with a spatial-autoregressive donor data-generating process. Chapters 4, 5, and 6 all retain the stable-unit-treatment-value assumption (SUTVA) — donors are treated as unaffected by California’s policy. Chapter 7 relaxes SUTVA and recovers a closed-form spillover for each neighbour, which matters when the treated unit shares a border with several donors (Nevada, in this case).</p>
 </section>
-<section id="exercises" class="level2" data-number="7.16">
-<h2 data-number="7.16" class="anchored" data-anchor-id="exercises"><span class="header-section-number">7.16</span> Exercises</h2>
+<section id="exercises" class="level2" data-number="8.16">
+<h2 data-number="8.16" class="anchored" data-anchor-id="exercises"><span class="header-section-number">8.16</span> Exercises</h2>
 <p>These exercises probe the design knobs the chapter exposed — the cointegration flag, the constraint family, the Bonferroni alpha allocation, and the lasso <span class="math inline">\(Q\)</span> tuning parameter — and one summary statistic the chapter did not extract (the first year California pierces the lower band). All exercises reuse <code>prop99</code>, <code>data_prep</code>, <code>pi_simplex</code>, <code>scpi_fits</code>, <code>years_pre</code>, <code>years_post</code>, and <code>years_all</code> from the setup chunks above.</p>
-<section id="exercise-1-cointegration-toggle" class="level3" data-number="7.16.1">
-<h3 data-number="7.16.1" class="anchored" data-anchor-id="exercise-1-cointegration-toggle"><span class="header-section-number">7.16.1</span> Exercise 1: Cointegration toggle</h3>
+<section id="exercise-1-cointegration-toggle" class="level3" data-number="8.16.1">
+<h3 data-number="8.16.1" class="anchored" data-anchor-id="exercise-1-cointegration-toggle"><span class="header-section-number">8.16.1</span> Exercise 1: Cointegration toggle</h3>
 <p>The chapter ran <code>scdata(..., cointegrated.data = TRUE)</code> because California’s per-capita cigarette sales look like an I(1) series. Refit the simplex <code>scpi</code> with <code>cointegrated.data = FALSE</code> and compare the average PI half-width across the post-period. How much does the cointegration adjustment matter?</p>
 <div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
@@ -2657,8 +2665,8 @@ Figure&nbsp;7.5: Sensitivity to the joint confidence level (simplex constraint).
 </div>
 </div>
 </section>
-<section id="exercise-2-first-post-period-year-california-pierces-the-lower-pi-bound" class="level3" data-number="7.16.2">
-<h3 data-number="7.16.2" class="anchored" data-anchor-id="exercise-2-first-post-period-year-california-pierces-the-lower-pi-bound"><span class="header-section-number">7.16.2</span> Exercise 2: First post-period year California pierces the lower PI bound</h3>
+<section id="exercise-2-first-post-period-year-california-pierces-the-lower-pi-bound" class="level3" data-number="8.16.2">
+<h3 data-number="8.16.2" class="anchored" data-anchor-id="exercise-2-first-post-period-year-california-pierces-the-lower-pi-bound"><span class="header-section-number">8.16.2</span> Exercise 2: First post-period year California pierces the lower PI bound</h3>
 <p>For each of the four constraints, find the first post-period year in which observed California falls <em>below</em> the lower 95% PI bound. This is the inferential analogue of “the year the effect became statistically distinguishable from forecasting noise.”</p>
 <div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
@@ -3174,8 +3182,8 @@ Figure&nbsp;7.5: Sensitivity to the joint confidence level (simplex constraint).
 </div>
 </div>
 </section>
-<section id="exercise-3-per-year-treatment-effect-interval" class="level3" data-number="7.16.3">
-<h3 data-number="7.16.3" class="anchored" data-anchor-id="exercise-3-per-year-treatment-effect-interval"><span class="header-section-number">7.16.3</span> Exercise 3: Per-year treatment-effect interval</h3>
+<section id="exercise-3-per-year-treatment-effect-interval" class="level3" data-number="8.16.3">
+<h3 data-number="8.16.3" class="anchored" data-anchor-id="exercise-3-per-year-treatment-effect-interval"><span class="header-section-number">8.16.3</span> Exercise 3: Per-year treatment-effect interval</h3>
 <p>The chapter plotted <span class="math inline">\(\widehat{\text{PI}}_{1t}\)</span> around the <em>synthetic counterfactual</em> <span class="math inline">\(\widehat{Y_{1t}(0)}\)</span>. Reframe it: plot the implied band around the per-year <em>treatment effect</em> <span class="math inline">\(\widehat{\tau}_t = Y_{1t} - \widehat{Y_{1t}(0)}\)</span>. Since <span class="math inline">\(Y_{1t}\)</span> is observed, the upper bound on <span class="math inline">\(\widehat{\tau}_t\)</span> is <span class="math inline">\(Y_{1t}\)</span> minus the <em>lower</em> PI bound on the counterfactual, and vice versa. The horizontal zero line then anchors the eye: years whose band stays below zero are the years the policy effect is statistically distinguishable from zero.</p>
 <div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
@@ -3213,7 +3221,7 @@ Figure&nbsp;7.5: Sensitivity to the joint confidence level (simplex constraint).
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="07-synthetic-control-prediction-intervals_files/figure-html/ex-ch06-03-1.png" class="img-fluid figure-img" width="768"></p>
+<p><img src="08-synthetic-control-prediction-intervals_files/figure-html/ex-ch08-03-1.png" class="img-fluid figure-img" width="768"></p>
 </figure>
 </div>
 </div>
@@ -3223,8 +3231,8 @@ Figure&nbsp;7.5: Sensitivity to the joint confidence level (simplex constraint).
 </div>
 </div>
 </section>
-<section id="exercise-4-asymmetric-bonferroni-alpha-allocation" class="level3" data-number="7.16.4">
-<h3 data-number="7.16.4" class="anchored" data-anchor-id="exercise-4-asymmetric-bonferroni-alpha-allocation"><span class="header-section-number">7.16.4</span> Exercise 4: Asymmetric Bonferroni alpha allocation</h3>
+<section id="exercise-4-asymmetric-bonferroni-alpha-allocation" class="level3" data-number="8.16.4">
+<h3 data-number="8.16.4" class="anchored" data-anchor-id="exercise-4-asymmetric-bonferroni-alpha-allocation"><span class="header-section-number">8.16.4</span> Exercise 4: Asymmetric Bonferroni alpha allocation</h3>
 <p>The chapter splits a 95% joint band evenly (<code>u.alpha = e.alpha = 0.025</code>). Refit the simplex <code>scpi</code> with an <em>asymmetric</em> split: <code>u.alpha = 0.04</code> and <code>e.alpha = 0.01</code> (still summing to 0.05). The total Bonferroni level is still 95%, but the shape of the band changes — one source of uncertainty is now bounded more tightly than the other. Compare to the symmetric chapter band.</p>
 <div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
@@ -3799,8 +3807,8 @@ Figure&nbsp;7.5: Sensitivity to the joint confidence level (simplex constraint).
 </div>
 </div>
 </section>
-<section id="exercise-5-stretch-lasso-q-sweep" class="level3" data-number="7.16.5">
-<h3 data-number="7.16.5" class="anchored" data-anchor-id="exercise-5-stretch-lasso-q-sweep"><span class="header-section-number">7.16.5</span> Exercise 5 (stretch): Lasso <span class="math inline">\(Q\)</span> sweep</h3>
+<section id="exercise-5-stretch-lasso-q-sweep" class="level3" data-number="8.16.5">
+<h3 data-number="8.16.5" class="anchored" data-anchor-id="exercise-5-stretch-lasso-q-sweep"><span class="header-section-number">8.16.5</span> Exercise 5 (stretch): Lasso <span class="math inline">\(Q\)</span> sweep</h3>
 <p>The chapter’s lasso fit uses <code>scpi</code>’s default <span class="math inline">\(Q = 1\)</span>, which is what makes the lasso weights look so similar to the simplex weights (“lasso = L1 ball of radius 1; simplex = L1 ball of radius 1 restricted to the non-negative orthant”). Sweep <span class="math inline">\(Q\)</span> over <span class="math inline">\(\{0.5, 1, 2\}\)</span>, refit <code>scpi</code> at each value, and report the resulting ATT plus the number of donors with non-zero weight (the lasso’s “active set” size).</p>
 <div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
@@ -4827,13 +4835,13 @@ Dunford, E. (2024). <em><span class="nocase">tidysynth</span> — a tidy impleme
   </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./06-structural-bayesian-ts.html" class="pagination-link" aria-label="Structural Bayesian Time Series">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Structural Bayesian Time Series</span></span>
+      <a href="./07-structural-bayesian-ts.html" class="pagination-link" aria-label="Structural Bayesian Time Series">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Structural Bayesian Time Series</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./08-bayesian-spatial-sc.html" class="pagination-link" aria-label="Bayesian Spatial Synthetic Control">
-        <span class="nav-page-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Bayesian Spatial Synthetic Control</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="./09-bayesian-spatial-sc.html" class="pagination-link" aria-label="Bayesian Spatial Synthetic Control">
+        <span class="nav-page-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Bayesian Spatial Synthetic Control</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
@@ -4850,11 +4858,11 @@ Dunford, E. (2024). <em><span class="nocase">tidysynth</span> — a tidy impleme
 <span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a><span class="fu">## Why a third synthetic-control chapter?</span></span>
 <span id="cb23-13"><a href="#cb23-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-14"><a href="#cb23-14" aria-hidden="true" tabindex="-1"></a>Chapter 4 fit the classical synthetic-control estimator with <span class="in">`tidysynth`</span>: donor weights live on the simplex, and the inference story is the Fisher-exact placebo permutation test. Chapter 6 produced posterior **credible** intervals (CrI) from a structural Bayesian time-series model — a probability statement about the parameter, conditional on the prior.</span>
+<span id="cb23-14"><a href="#cb23-14" aria-hidden="true" tabindex="-1"></a>Chapter 4 fit the classical synthetic-control estimator with <span class="in">`tidysynth`</span>: donor weights live on the simplex, and the inference story is the Fisher-exact placebo permutation test. Chapter 5 added a ridge outcome-model bias correction; chapter 6 ran DiD on a doubly de-meaned panel; chapter 7 produced posterior **credible** intervals (CrI) from a structural Bayesian time-series model — a probability statement about the parameter, conditional on the prior.</span>
 <span id="cb23-15"><a href="#cb23-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-16"><a href="#cb23-16" aria-hidden="true" tabindex="-1"></a>What is still missing is a **frequentist** uncertainty story for the synthetic-control estimator itself. The Fisher p-value from chapter 4 is a rank statistic — it tells us California is unusual relative to the donor pool, but it does not give us a *prediction interval* with finite-sample coverage guarantees. The `scpi` package of @cattaneo2021prediction and @cattaneo2025scpi closes that gap. It decomposes synthetic-control forecast error into two components — in-sample weight uncertainty and out-of-sample post-treatment shocks — and constructs a **prediction interval (PI)** $\widehat{\text{PI}}_{1t}$ that covers the synthetic counterfactual $\widehat{Y_{1t}(0)}$ with stated finite-sample frequentist coverage. The CrI of chapter 6 and the PI of this chapter answer different questions: the CrI is a posterior over the effect given a prior; the PI is a sampling-distribution band around the counterfactual prediction.</span>
+<span id="cb23-16"><a href="#cb23-16" aria-hidden="true" tabindex="-1"></a>What is still missing is a **frequentist** uncertainty story for the synthetic-control estimator itself. The Fisher p-value from chapter 4 is a rank statistic — it tells us California is unusual relative to the donor pool, but it does not give us a *prediction interval* with finite-sample coverage guarantees. The `scpi` package of @cattaneo2021prediction and @cattaneo2025scpi closes that gap. It decomposes synthetic-control forecast error into two components — in-sample weight uncertainty and out-of-sample post-treatment shocks — and constructs a **prediction interval (PI)** $\widehat{\text{PI}}_{1t}$ that covers the synthetic counterfactual $\widehat{Y_{1t}(0)}$ with stated finite-sample frequentist coverage. The CrI of chapter 7 and the PI of this chapter answer different questions: the CrI is a posterior over the effect given a prior; the PI is a sampling-distribution band around the counterfactual prediction.</span>
 <span id="cb23-17"><a href="#cb23-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-18"><a href="#cb23-18" aria-hidden="true" tabindex="-1"></a><span class="in">`scpi`</span> also generalises the weight-estimation step. The same API fits the **simplex** (classical Abadie–Diamond–Hainmueller), **lasso**, **ridge**, and **OLS** constraints from a single function call, so we can ask a sharper question than chapter 4 could: *is the headline ATT a consequence of the simplex constraint, or does it survive every reasonable choice of donor regularisation?* We will write the resulting point estimate as $\widehat{\tau}_{\text{scpi}}$ — adding a constraint subscript such as $\widehat{\tau}_{\text{scpi-simplex}}$ when we need to distinguish the four constraint families — to keep it distinct from chapter 4's $\widehat{\tau}_{\text{SCM}}$ and chapter 6's $\widehat{\tau}_{\text{BSTS}}$.</span>
+<span id="cb23-18"><a href="#cb23-18" aria-hidden="true" tabindex="-1"></a><span class="in">`scpi`</span> also generalises the weight-estimation step. The same API fits the **simplex** (classical Abadie–Diamond–Hainmueller), **lasso**, **ridge**, and **OLS** constraints from a single function call, so we can ask a sharper question than chapter 4 could: *is the headline ATT a consequence of the simplex constraint, or does it survive every reasonable choice of donor regularisation?* We will write the resulting point estimate as $\widehat{\tau}_{\text{scpi}}$ — adding a constraint subscript such as $\widehat{\tau}_{\text{scpi-simplex}}$ when we need to distinguish the four constraint families — to keep it distinct from chapter 4's $\widehat{\tau}_{\text{SCM}}$, chapter 5's $\widehat{\tau}_{\text{ASCM}}$, chapter 6's $\widehat{\tau}_{\text{SDID}}$, and chapter 7's $\widehat{\tau}_{\text{BSTS}}$.</span>
 <span id="cb23-19"><a href="#cb23-19" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb23-20"><a href="#cb23-20" aria-hidden="true" tabindex="-1"></a><span class="fu">## The framework</span></span>
 <span id="cb23-21"><a href="#cb23-21" aria-hidden="true" tabindex="-1"></a></span>
@@ -4870,7 +4878,7 @@ Dunford, E. (2024). <em><span class="nocase">tidysynth</span> — a tidy impleme
 <span id="cb23-31"><a href="#cb23-31" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb23-32"><a href="#cb23-32" aria-hidden="true" tabindex="-1"></a>The first term, the in-sample component, comes from estimating the donor weights on a finite pre-period — sampling variability propagates into the counterfactual. The second term, $e_t$, captures post-treatment shocks and structural drift that the pre-period cannot anticipate; it grows with the forecast horizon. The placebo test in chapter 4 sidesteps this decomposition entirely — it ranks California against permuted-treatment states without modelling either error source — and so produces a $p$-value rather than an interval. <span class="in">`scpi`</span> quantifies the two error sources separately and reports a prediction interval $\widehat{\text{PI}}_{1t} = [\widehat{Y_{1t}(0)} - L_t,\, \widehat{Y_{1t}(0)} + U_t]$ around the *counterfactual prediction*, with stated finite-sample coverage.</span>
 <span id="cb23-33"><a href="#cb23-33" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-34"><a href="#cb23-34" aria-hidden="true" tabindex="-1"></a>In chapter 4's notation we would write the same predictor with the V-weighted predictor objective augmented by auxiliary covariates. Chapter 7 omits the predictor matrix $X$ entirely (see Setup) and so works directly with donor outcomes $Y_{0t}$. A parallel frequentist-coverage literature builds prediction intervals via *conformal inference* (Chernozhukov, Wüthrich &amp; Zhu 2021, *JASA*), which trades the parametric in-sample / out-of-sample decomposition for distribution-free quantile guarantees; see Further reading.</span>
+<span id="cb23-34"><a href="#cb23-34" aria-hidden="true" tabindex="-1"></a>In chapter 4's notation we would write the same predictor with the V-weighted predictor objective augmented by auxiliary covariates. This chapter omits the predictor matrix $X$ entirely (see Setup) and so works directly with donor outcomes $Y_{0t}$. A parallel frequentist-coverage literature builds prediction intervals via *conformal inference* (Chernozhukov, Wüthrich &amp; Zhu 2021, *JASA*), which trades the parametric in-sample / out-of-sample decomposition for distribution-free quantile guarantees; see Further reading.</span>
 <span id="cb23-35"><a href="#cb23-35" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb23-36"><a href="#cb23-36" aria-hidden="true" tabindex="-1"></a>The substantive interpretation matters and is the first pitfall of the chapter: the prediction interval $\widehat{\text{PI}}_{1t}$ bounds the *synthetic counterfactual* $\widehat{Y_{1t}(0)}$, not the treatment effect $\widehat{\tau}_t$ and not the observed series. Because $Y_{1t}$ is observed (not random conditional on the pre-period), the band can be flipped about the observed series to produce a band for $\widehat{\tau}_t$ — exercise 3 does this — but the primary inferential statement is geometric: the treatment effect is "statistically distinct from forecasting noise" when observed California sits *outside* $\widehat{\text{PI}}_{1t}$, most commonly when it falls *below* the lower bound of the band built around synthetic California.</span>
 <span id="cb23-37"><a href="#cb23-37" aria-hidden="true" tabindex="-1"></a></span>
@@ -4902,7 +4910,7 @@ Dunford, E. (2024). <em><span class="nocase">tidysynth</span> — a tidy impleme
 <span id="cb23-65"><a href="#cb23-65" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb23-66"><a href="#cb23-66" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb23-67"><a href="#cb23-67" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-68"><a href="#cb23-68" aria-hidden="true" tabindex="-1"></a>The chapter reuses the Proposition 99 dataset that powered chapters 2–4 and 6: 39 US states, 1970–2000, with <span class="in">`cigsale`</span> as the outcome (per-capita cigarette sales in packs). <span class="in">`scpi`</span>'s <span class="in">`scdata()`</span> wants the unit identifier as character — coerce the factor before handing it off. We use only the outcome series for matching (matching the configuration of the <span class="in">`scpi_pkg`</span> Python illustration in @cattaneo2025scpi); the auxiliary covariates <span class="in">`lnincome`</span>, <span class="in">`beer`</span>, and <span class="in">`age15to24`</span> carry many NAs in the early pre-period and would force row deletions that bias the donor pool.</span>
+<span id="cb23-68"><a href="#cb23-68" aria-hidden="true" tabindex="-1"></a>The chapter reuses the Proposition 99 dataset that powered chapters 2–4 and 6–7: 39 US states, 1970–2000, with <span class="in">`cigsale`</span> as the outcome (per-capita cigarette sales in packs). <span class="in">`scpi`</span>'s <span class="in">`scdata()`</span> wants the unit identifier as character — coerce the factor before handing it off. We use only the outcome series for matching (matching the configuration of the <span class="in">`scpi_pkg`</span> Python illustration in @cattaneo2025scpi); the auxiliary covariates <span class="in">`lnincome`</span>, <span class="in">`beer`</span>, and <span class="in">`age15to24`</span> carry many NAs in the early pre-period and would force row deletions that bias the donor pool.</span>
 <span id="cb23-69"><a href="#cb23-69" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb23-70"><a href="#cb23-70" aria-hidden="true" tabindex="-1"></a>This is an intentional departure from chapter 4, which used <span class="in">`lnincome`</span>, <span class="in">`beer`</span>, and <span class="in">`age15to24`</span> as auxiliary predictors via <span class="in">`tidysynth::generate_predictor()`</span>. The covariate-rich match in chapter 4 produces a tighter pre-period fit and a more negative simplex ATT — $\widehat{\tau}_{\text{SCM}} \approx -18.85$; outcome-only matching here is more conservative, is more honest about the missing-data structure, and lands at a smaller $\widehat{\tau}_{\text{scpi-simplex}}$ (≈ $-11$, see below). We return to this comparison in the Recap.</span>
 <span id="cb23-71"><a href="#cb23-71" aria-hidden="true" tabindex="-1"></a></span>
@@ -5321,7 +5329,7 @@ Dunford, E. (2024). <em><span class="nocase">tidysynth</span> — a tidy impleme
 <span id="cb23-512"><a href="#cb23-512" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Does the ATT survive the constraint choice? <span class="pp">|</span> Yes — all four constraints produce a negative average gap between roughly <span class="in">`r sprintf("%.1f", min(att_lookup))`</span> and <span class="in">`r sprintf("%.1f", max(att_lookup))`</span> packs <span class="pp">|</span></span>
 <span id="cb23-513"><a href="#cb23-513" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Does the *inferential* conclusion survive? <span class="pp">|</span> Yes — observed California falls below the lower 95% joint PI bound under every constraint by the late 1990s <span class="pp">|</span></span>
 <span id="cb23-514"><a href="#cb23-514" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> What does $\widehat{\text{PI}}_{1t}$ cover? | The *synthetic counterfactual* $\widehat{Y_{1t}(0)}$, not observed California and not $\widehat{\tau}_t$ — "significance" means the observed series leaves the band <span class="pp">|</span></span>
-<span id="cb23-515"><a href="#cb23-515" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> How does this differ from chapter 6's credible interval? <span class="pp">|</span> $\widehat{\text{PI}}_{1t}$ has finite-sample frequentist coverage and is a statement about the synthetic counterfactual; CausalImpact's CrI is a posterior probability statement about the effect, conditioned on the prior. They tend to agree when the BSTS prior is uninformative and the SCPI in-sample uncertainty term dominates. <span class="pp">|</span></span>
+<span id="cb23-515"><a href="#cb23-515" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> How does this differ from chapter 7's credible interval? <span class="pp">|</span> $\widehat{\text{PI}}_{1t}$ has finite-sample frequentist coverage and is a statement about the synthetic counterfactual; CausalImpact's CrI is a posterior probability statement about the effect, conditioned on the prior. They tend to agree when the BSTS prior is uninformative and the SCPI in-sample uncertainty term dominates. <span class="pp">|</span></span>
 <span id="cb23-516"><a href="#cb23-516" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> What is the most important <span class="in">`scpi`</span> switch for this dataset? <span class="pp">|</span> <span class="in">`cointegrated.data = TRUE`</span>, which adjusts the long-run variance for the I(1)-looking <span class="in">`cigsale`</span> series <span class="pp">|</span></span>
 <span id="cb23-517"><a href="#cb23-517" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> What is the design-time pitfall? <span class="pp">|</span> Adding covariates with NAs (<span class="in">`beer`</span>, <span class="in">`age15to24`</span>, <span class="in">`lnincome`</span>) forces row deletions that bias the donor pool; the chapter uses outcome-only matching <span class="pp">|</span></span>
 <span id="cb23-518"><a href="#cb23-518" aria-hidden="true" tabindex="-1"></a></span>
@@ -5354,7 +5362,7 @@ Dunford, E. (2024). <em><span class="nocase">tidysynth</span> — a tidy impleme
 <span id="cb23-545"><a href="#cb23-545" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Chernozhukov, V., Wüthrich, K. &amp; Zhu, Y. (2021). *An exact and robust conformal inference method for counterfactual and synthetic controls.* Journal of the American Statistical Association — a distribution-free frequentist alternative to scpi's parametric in-sample / out-of-sample decomposition. Conformal SC intervals trade scpi's two-component parametric coverage for permutation-style quantile guarantees and are a natural companion read.</span>
 <span id="cb23-546"><a href="#cb23-546" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>The companion **Python (`scpi_pkg`) and Stata (`scpi`)** packages, documented at <span class="ot">&lt;https://nppackages.github.io/scpi/&gt;</span>, expose the same API as the R package used in this chapter.</span>
 <span id="cb23-547"><a href="#cb23-547" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-548"><a href="#cb23-548" aria-hidden="true" tabindex="-1"></a>**Coming up.** Chapter 8 closes Part I with a *fifth* synthetic-control perspective: a Bayesian horseshoe-prior weight model coupled with a spatial-autoregressive donor data-generating process. Chapters 4, 5, 6, and 7 all retain the stable-unit-treatment-value assumption (SUTVA) — donors are treated as unaffected by California's policy. Chapter 8 relaxes SUTVA and recovers a closed-form spillover for each neighbour, which matters when the treated unit shares a border with several donors (Nevada, in this case).</span>
+<span id="cb23-548"><a href="#cb23-548" aria-hidden="true" tabindex="-1"></a>**Coming up.** Chapter 7 closes Part I with a *fourth* synthetic-control perspective: a Bayesian horseshoe-prior weight model coupled with a spatial-autoregressive donor data-generating process. Chapters 4, 5, and 6 all retain the stable-unit-treatment-value assumption (SUTVA) — donors are treated as unaffected by California's policy. Chapter 7 relaxes SUTVA and recovers a closed-form spillover for each neighbour, which matters when the treated unit shares a border with several donors (Nevada, in this case).</span>
 <span id="cb23-549"><a href="#cb23-549" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb23-550"><a href="#cb23-550" aria-hidden="true" tabindex="-1"></a><span class="fu">## Exercises</span></span>
 <span id="cb23-551"><a href="#cb23-551" aria-hidden="true" tabindex="-1"></a></span>
@@ -5368,7 +5376,7 @@ Dunford, E. (2024). <em><span class="nocase">tidysynth</span> — a tidy impleme
 <span id="cb23-559"><a href="#cb23-559" aria-hidden="true" tabindex="-1"></a><span class="fu">## Solution</span></span>
 <span id="cb23-560"><a href="#cb23-560" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb23-563"><a href="#cb23-563" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb23-564"><a href="#cb23-564" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: ex-ch06-01</span></span>
+<span id="cb23-564"><a href="#cb23-564" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: ex-ch08-01</span></span>
 <span id="cb23-565"><a href="#cb23-565" aria-hidden="true" tabindex="-1"></a><span class="co">#| message: false</span></span>
 <span id="cb23-566"><a href="#cb23-566" aria-hidden="true" tabindex="-1"></a><span class="co">#| warning: false</span></span>
 <span id="cb23-567"><a href="#cb23-567" aria-hidden="true" tabindex="-1"></a><span class="co">#| results: hide</span></span>
@@ -5399,7 +5407,7 @@ Dunford, E. (2024). <em><span class="nocase">tidysynth</span> — a tidy impleme
 <span id="cb23-592"><a href="#cb23-592" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb23-593"><a href="#cb23-593" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb23-596"><a href="#cb23-596" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb23-597"><a href="#cb23-597" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: ex-ch06-01b</span></span>
+<span id="cb23-597"><a href="#cb23-597" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: ex-ch08-01b</span></span>
 <span id="cb23-598"><a href="#cb23-598" aria-hidden="true" tabindex="-1"></a>ci_yes <span class="ot">&lt;-</span> pi_simplex<span class="sc">$</span>inference.results<span class="sc">$</span>CI.all.gaussian</span>
 <span id="cb23-599"><a href="#cb23-599" aria-hidden="true" tabindex="-1"></a>ci_no  <span class="ot">&lt;-</span> pi_nocoint<span class="sc">$</span>inference.results<span class="sc">$</span>CI.all.gaussian</span>
 <span id="cb23-600"><a href="#cb23-600" aria-hidden="true" tabindex="-1"></a></span>
@@ -5421,7 +5429,7 @@ Dunford, E. (2024). <em><span class="nocase">tidysynth</span> — a tidy impleme
 <span id="cb23-616"><a href="#cb23-616" aria-hidden="true" tabindex="-1"></a><span class="fu">## Solution</span></span>
 <span id="cb23-617"><a href="#cb23-617" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb23-620"><a href="#cb23-620" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb23-621"><a href="#cb23-621" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: ex-ch06-02</span></span>
+<span id="cb23-621"><a href="#cb23-621" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: ex-ch08-02</span></span>
 <span id="cb23-622"><a href="#cb23-622" aria-hidden="true" tabindex="-1"></a>y_post <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(data_prep<span class="sc">$</span>Y.post)</span>
 <span id="cb23-623"><a href="#cb23-623" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb23-624"><a href="#cb23-624" aria-hidden="true" tabindex="-1"></a>first_exit <span class="ot">&lt;-</span> <span class="cf">function</span>(fit) {</span>
@@ -5447,7 +5455,7 @@ Dunford, E. (2024). <em><span class="nocase">tidysynth</span> — a tidy impleme
 <span id="cb23-644"><a href="#cb23-644" aria-hidden="true" tabindex="-1"></a><span class="fu">## Solution</span></span>
 <span id="cb23-645"><a href="#cb23-645" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb23-648"><a href="#cb23-648" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb23-649"><a href="#cb23-649" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: ex-ch06-03</span></span>
+<span id="cb23-649"><a href="#cb23-649" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: ex-ch08-03</span></span>
 <span id="cb23-650"><a href="#cb23-650" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-width: 8</span></span>
 <span id="cb23-651"><a href="#cb23-651" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-height: 5</span></span>
 <span id="cb23-652"><a href="#cb23-652" aria-hidden="true" tabindex="-1"></a>ci_post <span class="ot">&lt;-</span> pi_simplex<span class="sc">$</span>inference.results<span class="sc">$</span>CI.all.gaussian</span>
@@ -5480,7 +5488,7 @@ Dunford, E. (2024). <em><span class="nocase">tidysynth</span> — a tidy impleme
 <span id="cb23-679"><a href="#cb23-679" aria-hidden="true" tabindex="-1"></a><span class="fu">## Solution</span></span>
 <span id="cb23-680"><a href="#cb23-680" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb23-683"><a href="#cb23-683" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb23-684"><a href="#cb23-684" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: ex-ch06-04</span></span>
+<span id="cb23-684"><a href="#cb23-684" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: ex-ch08-04</span></span>
 <span id="cb23-685"><a href="#cb23-685" aria-hidden="true" tabindex="-1"></a><span class="co">#| message: false</span></span>
 <span id="cb23-686"><a href="#cb23-686" aria-hidden="true" tabindex="-1"></a><span class="co">#| warning: false</span></span>
 <span id="cb23-687"><a href="#cb23-687" aria-hidden="true" tabindex="-1"></a><span class="co">#| results: hide</span></span>
@@ -5499,7 +5507,7 @@ Dunford, E. (2024). <em><span class="nocase">tidysynth</span> — a tidy impleme
 <span id="cb23-700"><a href="#cb23-700" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb23-701"><a href="#cb23-701" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb23-704"><a href="#cb23-704" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb23-705"><a href="#cb23-705" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: ex-ch06-04b</span></span>
+<span id="cb23-705"><a href="#cb23-705" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: ex-ch08-04b</span></span>
 <span id="cb23-706"><a href="#cb23-706" aria-hidden="true" tabindex="-1"></a>ci_sym  <span class="ot">&lt;-</span> pi_simplex<span class="sc">$</span>inference.results<span class="sc">$</span>CI.all.gaussian</span>
 <span id="cb23-707"><a href="#cb23-707" aria-hidden="true" tabindex="-1"></a>ci_asym <span class="ot">&lt;-</span> pi_asym<span class="sc">$</span>inference.results<span class="sc">$</span>CI.all.gaussian</span>
 <span id="cb23-708"><a href="#cb23-708" aria-hidden="true" tabindex="-1"></a></span>
@@ -5522,7 +5530,7 @@ Dunford, E. (2024). <em><span class="nocase">tidysynth</span> — a tidy impleme
 <span id="cb23-725"><a href="#cb23-725" aria-hidden="true" tabindex="-1"></a><span class="fu">## Solution</span></span>
 <span id="cb23-726"><a href="#cb23-726" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb23-729"><a href="#cb23-729" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb23-730"><a href="#cb23-730" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: ex-ch06-05</span></span>
+<span id="cb23-730"><a href="#cb23-730" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: ex-ch08-05</span></span>
 <span id="cb23-731"><a href="#cb23-731" aria-hidden="true" tabindex="-1"></a><span class="co">#| message: false</span></span>
 <span id="cb23-732"><a href="#cb23-732" aria-hidden="true" tabindex="-1"></a><span class="co">#| warning: false</span></span>
 <span id="cb23-733"><a href="#cb23-733" aria-hidden="true" tabindex="-1"></a><span class="co">#| results: hide</span></span>
@@ -5544,7 +5552,7 @@ Dunford, E. (2024). <em><span class="nocase">tidysynth</span> — a tidy impleme
 <span id="cb23-749"><a href="#cb23-749" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb23-750"><a href="#cb23-750" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb23-753"><a href="#cb23-753" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb23-754"><a href="#cb23-754" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: ex-ch06-05b</span></span>
+<span id="cb23-754"><a href="#cb23-754" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: ex-ch08-05b</span></span>
 <span id="cb23-755"><a href="#cb23-755" aria-hidden="true" tabindex="-1"></a>y_post <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(data_prep<span class="sc">$</span>Y.post)</span>
 <span id="cb23-756"><a href="#cb23-756" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb23-757"><a href="#cb23-757" aria-hidden="true" tabindex="-1"></a><span class="fu">map2_dfr</span>(lasso_fits, Q_grid, \(fit, Q) {</span>
@@ -5561,7 +5569,7 @@ Dunford, E. (2024). <em><span class="nocase">tidysynth</span> — a tidy impleme
 </code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
-<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/quarcs-lab/ccm/edit/main/07-synthetic-control-prediction-intervals.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/quarcs-lab/ccm/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer><script>
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/quarcs-lab/ccm/edit/main/08-synthetic-control-prediction-intervals.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/quarcs-lab/ccm/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer><script>
 document.addEventListener('DOMContentLoaded', function() {
   var tocNav = document.getElementById('TOC');
   if (tocNav) {
